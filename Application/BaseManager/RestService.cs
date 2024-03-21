@@ -82,7 +82,7 @@ namespace Application.BaseManager
             return contents;
         }
 
-        public virtual async Task<object> List<T1, T2>(bool paginate = false, int pageSize = 10, int pageNumber = 0, string filterKey = "", string filterValue = "", string sortColumn = null, bool sortAsc = false) where T1 : class where T2 : class
+        public virtual async Task<object> List<T1, T2>(bool paginate = false, int pageSize = 10, int pageNumber = 0, string filterKey = "", string filterValue = "", string sortColumn = "", bool sortAsc = false) where T1 : class where T2 : class
         {
             var contents = await _context.Set<T1>().Where(x => EF.Property<bool>(x, "IsDeleted") == false).ToListAsync();
             if (!string.IsNullOrEmpty(sortColumn))

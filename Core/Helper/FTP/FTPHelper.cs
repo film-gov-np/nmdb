@@ -1,11 +1,5 @@
-﻿using Azure;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.StaticFiles;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Helper.FTP
 {

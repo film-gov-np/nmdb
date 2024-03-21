@@ -10,7 +10,7 @@ namespace Application.Helpers
         public Task<bool> Delete<T>(T model, bool force_delete) where T : class;
         public Task<T> Retrieve<T>(string Pid) where T : class;
         public Task<T> RetrieveByID<T>(int id) where T : class;
-        public Task<object> List<T1, T2>(bool paginate = false, int pageSize = 10, int pageNumber = 1, string filterKey = "", string filterValue = "", string sortColumn = null, bool sortAsc = false) where T1 : class where T2 : class;
+        public Task<object> List<T1, T2>(bool paginate = false, int pageSize = 10, int pageNumber = 1, string filterKey = "", string filterValue = "", string sortColumn = "", bool sortAsc = false) where T1 : class where T2 : class;
 
     }
 }
