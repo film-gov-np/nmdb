@@ -17,7 +17,6 @@ public class Account
     public string PasswordHash { get; set; }
     public bool AcceptTerms { get; set; }
     public string? VerificationToken { get; set; }
-    public string Origin { get; set; }
     public DateTime? Verified { get; set; }
     [DefaultValue(false)]
     public bool IsVerified => Verified.HasValue || PasswordReset.HasValue;

@@ -28,7 +28,7 @@ public class AccountsController : BaseController
     [HttpPost("authenticate")]
     public async Task<IActionResult> Authenticate(AuthenticateRequest model)
     {
-        var response = await _accountService.Authenticate(model, await ipAddress(), Request.Headers.Origin.ToString());
+        var response = await _accountService.Authenticate(model, await ipAddress());
         await setTokenCookie(response.RefreshToken);
         return JsonResponse.CreateJsonResponse(HttpStatusCode.OK, "", response);
     }
@@ -79,7 +79,7 @@ public class AccountsController : BaseController
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest model)
     {
-        await _accountService.Register(model, Request.Headers.Origin.ToString());
+        await _accountService.Register(model);
         return JsonResponse.CreateJsonResponse(HttpStatusCode.OK, "Registration successful, please check your email for verification instructions");
     }
 
@@ -95,7 +95,7 @@ public class AccountsController : BaseController
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest model)
     {
-        await _accountService.ForgotPassword(model, Request.Headers.Origin.ToString());
+        await _accountService.ForgotPassword(model);
         return JsonResponse.CreateJsonResponse(HttpStatusCode.OK, "Please check your email for password reset instructions");
     }
 
@@ -119,7 +119,7 @@ public class AccountsController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetAll(int pageNumber, int pageSize, string keyword="")
     {
-        var accounts = await _accountService.GetAll(pageNumber, pageSize, keyword, Request.Headers.Origin.ToString());
+        var accounts = await _accountService.GetAll(pageNumber, pageSize, keyword);
         return JsonResponse.CreateJsonResponse(HttpStatusCode.OK, "", accounts);
     }
 
@@ -139,7 +139,7 @@ public class AccountsController : BaseController
     [HttpPost]
     public async Task<IActionResult> Create(CreateRequest model)
     {
-        var account = await _accountService.Create(model, Request.Headers.Origin.ToString());
+        var account = await _accountService.Create(model);
         return JsonResponse.CreateJsonResponse(HttpStatusCode.OK,"User created successfully", account.Idx);
     }
 

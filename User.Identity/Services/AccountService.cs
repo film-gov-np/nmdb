@@ -19,19 +19,19 @@ using Amazon.Runtime;
 namespace User.Identity.Services;
 public interface IAccountService
 {
-    Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress, string origin);
+    Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress);
     Task<int?> ValidateToken(string token);
     Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
     Task RevokeToken(string token, string ipAddress);
-    Task Register(RegisterRequest model, string origin);
+    Task Register(RegisterRequest model);
     Task VerifyEmail(string token);
-    Task ForgotPassword(ForgotPasswordRequest model, string origin);
+    Task ForgotPassword(ForgotPasswordRequest model);
     Task ValidateResetToken(ValidateResetTokenRequest model);
     Task ResetPassword(ResetPasswordRequest model);
-    Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword, string origin);
+    Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword);
     Task<AccountResponse> GetByIdx(string idx);
     Task<AccountResponse> GetById(int id);
-    Task<AccountResponse> Create(CreateRequest model, string origin);
+    Task<AccountResponse> Create(CreateRequest model);
     Task<AccountResponse> Update(string idx, Application.Models.UpdateUserDTO model);
     Task Delete(string idx);
 }
@@ -58,10 +58,11 @@ public class AccountService : IAccountService
         _emailService = emailService;
     }
 
-    public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress, string origin)
+    public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
     {
-        var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email && x.Origin == origin);
-        if(account == null) {
+        var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
+        if (account == null)
+        {
             throw new AppException("Email doesn't exists on this origin");
         }
 
@@ -156,19 +157,19 @@ public class AccountService : IAccountService
         _context.Update(account);
         await _context.SaveChangesAsync();
     }
-    private async Task<bool> IsEmailAndOriginUnique(string email, string origin)
+    private async Task<bool> IsEmailAndOriginUnique(string email)
     {
         // Check if the email and origin combination exists
-        return !_context.Accounts.Any(u => u.Email == email && u.Origin == origin);
+        return !_context.Accounts.Any(u => u.Email == email);
     }
 
-    public async Task Register(RegisterRequest model, string origin)
+    public async Task Register(RegisterRequest model)
     {
         // validate
-        if (!await IsEmailAndOriginUnique(model.Email, origin))
+        if (!await IsEmailAndOriginUnique(model.Email))
         {
             // send already registered error in email to prevent account enumeration
-            await sendAlreadyRegisteredEmail(model.Email, origin);
+            await sendAlreadyRegisteredEmail(model.Email);
             throw new AppException("User already exists on this origin");
         }
 
@@ -180,7 +181,6 @@ public class AccountService : IAccountService
         account.Created = DateTime.UtcNow;
         account.Idx = UniqueIndexGenerator.GenerateUniqueAlphanumericIndex(length: 12, prefix: "acc");
         account.VerificationToken = await generateVerificationToken();
-        account.Origin = origin;
 
         // hash password
         account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
@@ -190,7 +190,7 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
 
         // send email
-        await sendVerificationEmail(account, origin,model.Password);
+        await sendVerificationEmail(account, model.Password);
     }
 
     public async Task VerifyEmail(string token)
@@ -207,7 +207,7 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
     }
 
-    public async Task ForgotPassword(ForgotPasswordRequest model, string origin)
+    public async Task ForgotPassword(ForgotPasswordRequest model)
     {
         var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
@@ -222,7 +222,7 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
 
         // send email
-        await sendPasswordResetEmail(account, origin);
+        await sendPasswordResetEmail(account);
     }
 
     public async Task ValidateResetToken(ValidateResetTokenRequest model)
@@ -244,10 +244,10 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword, string origin)
+    public async Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword)
     {
         var query = _context.Accounts.AsQueryable();
-        query = query.Where(p => (p.FirstName.Contains(keyword) || p.LastName.Contains(keyword) || p.Email.Contains(keyword)) && p.Origin.Equals(origin));
+        query = query.Where(p => (p.FirstName.Contains(keyword) || p.LastName.Contains(keyword) || p.Email.Contains(keyword)));
         int totalCount = query.Count();
         int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
         var accounts = query
@@ -275,7 +275,7 @@ public class AccountService : IAccountService
         return _mapper.Map<AccountResponse>(account);
     }
 
-    public async Task<AccountResponse> Create(CreateRequest model, string origin)
+    public async Task<AccountResponse> Create(CreateRequest model)
     {
         // validate
         if (_context.Accounts.Any(x => x.Email == model.Email))
@@ -290,14 +290,13 @@ public class AccountService : IAccountService
         account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
         account.Idx = UniqueIndexGenerator.GenerateUniqueAlphanumericIndex(length: 12, prefix: "acc");
         account.VerificationToken = await generateVerificationToken();
-        account.Origin = origin;
 
         // save account
         _context.Accounts.Add(account);
         await _context.SaveChangesAsync();
 
         // send email
-        await sendVerificationEmail(account, origin,model.Password);
+        await sendVerificationEmail(account, model.Password);
         return _mapper.Map<AccountResponse>(account);
     }
 
@@ -433,25 +432,11 @@ public class AccountService : IAccountService
         token.ReplacedByToken = replacedByToken;
     }
 
-    private async Task sendVerificationEmail(Account account, string origin,string password="")
+    private async Task sendVerificationEmail(Account account, string password = "")
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
-        {
-            // origin exists if request sent from browser single page app (e.g. Angular or React)
-            // so send link to verify via single page app
-            var verifyUrl = $"{origin}/api/auth/verify?token={account.VerificationToken}";
-            var tempPassword= $@"<p>Your random password is:{password}</p>";
-            message = $@"{tempPassword}</br><p>Please click the below link to verify your email address:</p>
-                            <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
-        }
-        else
-        {
-            // origin missing if request sent directly to api (e.g. from Postman)
-            // so send instructions to verify directly with api
-            message = $@"<p>Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:</p>
+        string message = $@"<p>Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:</p>
                             <p><code>{account.VerificationToken}</code></p>";
-        }
+
 
         await _emailService.Send(
              to: account.Email,
@@ -462,13 +447,9 @@ public class AccountService : IAccountService
          );
     }
 
-    private async Task sendAlreadyRegisteredEmail(string email, string origin)
+    private async Task sendAlreadyRegisteredEmail(string email)
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
-            message = $@"<p>If you don't know your password please visit the <a href=""{origin}/account/forgot-password"">forgot password</a> page.</p>";
-        else
-            message = "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>";
+        string message = "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>";
 
         await _emailService.Send(
             to: email,
@@ -479,20 +460,11 @@ public class AccountService : IAccountService
         );
     }
 
-    private async Task sendPasswordResetEmail(Account account, string origin)
+    private async Task sendPasswordResetEmail(Account account)
     {
-        string message;
-        if (!string.IsNullOrEmpty(origin))
-        {
-            var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
-            message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
-                            <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
-        }
-        else
-        {
-            message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+        string message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
                             <p><code>{account.ResetToken}</code></p>";
-        }
+
 
         await _emailService.Send(
             to: account.Email,
