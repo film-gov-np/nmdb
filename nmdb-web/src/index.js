@@ -1,13 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AboutUs from "./AboutUs";
+import Dashboard from "./components/admin/Dashboard";
+import Movie from "./components/admin/Movie";
+import Movies from "./components/Movies";
+import { Paths } from "./constants/routePaths";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import RouteNotFound from "./components/RouteNotFound";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Routes>
+        <Route path={Paths.Route_Home} element={<App />} />
+        <Route path={Paths.Route_Login} element={<Login />} />
+        <Route path={Paths.Route_Register} element={<Register />} />
+        <Route path={Paths.Route_Aboutus} element={<AboutUs />} />
+        <Route path={Paths.Route_Movies} element={<Movies />} />
+        <Route path={Paths.Route_Admin}>
+          <Route index element={<Dashboard />} />
+          <Route path={Paths.Route_Admin_Dashboard} element={<Dashboard />} />
+          <Route path={Paths.Route_Admin_Movie} element={<Movie />} />
+        </Route>
+        <Route path="*" element={<RouteNotFound />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
 );
 
