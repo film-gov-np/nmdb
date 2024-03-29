@@ -1,16 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AboutUs from "./AboutUs";
-import Dashboard from "./components/admin/Dashboard";
-import Movie from "./components/admin/Movie";
-import Movies from "./components/Movies";
 import { Paths } from "./constants/routePaths";
+import App from "./App";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import AboutUs from "./AboutUs";
+import Movies from "./components/Movies";
+import Dashboard from "./components/admin/Dashboard";
+import Movie from "./components/admin/Movie";
 import RouteNotFound from "./components/RouteNotFound";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
