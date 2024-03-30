@@ -34,12 +34,14 @@ axiosInstance.interceptors.response.use(
       retryQueue.push(
         new Promise((resolve, reject) => {
           axiosInstance
-            .post("/refreshToken", { token: localStorage.getItem("token") })
-            .then((response) => {
-              const newToken = response.data.token;
-              localStorage.setItem("token", newToken);
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              resolve(axiosInstance(originalRequest));
+            .post("Accounts/refresh-token")
+            .then((resp) => {
+              if (resp) {
+                const { jwtToken } = resp.data.data;
+                localStorage.setItem("token", jwtToken);
+                originalRequest.headers.Authorization = `Bearer ${jwtToken}`;
+                resolve(axiosInstance(originalRequest));
+              }
             })
             .catch((err) => {
               reject(err);

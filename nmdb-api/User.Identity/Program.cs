@@ -52,7 +52,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-//app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowSpecificOrigin");
 // custom jwt auth middleware
 //app.UseMiddleware<ErrorHandlerMiddleware>();
 //app.UseMiddleware<JwtMiddleware>();

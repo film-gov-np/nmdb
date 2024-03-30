@@ -37,8 +37,8 @@ function Register() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const postData = {
-      firstName: "firstName",
-      lastName: "lastName",
+      firstName: "Sudip",
+      lastName: "Thapa",
       email: email,
       password: newPassword,
       confirmPassword: confirmPassword,
@@ -67,7 +67,7 @@ function Register() {
             autoFocus
             value={fullName}
             onChange={onChange}
-            name="Fullname"
+            name="FullName"
           />
         </div>
         <div style={{ marginBottom: 15 }}>
@@ -90,7 +90,7 @@ function Register() {
           <input
             type="password"
             onChange={onChange}
-            name="newPassword"
+            name="NewPassword"
             value={newPassword}
           />
         </div>

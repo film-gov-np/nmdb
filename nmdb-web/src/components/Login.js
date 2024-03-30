@@ -15,10 +15,22 @@ function Login() {
       password: password,
     };
     axiosInstance
-      .post("Account/authenticate", postData)
+      .post("Accounts/authenticate", postData)
       .then((resp) => {
+        debugger;
         if (resp) {
+          const {
+            created,
+            email,
+            firstName,
+            idx,
+            isVerified,
+            jwtToken,
+            lastName,
+            updated,
+          } = resp.data.data;
           //set token to cookie or localStorage
+          localStorage.setItem("token", jwtToken);
           navigate("/admin/dashboard");
         }
       })

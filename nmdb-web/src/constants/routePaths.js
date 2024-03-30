@@ -6,6 +6,7 @@ export const Paths = {
   Route_Aboutus: "/aboutus",
   Route_Admin: "/admin",
   Route_Forogot_Password: "/forgotpassword",
+  Route_Verify_Email: "/verifyemail",
 
   //protected routes ie. admin/dashboard
   Route_Admin_Dashboard: "dashboard",

@@ -11,6 +11,7 @@ import Movies from "./components/Movies";
 import Dashboard from "./components/admin/Dashboard";
 import Movie from "./components/admin/Movie";
 import RouteNotFound from "./components/RouteNotFound";
+import VerifyEmail from "./components/VerifyEmail";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -20,6 +21,7 @@ root.render(
         <Route path={Paths.Route_Home} element={<App />} />
         <Route path={Paths.Route_Login} element={<Login />} />
         <Route path={Paths.Route_Register} element={<Register />} />
+        <Route path={Paths.Route_Verify_Email} element={<VerifyEmail />} />
         <Route path={Paths.Route_Aboutus} element={<AboutUs />} />
         <Route path={Paths.Route_Movies} element={<Movies />} />
         <Route path={Paths.Route_Admin}>
