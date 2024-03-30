@@ -5,6 +5,9 @@ export const Paths = {
   Route_Movies: "/movies",
   Route_Aboutus: "/aboutus",
   Route_Admin: "/admin",
+  Route_Forogot_Password: "/forgotpassword",
+
+  //protected routes ie. admin/dashboard
   Route_Admin_Dashboard: "dashboard",
   Route_Admin_Movie: "movie",
 };

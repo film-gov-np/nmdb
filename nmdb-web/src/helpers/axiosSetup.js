@@ -1,4 +1,4 @@
-import { BaseAPIUrl } from "@rootSrc/constants/authConstant";
+import { BaseAPIUrl } from "../constants/authConstant";
 import axios from "axios";
 
 const axiosInstance = axios.create({

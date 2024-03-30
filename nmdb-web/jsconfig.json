@@ -4,8 +4,9 @@
     "module": "CommonJS",
     "target": "ES6",
     "paths": {
-      "@rootSrc/*": ["./src/*"]
+      "@root/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

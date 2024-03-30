@@ -1,14 +1,77 @@
-import axiosInstance from "@rootSrc/helpers/axiosSetup";
-import React, { useEffect } from "react";
+import { Paths } from "../constants/routePaths";
+import axiosInstance from "../helpers/axiosSetup";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Login() {
-  useEffect(() => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const postData = {
+      email: email,
+      password: password,
+    };
     axiosInstance
-      .get("Account/authenticate")
-      .then((response) => {})
+      .post("Account/authenticate", postData)
+      .then((resp) => {
+        if (resp) {
+          //set token to cookie or localStorage
+          navigate("/admin/dashboard");
+        }
+      })
       .catch((error) => {});
-  }, []);
-  return <div>Login</div>;
+  };
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "Email":
+        setEmail(value);
+        break;
+      case "Password":
+        setPassword(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div>
+      <h3>Login</h3>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            Email <span color="red">*</span>
+          </label>
+          <input autoFocus value={email} onChange={onChange} name="Email" />
+        </div>
+        <div style={{ marginBottom: 15 }}>
+          <label>
+            Password <span color="red">*</span>
+          </label>
+
+          <input
+            type="password"
+            onChange={onChange}
+            name="Password"
+            value={password}
+          />
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div>
+        <NavLink to={Paths.Route_Forogot_Password}>Forgot password?</NavLink>
+
+        <NavLink to={Paths.Route_Register}>
+          {"Don't have an account? Sign Up"}
+        </NavLink>
+      </div>
+    </div>
+  );
 }
 
 export default Login;
