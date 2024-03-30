@@ -37,9 +37,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>Film Department Board of Nepal</p>
-        <a className="App-link" target="_blank" rel="noopener noreferrer">
-          Nepali Movie Database
-        </a>
+        <span>Nepali Movie Database</span>
         <ul>
           {menuRoutes.map((menu, index) => {
             const { title, to } = menu;
