@@ -1,20 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../helpers/axiosSetup";
 import { useNavigate } from "react-router";
+import { NavLink } from "react-router-dom";
 
 function VerifyEmail() {
   const navigate = useNavigate();
-  const [token, setToken] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [requested, setRequested] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.pathname);
+    const token = params.get("token");
+    if (token) {
+      handleSubmit(token);
+    }
+  }, []);
 
+  const handleSubmit = (token) => {
+    setRequested(true);
     axiosInstance
       .post(`Accounts/verify-email?token=${token}`)
       .then((resp) => {
         if (resp) {
-          //set token to cookie or localStorage
-          navigate("/login");
+          setSuccess(true);
         }
       })
       .catch((error) => {});
@@ -22,20 +30,27 @@ function VerifyEmail() {
   return (
     <div>
       <h3>Verify your account.</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Token <span color="red">*</span>
-          </label>
-          <input
-            autoFocus
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-          />
-        </div>
-
-        <button type="submit">Verify</button>
-      </form>
+      {requested && (
+        <>
+          {" "}
+          {success ? (
+            <>
+              <p>Account verified successfully</p>
+              <NavLink
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                Login
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <p>Account verification failed</p>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
