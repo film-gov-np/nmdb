@@ -49,7 +49,7 @@ function Register() {
       .then((resp) => {
         if (resp) {
           //set token to cookie or localStorage
-          navigate("/admin/dashboard");
+          navigate(Paths.Route_Verify_Email);
         }
       })
       .catch((error) => {});
