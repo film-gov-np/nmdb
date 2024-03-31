@@ -6,6 +6,8 @@ using User.Identity.Herlpers;
 using User.Identity.Services;
 using Microsoft.AspNetCore.Cors;
 using User.Identity.Helpers;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<UserIdentityContext>(options =>

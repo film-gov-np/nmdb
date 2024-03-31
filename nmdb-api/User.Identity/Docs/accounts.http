@@ -1,4 +1,4 @@
-@rootUrl=https://localhost:44369
+@rootUrl=https://localhost:7113/api
 
 GET {{rootUrl}}/accounts
 ###
