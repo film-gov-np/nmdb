@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./App.css";
+import "./index.css";
 import { Paths } from "./constants/routePaths";
 
 const menuRoutes = [
@@ -36,7 +37,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Film Department Board of Nepal</p>
+        <p className=" text-red-700">Film Department Board of Nepal</p>
         <span>Nepali Movie Database</span>
         <ul>
           {menuRoutes.map((menu, index) => {
