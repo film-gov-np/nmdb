@@ -11,4 +11,5 @@ export const Paths = {
   //protected routes ie. admin/dashboard
   Route_Admin_Dashboard: "dashboard",
   Route_Admin_Movie: "movie",
+  Route_Admin_Crew: "movie",
 };
