@@ -3,13 +3,17 @@ import flattenDeep from "lodash/flattenDeep";
 import { Route, Routes as ReactRoutes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
-const generateFlattenRoutes = (routes) => {
+const generateFlattenRoutes = (routes, parentPath = "") => {
   if (!routes) return [];
+
   return flattenDeep(
-    routes.map(({ routes: subRoutes, ...rest }) => [
-      rest,
-      generateFlattenRoutes(subRoutes),
-    ])
+    routes.map(({ routes: subRoutes, path: currentPath, ...rest }) => {
+      const fullPath = parentPath + currentPath; // to concat with parent routes
+      return [
+        { ...rest, path: fullPath },
+        generateFlattenRoutes(subRoutes, fullPath),
+      ];
+    })
   );
 };
 

@@ -33,7 +33,7 @@ export const routes = [
             isPublic: false,
           },
           {
-            name: "movies",
+            name: "movie",
             title: "Movies page",
             component: Movies,
             path: Paths.Route_Admin_Movie,

@@ -4,12 +4,12 @@ export const Paths = {
   Route_Register: "/register",
   Route_Movies: "/movies",
   Route_Aboutus: "/aboutus",
-  Route_Admin: "/admin",
   Route_Forogot_Password: "/forgotpassword",
   Route_Verify_Email: "/verifyemail",
 
   //protected routes ie. admin/dashboard
-  Route_Admin_Dashboard: "dashboard",
-  Route_Admin_Movie: "movie",
-  Route_Admin_Crew: "movie",
+  Route_Admin: "/admin",
+  Route_Admin_Dashboard: "/dashboard",
+  Route_Admin_Movie: "/movie",
+  Route_Admin_Crew: "/crew",
 };
