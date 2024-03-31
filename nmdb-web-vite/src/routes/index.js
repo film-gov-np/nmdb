@@ -4,8 +4,8 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import MainLayout from "@/components/layouts/MainLayout";
 
 // Pages Landing
-import Login from "../components/landing/Login";
-import Home from "@/components/landing/Home";
+import Login from "@/components/landing/pages/Login";
+import Home from "@/components/landing/pages/Home";
 
 // Pages Admin
 import Movies from "@/components/admin/pages/Movies";
