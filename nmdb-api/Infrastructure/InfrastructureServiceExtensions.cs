@@ -4,24 +4,25 @@ using Microsoft.Extensions.Configuration;
 using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Identity;
+using Microsoft.VisualBasic.FileIO;
+using Application.Interfaces;
 
-namespace Infrastructure
+namespace Infrastructure;
+
+public static class InfrastructureServiceExtensions
 {
-    public static class InfrastructureServiceExtensions
-    {
-        public static IServiceCollection AddInfrastructureServices(
-            this IServiceCollection services,
-            ConfigurationManager config)
-        {
-            string? connectionString = config.GetConnectionString("NmbdbConnection");
-            services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(connectionString));
+    public static IServiceCollection AddInfrastructureServices(
+        this IServiceCollection services,
+        IConfiguration config)    {
+        services.AddDbContext<AppDbContext>(c =>
+                        c.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
-            //builder.Services.Configure<MailServerConfiguration>(builder.Configuration.GetSection("MailServerConfiguration"));
-            //builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+        // Register your services here
+        services.AddScoped<IEmailService, SmtpEmailService>();
+        services.AddScoped<IJwtUtils, JwtUtils>();
+        
 
 
-            return services;
-        }
+        return services;
     }
 }

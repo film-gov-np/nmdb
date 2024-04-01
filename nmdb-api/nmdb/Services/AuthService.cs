@@ -125,7 +125,7 @@ namespace nmdb.Services
 
         public async Task RevokeToken(string token, string ipAddress)
         {
-            ApplicationUser account = await getAccountByRefreshToken(token);
+            CustomApplicationUser account = await getAccountByRefreshToken(token);
             var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
             if (!refreshToken.IsActive)
@@ -153,7 +153,7 @@ namespace nmdb.Services
             }
 
             // map model to new account object
-            var account = _mapper.Map<ApplicationUser>(model);
+            var account = _mapper.Map<CustomApplicationUser>(model);
 
             // first registered account is an admin
             var isFirstAccount = _context.Users.Count() == 0;
@@ -261,7 +261,7 @@ namespace nmdb.Services
                 throw new AppException($"Email '{model.Email}' is already registered");
 
             // map model to new account object
-            var account = _mapper.Map<ApplicationUser>(model);
+            var account = _mapper.Map<CustomApplicationUser>(model);
             account.Created = DateTime.UtcNow;
             account.Verified = DateTime.UtcNow;
             account.Idx =
@@ -309,26 +309,26 @@ namespace nmdb.Services
 
         // helper methods
 
-        private async Task<ApplicationUser> getAccount(string idx)
+        private async Task<CustomApplicationUser> getAccount(string idx)
         {
             var account = _context.Users.SingleOrDefault(u => u.Idx == idx);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
-        private async Task<ApplicationUser> getAccountById(string id)
+        private async Task<CustomApplicationUser> getAccountById(string id)
         {
             var account = _context.Users.SingleOrDefault(u => u.Id == id);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
-        private async Task<ApplicationUser> getAccountByRefreshToken(string token)
+        private async Task<CustomApplicationUser> getAccountByRefreshToken(string token)
         {
             var account = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
             if (account == null) throw new AppException("Invalid token");
             return account;
         }
 
-        private async Task<ApplicationUser> getAccountByResetToken(string token)
+        private async Task<CustomApplicationUser> getAccountByResetToken(string token)
         {
             var account = _context.Users.SingleOrDefault(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
@@ -336,7 +336,7 @@ namespace nmdb.Services
             return account;
         }
 
-        private async Task<string> generateJwtToken(ApplicationUser account)
+        private async Task<string> generateJwtToken(CustomApplicationUser account)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -383,14 +383,14 @@ namespace nmdb.Services
             return newRefreshToken;
         }
 
-        private async Task removeOldRefreshTokens(ApplicationUser account)
+        private async Task removeOldRefreshTokens(CustomApplicationUser account)
         {
             account.RefreshTokens.RemoveAll(x =>
                 !x.IsActive &&
                 x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
         }
 
-        private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, ApplicationUser account, string ipAddress, string reason)
+        private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, CustomApplicationUser account, string ipAddress, string reason)
         {
             // recursively traverse the refresh token chain and ensure all descendants are revoked
             if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
@@ -411,7 +411,7 @@ namespace nmdb.Services
             token.ReplacedByToken = replacedByToken;
         }
 
-        private async Task sendVerificationEmail(ApplicationUser account, string password = "")
+        private async Task sendVerificationEmail(CustomApplicationUser account, string password = "")
         {
             string message = $@"<p>Please use the below token to verify your email address with the <code>/Users/verify-email</code> api route:</p>
                             <p><code>{account.VerificationToken}</code></p>";
@@ -439,7 +439,7 @@ namespace nmdb.Services
             );
         }
 
-        private async Task sendPasswordResetEmail(ApplicationUser account)
+        private async Task sendPasswordResetEmail(CustomApplicationUser account)
         {
             string message = $@"<p>Please use the below token to reset your password with the <code>/Users/reset-password</code> api route:</p>
                             <p><code>{account.ResetToken}</code></p>";
