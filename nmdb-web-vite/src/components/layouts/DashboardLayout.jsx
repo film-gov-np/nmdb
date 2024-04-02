@@ -1,22 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
-import {
-  Bell,
-  CircleUser,
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  Search,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
+import { Bell, CircleUser, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -44,7 +30,10 @@ const DashboardLayout = () => {
           <aside className="fixed inset-y-0 left-0 z-10 hidden md:w-64 lg:w-72  border-r bg-muted/40 md:block">
             <div className="flex h-full overflow-y-auto flex-col gap-2">
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                <NavLink to={Paths.Route_Admin} className="flex items-center gap-2 font-semibold">
+                <NavLink
+                  to={Paths.Route_Admin}
+                  className="flex items-center gap-2 font-semibold"
+                >
                   <Package2 className="h-6 w-6" />
                   <span className="">NMDB Dashboard</span>
                 </NavLink>
@@ -61,15 +50,18 @@ const DashboardLayout = () => {
                 <Sidenav className="items-start px-2 text-sm font-medium lg:px-4" />
               </div>
               <div className="mt-auto p-4">
-                    <Card>
-                      <CardHeader className="p-2 pt-0 md:p-4">
-                        <CardTitle className="text-xl"> Film Development Board</CardTitle>
-                        <CardDescription>
-                          @{new Date().getFullYear()} All Rights Reserved
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
-                  </div>
+                <Card>
+                  <CardHeader className="p-2 pt-0 md:p-4">
+                    <CardTitle className="text-xl">
+                      {" "}
+                      Film Development Board
+                    </CardTitle>
+                    <CardDescription>
+                      @{new Date().getFullYear()} All Rights Reserved
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </div>
             </div>
           </aside>
 
@@ -145,9 +137,10 @@ const DashboardLayout = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <div className="px-4 pt-2 lg:px-6 lg:pt-4"><BreadcrumbResponsive/></div>
+            <div className="px-4 pt-2 lg:px-6 lg:pt-4">
+              <BreadcrumbResponsive />
+            </div>
             <Outlet />
-            
           </div>
         </div>
       </div>

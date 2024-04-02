@@ -1,4 +1,12 @@
-import { Bell, BookOpen, BookTemplateIcon, BookText, ChevronDown, GraduationCap, Group, Home, Package, Users, Video } from "lucide-react";
+import {
+  BookOpen,
+  BookText,
+  ChevronDown,
+  GraduationCap,
+  Home,
+  Users,
+  Video,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Paths } from "@/constants/routePaths";
@@ -47,10 +55,11 @@ const adminRouteElement = [
   },
 ];
 
-
 const NavLinkCustom = ({
   path,
-  Icon,title,label,
+  Icon,
+  title,
+  label,
   closeNavOnTransistion,
   isSubLink,
 }) => {
@@ -73,17 +82,17 @@ const NavLinkCustom = ({
     )) || (
       <div className={cn(isSubLink && "ps-4")}>
         <NavLink
-      to={path}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-    >
-      {Icon}
-      {title}
-      {label && (
-        <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-          {label}
-        </Badge>
-      )}
-    </NavLink>
+          to={path}
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+        >
+          {Icon}
+          {title}
+          {label && (
+            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+              {label}
+            </Badge>
+          )}
+        </NavLink>
       </div>
     )
   );

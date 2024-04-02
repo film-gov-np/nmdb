@@ -30,7 +30,7 @@ import { Route } from "lucide-react";
 
 const ITEMS_TO_DISPLAY = 4;
 export function BreadcrumbResponsive() {
-    const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const items = useMemo(
     function generateBreadCrumbs() {
@@ -54,7 +54,7 @@ export function BreadcrumbResponsive() {
           <BreadcrumbLink href={items[0].href}>{items[0].label}</BreadcrumbLink>
         </BreadcrumbItem> */}
         <BreadcrumbSeparator>
-        <Route className="h-6 w-6"/>
+          <Route className="h-6 w-6" />
         </BreadcrumbSeparator>
         {items.length > ITEMS_TO_DISPLAY ? (
           <>
