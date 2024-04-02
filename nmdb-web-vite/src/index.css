@@ -62,6 +62,7 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }
+  
 }
 
 @layer utilities {
@@ -80,4 +81,8 @@
   .container {
     @apply px-4;
   }
+}
+
+nav a.active{
+  @apply bg-muted;
 }

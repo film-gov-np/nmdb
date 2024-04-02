@@ -15,9 +15,9 @@ const Home = () => {
                 <NavLink to="#" className="font-semibold text-primary">
                   General
                 </NavLink>
-                <NavLink to="#">Home</NavLink>
-                <NavLink to="#">Movies</NavLink>
-                <NavLink to="#">Celebrities</NavLink>
+                <NavLink to="#s">Home</NavLink>
+                <NavLink to="/">Movies</NavLink>
+                <NavLink to="/abd">Celebrities</NavLink>
                 <NavLink to="#">Movie Calendar</NavLink>
                 <NavLink to="#">Cinema Hall</NavLink>
               </nav>

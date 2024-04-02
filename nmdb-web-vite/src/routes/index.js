@@ -8,11 +8,14 @@ import Login from "@/components/landing/pages/Login";
 import Home from "@/components/landing/pages/Home";
 
 // Pages Admin
-import Movies from "@/components/admin/pages/Movies";
-import Crew from "@/components/admin/pages/Crew";
+import Movies from "@/components/admin/pages/movies/Movies";
+import Crew from "@/components/admin/pages/crew/Crew";
+import ScholarshipBachelors from "@/components/admin/pages/scholarship/Bachelors";
+import ScholarshipMasters from "@/components/admin/pages/scholarship/Masters";
 import { Paths } from "@/constants/routePaths";
 import Register from "@/components/landing/register";
 import VerifyEmail from "@/components/landing/verify/VerifyEmail";
+import Dashboard from "@/components/admin/pages/dashboard/Dashboard";
 
 export const routes = [
   {
@@ -21,14 +24,14 @@ export const routes = [
       {
         name: "admin",
         title: "Dasboard",
-        component: Movies,
+        component: Dashboard,
         path: Paths.Route_Admin,
         isPublic: false,
         routes: [
           {
             name: "dashboard",
-            title: "Movies page",
-            component: Movies,
+            title: "Dashboard page",
+            component: Dashboard,
             path: Paths.Route_Admin_Dashboard,
             isPublic: false,
           },
@@ -45,6 +48,29 @@ export const routes = [
             component: Crew,
             path: Paths.Route_Admin_Crew,
             isPublic: false,
+          },
+          {
+            name: "Scholarship",
+            title: "Scholarship",
+            component: ScholarshipBachelors,
+            path: "/scholarship",
+            isPublic: false,
+            routes: [
+              {
+                name: "Scholarship Bachelors",
+                title: "Scholarship Bachelors",
+                component: ScholarshipBachelors,
+                path: "/bachelors",
+                isPublic: false,
+              },
+              {
+                name: "Scholarship Masters",
+                title: "Scholarship Masters",
+                component: ScholarshipMasters,
+                path: "/masters",
+                isPublic: false,
+              },
+            ],
           },
         ],
       },
