@@ -1,4 +1,4 @@
-namespace User.Identity.Model;
+namespace nmdb.Model;
 
 using System.Text.Json.Serialization;
 

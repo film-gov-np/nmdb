@@ -1,8 +1,6 @@
-namespace User.Identity.Model;
+namespace nmdb.Model;
 
-using System.Text.Json.Serialization;
-
-public class AuthenticateResponse
+public class AccountResponse
 {
     public string Idx { get; set; }
     public string FirstName { get; set; }
@@ -11,8 +9,4 @@ public class AuthenticateResponse
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }
     public bool IsVerified { get; set; }
-    public string JwtToken { get; set; }
-
-    //[JsonIgnore] // refresh token is returned in http only cookie
-    public string RefreshToken { get; set; }
 }
