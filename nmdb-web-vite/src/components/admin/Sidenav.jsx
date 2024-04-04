@@ -83,30 +83,17 @@ const NavLinkCustom = ({
   path,
   title,
   label,
-  closeNavOnTransistion,
+  isMobileSidebar,
   isSubLink,
+  setOpen,
   ...rest
 }) => {
   return (
-    (closeNavOnTransistion && (
-      <SheetClose asChild>
-        <NavLink
-          to={path}
-          className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-muted-foreground"
-        >
-          {<rest.icon className="h-6 w-6" />}
-          {title}
-          {label && (
-            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-              {label}
-            </Badge>
-          )}
-        </NavLink>
-      </SheetClose>
-    )) || (
+    
       <div className={cn(isSubLink && "ps-4")}>
         <NavLink
           to={path}
+          onClick={()=>{isMobileSidebar && setOpen(false)}}
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
         >
           <rest.icon className="h-4 w-4" />
@@ -118,7 +105,7 @@ const NavLinkCustom = ({
           )}
         </NavLink>
       </div>
-    )
+    
   );
 };
 
@@ -126,7 +113,8 @@ const NavLinkDropdown = ({
   title,
   label,
   submenus,
-  closeNavOnTransistion,
+  isMobileSidebar,
+  setOpen,
   ...rest
 }) => {
   const { checkActiveNav } = useCheckActiveNav();
@@ -136,14 +124,14 @@ const NavLinkDropdown = ({
       <CollapsibleTrigger
         className={cn(
           "group w-full",
-          (closeNavOnTransistion &&
+          (isMobileSidebar &&
             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-foreground") ||
             " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
         )}
       >
         {
           <rest.icon
-            className={cn(closeNavOnTransistion ? "h-6 w-6" : "h-4 w-4")}
+            className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")}
           />
         }
         {title}
@@ -166,7 +154,8 @@ const NavLinkDropdown = ({
             <li key={sublink.title} className="my-1 ml-6">
               <NavLinkCustom
                 {...sublink}
-                closeNavOnTransistion={closeNavOnTransistion}
+                isMobileSidebar={isMobileSidebar}
+                setOpen={setOpen}
               />
             </li>
           ))}
@@ -176,7 +165,7 @@ const NavLinkDropdown = ({
   );
 };
 
-const Sidenav = ({ className, closeNavOnTransistion }) => {
+const Sidenav = ({ className, isMobileSidebar, setOpen }) => {
   return (
     <nav className={cn("sidebar-nav grid", className)}>
       {adminRouteElement.map(
@@ -186,13 +175,15 @@ const Sidenav = ({ className, closeNavOnTransistion }) => {
               key={route.title + index}
               {...route}
               submenus={submenus}
-              closeNavOnTransistion={closeNavOnTransistion}
+              isMobileSidebar={isMobileSidebar}
+              setOpen={setOpen}
             />
           )) || (
             <NavLinkCustom
               key={route.title + index}
               {...route}
-              closeNavOnTransistion={closeNavOnTransistion}
+              isMobileSidebar={isMobileSidebar}
+              setOpen={setOpen}
             />
           ),
       )}

@@ -21,6 +21,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Sidenav from "@/components/admin/Sidenav";
 import { BreadcrumbResponsive } from "@/components/admin/Breadcrumb";
 import { Paths } from "@/constants/routePaths";
+import MobileSideBar from "../admin/MobileSideBar";
 
 const DashboardLayout = () => {
   return (
@@ -66,42 +67,7 @@ const DashboardLayout = () => {
           </aside>
 
           <header className="fixed left-0 right-0 top-0 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-72 lg:h-[60px] lg:px-6">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="shrink-0 md:hidden"
-                >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col">
-                <a
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-2 ps-2 text-lg font-semibold"
-                >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">NMDB Dashboard</span>
-                </a>
-                <Sidenav
-                  className="gap-2 text-lg font-medium"
-                  closeNavOnTransistion={true}
-                />
-
-                <div className="mt-auto">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle> Film Development Board</CardTitle>
-                      <CardDescription>
-                        @{new Date().getFullYear()} All Rights Reserved
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </div>
-              </SheetContent>
-            </Sheet>
+          <MobileSideBar />
             <div className="w-full flex-1">
               <form>
                 <div className="relative">
