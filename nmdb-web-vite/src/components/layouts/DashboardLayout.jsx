@@ -65,7 +65,7 @@ const DashboardLayout = () => {
             </div>
           </aside>
 
-          <div className="flex flex-col md:pl-64 lg:pl-72">
+          <div className="flex flex-col md:pl-64 lg:pl-72 overflow-auto">
             <header className="sticky inset-y-0 left-72 flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
               <Sheet>
                 <SheetTrigger asChild>
