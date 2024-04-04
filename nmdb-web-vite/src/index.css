@@ -83,6 +83,6 @@
   }
 }
 
-nav a.active{
+nav.sidebar-nav a.active{
   @apply bg-muted;
 }

@@ -16,6 +16,10 @@ import { Paths } from "@/constants/routePaths";
 import Register from "@/components/landing/register";
 import VerifyEmail from "@/components/landing/verify/VerifyEmail";
 import Dashboard from "@/components/admin/pages/dashboard/Dashboard";
+import Awards from "@/components/admin/pages/awards/Awards";
+import Role from "@/components/admin/pages/role/Role";
+import ProductionHouse from "@/components/admin/pages/productionHouse/ProductionHouse";
+import Theatre from "@/components/admin/pages/theatre/Theatre";
 
 export const routes = [
   {
@@ -47,6 +51,34 @@ export const routes = [
             title: "Crew page",
             component: Crew,
             path: Paths.Route_Admin_Crew,
+            isPublic: false,
+          },
+          {
+            name: "role",
+            title: "Role page",
+            component: Role,
+            path: Paths.Route_Admin_Role,
+            isPublic: false,
+          },
+          {
+            name: "productionHouse",
+            title: "Production House page",
+            component: ProductionHouse,
+            path: Paths.Route_Admin_ProductionHouse,
+            isPublic: false,
+          },
+          {
+            name: "theatre",
+            title: "Theatre page",
+            component: Theatre,
+            path: Paths.Route_Admin_Theatre,
+            isPublic: false,
+          },
+          {
+            name: "awards",
+            title: "Awards Title",
+            component: Awards,
+            path: Paths.Route_Admin_Awards,
             isPublic: false,
           },
           {

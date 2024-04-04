@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { DataTableColumnHeader } from "./Movies";
+import { DataTableColumnHeader } from "../movies/Movies";
 
 export const columns = [
   {

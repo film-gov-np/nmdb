@@ -1,9 +1,13 @@
 import {
+  Award,
   BookOpen,
   BookText,
+  BriefcaseBusiness,
   ChevronDown,
+  Clapperboard,
   GraduationCap,
   Home,
+  Projector,
   Users,
   Video,
 } from "lucide-react";
@@ -23,32 +27,52 @@ const adminRouteElement = [
   {
     title: "Dashboard",
     label: "DB",
-    Icon: <Home className="h-4 w-4" />,
+    icon: Home,
     path: Paths.Route_Admin + Paths.Route_Admin_Dashboard,
   },
   {
     title: "Movie",
-    Icon: <Video className="h-4 w-4" />,
+    icon: Video,
     path: Paths.Route_Admin + Paths.Route_Admin_Movie,
   },
   {
     title: "Crew",
-    Icon: <Users className="h-4 w-4" />,
+    icon: Users,
     path: Paths.Route_Admin + Paths.Route_Admin_Crew,
   },
   {
+    title: "Role",
+    icon: BriefcaseBusiness,
+    path: Paths.Route_Admin + Paths.Route_Admin_Role,
+  },
+  {
+    title: "Production House",
+    icon: Clapperboard,
+    path: Paths.Route_Admin + Paths.Route_Admin_ProductionHouse,
+  },
+  {
+    title: "Theatre",
+    icon: Projector,
+    path: Paths.Route_Admin + Paths.Route_Admin_Theatre,
+  },
+  {
+    title: "Awards",
+    icon: Award,
+    path: Paths.Route_Admin + Paths.Route_Admin_Awards,
+  },
+  {
     title: "Scholarship",
-    Icon: <GraduationCap className="h-4 w-4" />,
+    icon: GraduationCap,
     path: "",
     submenus: [
       {
         title: "Bachelors",
-        Icon: <BookOpen className="h-4 w-4" />,
+        icon: BookOpen,
         path: Paths.Route_Admin + "/scholarship/bachelors",
       },
       {
         title: "Masters",
-        Icon: <BookText className="h-4 w-4" />,
+        icon: BookText,
         path: Paths.Route_Admin + "/scholarship/masters",
       },
     ],
@@ -57,11 +81,11 @@ const adminRouteElement = [
 
 const NavLinkCustom = ({
   path,
-  Icon,
   title,
   label,
   closeNavOnTransistion,
   isSubLink,
+  ...rest
 }) => {
   return (
     (closeNavOnTransistion && (
@@ -70,7 +94,7 @@ const NavLinkCustom = ({
           to={path}
           className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-muted-foreground"
         >
-          {Icon}
+          {<rest.icon className="h-6 w-6" />}
           {title}
           {label && (
             <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
@@ -85,7 +109,7 @@ const NavLinkCustom = ({
           to={path}
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
         >
-          {Icon}
+          <rest.icon className="h-4 w-4" />
           {title}
           {label && (
             <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
@@ -100,10 +124,10 @@ const NavLinkCustom = ({
 
 const NavLinkDropdown = ({
   title,
-  Icon,
   label,
   submenus,
   closeNavOnTransistion,
+  ...rest
 }) => {
   const { checkActiveNav } = useCheckActiveNav();
   const isChildActive = !!submenus?.find((s) => checkActiveNav(s.path));
@@ -114,10 +138,14 @@ const NavLinkDropdown = ({
           "group w-full",
           (closeNavOnTransistion &&
             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-foreground") ||
-            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
         )}
       >
-        {Icon}
+        {
+          <rest.icon
+            className={cn(closeNavOnTransistion ? "h-6 w-6" : "h-4 w-4")}
+          />
+        }
         {title}
         {label && (
           <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
@@ -126,7 +154,7 @@ const NavLinkDropdown = ({
         )}
         <span
           className={cn(
-            "ml-auto transition-all group-data-[state='open']:-rotate-180"
+            "ml-auto transition-all group-data-[state='open']:-rotate-180",
           )}
         >
           <ChevronDown className=" h-4 w-4" />
@@ -150,7 +178,7 @@ const NavLinkDropdown = ({
 
 const Sidenav = ({ className, closeNavOnTransistion }) => {
   return (
-    <nav className={cn("grid", className)}>
+    <nav className={cn("sidebar-nav grid", className)}>
       {adminRouteElement.map(
         ({ submenus, ...route }, index) =>
           (submenus && (
@@ -166,7 +194,7 @@ const Sidenav = ({ className, closeNavOnTransistion }) => {
               {...route}
               closeNavOnTransistion={closeNavOnTransistion}
             />
-          )
+          ),
       )}
     </nav>
   );

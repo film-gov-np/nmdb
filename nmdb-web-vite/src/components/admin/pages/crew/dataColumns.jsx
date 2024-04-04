@@ -140,10 +140,10 @@ export const columns = [
     ),
     cell: ({ row }) => {
       const statuses = facetedFilters.find(
-        (filter) => filter.name === "status"
+        (filter) => filter.name === "status",
       );
       const status = statuses?.filters?.find(
-        (status) => status.value === row.getValue("status")
+        (status) => status.value === row.getValue("status"),
       );
 
       if (!status) {
@@ -170,10 +170,10 @@ export const columns = [
     ),
     cell: ({ row }) => {
       const priorities = facetedFilters.find(
-        (filter) => filter.name === "priority"
+        (filter) => filter.name === "priority",
       );
       const priority = priorities?.filters?.find(
-        (priority) => priority.value === row.getValue("priority")
+        (priority) => priority.value === row.getValue("priority"),
       );
 
       if (!priority) {

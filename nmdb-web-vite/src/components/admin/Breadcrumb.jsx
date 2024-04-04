@@ -37,13 +37,15 @@ export function BreadcrumbResponsive() {
       const pathArray = pathname.split("/").filter((item) => item !== "");
       const crumblist = pathArray.map((subpath, index) => {
         const href = "/" + pathArray.slice(0, index + 1).join("/");
-        return index + 1 === pathArray.length
-          ? { label: subpath }
-          : { href, label: subpath };
+        const label = subpath
+          .split("-")
+          ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+        return index + 1 === pathArray.length ? { label } : { href, label };
       });
       return [...crumblist];
     },
-    [pathname]
+    [pathname],
   );
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
