@@ -1,4 +1,5 @@
-﻿using Infrastructure.Data;
+﻿using Application.Models;
+using Infrastructure.Data;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,25 +19,31 @@ public interface IJwtUtils
 public class JwtUtils : IJwtUtils
 {
     private readonly AppDbContext _context;
-    private readonly JwtOptions _appSettings;
+    private readonly JwtOptions _jwtOptions;
 
     public JwtUtils(
         AppDbContext context,
         IOptions<JwtOptions> jwtOptions)
     {
         _context = context;
-        _appSettings = jwtOptions.Value;
+        _jwtOptions = jwtOptions.Value;
     }
 
     public async Task<string> GenerateJwtToken(ApplicationUser account)
     {
         // generate token that is valid for 15 minutes
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+        var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+        Claim[] claims = new Claim[]
+             {
+              new Claim(ClaimTypes.NameIdentifier,account.Id),
+              new Claim(ClaimTypes.Name,account.Email),
+             };
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) }),
-            // Expires = DateTime.UtcNow.AddMinutes(15),
+            Audience = _jwtOptions.Audience,
+            Issuer = _jwtOptions.Issuer,
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.Now.AddMinutes(15),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
@@ -50,7 +57,7 @@ public class JwtUtils : IJwtUtils
             return null;
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+        var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
         try
         {
             tokenHandler.ValidateToken(token, new TokenValidationParameters

@@ -1,22 +1,26 @@
-﻿using Application.Interfaces;
+﻿using Application.Dtos.Auth;
+using Application.Interfaces;
 using AutoMapper;
+using Azure.Core;
 using BCrypt.Net;
 using Core;
 using Infrastructure.Data;
-using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using nmdb.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.Helpers;
 
-namespace nmdb.Services
+
+namespace Infrastructure.Identity.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
         private readonly IJwtUtils _jwtUtils;
         private readonly IMapper _mapper;
@@ -28,44 +32,50 @@ namespace nmdb.Services
             IJwtUtils jwtUtils,
             IMapper mapper,
             IOptions<JwtOptions> appSettings,
-            IEmailService emailService)
+            IEmailService emailService,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _jwtUtils = jwtUtils;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _emailService = emailService;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
-        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
+
+
+        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, string ipAddress)
         {
-            var account = _context.Users.SingleOrDefault(x => x.Email == model.Email);
-            if (account == null)
+            var requestedUser = await _userManager.Users.Include(u => u.RefreshTokens)
+                                   .SingleOrDefaultAsync(u => u.Email == request.Email);
+            if (requestedUser == null)
             {
-                throw new AppException("Email doesn't exists on this origin");
+                throw new UserNotFoundException(request.Email);
             }
+            var result = await _signInManager.CheckPasswordSignInAsync(requestedUser, request.Password, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
 
-            // validate
-            if (!BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
-                throw new AppException("Email or password is incorrect");
-            //else if (!account.IsVerified)
-            //    throw new AppException("User is not verified");
-            // authentication successful so generate jwt and refresh tokens
-            var jwtToken = await _jwtUtils.GenerateJwtToken(account);
-            var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
-            account.RefreshTokens.Add(refreshToken);
+                var jwtToken = await _jwtUtils.GenerateJwtToken(requestedUser);
+                var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
+                requestedUser.RefreshTokens.Add(refreshToken);
 
-            // remove old refresh tokens from account
-            await removeOldRefreshTokens(account);
+                // remove old refresh tokens from accountSSSSS
+                await removeOldRefreshTokens(requestedUser);
 
-            // save changes to db
-            _context.Update(account);
-            await _context.SaveChangesAsync();
+                // save changes to db
+                _context.Update(requestedUser);
+                await _context.SaveChangesAsync();
 
-            var response = _mapper.Map<AuthenticateResponse>(account);
-            response.JwtToken = jwtToken;
-            response.RefreshToken = refreshToken.Token;
-            return response;
+                var response = _mapper.Map<AuthenticateResponse>(requestedUser);
+                response.JwtToken = jwtToken;
+                response.RefreshToken = refreshToken.Token;
+                return response;
+            }
+            throw new UnauthorizedAccessException("Invalid login attempt.");
         }
         public async Task<int?> ValidateToken(string token)
         {
@@ -125,7 +135,7 @@ namespace nmdb.Services
 
         public async Task RevokeToken(string token, string ipAddress)
         {
-            CustomApplicationUser account = await getAccountByRefreshToken(token);
+            ApplicationUser account = await getAccountByRefreshToken(token);
             var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
             if (!refreshToken.IsActive)
@@ -142,34 +152,28 @@ namespace nmdb.Services
             return !_context.Users.Any(u => u.Email == email);
         }
 
-        public async Task Register(RegisterRequest model)
+        public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
-            // validate
-            if (!await IsEmailAndOriginUnique(model.Email))
+            var userToRegister = new ApplicationUser
             {
-                // send already registered error in email to prevent account enumeration
-                await sendAlreadyRegisteredEmail(model.Email);
-                throw new AppException("User already exists on this origin");
+                UserName = request.Email,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            };
+
+            var result = await _userManager.CreateAsync(userToRegister, request.Password);
+
+            if (result.Succeeded)
+            {
+                var account = _mapper.Map<ApplicationUser>(request);
+                account.VerificationToken = await generateVerificationToken();
+                await sendVerificationEmail(account, request.Password);
+                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
             }
-
-            // map model to new account object
-            var account = _mapper.Map<CustomApplicationUser>(model);
-
-            // first registered account is an admin
-            var isFirstAccount = _context.Users.Count() == 0;
-            account.Created = DateTime.UtcNow;
-            account.Idx = UniqueIndexGenerator.GenerateUniqueAlphanumericIndex(length: 12, prefix: "acc");
-            account.VerificationToken = await generateVerificationToken();
-
-            // hash password
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-
-            // save account
-            _context.Users.Add(account);
-            await _context.SaveChangesAsync();
-
-            // send email
-            await sendVerificationEmail(account, model.Password);
+            var errorMessage = string.Join(", ", result.Errors);
+            return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
         }
 
         public async Task VerifyEmail(string token)
@@ -261,13 +265,13 @@ namespace nmdb.Services
                 throw new AppException($"Email '{model.Email}' is already registered");
 
             // map model to new account object
-            var account = _mapper.Map<CustomApplicationUser>(model);
+            var account = _mapper.Map<ApplicationUser>(model);
             account.Created = DateTime.UtcNow;
             account.Verified = DateTime.UtcNow;
-            account.Idx =
+            //account.Idx =
             // hash password
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            account.Idx = UniqueIndexGenerator.GenerateUniqueAlphanumericIndex(length: 12, prefix: "acc");
+            //account.Idx = UniqueIndexGenerator.GenerateUniqueAlphanumericIndex(length: 12, prefix: "acc");
             account.VerificationToken = await generateVerificationToken();
 
             // save account
@@ -309,45 +313,31 @@ namespace nmdb.Services
 
         // helper methods
 
-        private async Task<CustomApplicationUser> getAccount(string idx)
+        private async Task<ApplicationUser> getAccount(string idx)
         {
-            var account = _context.Users.SingleOrDefault(u => u.Idx == idx);
+            var account = _context.Users.SingleOrDefault(u => u.Id == idx);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
-        private async Task<CustomApplicationUser> getAccountById(string id)
+        private async Task<ApplicationUser> getAccountById(string id)
         {
             var account = _context.Users.SingleOrDefault(u => u.Id == id);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
-        private async Task<CustomApplicationUser> getAccountByRefreshToken(string token)
+        private async Task<ApplicationUser> getAccountByRefreshToken(string token)
         {
             var account = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
             if (account == null) throw new AppException("Invalid token");
             return account;
         }
 
-        private async Task<CustomApplicationUser> getAccountByResetToken(string token)
+        private async Task<ApplicationUser> getAccountByResetToken(string token)
         {
             var account = _context.Users.SingleOrDefault(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
             if (account == null) throw new AppException("Invalid token");
             return account;
-        }
-
-        private async Task<string> generateJwtToken(CustomApplicationUser account)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim("idx", account.Idx.ToString()) }),
-                Expires = DateTime.UtcNow.AddMinutes(15),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
 
         private async Task<string> generateResetToken()
@@ -383,14 +373,14 @@ namespace nmdb.Services
             return newRefreshToken;
         }
 
-        private async Task removeOldRefreshTokens(CustomApplicationUser account)
+        private async Task removeOldRefreshTokens(ApplicationUser account)
         {
             account.RefreshTokens.RemoveAll(x =>
                 !x.IsActive &&
                 x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
         }
 
-        private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, CustomApplicationUser account, string ipAddress, string reason)
+        private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, ApplicationUser account, string ipAddress, string reason)
         {
             // recursively traverse the refresh token chain and ensure all descendants are revoked
             if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
@@ -411,20 +401,42 @@ namespace nmdb.Services
             token.ReplacedByToken = replacedByToken;
         }
 
-        private async Task sendVerificationEmail(CustomApplicationUser account, string password = "")
+        private async Task sendVerificationEmail(ApplicationUser account, string password = "")
         {
-            string message = $@"<p>Please use the below token to verify your email address with the <code>/Users/verify-email</code> api route:</p>
-                            <p><code>{account.VerificationToken}</code></p>";
-
+            string emailContent = GetVerificationEmailContent(account.VerificationToken);
 
             await _emailService.Send(
                  to: account.Email,
                  subject: "Verify Email",
-                 html: $@"<h4>Verify Email</h4>
-                        <p>Thanks for registering!</p>
-                        {message}"
+                 html: emailContent
              );
         }
+
+        private string GetVerificationEmailContent(string verificationLink)
+        {
+            var emailTemplate = @"
+            <!DOCTYPE html>
+            <html lang=""en"">
+            <head>
+                <meta charset=""UTF-8"">
+                <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                <title>Email Verification</title>
+            </head>
+            <body>
+                <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
+                    <h2 style=""color: #333;"">Verify Your Email Address</h2>
+                    <p>Thank you for registering! Please click the button below to verify your email address:</p>
+                    <a href=""{{verificationLink}}"" style=""display: inline-block; background-color: #007bff; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;"">Verify Email</a>
+                    <p>If you did not create an account, you can safely ignore this email.</p>
+                    <p>Thank you,<br>YourApp Team</p>
+                </div>
+            </body>
+            </html>";
+
+            // Replace placeholder with actual verification link
+            return emailTemplate.Replace("{{verificationLink}}", verificationLink);
+        }
+
 
         private async Task sendAlreadyRegisteredEmail(string email)
         {
@@ -439,7 +451,7 @@ namespace nmdb.Services
             );
         }
 
-        private async Task sendPasswordResetEmail(CustomApplicationUser account)
+        private async Task sendPasswordResetEmail(ApplicationUser account)
         {
             string message = $@"<p>Please use the below token to reset your password with the <code>/Users/reset-password</code> api route:</p>
                             <p><code>{account.ResetToken}</code></p>";

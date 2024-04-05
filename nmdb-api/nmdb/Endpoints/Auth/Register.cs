@@ -1,14 +1,23 @@
-﻿using FastEndpoints;
+﻿using Application.Dtos.Auth;
+using Core;
+using FastEndpoints;
+using Infrastructure.Identity.Services;
 
-namespace nmdb.AuthEndpoints;
+namespace nmdb.Endpoints.AuthEndpoints;
 
 public class Register
-    : Endpoint<RegisterRequest, RegisterResponse>
+    : Endpoint<RegisterRequest, ApiResponse<string>>
 {
+    private readonly IAuthService _authService;
+    public Register(IAuthService authService)
+    {
+        _authService = authService;
+    }
     public override void Configure()
     {
         Post(RegisterRequest.Route);
         AllowAnonymous();
+        
         Summary(s =>
         {
             // XML Docs are used by default but are overridden by these properties:
@@ -21,7 +30,7 @@ public class Register
     public override async Task HandleAsync(RegisterRequest request,
         CancellationToken cancellationToken)
     {
-        Response = new RegisterResponse($"You have been successfully registered to nmdb. Check your email, {request.Email} to verify your account.");
-        return;
+        var registerResponse = await _authService.Register(request);
+        Response = registerResponse;
     }
 }

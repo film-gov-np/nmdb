@@ -6,7 +6,7 @@ using Amazon;
 
 namespace Infrastructure.Email;
 
-public class SmtpEmailService:IEmailService
+public class SmtpEmailService : IEmailService
 {
     private readonly MailServerConfiguration _mailSettings;
 

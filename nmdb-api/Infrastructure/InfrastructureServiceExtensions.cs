@@ -6,6 +6,7 @@ using Infrastructure.Email;
 using Infrastructure.Identity;
 using Microsoft.VisualBasic.FileIO;
 using Application.Interfaces;
+using Infrastructure.Identity.Services;
 
 namespace Infrastructure;
 
@@ -20,6 +21,7 @@ public static class InfrastructureServiceExtensions
         // Register your services here
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IJwtUtils, JwtUtils>();
+        services.AddScoped<IAuthService, AuthService>();
         
 
 

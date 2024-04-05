@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Application.Dtos.Auth;
+using FastEndpoints;
 using FluentValidation;
 
 namespace nmdb.AuthEndpoints

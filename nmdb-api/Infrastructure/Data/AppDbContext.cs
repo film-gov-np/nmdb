@@ -1,19 +1,22 @@
 ﻿using Application.Models;
+using Core.Entities;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Data;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) :
         base(options)
     { }
 
-    DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<FilmRoleCategory> FilmRoleCategory { get; set; }
+    public DbSet<FilmRole> FilmRoles { get; set; }
 
-protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<ApplicationUser>().ToTable("Users");

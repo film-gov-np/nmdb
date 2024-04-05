@@ -35,8 +35,8 @@ POST {{rootUrl}}/accounts/authenticate
 Content-Type: application/json
 
  {
-  "email": "user@example.com",
-  "password": "string"
+  "email": "sthsudhir.np@gmail.com",
+  "password": "Hello@123"
  }
 
  

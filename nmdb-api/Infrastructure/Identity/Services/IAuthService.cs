@@ -1,7 +1,7 @@
-﻿using Core;
-using nmdb.Model;
+﻿using Application.Dtos.Auth;
+using Core;
 
-namespace nmdb.Services
+namespace Infrastructure.Identity.Services
 {
     public interface IAuthService
     {
@@ -9,7 +9,7 @@ namespace nmdb.Services
         Task<int?> ValidateToken(string token);
         Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
         Task RevokeToken(string token, string ipAddress);
-        Task Register(RegisterRequest model);
+        Task<ApiResponse<string>> Register(RegisterRequest model);
         Task VerifyEmail(string token);
         Task ForgotPassword(ForgotPasswordRequest model);
         Task ValidateResetToken(ValidateResetTokenRequest model);
