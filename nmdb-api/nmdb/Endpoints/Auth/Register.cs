@@ -17,7 +17,7 @@ public class Register
     {
         Post(RegisterRequest.Route);
         AllowAnonymous();
-        
+
         Summary(s =>
         {
             // XML Docs are used by default but are overridden by these properties:

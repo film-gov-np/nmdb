@@ -163,7 +163,8 @@ namespace Infrastructure.Identity.Services
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 FirstName = request.FirstName,
-                LastName = request.LastName
+                LastName = request.LastName,
+                CreatedBy = "superuser@nmdb.com" // Handle this by getting email from jwt claims
             };
 
             var result = await _userManager.CreateAsync(userToRegister, request.Password);

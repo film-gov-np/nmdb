@@ -11,16 +11,16 @@ namespace Core
         public bool Success { get; set; }
         public HttpStatusCode StatusCode { get; set; }
         public T Data { get; set; }
-        public string ErrorMessage { get; set; }
+        public string Message { get; set; }
 
-        public static ApiResponse<T> SuccessResponse(T data, HttpStatusCode statusCode = HttpStatusCode.OK)
+        public static ApiResponse<T> SuccessResponse(T data, string message = "", HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            return new ApiResponse<T> { Success = true, StatusCode = statusCode, Data = data };
+            return new ApiResponse<T> { Success = true, StatusCode = statusCode, Data = data, Message = message };
         }
 
         public static ApiResponse<T> ErrorResponse(string errorMessage, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         {
-            return new ApiResponse<T> { Success = false, StatusCode = statusCode, ErrorMessage = errorMessage }; ;
+            return new ApiResponse<T> { Success = false, StatusCode = statusCode, Message = errorMessage }; ;
         }
     }
 
@@ -40,14 +40,14 @@ namespace Core
 
     public class UserDetailResponse
     {
-         /// <summary>
+        /// <summary>
         /// Defines the status of respose 
         /// </summary>
         public HttpStatusCode status { get; set; } = HttpStatusCode.OK;
         /// <summary>
         /// Clear message that defines the respose clearly
         /// </summary>
-        public string message { get; set; }=string.Empty;
+        public string message { get; set; } = string.Empty;
         /// <summary>
         /// Holds the result object to be transmitted
         /// </summary>
@@ -66,7 +66,7 @@ namespace Core
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public bool IsVerified { get; set; }
-        public object RolesPid{get;set;}
+        public object RolesPid { get; set; }
     }
 
 }

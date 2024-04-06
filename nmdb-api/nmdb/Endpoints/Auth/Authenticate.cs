@@ -19,7 +19,7 @@ public class Authenticate
     {
         Post(AuthenticateRequest.Route);
         AllowAnonymous();
-        
+
         Summary(s =>
         {
             // XML Docs are used by default but are overridden by these properties:
@@ -37,7 +37,7 @@ public class Authenticate
         try
         {
             var authenticateResponse = await _authService.Authenticate(request, "");
-            Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse);
+            Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
         }
         catch (UnauthorizedAccessException ex)
         {
