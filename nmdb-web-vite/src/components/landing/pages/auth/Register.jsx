@@ -120,7 +120,7 @@ const Register = () => {
             <div className="grid gap-2">
               <Label htmlFor="password">Confirm Password</Label>
               <Input
-                id="password"
+                id="confirmpassword"
                 type="password"
                 onChange={onChange}
                 name="ConfirmPassword"
