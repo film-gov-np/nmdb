@@ -20,6 +20,7 @@ import Awards from "@/components/admin/pages/awards/Awards";
 import Role from "@/components/admin/pages/role/Role";
 import ProductionHouse from "@/components/admin/pages/productionHouse/ProductionHouse";
 import Theatre from "@/components/admin/pages/theatre/Theatre";
+import AddProductionHouse from "@/components/admin/pages/productionHouse/AddProductionHouse";
 
 export const routes = [
   {
@@ -66,6 +67,15 @@ export const routes = [
             component: ProductionHouse,
             path: Paths.Route_Admin_ProductionHouse,
             isPublic: false,
+            routes: [
+              {
+                name: "productionHouseAdd",
+                title: "Production House Add page",
+                component: AddProductionHouse,
+                path: Paths.Route_Admin_ProductionHouse_Add,
+                isPublic: false,
+              }
+            ]
           },
           {
             name: "theatre",
