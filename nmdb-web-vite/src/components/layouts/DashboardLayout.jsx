@@ -21,7 +21,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Sidenav from "@/components/admin/Sidenav";
 import { BreadcrumbResponsive } from "@/components/admin/Breadcrumb";
 import { Paths } from "@/constants/routePaths";
-import MobileSideBar from "../admin/MobileSideBar";
+import MobileSideBar from "../common/MobileSideBar";
 
 const DashboardLayout = () => {
   return (
@@ -65,9 +65,8 @@ const DashboardLayout = () => {
               </div>
             </div>
           </aside>
-
-          <header className="fixed left-0 right-0 top-0 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-72 lg:h-[60px] lg:px-6">
-          <MobileSideBar />
+          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-72 lg:h-[60px] lg:px-6">
+            <MobileSideBar />
             <div className="w-full flex-1">
               <form>
                 <div className="relative">

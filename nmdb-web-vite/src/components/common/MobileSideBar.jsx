@@ -1,7 +1,7 @@
 import { Menu, Package2 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
-import Sidenav from "./Sidenav"
+import Sidenav from "../admin/Sidenav"
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { useState } from "react"
 

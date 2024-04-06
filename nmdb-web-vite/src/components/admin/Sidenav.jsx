@@ -94,9 +94,9 @@ const NavLinkCustom = ({
         <NavLink
           to={path}
           onClick={()=>{isMobileSidebar && setOpen(false)}}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+          className={cn(isMobileSidebar && "mx-[-0.65rem] gap-4", "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary")}
         >
-          <rest.icon className="h-4 w-4" />
+          <rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />
           {title}
           {label && (
             <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
@@ -125,8 +125,8 @@ const NavLinkDropdown = ({
         className={cn(
           "group w-full",
           (isMobileSidebar &&
-            "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-foreground") ||
-            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+            "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground") ||
+            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
         )}
       >
         {

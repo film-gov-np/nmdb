@@ -4,7 +4,7 @@ import { PlusCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
-import { DataTableAdvanced } from "@/components/ui/custom/datatable-advanced";
+import { DataTableAdvanced } from "@/components/ui/custom/data-table-advanced";
 import { Separator } from "@/components/ui/separator";
 
 const data = [

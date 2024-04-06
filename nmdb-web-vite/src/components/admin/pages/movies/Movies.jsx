@@ -1,7 +1,7 @@
 import { buttonVariants } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DataTableAdvanced } from "@/components/ui/custom/datatable-advanced";
+import { DataTableAdvanced } from "@/components/ui/custom/data-table-advanced";
 import { movies } from "./data";
 import { columns, facetedFilters } from "./dataColumns";
 import { Separator } from "@/components/ui/separator";
