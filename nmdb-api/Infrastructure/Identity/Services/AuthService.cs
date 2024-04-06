@@ -5,6 +5,7 @@ using Azure.Core;
 using BCrypt.Net;
 using Core;
 using Infrastructure.Data;
+using Infrastructure.Identity.Security.TokenGenerator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,28 +22,31 @@ namespace Infrastructure.Identity.Services
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly AppDbContext _context;
-        private readonly IJwtUtils _jwtUtils;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IMapper _mapper;
-        private readonly JwtOptions _appSettings;
+        private readonly JwtSettings _appSettings;
         private readonly IEmailService _emailService;
 
         public AuthService(
             AppDbContext context,
-            IJwtUtils jwtUtils,
+            IJwtTokenGenerator jwtUtils,
             IMapper mapper,
-            IOptions<JwtOptions> appSettings,
+            IOptions<JwtSettings> appSettings,
             IEmailService emailService,
             SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _context = context;
-            _jwtUtils = jwtUtils;
+            _jwtTokenGenerator = jwtUtils;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _emailService = emailService;
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
@@ -58,9 +62,9 @@ namespace Infrastructure.Identity.Services
             var result = await _signInManager.CheckPasswordSignInAsync(requestedUser, request.Password, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-
-                var jwtToken = await _jwtUtils.GenerateJwtToken(requestedUser);
-                var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
+                var roles = await _userManager.GetRolesAsync(requestedUser);
+                var jwtToken = _jwtTokenGenerator.GenerateJwtToken(requestedUser, roles);
+                var refreshToken = await _jwtTokenGenerator.GenerateRefreshToken(ipAddress);
                 requestedUser.RefreshTokens.Add(refreshToken);
 
                 // remove old refresh tokens from accountSSSSS
@@ -77,9 +81,9 @@ namespace Infrastructure.Identity.Services
             }
             throw new UnauthorizedAccessException("Invalid login attempt.");
         }
-        public async Task<int?> ValidateToken(string token)
+        public string ValidateToken(string token)
         {
-            return await _jwtUtils.ValidateJwtToken(token);
+            return _jwtTokenGenerator.ValidateJwtToken(token);
             //var tokenHandler = new JwtSecurityTokenHandler();
             //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 
@@ -90,22 +94,20 @@ namespace Infrastructure.Identity.Services
             //    ValidateIssuer = false,
             //    ValidateAudience = false
             //}, out SecurityToken validatedToken);
-
-
         }
 
 
 
         public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
         {
-            var account = await getAccountByRefreshToken(token);
-            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+            var applicationUser = await getAccountByRefreshToken(token);
+            var refreshToken = applicationUser.RefreshTokens.Single(x => x.Token == token);
 
             if (refreshToken.IsRevoked)
             {
                 // revoke all descendant tokens in case this token has been compromised
-                await revokeDescendantRefreshTokens(refreshToken, account, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
-                _context.Update(account);
+                await revokeDescendantRefreshTokens(refreshToken, applicationUser, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
+                _context.Update(applicationUser);
                 await _context.SaveChangesAsync();
             }
 
@@ -114,20 +116,21 @@ namespace Infrastructure.Identity.Services
 
             // replace old refresh token with a new one (rotate token)
             var newRefreshToken = await rotateRefreshToken(refreshToken, ipAddress);
-            account.RefreshTokens.Add(newRefreshToken);
+            applicationUser.RefreshTokens.Add(newRefreshToken);
 
             // remove old refresh tokens from account
-            await removeOldRefreshTokens(account);
+            await removeOldRefreshTokens(applicationUser);
 
             // save changes to db
-            _context.Update(account);
+            _context.Update(applicationUser);
             await _context.SaveChangesAsync();
 
             // generate new jwt
-            var jwtToken = await _jwtUtils.GenerateJwtToken(account);
+            var roles = await _userManager.GetRolesAsync(applicationUser);
+            var jwtToken = _jwtTokenGenerator.GenerateJwtToken(applicationUser, roles);
 
             // return data in authenticate response object
-            var response = _mapper.Map<AuthenticateResponse>(account);
+            var response = _mapper.Map<AuthenticateResponse>(applicationUser);
             response.JwtToken = jwtToken;
             response.RefreshToken = newRefreshToken.Token;
             return response;
@@ -266,7 +269,7 @@ namespace Infrastructure.Identity.Services
 
             // map model to new account object
             var account = _mapper.Map<ApplicationUser>(model);
-            account.Created = DateTime.UtcNow;
+            //account.Created = DateTime.UtcNow;
             account.Verified = DateTime.UtcNow;
             //account.Idx =
             // hash password
@@ -368,7 +371,7 @@ namespace Infrastructure.Identity.Services
 
         private async Task<RefreshToken> rotateRefreshToken(RefreshToken refreshToken, string ipAddress)
         {
-            var newRefreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
+            var newRefreshToken = await _jwtTokenGenerator.GenerateRefreshToken(ipAddress);
             await revokeRefreshToken(refreshToken, ipAddress, "Replaced by new token", newRefreshToken.Token);
             return newRefreshToken;
         }
@@ -377,7 +380,7 @@ namespace Infrastructure.Identity.Services
         {
             account.RefreshTokens.RemoveAll(x =>
                 !x.IsActive &&
-                x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
+                x.Created.AddDays(_appSettings.RefreshTokenExpirationInDays) <= DateTime.UtcNow);
         }
 
         private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, ApplicationUser account, string ipAddress, string reason)

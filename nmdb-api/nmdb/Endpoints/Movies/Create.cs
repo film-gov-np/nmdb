@@ -10,6 +10,7 @@ public class Create
     public override void Configure()
     {
         Post(Route);
+        Roles("Admin");
         Summary(s =>
         {
             s.ExampleRequest = new CreateRequest("The Lion King", true);

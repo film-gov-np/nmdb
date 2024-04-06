@@ -8,9 +8,9 @@ namespace Infrastructure.Email;
 
 public class SmtpEmailService : IEmailService
 {
-    private readonly MailServerConfiguration _mailSettings;
+    private readonly EmailSettings _mailSettings;
 
-    public SmtpEmailService(IOptions<MailServerConfiguration> mailSettings)
+    public SmtpEmailService(IOptions<EmailSettings> mailSettings)
     {
         _mailSettings = mailSettings.Value;
     }

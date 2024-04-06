@@ -6,7 +6,7 @@ namespace Infrastructure.Identity.Services
     public interface IAuthService
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress);
-        Task<int?> ValidateToken(string token);
+        string ValidateToken(string token);
         Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
         Task RevokeToken(string token, string ipAddress);
         Task<ApiResponse<string>> Register(RegisterRequest model);

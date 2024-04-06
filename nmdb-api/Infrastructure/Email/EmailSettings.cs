@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Email
 {
-    public class MailServerConfiguration
+    public class EmailSettings
     {
+        public const string Section = "EmailSettings";
         public string SmtpHost { get; set; }
         public int SmtpPort { get; set; }
         public string SmtpUsername { get; set; }
