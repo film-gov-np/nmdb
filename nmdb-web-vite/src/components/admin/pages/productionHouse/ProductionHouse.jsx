@@ -58,7 +58,7 @@ const ProductionHouse = () => {
               </p>
             </div>
             <NavLink
-              to={Paths.Route_Admin}
+              to={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse + Paths.Route_Admin_ProductionHouse_Add}
               className={cn(buttonVariants({ variant: "default" }))}
             >
               <PlusCircle className="mr-2 h-4 w-4" /> Add Production House
@@ -79,7 +79,7 @@ const ProductionHouse = () => {
         (
           <NoDataComponent
             label={"production house"}
-            pathTo={Paths.Route_Admin}
+            pathTo={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse + Paths.Route_Admin_ProductionHouse_Add}
           />
         )
       )}
