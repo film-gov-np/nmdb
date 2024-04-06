@@ -5,6 +5,7 @@ using Infrastructure.Identity;
 using Infrastructure.Identity.Security.TokenGenerator;
 using Infrastructure.Identity.Security.TokenValidation;
 using Infrastructure.Identity.Services;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.Section));
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 

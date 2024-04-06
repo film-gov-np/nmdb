@@ -7,13 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Dtos\Auth\obj\**" />
     <Compile Remove="Helpers\EndPoints\**" />
     <Compile Remove="Helpers\NewFolder1\**" />
-    <EmbeddedResource Remove="Dtos\Auth\obj\**" />
     <EmbeddedResource Remove="Helpers\EndPoints\**" />
     <EmbeddedResource Remove="Helpers\NewFolder1\**" />
-    <None Remove="Dtos\Auth\obj\**" />
     <None Remove="Helpers\EndPoints\**" />
     <None Remove="Helpers\NewFolder1\**" />
   </ItemGroup>
