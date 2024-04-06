@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router-dom";
 
-function VerifyEmail() {
+const VerifyEmail = () => {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
   const [requested, setRequested] = useState(false);
@@ -53,6 +53,6 @@ function VerifyEmail() {
       )}
     </div>
   );
-}
+};
 
 export default VerifyEmail;

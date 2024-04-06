@@ -21,7 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge, Bird, CalendarIcon, Rabbit, Turtle } from "lucide-react";
+import {
+  Badge,
+  Bird,
+  CalendarIcon,
+  ChevronLeft,
+  Rabbit,
+  Turtle,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -31,12 +38,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  nepali_name: z.string().min(2, {
+  name_nepali: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   address: z.string(),
@@ -47,23 +56,40 @@ const formSchema = z.object({
   date_established: z.date(),
   is_running: z.string(),
 });
+console.log(formSchema);
+
+const renderModes = {
+  Render_Mode_Add: "add",
+  Render_Mode_Edit: "edit",
+  Render_Mode_Details: "details",
+};
 
 const AddProductionHouse = () => {
-  const { toast } = useToast()
+  const { slug } = useParams();
+  const { pathname } = useLocation();
+  const pathArray = pathname.split("/").filter((item) => item !== "");
+  let renderMode = null;
+  if (pathArray.includes(renderModes.Render_Mode_Edit) && slug)
+    renderMode = renderModes.Render_Mode_Edit;
+  else if (!pathArray.includes(renderModes.Render_Mode_Edit) && slug)
+    renderMode = renderModes.Render_Mode_Details;
+  else renderMode = renderModes.Render_Mode_Add;
+  const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      nepali_name: "",
+      name_nepali: "",
       address: "",
+      date_established: "",
+      is_running: "Yes",
       contact_contactperson: "",
       name_contactperson: "",
-      is_running: "Yes",
     },
   });
+  console.log(form);
 
-  function onSubmit(data) {
-    
+  const createProductionHouse = (data) => {
     toast({
       title: "You submitted the following values:",
       description: (
@@ -71,11 +97,53 @@ const AddProductionHouse = () => {
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
-    })
-  }
+    });
+  };
+  const updateProductionHouse = (slug, data) => {
+    toast({
+      title: "You updating the following values for " + slug,
+      description: (
+        <pre className="mt-2 w-[440px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  };
+
+  const onSubmit = (data) => {
+    return renderMode === renderModes.Render_Mode_Add
+      ? createProductionHouse(data)
+      : updateProductionHouse(slug, data);
+  };
+
+  const [data, setData] = useState({});
+  useEffect(() => {
+    if (
+      [renderModes.Render_Mode_Edit, renderModes.Render_Mode_Details].includes(
+        renderMode,
+      )
+    ) {
+      // get user and set form fields
+      form.setValue("name", "Kaji Production House");
+      form.setValue("name_nepali", "Kaji Film Nirman Ghar");
+      form.setValue("address", "Radhe Radhe");
+      form.setValue("contact_contactperson", "1234567890");
+      form.setValue("name_contactperson", "Sudip Thapa");
+      form.setValue("is_running", "No");
+      form.setValue("date_established", "2051-12-19");
+      setData({});
+    }
+  }, []);
+  console.log(renderMode);
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-start gap-6">
+        <NavLink to={"/admin/production-house"}>
+          <Button variant="outline" size="icon" className="h-8 w-8">
+            <ChevronLeft className="h-4 w-4" />
+            <span className="sr-only">Back</span>
+          </Button>
+        </NavLink>
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
             Production House
@@ -89,9 +157,12 @@ const AddProductionHouse = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid gap-6">
-            <fieldset className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6">
-              <legend className="text-md -ml-1 px-1 font-medium text-muted-foreground">
+          <div className="grid gap-8">
+            <fieldset
+              disabled={renderMode === renderModes.Render_Mode_Details}
+              className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6"
+            >
+              <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
                 Production House
               </legend>
               <FormField
@@ -112,7 +183,7 @@ const AddProductionHouse = () => {
               />
               <FormField
                 control={form.control}
-                name="nepali_name"
+                name="name_nepali"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name(in nepali)</FormLabel>
@@ -194,7 +265,9 @@ const AddProductionHouse = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Yes" selected={true}>Yes</SelectItem>
+                        <SelectItem value="Yes" selected={true}>
+                          Yes
+                        </SelectItem>
                         <SelectItem value="No">No</SelectItem>
                       </SelectContent>
                     </Select>
@@ -203,8 +276,11 @@ const AddProductionHouse = () => {
                 )}
               />
             </fieldset>
-            <fieldset className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6">
-              <legend className="text-md -ml-1 px-1 font-medium text-muted-foreground">
+            <fieldset
+              disabled={renderMode === renderModes.Render_Mode_Details}
+              className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6"
+            >
+              <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
                 Chairman Information
               </legend>
               <FormField
@@ -235,7 +311,9 @@ const AddProductionHouse = () => {
               />
             </fieldset>
           </div>
-          <Button type="submit">Submit</Button>
+          {renderMode !== renderModes.Render_Mode_Details && (
+            <Button type="submit">Submit</Button>
+          )}
         </form>
       </Form>
     </main>

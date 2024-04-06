@@ -4,8 +4,8 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import MainLayout from "@/components/layouts/MainLayout";
 
 // Pages Landing
-import Login from "@/components/landing/pages/Login";
-import Home from "@/components/landing/pages/Home";
+import Login from "@/components/landing/pages/auth/Login";
+import Home from "@/components/landing/pages/home";
 
 // Pages Admin
 import Movies from "@/components/admin/pages/movies/Movies";
@@ -13,14 +13,16 @@ import Crew from "@/components/admin/pages/crew/Crew";
 import ScholarshipBachelors from "@/components/admin/pages/scholarship/Bachelors";
 import ScholarshipMasters from "@/components/admin/pages/scholarship/Masters";
 import { Paths } from "@/constants/routePaths";
-import Register from "@/components/landing/register";
-import VerifyEmail from "@/components/landing/verify/VerifyEmail";
+import Register from "@/components/landing/pages/auth/Register";
+import VerifyEmail from "@/components/landing/pages/auth/VerifyEmail";
 import Dashboard from "@/components/admin/pages/dashboard/Dashboard";
 import Awards from "@/components/admin/pages/awards/Awards";
 import Role from "@/components/admin/pages/role/Role";
 import ProductionHouse from "@/components/admin/pages/productionHouse/ProductionHouse";
 import Theatre from "@/components/admin/pages/theatre/Theatre";
 import AddProductionHouse from "@/components/admin/pages/productionHouse/AddProductionHouse";
+import AuthLayout from "@/components/layouts/AuthLayout";
+import ForgotPassword from "@/components/landing/pages/auth/ForgotPassword";
 
 export const routes = [
   {
@@ -73,6 +75,20 @@ export const routes = [
                 title: "Production House Add page",
                 component: AddProductionHouse,
                 path: Paths.Route_Admin_ProductionHouse_Add,
+                isPublic: false,
+              },
+              {
+                name: "productionHouseEdit",
+                title: "Production House Edit page",
+                component: AddProductionHouse,
+                path: "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "productionHouseDetail",
+                title: "Production House Detail page",
+                component: AddProductionHouse,
+                path: "/:slug",
                 isPublic: false,
               }
             ]
@@ -128,6 +144,11 @@ export const routes = [
         path: Paths.Route_Home,
         isPublic: true,
       },
+    ],
+  },
+  {
+    layout: AuthLayout,
+    routes: [
       {
         name: "login",
         title: "Login page",
@@ -143,10 +164,17 @@ export const routes = [
         isPublic: true,
       },
       {
-        name: "verifyemail",
+        name: "verify-email",
         title: "Verify page",
         component: VerifyEmail,
         path: Paths.Route_Verify_Email,
+        isPublic: true,
+      },
+      {
+        name: "forgot-password",
+        title: "Forgot password page",
+        component: ForgotPassword,
+        path: Paths.Route_Forogot_Password,
         isPublic: true,
       },
     ],

@@ -29,10 +29,10 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <nav className="grid gap-4 text-sm text-muted-foreground">
-                <NavLink to="login" className="font-semibold text-primary">
+                <NavLink to="login">
                   Login
                 </NavLink>
-                <NavLink to="#">Register</NavLink>
+                <NavLink to="register">Register</NavLink>
                 <NavLink to="admin">Dashboard</NavLink>
               </nav>
             </CardContent>

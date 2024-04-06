@@ -17,7 +17,7 @@ import {
   LinkNone2Icon,
   StopwatchIcon,
 } from "@radix-ui/react-icons";
-import { Film, SquarePen, Trash, Video } from "lucide-react";
+import { Film, SquarePen, Trash, Video, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -55,7 +55,7 @@ export const facetedFilters = [
 ];
 
 function DataTableRowActions({ row }) {
-  const movie = row.original;
+  // const movie = row.original;
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   return (
     <div className="flex">
@@ -71,7 +71,22 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to="#"
+                to={`/admin/production-house/${row.original.id}`}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  " text-blue-500",
+                )}
+              >
+                <View className="h-4 w-4" />
+                <span className="sr-only">View Details</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="top">Edit</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to={`/admin/production-house/${row.original.id}/edit`}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-green-500",

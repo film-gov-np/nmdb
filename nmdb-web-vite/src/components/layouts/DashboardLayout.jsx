@@ -79,7 +79,7 @@ const DashboardLayout = () => {
                 </div>
               </form>
             </div>
-            <ModeToggle></ModeToggle>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -96,6 +96,8 @@ const DashboardLayout = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex gap-2">Theme<ModeToggle></ModeToggle></DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Logout</DropdownMenuItem>
               </DropdownMenuContent>

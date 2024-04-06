@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useTransition } from "react"
+import { useToast } from "../use-toast"
 
 export function DeleteTasksDialog({
   selectedData,
@@ -21,13 +22,18 @@ export function DeleteTasksDialog({
   ...props}
 ) {
   const [isDeletePending, startDeleteTransition] = useTransition()
+  const {toast} = useToast()
 
   return (
     <Dialog {...props}>
       {showTrigger ? (
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm">
-            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+          <Button
+            variant="outlineDestructive"
+            size="sm"
+            className="ml-auto mr-2 hidden h-8 lg:flex" 
+          >
+            <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             Delete ({selectedData.length})
           </Button>
         </DialogTrigger>
@@ -51,7 +57,15 @@ export function DeleteTasksDialog({
               variant="destructive"
               onClick={() => {
                 startDeleteTransition(() => {
-                  console.log(selectedData)
+                  toast({
+                    title: "You submitted the following values:",
+                    description: (
+                      <pre className="mt-2 w-[440px] max-h-96 rounded-md bg-slate-950 p-4">
+                        <code className="text-white">{JSON.stringify(selectedData, null, 2)}</code>
+                      </pre>
+                    ),
+                  });
+                  
                   onSuccess()
                 })
               }}

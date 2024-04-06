@@ -75,7 +75,7 @@ const MainLayout = () => {
                   />
                 </div>
               </form>
-              <ModeToggle />
+              <ModeToggle mode={"icon"}/>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
