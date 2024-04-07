@@ -1,5 +1,6 @@
 ﻿using Application.Models;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +32,8 @@ public interface IJwtTokenGenerator
     /// <param name="ipAddress"></param>
     /// <returns></returns>
     public Task<RefreshToken> GenerateRefreshToken(string ipAddress);
+
+    public ClaimsPrincipal GetClaimsPrincipalFromToken(string token);
 }
 
 public class JwtTokenGenerator : IJwtTokenGenerator
@@ -124,5 +127,33 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             return await GenerateRefreshToken(ipAddress);
 
         return refreshToken;
+    }
+
+    public ClaimsPrincipal GetClaimsPrincipalFromToken(string token)
+    {
+        try
+        {
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateLifetime = true //here we are saying that we don't care about the token's expiration date
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                return null;
+            return principal;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 }
