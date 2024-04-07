@@ -1,21 +1,26 @@
-﻿using Azure;
+﻿
+using Application.Interfaces;
+using Azure;
 using Core;
 using Core.Constants;
 using FastEndpoints;
 using Infrastructure.Data;
 using nmdb.Endpoints.Films.FilmRoleCategory;
+using System.Web.Mvc;
 
 namespace nmdb.Endpoints.Films.FilmRole
 {
+    //[Authorize(Roles = "User")]
     public class Create
-        : Endpoint<CreateFilmRoleCategoryRequest, ApiResponse<string>>
+    : Endpoint<CreateFilmRoleCategoryRequest, ApiResponse<string>>
     {
-        private const string Route = "api/film/role-category/create";
+        private const string Route = "api/film/film-role-category";
         private AppDbContext _appDbContext;
-
-        public Create(AppDbContext appDbContext)
+        private readonly IUnitOfWork _unitOfWork;
+        public Create(AppDbContext appDbContext, IUnitOfWork unitOfWork)
         {
             _appDbContext = appDbContext;
+            _unitOfWork = unitOfWork;
         }
         public override void Configure()
         {
@@ -31,14 +36,14 @@ namespace nmdb.Endpoints.Films.FilmRole
         public override async Task HandleAsync(CreateFilmRoleCategoryRequest request,
             CancellationToken cancellationToken)
         {
-            var result = _appDbContext.FilmRoleCategory.Add(new Core.Entities.FilmRoleCategory
+            var result = await _unitOfWork.FilmRoleCategoryRepository.AddAsync(new Core.Entities.FilmRoleCategory
             {
                 CategoryName = request.name,
-                DisplayOrder=request.dislayOrder,
-                CreatedBy=AuthorizationConstants.SuperUser                
+                DisplayOrder = request.dislayOrder,
+                CreatedBy = AuthorizationConstants.SuperUser
             });
-            await _appDbContext.SaveChangesAsync();
-            Response = ApiResponse<string>.SuccessResponse("Film Role category created successfully.");
+            await _unitOfWork.CommitAsync();
+            Response = ApiResponse<string>.SuccessResponse(null, message: "Film Role category created successfully.");
             return;
         }
     }

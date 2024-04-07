@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace nmdb.Controllers
 {
     [ApiController]
-    [TypeFilter(typeof(AuthorizeAccount))]
+    //[TypeFilter(typeof(AuthorizeAccount))]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {

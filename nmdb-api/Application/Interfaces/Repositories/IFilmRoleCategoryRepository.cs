@@ -9,5 +9,5 @@ namespace Application.Interfaces.Repositories;
 
 public interface IFilmRoleCategoryRepository:IEfRepository<FilmRoleCategory>
 {
-
+    
 }
