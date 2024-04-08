@@ -21,8 +21,6 @@ const Login = () => {
     axiosInstance
       .post("auth/authenticate", postData)
       .then((resp) => {
-        setIsAuthorized(true);
-        navigate("/admin/dashboard");
         if (resp) {
           const {
             created,
@@ -36,13 +34,11 @@ const Login = () => {
           } = resp.data.data;
           //set token to cookie or localStorage
           localStorage.setItem("token", jwtToken);
-          // navigate("/admin/dashboard");
+          setIsAuthorized(true);
+          navigate("/admin/dashboard");
         }
       })
-      .catch((error) => {
-        setIsAuthorized(true);
-        navigate("/admin/dashboard");
-      });
+      .catch((error) => {});
   };
 
   const onChange = (e) => {
