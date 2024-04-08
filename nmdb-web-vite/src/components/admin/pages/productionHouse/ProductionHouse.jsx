@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/components/ui/button";
-import { DataTableAdvancedWithServerPagination } from "@/components/ui/custom/data-table-advanced-server-paginated";
+import { DataTableAdvancedWithServerPagination } from "@/components/ui/custom/data-table/data-table-advanced-server-paginated";
 import { Separator } from "@/components/ui/separator";
 import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
@@ -7,7 +7,7 @@ import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { columns, facetedFilters } from "./dataColumns";
-import { DataTableSkeleton } from "@/components/ui/custom/data-table-skeleton";
+import { DataTableSkeleton } from "@/components/ui/custom/data-table/data-table-skeleton";
 import NoDataComponent from "../../NoDataComponent";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 

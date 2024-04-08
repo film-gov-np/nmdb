@@ -1,17 +1,6 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
+import { flexRender } from "@tanstack/react-table";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,42 +8,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../table";
+} from "../../table";
+import { useDataTable } from "@/hooks/useDataTable";
 
-export function DataTableAdvanced({ columns, data, facetedFilters }) {
-  const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [sorting, setSorting] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState('')
-
-  const table = useReactTable({
+export function DataTableAdvancedWithServerPagination({
+  columns,
+  data,
+  facetedFilters,
+  pageNo,
+  searchKey,
+  totalUsers,
+  pageCount,
+  pageSizeOptions = [10, 20, 30, 40, 50],
+}) {
+  const { table } = useDataTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      globalFilter
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    pageCount,
+    facetedFilters,
   });
-
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} facetedFilters={facetedFilters}/>
+      <DataTableToolbar table={table} facetedFilters={facetedFilters} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -67,7 +42,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -86,7 +61,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

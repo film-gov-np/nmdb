@@ -40,7 +40,27 @@ import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import MultipleSelector from "@/components/ui/custom/multiple-selector/multiple-selector";
+import MultipleSelectorWithList from "../movies/MultipleSelectionWithList";
 
+const OPTIONS = [
+  { label: 'nextjs', value: 'Nextjs' },
+  { label: 'React', value: 'react' },
+  { label: 'Remix', value: 'remix' },
+  { label: 'Vite', value: 'vite' },
+  { label: 'Nuxt', value: 'nuxt' },
+  { label: 'Vue', value: 'vue' },
+  { label: 'Svelte', value: 'svelte' },
+  { label: 'Angular', value: 'angular' },
+  { label: 'Ember', value: 'ember', disable: true },
+  { label: 'Gatsby', value: 'gatsby', disable: true },
+  { label: 'Astro', value: 'astro' },
+];
+const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -55,6 +75,7 @@ const formSchema = z.object({
   contact_contactperson: z.string(),
   date_established: z.date(),
   is_running: z.string(),
+  frameworks: z.array(optionSchema).min(1),
 });
 console.log(formSchema);
 
@@ -154,6 +175,7 @@ const AddProductionHouse = () => {
         </div>
       </div>
       <Separator />
+      
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -165,6 +187,29 @@ const AddProductionHouse = () => {
               <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
                 Production House
               </legend>
+              <FormField
+          control={form.control}
+          name="frameworks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Frameworks</FormLabel>
+              <FormControl>
+                <MultipleSelectorWithList
+                  value={field.value}
+                  onChange={field.onChange}
+                  defaultOptions={OPTIONS}
+                  placeholder="Select frameworks you like..."
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
               <FormField
                 control={form.control}
                 name="name"

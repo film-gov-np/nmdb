@@ -1,7 +1,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeleteTasksDialog } from "@/components/ui/custom/DeleteTasksDialog";
-import { DataTableColumnHeader } from "@/components/ui/custom/data-table-column-header";
+import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
+import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
 import {
   Tooltip,
   TooltipContent,
@@ -59,7 +59,7 @@ function DataTableRowActions({ row }) {
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   return (
     <div className="flex">
-      <DeleteTasksDialog
+      <DeleteItemsDialog
         open={showDeleteTaskDialog}
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}

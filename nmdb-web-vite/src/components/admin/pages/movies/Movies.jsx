@@ -1,16 +1,82 @@
 import { buttonVariants } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DataTableAdvanced } from "@/components/ui/custom/data-table-advanced";
+import { DataTableAdvanced } from "@/components/ui/custom/data-table/data-table-advanced";
 import { movies } from "./data";
 import { columns, facetedFilters } from "./dataColumns";
 import { Separator } from "@/components/ui/separator";
 import { NavLink } from "react-router-dom";
 import { Paths } from "@/constants/routePaths";
+import React from "react";
+import MultipleSelector from "@/components/ui/custom/multiple-selector/multiple-selector";
+import MultipleSelectorWithList from "./MultipleSelectionWithList";
 
+let OPTIONS = [
+  // { name: 'nextjs', id: 'Nextjs' },
+  // { name: 'React', id: 'react' },
+  // { name: 'Remix', id: 'remix' },
+  // { name: 'Vite', id: 'vite' },
+  // { name: 'Nuxt', id: 'nuxt' },
+  // { name: 'Vue', id: 'vue' },
+  // { name: 'Vue', id: 'vue2' },
+  // { name: 'Vue', id: 'vue1' },
+  // { name: 'Svelte', id: 'svelte' },
+  // { name: 'Angular', id: 'angular' },
+  // { name: 'Ember', id: 'ember' },
+  // { name: 'Gatsby', id: 'gatsby' },
+  // { name: 'Astro', id: 'astro' },
+];
+const fetchPost = async (value) => {
+  await fetch(
+    `https://api.slingacademy.com/v1/sample-data/users?search=${value}&limit=100`,
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      OPTIONS = res?.users;
+    });
+};
+
+const mockSearch = async (value) => {
+  await fetchPost(value);
+  return new Promise((resolve) => {
+    console.log(OPTIONS);
+    const res = OPTIONS?.filter((option) =>
+      option.first_name.toLowerCase().includes(value.toLowerCase()),
+    );
+    resolve(res);
+  });
+};
 const Movies = () => {
+  const [isTriggered, setIsTriggered] = React.useState(false);
+
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
+
+        <MultipleSelectorWithList
+          onSearch={async (value) => {
+            setIsTriggered(true);
+            console.log(value);
+            const res = await mockSearch(value);
+            console.log(res);
+            setIsTriggered(false);
+            return res;
+          }}
+          keyValue="id"
+          keyLabel="first_name"
+          placeholder="Begin typing to search crew member..."
+          loadingIndicator={
+            <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
+              loading...
+            </p>
+          }
+          emptyIndicator={
+            <p className="w-full text-center text-lg leading-10 text-muted-foreground">
+              no results found.
+            </p>
+          }
+        />
+
       {movies && movies.length ? (
         <>
           <div className="flex items-start justify-between">
