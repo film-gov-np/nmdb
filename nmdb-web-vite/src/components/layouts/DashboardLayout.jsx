@@ -22,8 +22,12 @@ import Sidenav from "@/components/admin/Sidenav";
 import { BreadcrumbResponsive } from "@/components/admin/Breadcrumb";
 import { Paths } from "@/constants/routePaths";
 import MobileSideBar from "../common/MobileSideBar";
+import { useAuthContext } from "../admin/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const DashboardLayout = () => {
+  const navigate = useNavigate();
+  const { setIsAuthorized } = useAuthContext();
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="theme-zinc h-full w-full">
@@ -79,7 +83,7 @@ const DashboardLayout = () => {
                 </div>
               </form>
             </div>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -97,9 +101,18 @@ const DashboardLayout = () => {
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2">Theme<ModeToggle></ModeToggle></DropdownMenuItem>
+                <DropdownMenuItem className="flex gap-2">
+                  Theme<ModeToggle></ModeToggle>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsAuthorized(false);
+                    navigate(Paths.Route_Home);
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </header>

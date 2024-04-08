@@ -13,28 +13,29 @@ const generateFlattenRoutes = (routes, parentPath = "") => {
         { ...rest, path: fullPath },
         generateFlattenRoutes(subRoutes, fullPath),
       ];
-    })
+    }),
   );
 };
 
 export const renderRoutes = (mainRoutes) => {
-  const Routes = ({ isAuthorized}) => {
+  const Routes = ({ isAuthorized }) => {
     const layouts = mainRoutes.map(({ layout: Layout, routes }, index) => {
       const subRoutes = generateFlattenRoutes(routes);
       return (
         <Route key={index} element={<Layout />}>
-          <Route
-            element={
-              <ProtectedRoute isAuthorized={isAuthorized} />
-            }
-          >
-            {subRoutes.map(({ component: Component, path, name }) => {
+          {subRoutes.map(({ component: Component, path, name, isPublic }) => {
+            // If route is not public and user is not authorized, render ProtectedRoute
+            if (!isPublic && !isAuthorized) {
               return (
-                Component &&
-                path && <Route key={name} element={<Component />} path={path} />
+                <Route key={name} element={<ProtectedRoute />} path={path} />
               );
-            })}
-          </Route>
+            }
+            // If route is public or user is authorized, render the component
+            return (
+              Component &&
+              path && <Route key={name} element={<Component />} path={path} />
+            );
+          })}
         </Route>
       );
     });

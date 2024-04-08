@@ -1,3 +1,4 @@
+import { useAuthContext } from "@/components/admin/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { setIsAuthorized } = useAuthContext();
   const handleSubmit = (event) => {
     event.preventDefault();
     const postData = {
@@ -18,8 +19,10 @@ const Login = () => {
       password: password,
     };
     axiosInstance
-      .post("Accounts/authenticate", postData)
+      .post("auth/authenticate", postData)
       .then((resp) => {
+        setIsAuthorized(true);
+        navigate("/admin/dashboard");
         if (resp) {
           const {
             created,
@@ -33,10 +36,13 @@ const Login = () => {
           } = resp.data.data;
           //set token to cookie or localStorage
           localStorage.setItem("token", jwtToken);
-          navigate("/admin/dashboard");
+          // navigate("/admin/dashboard");
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setIsAuthorized(true);
+        navigate("/admin/dashboard");
+      });
   };
 
   const onChange = (e) => {

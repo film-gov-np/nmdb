@@ -90,8 +90,8 @@ export const routes = [
                 component: AddProductionHouse,
                 path: "/:slug",
                 isPublic: false,
-              }
-            ]
+              },
+            ],
           },
           {
             name: "theatre",

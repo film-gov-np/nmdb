@@ -48,7 +48,7 @@ const Register = () => {
       acceptTerms: true,
     };
     axiosInstance
-      .post("Accounts/register", postData)
+      .post("auth/register", postData)
       .then((resp) => {
         if (resp) {
           //set token to cookie or localStorage
