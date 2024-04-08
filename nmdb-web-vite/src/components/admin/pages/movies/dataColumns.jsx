@@ -1,6 +1,6 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "@/components/ui/custom/data-table-column-header";
+import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
 import {
   Tooltip,
   TooltipContent,

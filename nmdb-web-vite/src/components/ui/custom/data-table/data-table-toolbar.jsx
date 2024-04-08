@@ -1,6 +1,6 @@
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { Input } from "../input";
+import { Input } from "../../input";
 
 import {
   ArrowDownIcon,
@@ -13,7 +13,7 @@ import {
   StopwatchIcon,
 } from "@radix-ui/react-icons";
 import { DataTableViewOptions } from "./data-table-view-options";
-import { Button } from "../button";
+import { Button } from "../../button";
 import DataTableToolbarActions from "./data-table-toolbar-actions";
 
 export const statuses = [

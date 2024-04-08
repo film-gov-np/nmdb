@@ -3,8 +3,8 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 
 // import { labels } from "../data/data"
 // import { taskSchema } from "../data/schema"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../dropdown-menu"
-import { Button } from "../button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../../dropdown-menu"
+import { Button } from "../../button"
 
 export const labels = [
     {

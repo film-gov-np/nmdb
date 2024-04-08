@@ -13,9 +13,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useTransition } from "react"
-import { useToast } from "../use-toast"
+import { useToast } from "../../use-toast"
 
-export function DeleteTasksDialog({
+export function DeleteItemsDialog({
   selectedData,
   onSuccess,
   showTrigger = true,
