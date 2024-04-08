@@ -1,9 +1,11 @@
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace nmdb.Controllers
 {
     [ApiController]
+    //[TypeFilter(typeof(AuthorizeAccount))]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
