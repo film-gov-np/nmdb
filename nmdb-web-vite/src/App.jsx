@@ -5,7 +5,7 @@ import { Toaster } from "./components/ui/toaster";
 import { AuthContext } from "./components/admin/context/AuthContext";
 import { useState } from "react";
 const App = () => {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(true);
   return (
     <ThemeProvider>
       <AuthContext.Provider value={{ isAuthorized, setIsAuthorized }}>

@@ -42,19 +42,21 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import MultipleSelector from "@/components/ui/custom/multiple-selector/multiple-selector";
 import MultipleSelectorWithList from "../movies/MultipleSelectionWithList";
+import AddPageHeader from "../../AddPageHeader";
+import { Paths } from "@/constants/routePaths";
 
 const OPTIONS = [
-  { label: 'nextjs', value: 'Nextjs' },
-  { label: 'React', value: 'react' },
-  { label: 'Remix', value: 'remix' },
-  { label: 'Vite', value: 'vite' },
-  { label: 'Nuxt', value: 'nuxt' },
-  { label: 'Vue', value: 'vue' },
-  { label: 'Svelte', value: 'svelte' },
-  { label: 'Angular', value: 'angular' },
-  { label: 'Ember', value: 'ember', disable: true },
-  { label: 'Gatsby', value: 'gatsby', disable: true },
-  { label: 'Astro', value: 'astro' },
+  { label: "nextjs", value: "Nextjs" },
+  { label: "React", value: "react" },
+  { label: "Remix", value: "remix" },
+  { label: "Vite", value: "vite" },
+  { label: "Nuxt", value: "nuxt" },
+  { label: "Vue", value: "vue" },
+  { label: "Svelte", value: "svelte" },
+  { label: "Angular", value: "angular" },
+  { label: "Ember", value: "ember", disable: true },
+  { label: "Gatsby", value: "gatsby", disable: true },
+  { label: "Astro", value: "astro" },
 ];
 const optionSchema = z.object({
   label: z.string(),
@@ -158,25 +160,10 @@ const AddProductionHouse = () => {
   console.log(renderMode);
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <div className="flex items-center justify-start gap-6">
-        <NavLink to={"/admin/production-house"}>
-          <Button variant="outline" size="icon" className="h-8 w-8">
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Back</span>
-          </Button>
-        </NavLink>
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Production House
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Use the form below to add a new production House.
-          </p>
-        </div>
-      </div>
-      <Separator />
-      
-
+      <AddPageHeader
+        label="production house"
+        pathTo={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid gap-8">
@@ -188,28 +175,28 @@ const AddProductionHouse = () => {
                 Production House
               </legend>
               <FormField
-          control={form.control}
-          name="frameworks"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Frameworks</FormLabel>
-              <FormControl>
-                <MultipleSelectorWithList
-                  value={field.value}
-                  onChange={field.onChange}
-                  defaultOptions={OPTIONS}
-                  placeholder="Select frameworks you like..."
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no results found.
-                    </p>
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                control={form.control}
+                name="frameworks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Frameworks</FormLabel>
+                    <FormControl>
+                      <MultipleSelectorWithList
+                        value={field.value}
+                        onChange={field.onChange}
+                        defaultOptions={OPTIONS}
+                        placeholder="Select frameworks you like..."
+                        emptyIndicator={
+                          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                            no results found.
+                          </p>
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"

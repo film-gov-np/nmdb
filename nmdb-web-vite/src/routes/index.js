@@ -5,7 +5,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 
 // Pages Landing
 import Login from "@/components/landing/pages/auth/Login";
-import Home from "@/components/landing/pages/home";
+import Home from "@/components/landing/pages/home/Home";
 
 // Pages Admin
 import Movies from "@/components/admin/pages/movies/Movies";
@@ -23,6 +23,7 @@ import Theatre from "@/components/admin/pages/theatre/Theatre";
 import AddProductionHouse from "@/components/admin/pages/productionHouse/AddProductionHouse";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import ForgotPassword from "@/components/landing/pages/auth/ForgotPassword";
+import AddMovie from "@/components/admin/pages/movies/AddMovie";
 
 export const routes = [
   {
@@ -48,6 +49,29 @@ export const routes = [
             component: Movies,
             path: Paths.Route_Admin_Movie,
             isPublic: false,
+            routes: [
+              {
+                name: "movieAdd",
+                title: "Movies Add page",
+                component: AddMovie,
+                path: Paths.Route_Admin_Movie_Add,
+                isPublic: false,
+              },
+              {
+                name: "movieEdit",
+                title: "Movies Edit page",
+                component: AddMovie,
+                path: "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "movieDetail",
+                title: "Movies Detail page",
+                component: AddMovie,
+                path: "/:slug",
+                isPublic: false,
+              },
+            ],
           },
           {
             name: "crew",

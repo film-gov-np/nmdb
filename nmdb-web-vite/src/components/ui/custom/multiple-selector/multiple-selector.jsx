@@ -238,7 +238,6 @@ const MultipleSelector = React.forwardRef(
       const doSearch = async () => {
         setIsLoading(true);
         const res = await onSearch?.(debouncedSearchTerm);
-        console.log(onSearch, res, debouncedSearchTerm)
         setOptions(transToGroupOption(res || [], groupBy));
         setIsLoading(false);
       };

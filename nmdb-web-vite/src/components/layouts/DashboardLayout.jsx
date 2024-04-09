@@ -16,7 +16,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/mode-toggle";
 import Sidenav from "@/components/admin/Sidenav";
 import { BreadcrumbResponsive } from "@/components/admin/Breadcrumb";
@@ -32,7 +31,7 @@ const DashboardLayout = () => {
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="theme-zinc h-full w-full">
         <div className="grid min-h-screen w-full ">
-          <aside className="fixed inset-y-0 left-0 z-10 hidden border-r bg-muted/40  md:block md:w-60 lg:w-72">
+          <aside className="fixed inset-y-0 left-0 z-10 hidden border-r bg-muted/40  md:block md:w-60 lg:w-64">
             <div className="flex h-full flex-col gap-2 overflow-y-auto">
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <NavLink
@@ -69,7 +68,7 @@ const DashboardLayout = () => {
               </div>
             </div>
           </aside>
-          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-72 lg:h-[60px] lg:px-6">
+          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
             <MobileSideBar />
             <div className="w-full flex-1">
               <form>
@@ -116,7 +115,7 @@ const DashboardLayout = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <div className="flex flex-col overflow-hidden pt-14 md:pl-64 lg:pl-72 lg:pt-[60px]">
+          <div className="flex flex-col overflow-hidden pt-14 md:pl-60 lg:pl-64 lg:pt-[60px]">
             <div className="px-4 pt-2 lg:px-6 lg:pt-4">
               <BreadcrumbResponsive />
             </div>

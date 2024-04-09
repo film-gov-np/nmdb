@@ -9,7 +9,14 @@ import { NavLink, useSearchParams } from "react-router-dom";
 import { columns, facetedFilters } from "./dataColumns";
 import { DataTableSkeleton } from "@/components/ui/custom/data-table/data-table-skeleton";
 import NoDataComponent from "../../NoDataComponent";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import ListPageHeader from "../../ListPageHeader";
 
 const ProductionHouse = () => {
   const [searchParams] = useSearchParams();
@@ -49,23 +56,14 @@ const ProductionHouse = () => {
         />
       ) : employee && employee.length ? (
         <>
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight">
-                Production House
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                This is server side paginated data
-              </p>
-            </div>
-            <NavLink
-              to={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse + Paths.Route_Admin_ProductionHouse_Add}
-              className={cn(buttonVariants({ variant: "default" }))}
-            >
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Production House
-            </NavLink>
-          </div>
-          <Separator />
+          <ListPageHeader
+            label={"production house"}
+            pathTo={
+              Paths.Route_Admin +
+              Paths.Route_Admin_ProductionHouse +
+              Paths.Route_Admin_ProductionHouse_Add
+            }
+          />
           <DataTableAdvancedWithServerPagination
             searchKey="country"
             pageNo={page}
@@ -77,12 +75,14 @@ const ProductionHouse = () => {
           />
         </>
       ) : (
-        (
-          <NoDataComponent
-            label={"production house"}
-            pathTo={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse + Paths.Route_Admin_ProductionHouse_Add}
-          />
-        )
+        <NoDataComponent
+          label={"production house"}
+          pathTo={
+            Paths.Route_Admin +
+            Paths.Route_Admin_ProductionHouse +
+            Paths.Route_Admin_ProductionHouse_Add
+          }
+        />
       )}
     </main>
   );
