@@ -29,13 +29,21 @@ import { Input } from "@/components/ui/input";
 
 const AddMovie = () => {
   const { toast } = useToast();
-  const [formState, setFormState] = useState([]);
   const form = useForm({
     defaultValues: {
-      actress: "",
-      address: "",
       name: "",
-      phone: "",
+      name_nepali: "",
+      runtime: "",
+      status: "",
+      genre: "",
+      language: "",
+      studio: "",
+      date_release: "",
+      date_application: "",
+      certificate_number: "",
+      censor_type: "",
+      movie_type: "",
+      actress: "",
       director: "",
     },
   });
@@ -62,7 +70,7 @@ const AddMovie = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Tabs
-            defaultValue="account"
+            defaultValue="basic_information"
             onValueChange={() => {
               console.log(form.getValues());
             }}
@@ -70,44 +78,276 @@ const AddMovie = () => {
             orientation="vertical"
           >
             <TabsList className="flex h-full w-full flex-wrap justify-start gap-2 p-2 lg:h-full lg:flex-col lg:p-4 ">
-              <TabsTrigger value="account" className="justify-start lg:w-full">
-                Account
+              <TabsTrigger
+                value="basic_information"
+                className="justify-start lg:w-full"
+              >
+                Basic Info
               </TabsTrigger>
-              <TabsTrigger value="password" className="justify-start lg:w-full">
-                Password
+              <TabsTrigger
+                value="crew_information"
+                className="justify-start lg:w-full"
+              >
+                Crew Info
               </TabsTrigger>
-              <TabsTrigger value="register" className="justify-start lg:w-full">
-                Register
+              <TabsTrigger
+                value="censor_information"
+                className="justify-start lg:w-full"
+              >
+                Censor Info
               </TabsTrigger>
-              <TabsTrigger value="crew" className="justify-start lg:w-full">
-                Crew
+              <TabsTrigger
+                value="role_information"
+                className="justify-start lg:w-full"
+              >
+                Role Info
               </TabsTrigger>
             </TabsList>
-
-            <ScrollArea viewPortClass="max-h-[calc(100vh-320px)]">
-              <TabsContent value="account" className="h-full">
-                <div className="rounded-md border border-input px-4 py-2">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name(in english)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Name" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          This is your public display name.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </TabsContent>
-              <TabsContent value="password">
-                <Card>
-                  <CardContent>
+            <div className="border border-input rounded-md">
+              <ScrollArea
+                className="py-2"
+                viewPortClass="max-h-[calc(100vh-180px)]"
+              >
+                <TabsContent value="basic_information" className="h-full ">
+                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name_nepali"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name(in english)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value="crew_information">
+                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="address"
@@ -117,87 +357,81 @@ const AddMovie = () => {
                           <FormControl>
                             <Input placeholder="Address" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            This is your public display name.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </CardContent>
-                  <CardFooter>
-                    <Button>Save password</Button>
-                  </CardFooter>
-                </Card>
-              </TabsContent>
-              <TabsContent value="register" className="h-full">
-                <div className="rounded-md border border-input px-4 py-2">
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>phone</FormLabel>
-                        <FormControl>
-                          <Input placeholder="phone" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </TabsContent>
-              <TabsContent value="crew" className="h-full">
-                <div className="rounded-md border border-input px-4 py-2 grid gap-4 grid-cols-1 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="actress"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Actress</FormLabel>
-                        <FormControl>
-                          <MultipleSelectorWithList
-                            value={field.value}
-                            onChange={field.onChange}
-                            triggerOnSearch={true}
-                            minSearchTrigger={3}
-                            apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
-                            keyValue="id"
-                            keyLabel="first_name"
-                            imgLabel="profile_picture"
-                            placeholder="Begin typing to search crew member..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="director"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Director</FormLabel>
-                        <FormControl>
-                          <MultipleSelectorWithList
-                            value={field.value}
-                            onChange={field.onChange}
-                            triggerOnSearch={true}
-                            minSearchTrigger={3}
-                            apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
-                            keyValue="id"
-                            keyLabel="first_name"
-                            imgLabel="profile_picture"
-                            placeholder="Begin typing to search crew member..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </TabsContent>
-            </ScrollArea>
+                  </div>
+                </TabsContent>
+                <TabsContent value="censor_information" className="h-full">
+                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>phone</FormLabel>
+                          <FormControl>
+                            <Input placeholder="phone" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value="role_information" className="h-full">
+                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="actress"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Actress</FormLabel>
+                          <FormControl>
+                            <MultipleSelectorWithList
+                              value={field.value}
+                              onChange={field.onChange}
+                              triggerOnSearch={true}
+                              minSearchTrigger={3}
+                              apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
+                              keyValue="id"
+                              keyLabel="first_name"
+                              imgLabel="profile_picture"
+                              placeholder="Begin typing to search crew member..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="director"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Director</FormLabel>
+                          <FormControl>
+                            <MultipleSelectorWithList
+                              value={field.value}
+                              onChange={field.onChange}
+                              triggerOnSearch={true}
+                              minSearchTrigger={3}
+                              apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
+                              keyValue="id"
+                              keyLabel="first_name"
+                              imgLabel="profile_picture"
+                              placeholder="Begin typing to search crew member..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+              </ScrollArea>
+            </div>
           </Tabs>
 
           <Button type="submit">Submit</Button>
