@@ -1,5 +1,5 @@
-﻿using Application.Dtos.Auth;
-using Application.Interfaces;
+﻿using Application.Abstractions;
+using Application.Dtos.Auth;
 using AutoMapper;
 using Azure.Core;
 using BCrypt.Net;

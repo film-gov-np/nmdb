@@ -1,8 +1,8 @@
-﻿using Application.Interfaces;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
 using Amazon;
+using Application.Abstractions;
 
 namespace Infrastructure.Email;
 

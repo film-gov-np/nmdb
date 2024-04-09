@@ -23,8 +23,7 @@ public class Authenticate
         Summary(s =>
         {
             // XML Docs are used by default but are overridden by these properties:
-            //s.Summary = "Create a new Contributor.";
-            //s.Description = "Create a new Contributor. A valid name is required.";
+            s.Summary = "Authenticate API";
             s.Description = "Returns jwt token.";
             s.ExampleRequest = new AuthenticateRequest { Email = "sudhir@nepticstech.com", Password = "Helloworld@123" };
         });

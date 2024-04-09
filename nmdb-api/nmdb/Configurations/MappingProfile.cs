@@ -1,14 +1,17 @@
-﻿using Application.Dtos.Auth;
+﻿using Application.CQRS.FilmRoles.Commands.CreateFilmRole;
+using Application.Dtos.Auth;
 using AutoMapper;
 using Infrastructure.Identity;
+using nmdb.Endpoints.Films.FilmRole;
 
 namespace nmdb.Configurations
 {
-    public class AutoMapperProfile : Profile
+    public class MappingProfile : Profile
     {
-        public AutoMapperProfile()
+        public MappingProfile()
         {
-            CreateMap<ApplicationUser, AuthenticateResponse>();            
+            CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();            
+            CreateMap<ApplicationUser, AuthenticateResponse>();
 
             CreateMap<RegisterRequest, ApplicationUser>();
 

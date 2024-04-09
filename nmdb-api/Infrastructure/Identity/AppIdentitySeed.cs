@@ -71,7 +71,7 @@ public class AppIdentitySeed
             defaultUser = await userManager.FindByNameAsync(defaultUserName);
             if (defaultUser is not null)
             {
-                await userManager.AddToRoleAsync(defaultUser, AuthorizationConstants.User);
+                await userManager.AddToRoleAsync(defaultUser, AuthorizationConstants.UserRole);
             }
         }
         catch (Exception ex)

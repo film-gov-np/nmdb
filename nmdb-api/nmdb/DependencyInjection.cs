@@ -1,5 +1,9 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
+using MediatR;
+using Neptics.Application.Helpers;
+using nmdb.Configurations;
+using System.Reflection;
 
 namespace nmdb;
 
@@ -19,8 +23,8 @@ public static class DependencyInjection
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
-        });     
-        
+        });
+
         services.AddFastEndpoints()
                         .SwaggerDocument(o =>
                         {
@@ -43,7 +47,21 @@ public static class DependencyInjection
                         });
 
         services.AddCoreAdmin();
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+        services.AddAutoMapper(typeof(MappingProfile).Assembly);
+        ConfigureMediatR();
+
+        void ConfigureMediatR()
+        {
+            var mediatRAssemblies = new[]
+          {
+            Assembly.GetAssembly(typeof(Application.AssemblyReference))
+            };
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
+            //builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            //builder.Services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
+        }
         return services;
-    }
 }
+
+    }

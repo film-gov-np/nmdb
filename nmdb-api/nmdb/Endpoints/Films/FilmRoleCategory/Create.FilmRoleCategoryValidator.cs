@@ -7,7 +7,7 @@ public class CreateFilmRoleCategoryValidator : Validator<CreateFilmRoleCategoryR
 {
     public CreateFilmRoleCategoryValidator()
     {
-        RuleFor(x => x.name).NotEmpty()
+        RuleFor(x => x.Name).NotEmpty()
             .MaximumLength(30);
     }
 }
