@@ -7,7 +7,7 @@ public class GetFilmRoleCategoryByIdValidator : Validator<GetFilmRoleCategoryByI
 {
     public GetFilmRoleCategoryByIdValidator()
     {
-        RuleFor(x => x.FilmRoleCategoryId)
+        RuleFor(x => x.RoleCategoryId)
             .GreaterThan(0);
     }
 }

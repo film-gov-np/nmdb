@@ -6,21 +6,21 @@ namespace Core
     public class ApiResponse : BaseResponse
     {
     }
-    public class ApiResponse<T> where T : class
+    public class ApiResponse<T>
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public HttpStatusCode StatusCode { get; set; }
         public T Data { get; set; }
         public string Message { get; set; }
 
         public static ApiResponse<T> SuccessResponse(T data, string message = "", HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            return new ApiResponse<T> { Success = true, StatusCode = statusCode, Data = data, Message = message };
+            return new ApiResponse<T> { IsSuccess = true, StatusCode = statusCode, Data = data, Message = message };
         }
 
         public static ApiResponse<T> ErrorResponse(string errorMessage, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         {
-            return new ApiResponse<T> { Success = false, StatusCode = statusCode, Message = errorMessage }; ;
+            return new ApiResponse<T> { IsSuccess = false, StatusCode = statusCode, Message = errorMessage }; ;
         }
     }
 

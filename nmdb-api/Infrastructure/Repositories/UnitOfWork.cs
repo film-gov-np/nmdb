@@ -15,6 +15,7 @@ namespace Infrastructure.Repositories
         private readonly AppDbContext _context;
         private IRolesRepository _rolesRepository;
         private IFilmRoleCategoryRepository _filmRoleCategoryRepository;
+        private IFilmRoleRepository _filmRoleRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -23,10 +24,11 @@ namespace Infrastructure.Repositories
 
         public IRolesRepository RolesRepository => _rolesRepository ??= new RolesRepository(_context);
         public IFilmRoleCategoryRepository FilmRoleCategoryRepository => _filmRoleCategoryRepository ??= new FilmRoleCategoryRepository(_context);
+        public IFilmRoleRepository FilmRoleRepository => _filmRoleRepository ??= new FilmRoleRepository(_context);
 
-        public async Task CommitAsync()
+        public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public void Dispose()

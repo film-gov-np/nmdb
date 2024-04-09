@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Application.CQRS.FilmRoles.Commands.CreateFilmRole;
+using AutoMapper;
+using Core.Entities;
 
 namespace Neptics.Application.Helpers
 {
@@ -6,7 +8,7 @@ namespace Neptics.Application.Helpers
     {
         public AutoMapperProfile()
         {
-            //CreateMap<User, RegisterDTO>().ReverseMap();
+            CreateMap<FilmRole, CreateFilmRoleCommand>().ReverseMap();
             //CreateMap<UserProfile,UserDTO>().ReverseMap();
             //CreateMap<User, UserDTO>().ReverseMap();
             //CreateMap<User, LoggedInUser>().ReverseMap();
