@@ -115,7 +115,6 @@ const MultipleSelectorWithList = React.forwardRef(
       onSearch = async (searchTerm) => {
         if (searchTerm.length >= minSearchTrigger) {
           const data = await getData(searchTerm);
-          console.log(data);
           return data;
         }
       };
@@ -358,12 +357,12 @@ const MultipleSelectorWithList = React.forwardRef(
                 data-disabled={disabled}
                 className="flex"
               >
-                <div className="flex items-center gap-2 rounded-md border border-input p-2">
-                  <Avatar className="hidden h-8 w-8 sm:flex">
+                <div className="flex items-center gap-1 rounded-md border border-input p-1">
+                  <Avatar className="hidden h-6 w-6 sm:flex">
                     <AvatarImage src={option[imgLabel]} alt="Avatar" />
                     <AvatarFallback>{option[keyLabel]}</AvatarFallback>
                   </Avatar>
-                  <div className="grid gap-1">
+                  <div className="grid">
                     <p className="text-sm font-medium leading-none">
                       {option[keyLabel]}
                     </p>
@@ -377,7 +376,7 @@ const MultipleSelectorWithList = React.forwardRef(
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6"
+                          className="h-5 w-5"
                           onClick={() => handleUnselect(option)}
                         >
                           <Cross2Icon className="size-4" />

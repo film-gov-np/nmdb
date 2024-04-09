@@ -79,7 +79,6 @@ const formSchema = z.object({
   is_running: z.string(),
   frameworks: z.array(optionSchema).min(1),
 });
-console.log(formSchema);
 
 const renderModes = {
   Render_Mode_Add: "add",
@@ -110,7 +109,6 @@ const AddProductionHouse = () => {
       name_contactperson: "",
     },
   });
-  console.log(form);
 
   const createProductionHouse = (data) => {
     toast({
@@ -157,7 +155,6 @@ const AddProductionHouse = () => {
       setData({});
     }
   }, []);
-  console.log(renderMode);
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader

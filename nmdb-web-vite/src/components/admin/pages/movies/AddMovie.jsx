@@ -72,7 +72,6 @@ const AddMovie = () => {
           <Tabs
             defaultValue="basic_information"
             onValueChange={() => {
-              console.log(form.getValues());
             }}
             className="min-h-[60vh] w-full gap-2 lg:grid lg:grid-cols-[1fr,6fr]"
             orientation="vertical"
