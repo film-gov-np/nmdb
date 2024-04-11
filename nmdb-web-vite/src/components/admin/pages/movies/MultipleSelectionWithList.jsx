@@ -197,15 +197,22 @@ const MultipleSelectorWithList = React.forwardRef(
     const EmptyItem = React.useCallback(() => {
       // For async search that showing emptyIndicator
       if (onSearch && Object.keys(options).length === 0) {
-        if (!debouncedSearchTerm || debouncedSearchTerm.length < minSearchTrigger)
+        if (
+          !debouncedSearchTerm ||
+          debouncedSearchTerm.length < minSearchTrigger
+        )
           return (
-            <CommandEmpty className="w-full text-center leading-10 text-muted-foreground">
+            <CommandEmpty className="w-full p-2 text-center text-sm text-muted-foreground">
               Initiate the search with a minimum of {3} characters.
             </CommandEmpty>
           );
         return (
-          <CommandItem value="-" disabled>
-            <p className="w-full text-center leading-10 text-muted-foreground">{emptyIndicator ? emptyIndicator: "No result found."}</p>
+          <CommandItem
+            value="-"
+            disabled
+            className="w-full justify-center p-2 text-center text-sm text-muted-foreground"
+          >
+            {emptyIndicator || "No result found."}
           </CommandItem>
         );
       }
@@ -278,7 +285,7 @@ const MultipleSelectorWithList = React.forwardRef(
               {open && (
                 <CommandList className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
                   {isLoading ? (
-                      <p className="w-full text-center leading-10 text-muted-foreground">
+                    <p className="w-full text-center leading-10 text-muted-foreground">
                       {loadingIndicator || "Searching..."}
                     </p>
                   ) : (
@@ -366,7 +373,7 @@ const MultipleSelectorWithList = React.forwardRef(
                     <p className="text-sm font-medium leading-none">
                       {option[keyLabel]}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {option["email"]}
                     </p>
                   </div>
@@ -376,10 +383,10 @@ const MultipleSelectorWithList = React.forwardRef(
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-5 w-5"
+                          className="h-4 w-4"
                           onClick={() => handleUnselect(option)}
                         >
-                          <Cross2Icon className="size-4" />
+                          <Cross2Icon className="size-3" />
                           <span className="sr-only">Remove</span>
                         </Button>
                       </TooltipTrigger>
