@@ -245,11 +245,11 @@ const MultipleSelectorWithList = React.forwardRef(
           >
             <div
               className={cn(
-                "group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                "group h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
                 className,
               )}
             >
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1 ">
                 {/* Avoid having the "Search" Icon */}
                 <CommandPrimitive.Input
                   {...inputProps}
@@ -275,7 +275,7 @@ const MultipleSelectorWithList = React.forwardRef(
                       : placeholder
                   }
                   className={cn(
-                    "ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground",
+                    "ml-2 flex-1  bg-transparent outline-none placeholder:text-muted-foreground",
                     inputProps?.className,
                   )}
                 />
