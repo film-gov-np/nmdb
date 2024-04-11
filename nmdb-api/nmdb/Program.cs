@@ -46,7 +46,7 @@ app.MapDefaultControllerRoute();
 //app.MapGroup("api/identity")
 //    .MapCustomIdentityApi<ApplicationUser>();
 
-SeedDatabase(app);
+//SeedDatabase(app);
 app.Run();
 async void SeedDatabase(WebApplication app)
 {

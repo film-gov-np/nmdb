@@ -25,7 +25,7 @@ public class Authenticate
             // XML Docs are used by default but are overridden by these properties:
             s.Summary = "Authenticate API";
             s.Description = "Returns jwt token.";
-            s.ExampleRequest = new AuthenticateRequest { Email = "sudhir@nepticstech.com", Password = "Helloworld@123" };
+            s.ExampleRequest = new AuthenticateRequest { Email = "admin@nmdb.com", Password = "Hello@123" };
         });
     }
 
