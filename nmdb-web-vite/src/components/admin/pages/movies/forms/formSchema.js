@@ -33,6 +33,6 @@ export const defaultValues = {
   
   theater: [{name:"", showingDate: ""}],
   
-  crew_and_roles: [{ director: [] }, { producer: [] }],
+  crew_and_roles: [{ director: [] }, { producer: [] }, { actor: [] }, { actress: [] }],
   
 };

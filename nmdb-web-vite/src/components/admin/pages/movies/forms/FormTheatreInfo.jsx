@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { TrashIcon } from "@radix-ui/react-icons"
 
 const FormTheatreInfo = ({ form }) => {
   const { fields, append, remove } = useFieldArray({
@@ -33,7 +34,7 @@ const FormTheatreInfo = ({ form }) => {
           {fields.map((formFields, index) => (
             <div
               key={formFields.id}
-              className="mb-2 grid lg:grid-cols-[7fr,3fr,1fr] md:grid-cols-[5fr,2fr] gap-4 rounded-md border border-input px-4 py-2"
+              className="mb-2 grid gap-4 rounded-md border border-input px-4 py-2 md:grid-cols-[5fr,2fr] lg:grid-cols-[7fr,3fr,1fr]"
             >
               <FormField
                 control={form.control}
@@ -98,15 +99,16 @@ const FormTheatreInfo = ({ form }) => {
                   </FormItem>
                 )}
               />
-              <div className="lg:mt-8">
+              <div className="lg:mt-9">
+                
                 <Button
-                  variant="outline"
+                  variant="outline-destructive"
                   size="sm"
-                  className=" hidden sm:flex"
+                  className="ml-auto mr-2 h-8 "
                   onClick={() => remove(index)}
                 >
-                  <Trash className="h-4 w-4" />
-                  Delete
+                  <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Remove
                 </Button>
               </div>
             </div>

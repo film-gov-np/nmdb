@@ -29,7 +29,7 @@ export function DeleteItemsDialog({
       {showTrigger ? (
         <DialogTrigger asChild>
           <Button
-            variant="outlineDestructive"
+            variant="outline-destructive"
             size="sm"
             className="ml-auto mr-2 hidden h-8 lg:flex" 
           >
