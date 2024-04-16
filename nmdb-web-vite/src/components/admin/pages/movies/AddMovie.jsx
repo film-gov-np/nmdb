@@ -1,108 +1,35 @@
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
-import MultipleSelectorWithList from "./MultipleSelectionWithList";
 import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-import { z } from "zod";
-
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import FormBasicInfo from "./FormBasicInfo";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { ChevronRight, Trash } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-const roles = [
-  {
-    value: "director",
-    label: "Director",
-  },
-  {
-    value: "actress",
-    label: "Actress",
-  },
-  {
-    value: "producer",
-    label: "Producer",
-  },
-  {
-    value: "cameraman",
-    label: "Cameraman",
-  },
-  {
-    value: "action-director",
-    label: "Action Director",
-  },
-  {
-    value: "actor",
-    label: "Actor",
-  },
-];
-const formSchema = z.object({
-  file: z.instanceof(FileList).optional(),
-});
+import FormBasicInfo from "./forms/FormBasicInfo";
+import FormCensorInfo from "./forms/FormCensorInfo";
+import FormRoleInfo from "./forms/FormRoleInfo";
+import { defaultValues, resolver } from "./forms/formSchema";
+import FormTheatreInfo from "./forms/FormTheatreInfo";
 
 const AddMovie = () => {
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
   const form = useForm({
-    // resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      name_nepali: "",
-      runtime: "",
-      status: "",
-      genre: "",
-      language: "",
-      studio: "",
-      date_release: "",
-      date_application: "",
-      certificate_number: "",
-      censor_type: "",
-      movie_type: "",
-      crew_and_roles: [{ "director" :[]}, {"producer":[]},],
-    }
+    // resolver,
+    defaultValues,
   });
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "crew_and_roles",
-  });
+  const [previews, setPreviews] = useState([]);
   const onSubmit = (data) => {
-    console.log(data)
+    console.log(data);
     toast({
       title: "You submitted the following values:",
       description: (
@@ -126,7 +53,6 @@ const AddMovie = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Tabs
             defaultValue="basic_information"
-            onValueChange={() => {}}
             className="min-h-[60vh] w-full gap-2 lg:grid lg:grid-cols-[1fr,6fr]"
             orientation="vertical"
           >
@@ -150,6 +76,12 @@ const AddMovie = () => {
                 Censor Info
               </TabsTrigger>
               <TabsTrigger
+                value="theater_information"
+                className="justify-start lg:w-full"
+              >
+                Theater Info
+              </TabsTrigger>
+              <TabsTrigger
                 value="role_information"
                 className="justify-start lg:w-full"
               >
@@ -162,7 +94,11 @@ const AddMovie = () => {
                 viewPortClass="max-h-[calc(100vh-100px)]"
               >
                 <TabsContent value="basic_information" className="h-full ">
-                  <FormBasicInfo form={form} />
+                  <FormBasicInfo
+                    form={form}
+                    previews={previews}
+                    setPreviews={setPreviews}
+                  />
                 </TabsContent>
                 <TabsContent value="crew_information">
                   <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
@@ -182,107 +118,13 @@ const AddMovie = () => {
                   </div>
                 </TabsContent>
                 <TabsContent value="censor_information" className="h-full">
-                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>phone</FormLabel>
-                          <FormControl>
-                            <Input placeholder="phone" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormCensorInfo form={form} />
+                </TabsContent>
+                <TabsContent value="theater_information" className="h-full">
+                  <FormTheatreInfo form={form} />
                 </TabsContent>
                 <TabsContent value="role_information" className="h-full">
-                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-                    {fields.map((formFields, index) => (
-                      <fieldset
-                        key={formFields.id}
-                        className="grid h-fit grid-cols-1 gap-2 rounded-lg border p-4"
-                      >
-                        <legend className="text-md -ml-1 px-1 font-medium capitalize text-muted-foreground">
-                          {Object.keys(formFields)[0]}
-                        </legend>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-7 w-7 ml-auto -mt-10"
-                          onClick={() => remove(index)}
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                        <FormField
-                          control={form.control}
-                          name={`crew_and_roles.${index}.${Object.keys(formFields)[0]}`}
-                          render={({ field }) => (
-                            <FormItem>
-                              {/* <FormLabel>{formFields.role}</FormLabel> */}
-                              <FormControl>
-                                <MultipleSelectorWithList
-                                  value={field.value}
-                                  onChange={field.onChange}
-                                  triggerOnSearch={true}
-                                  minSearchTrigger={3}
-                                  apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
-                                  keyValue="id"
-                                  keyLabel="first_name"
-                                  imgLabel="profile_picture"
-                                  placeholder="Begin typing to search crew member..."
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </fieldset>
-                    ))}
-
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-[150px] justify-start"
-                        >
-                          <>+ Add a role</>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="p-0"
-                        side="right"
-                        align="start"
-                      >
-                        <Command>
-                          <CommandInput placeholder="Change status..." />
-                          <CommandList>
-                            <CommandEmpty>No results found.</CommandEmpty>
-                            <CommandGroup>
-                              {roles.map((role) => (
-                                <CommandItem
-                                  key={role.value}
-                                  value={role.value}
-                                  onSelect={(value) => {
-                                    append({
-                                      [value]: [],
-                                    });
-                                    delete roles[roles.indexOf(role)]
-                                    setOpen(false);
-                                  }}
-                                >
-                                  <span>{role.label}</span>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <FormRoleInfo form={form} />
                 </TabsContent>
               </ScrollArea>
             </div>
