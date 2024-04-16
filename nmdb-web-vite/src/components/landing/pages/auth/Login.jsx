@@ -11,7 +11,9 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
   const { setIsAuthorized } = useAuthContext();
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     const postData = {

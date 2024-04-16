@@ -11,9 +11,8 @@ namespace Core.Entities
     {
         public int RoleCategoryId { get; set; }
 
-        [ForeignKey("RoleCategoryId")]
-        public FilmRoleCategory RoleCategory { get; set; }
-
+        [ForeignKey(nameof(RoleCategoryId))]
+        public virtual FilmRoleCategory RoleCategory { get; set; }
         public string RoleName { get; set; }
         public int DisplayOrder { get; set; }
 

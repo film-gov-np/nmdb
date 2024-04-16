@@ -9,7 +9,7 @@ const VerifyEmail = () => {
   const [requested, setRequested] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.pathname);
+    const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     if (token) {
       handleSubmit(token);

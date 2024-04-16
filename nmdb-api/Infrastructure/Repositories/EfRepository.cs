@@ -15,9 +15,38 @@ namespace Infrastructure.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "", int? pageNumber = default(int?), int? pageSize = default(int?), bool enableNoTracking = true, bool ignoreQueryFilters = false)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            IQueryable<TEntity> query = enableNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+
+
+            if (ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            var propertiesToInclude = includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var includeProperty in propertiesToInclude)
+            {
+                query = query.Include(includeProperty.Trim());
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            if (pageNumber != null && pageSize != null)
+            {
+                var skip = ((int)pageNumber - 1) * (int)pageSize;
+                query = query.Skip(skip).Take((int)pageSize);
+            }
+            return query;
         }
 
         public async Task<TEntity> GetByIdAsync(object id)

@@ -2,6 +2,7 @@
 using Application.Interfaces.Repositories;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
+        private IDbContextTransaction _transaction;
         private IRolesRepository _rolesRepository;
         private IFilmRoleCategoryRepository _filmRoleCategoryRepository;
         private IFilmRoleRepository _filmRoleRepository;
@@ -26,13 +28,29 @@ namespace Infrastructure.Repositories
         public IFilmRoleCategoryRepository FilmRoleCategoryRepository => _filmRoleCategoryRepository ??= new FilmRoleCategoryRepository(_context);
         public IFilmRoleRepository FilmRoleRepository => _filmRoleRepository ??= new FilmRoleRepository(_context);
 
+        public async Task BeginTransactionAsync()
+        {
+            if (_transaction != null)
+            {
+                throw new InvalidOperationException("A transaction is already in progress.");
+            }
+
+            _transaction = await _context.Database.BeginTransactionAsync();
+        }
+
         public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
             await _context.SaveChangesAsync(cancellationToken);
+            _transaction?.Commit();
         }
 
+        public void Rollback()
+        {
+            _transaction?.Rollback();
+        }
         public void Dispose()
         {
+            _transaction?.Dispose();
             _context.Dispose();
         }
     }
