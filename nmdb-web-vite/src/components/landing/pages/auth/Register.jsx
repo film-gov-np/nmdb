@@ -1,51 +1,50 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Paths } from "@/constants/routePaths";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { registerSchemaResolver } from "./authSchema";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "FullName":
-        setFullName(value);
-        break;
-      case "Email":
-        setEmail(value);
-        break;
-      case "MobileNumber":
-        setMobileNumber(value);
-        break;
-      case "NewPassword":
-        setNewPassword(value);
-        break;
-      case "ConfirmPassword":
-        setConfirmPassword(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const postData = {
-      firstName: "Sudip",
-      lastName: "Thapa",
-      email: email,
-      password: newPassword,
-      confirmPassword: confirmPassword,
+  const form = useForm({
+    resolver: registerSchemaResolver,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobileNumber: "",
+      password: "",
+      confirmPassword: "",
       acceptTerms: true,
+    },
+  });
+
+  const onSubmit = ({
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword,
+    acceptTerms,
+  }) => {
+    const postData = {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      acceptTerms,
     };
     axiosInstance
       .post("auth/register", postData)
@@ -60,79 +59,138 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center py-12">
-      <div className="mx-auto grid w-[350px] gap-6">
+      <div className="mx-auto grid w-[420px] gap-6">
         <div className="grid gap-2 text-center">
           <h1 className="text-3xl font-bold">NMDB</h1>
           <p className="text-balance text-muted-foreground">
             Enter your details below to register
           </p>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Full Name</Label>
-              <Input
-                id="fullname"
-                type="text"
-                placeholder="Jhon Doe"
-                onChange={onChange}
-                autoFocus
-                value={fullName}
-                name="FullName"
-                required
-              />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4">
+              <div className="grid gap-2 lg:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="m@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="mobileNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="xxx xxx xxxx" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="acceptTerms"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>
+                          Accept{" "}
+                          <NavLink
+                            to="/terms-and-conditions"
+                            className="underline"
+                          >
+                            terms and conditions
+                          </NavLink>
+                        </FormLabel>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Register
+              </Button>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={onChange}
-                name="Email"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Mobile Number</Label>
-              <Input
-                id="mobilenumber"
-                type="text"
-                placeholder="XXX XXX XXXX"
-                value={mobileNumber}
-                onChange={onChange}
-                name="MobileNumber"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                onChange={onChange}
-                name="NewPassword"
-                value={newPassword}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Confirm Password</Label>
-              <Input
-                id="confirmpassword"
-                type="password"
-                onChange={onChange}
-                name="ConfirmPassword"
-                value={confirmPassword}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Register
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
         <div className="mt-4 text-center text-sm">
           Already a member?{" "}
           <NavLink to={Paths.Route_Login} className="underline">

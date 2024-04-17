@@ -1,21 +1,32 @@
 import { useAuthContext } from "@/components/admin/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Paths } from "@/constants/routePaths";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
+import { loginSchemaResolver } from "./authSchema";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  
   const { setIsAuthorized } = useAuthContext();
-  
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const form = useForm({
+    resolver: loginSchemaResolver,
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = ({ email, password }) => {
     const postData = {
       email: email,
       password: password,
@@ -43,20 +54,6 @@ const Login = () => {
       .catch((error) => {});
   };
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "Email":
-        setEmail(value);
-        break;
-      case "Password":
-        setPassword(value);
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <div className="flex items-center justify-center py-12">
       <div className="mx-auto grid w-[350px] gap-6">
@@ -66,44 +63,53 @@ const Login = () => {
             Enter your credentials below to login
           </p>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={onChange}
-                name="Email"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <NavLink
-                  to={Paths.Route_Forogot_Password}
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </NavLink>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="m@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <Input
-                id="password"
-                type="password"
-                onChange={onChange}
-                name="Password"
-                value={password}
-                required
-              />
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center">
+                        <FormLabel>Password</FormLabel>
+                        <NavLink
+                          to={Paths.Route_Forogot_Password}
+                          className="ml-auto inline-block text-sm underline"
+                        >
+                          Forgot your password?
+                        </NavLink>
+                      </div>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
             </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
           <NavLink to={Paths.Route_Register} className="underline">

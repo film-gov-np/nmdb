@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import {
   Command,
   CommandEmpty,
@@ -6,9 +5,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Command as CommandPrimitive, useCommandState } from "cmdk";
+import { Command as CommandPrimitive } from "cmdk";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
-import { Cross, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -332,6 +330,7 @@ const MultipleSelectorWithList = React.forwardRef(
                                       {option[keyValue]}
                                     </div>
                                     {option[keyLabel]}
+                                  
                                     {option[imgLabel] && (
                                       <img
                                         src={option[imgLabel]}
@@ -365,10 +364,10 @@ const MultipleSelectorWithList = React.forwardRef(
                 className="flex"
               >
                 <div className="flex items-center gap-1 rounded-md border border-input p-1">
-                  <Avatar className="hidden h-6 w-6 sm:flex">
+                  {option[imgLabel] && (<Avatar className="hidden h-6 w-6 sm:flex">
                     <AvatarImage src={option[imgLabel]} alt="Avatar" />
                     <AvatarFallback>{option[keyLabel]}</AvatarFallback>
-                  </Avatar>
+                  </Avatar>)}
                   <div className="grid">
                     <p className="text-sm font-medium leading-none">
                       {option[keyLabel]}
