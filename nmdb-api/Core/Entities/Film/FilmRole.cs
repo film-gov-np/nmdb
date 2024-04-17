@@ -12,6 +12,8 @@ namespace Core.Entities
         public int RoleCategoryId { get; set; }
 
         [ForeignKey(nameof(RoleCategoryId))]
+        //  virtual enables lazy loading i.e related entities are automatically loaded from the db when
+        // accessed for the first time
         public virtual FilmRoleCategory RoleCategory { get; set; }
         public string RoleName { get; set; }
         public int DisplayOrder { get; set; }

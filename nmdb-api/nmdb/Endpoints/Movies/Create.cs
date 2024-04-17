@@ -13,7 +13,7 @@ namespace nmdb.Endpoints.Movies;
 public class Create
     : Endpoint<CreateRequest, CreateResponse>
 {
-    private const string Route = "api/movies/create";
+    private const string Route = "api/movies";
     private AppDbContext _appDbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
 

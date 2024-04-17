@@ -1,6 +1,8 @@
 ﻿using Application.CQRS.FilmRoles.Commands.CreateFilmRole;
+using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos.Auth;
 using AutoMapper;
+using Core.Entities;
 using Infrastructure.Identity;
 using nmdb.Endpoints.Films.FilmRole;
 
@@ -12,11 +14,8 @@ namespace nmdb.Configurations
         {
             CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();            
             CreateMap<ApplicationUser, AuthenticateResponse>();
-
             CreateMap<RegisterRequest, ApplicationUser>();
-
             CreateMap<CreateRequest, ApplicationUser>();
-
             CreateMap<Application.Models.UpdateUserDTO, ApplicationUser>()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
@@ -27,7 +26,8 @@ namespace nmdb.Configurations
                         return true;
                     }
                 ));
-
+            CreateMap<FilmRole,FilmRoleResponse>()
+                .ForMember(dest=>dest.CategoryName, opt=>opt.MapFrom(src=>src.RoleCategory.CategoryName));
         }
     }
 }
