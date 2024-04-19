@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
-import { columns, facetedFilters } from "./dataColumns";
+import { columns, facetedFilters } from "./DataColumns";
 import { DataTableSkeleton } from "@/components/ui/custom/data-table/data-table-skeleton";
 import NoDataComponent from "../../NoDataComponent";
 import {

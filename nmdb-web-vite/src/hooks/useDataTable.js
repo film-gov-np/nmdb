@@ -22,11 +22,11 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
-  const page = searchParams?.get("page") ?? "1";
+  const page = searchParams?.get("pageNo") ?? "1";
   const pageAsNumber = Number(page);
   const fallbackPage =
     isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const per_page = searchParams?.get("limit") ?? "10";
+  const per_page = searchParams?.get("pageSize") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
@@ -55,8 +55,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
   useEffect(() => {
     navigate(
       `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        limit: pageSize,
+        pageNo : pageIndex + 1,
+        pageSize : pageSize,
       })}`,
       { replace: true },
     );
@@ -66,8 +66,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     if (debouncedGlobalFilter?.length > 0) {
       navigate(
         `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
+          pageNo : null,
+          pageSize : null,
           search: debouncedGlobalFilter,
         })}`,
       );
@@ -78,8 +78,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     ) {
       navigate(
         `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
+          pageNo : null,
+          pageSize : null,
           search: null,
         })}`,
       );

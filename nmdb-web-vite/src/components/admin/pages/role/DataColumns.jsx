@@ -34,21 +34,7 @@ export const labels = [
 ];
 
 export const facetedFilters = [
-  {
-    name: "gender",
-    filters: [
-      {
-        value: "female",
-        label: "Female",
-        icon: CheckIcon,
-      },
-      {
-        value: "male",
-        label: "Male",
-        icon: LinkNone2Icon,
-      },
-    ],
-  },
+
 ];
 
 function DataTableRowActions({ row }) {
@@ -68,7 +54,7 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={`/admin/production-house/${row.original.id}`}
+                to={`/admin/role/${row.original.id}`}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-blue-500",
@@ -83,7 +69,7 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={`/admin/production-house/${row.original.id}/edit`}
+                to={`/admin/role/${row.original.id}/edit`}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-green-500",
@@ -141,66 +127,27 @@ export const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "first_name",
+    accessorKey: "roleName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title="Role" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("first_name")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("roleName")}</div>,
   },
   {
-    accessorKey: "country",
+    accessorKey: "categoryName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Country" />
+      <DataTableColumnHeader column={column} title="Category" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("country")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("categoryName")}</div>,
     enableGlobalFilter: true,
   },
   {
-    accessorKey: "email",
+    accessorKey: "createdBy",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="email" />
+      <DataTableColumnHeader column={column} title="Created By" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("createdBy")}</div>,
     enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "job",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Company" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("job")}</div>,
-    enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "gender",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Gender" />
-    ),
-    cell: ({ row }) => {
-      const categories = facetedFilters.find(
-        (filter) => filter.name === "gender",
-      );
-      const category = categories?.filters?.find(
-        (category) => category.value === row.getValue("gender"),
-      );
-
-      if (!category) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {category.icon && (
-            <category.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{category.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-    enableGlobalFilter: false,
   },
 
   {
