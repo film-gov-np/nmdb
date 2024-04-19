@@ -1,9 +1,12 @@
 ﻿using Application.Dtos.Film;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Core;
+using Core.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Application.Services;
@@ -12,14 +15,37 @@ public class FilmRoleCategoryService : IFilmRoleCategoryService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    public FilmRoleCategoryService(IUnitOfWork unitOfWork, IMapper mapper)
+    private readonly IService _service;
+    public FilmRoleCategoryService(IUnitOfWork unitOfWork, IMapper mapper, IService service)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _service = service;
     }
-    public Task<ApiResponse<string>> Create(FilmRoleCategoryDto filmRoleCategory)
+    public async Task<ApiResponse<string>> Create(FilmRoleCategoryDto roleCatgeoryRequest)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            FilmRole filmRole = new()
+            {
+                RoleName = roleCatgeoryRequest.CategoryName,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = "test"
+            };
+            await _unitOfWork.FilmRoleRepository.AddAsync(filmRole);
+            await _unitOfWork.CommitAsync();
+            return ApiResponse<string>.SuccessResponse("Role category created successfully.");
+        }
+        catch (Exception ex)
+        {
+            // Log errors
+            Console.WriteLine(ex.ToString());
+            _unitOfWork.Rollback();
+            return ApiResponse<string>.ErrorResponse(
+                "Something went wrong while creating role category.",
+                HttpStatusCode.InternalServerError);
+        }
     }
 
     public Task<ApiResponse<string>> DeleteById(string roleId)
@@ -27,15 +53,17 @@ public class FilmRoleCategoryService : IFilmRoleCategoryService
         throw new NotImplementedException();
     }
 
-    public Task<ApiResponse<List<FilmRoleCategoryDto>>> GetAll()
+    public async Task<ApiResponse<List<FilmRoleCategoryDto>>> GetAll()
     {
-        throw new NotImplementedException();
+        var filmRoleCategoryList = await _service.List<FilmRoleCategory,FilmRoleCategoryDto>();
+        var filmRoleCategoryListDto = _mapper.Map<List<FilmRoleCategoryDto>>(filmRoleCategoryList);
+        return ApiResponse<List<FilmRoleCategoryDto>>.SuccessResponse(data: filmRoleCategoryListDto);
     }
 
     public async Task<ApiResponse<FilmRoleCategoryDto>> GetById(int roleId)
     {
         var roleCategory = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(roleId);
-        if(roleCategory == null)
+        if (roleCategory == null)
         {
             return new ApiResponse<FilmRoleCategoryDto>
             {

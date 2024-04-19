@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos.Film;
 
-public record FilmRoleCategoryDto(int Id, string Name, int DisplayOrder);
+public record FilmRoleCategoryDto(int Id, string CategoryName, int DisplayOrder);

@@ -7,4 +7,5 @@ public abstract class BaseEntity<TId>:IBaseEntity<TId>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

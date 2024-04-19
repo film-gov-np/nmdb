@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Application.Dtos.Media;
+using FastEndpoints;
 using FastEndpoints.Swagger;
 using MediatR;
 using Neptics.Application.Helpers;
@@ -9,10 +10,11 @@ namespace nmdb;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();
+        services.Configure<AllowedUploadFiles>(configuration.GetSection(AllowedUploadFiles.Section));
 
         services.AddCors(options =>
         {
