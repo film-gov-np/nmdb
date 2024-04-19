@@ -7,6 +7,7 @@ using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Application.Helpers.Response;
+using Application.Interfaces.Services;
 
 namespace nmdb.Endpoints.Films.FilmRole
 {
@@ -21,7 +22,7 @@ namespace nmdb.Endpoints.Films.FilmRole
 
         public override async Task HandleAsync(GetAllFilmRolesRequest request,
           CancellationToken cancellationToken)
-        {
+        {            
             var filmRolesQuery = unitOfWork.FilmRoleRepository.Get();
             var totalItems = await filmRolesQuery.CountAsync();
             var filmRoles = await filmRolesQuery

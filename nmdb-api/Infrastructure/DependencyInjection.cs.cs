@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Helpers;
 using Application.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Email;
@@ -34,6 +35,7 @@ public static class DependencyInjection
     }
     private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IService, RestService>();
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.Section));
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
