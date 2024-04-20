@@ -12,7 +12,7 @@ namespace nmdb.Configurations
     {
         public MappingProfile()
         {
-            CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();            
+            CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();
             CreateMap<ApplicationUser, AuthenticateResponse>();
             CreateMap<RegisterRequest, ApplicationUser>();
             CreateMap<CreateRequest, ApplicationUser>();
@@ -26,8 +26,8 @@ namespace nmdb.Configurations
                         return true;
                     }
                 ));
-            CreateMap<FilmRole,FilmRoleResponse>()
-                .ForMember(dest=>dest.CategoryName, opt=>opt.MapFrom(src=>src.RoleCategory.CategoryName));
+            CreateMap<FilmRole, FilmRoleResponse>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.RoleCategory.CategoryName));
         }
     }
 }

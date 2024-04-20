@@ -11,5 +11,6 @@ namespace nmdb.Endpoints.Films.FilmRole
 
         [QueryParam, BindFrom("pageSize")]
         public int PageSize { get; set; } = 10;
+        public string? SearchKeyword { get; set; }
     }
 }

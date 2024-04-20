@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.FilmRoles.Queries
 {
-    public sealed record FilmRoleResponse(int Id, string RoleName, string CategoryName, int DisplayOrder);
+    public sealed record FilmRoleResponse(int Id, string RoleName, string CategoryName, int? DisplayOrder);
 
 }
