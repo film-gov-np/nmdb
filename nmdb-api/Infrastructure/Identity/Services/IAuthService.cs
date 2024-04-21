@@ -1,12 +1,14 @@
-﻿using Application.Dtos.Auth;
+﻿using Application.Dtos;
+using Application.Dtos.Auth;
 using Core;
+using System.Security.Claims;
 
 namespace Infrastructure.Identity.Services
 {
     public interface IAuthService
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress);
-        string ValidateToken(string token);
+        //string ValidateToken(string token);
         Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
         Task RevokeToken(string token, string ipAddress);
         Task<ApiResponse<string>> Register(RegisterRequest model);
@@ -19,6 +21,7 @@ namespace Infrastructure.Identity.Services
         Task<AccountResponse> GetById(string id);
         Task<AccountResponse> Create(CreateRequest model);
         Task<AccountResponse> Update(string idx, Application.Models.UpdateUserDTO model);
+        CurrentUser GetUserFromClaims(IEnumerable<Claim> claims);
         Task Delete(string idx);
     }
 }

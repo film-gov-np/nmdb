@@ -6,6 +6,8 @@ using nmdb;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using nmdb.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,11 +32,13 @@ app.UseFastEndpoints()
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("AllowSpecificOrigin");
+app.UseMiddleware<AuthorizedUserMiddleware>();
 
 app.MapControllers();
 app.MapDefaultControllerRoute();

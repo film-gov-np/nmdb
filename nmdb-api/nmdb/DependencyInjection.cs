@@ -4,6 +4,7 @@ using FastEndpoints.Swagger;
 using MediatR;
 using Neptics.Application.Helpers;
 using nmdb.Configurations;
+using nmdb.Middlewares;
 using System.Reflection;
 
 namespace nmdb;
@@ -49,6 +50,7 @@ public static class DependencyInjection
                         });
 
         services.AddCoreAdmin();
+        services.AddTransient<AuthorizedUserMiddleware>();
         services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
         services.AddAutoMapper(typeof(MappingProfile).Assembly);
         ConfigureMediatR();

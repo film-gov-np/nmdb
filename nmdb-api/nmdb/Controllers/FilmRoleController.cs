@@ -1,27 +1,35 @@
 using Application.Interfaces;
+using Core.Constants;
 using Core.Entities;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using nmdb.Common;
+using System.Security.Claims;
 
 namespace nmdb.Controllers
 {
     [ApiController]
     //[TypeFilter(typeof(AuthorizeAccount))]
     [Route("[controller]")]
-    public class FilmRoleController : ControllerBase
+    public class FilmRoleController : AuthorizedController
     {
         private readonly ILogger<FilmRoleController> _logger;
-
-        public FilmRoleController(ILogger<FilmRoleController> logger)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public FilmRoleController(ILogger<FilmRoleController> logger, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
+            _contextAccessor = contextAccessor;
         }
 
         [HttpGet("GetFilmRoles")]
+        [Authorize(Roles = AuthorizationConstants.AdminRole)]
         public async Task<object> GetFilmRoles(IUnitOfWork unitOfWork, int pageNo = 1, int pageSize = 10)
         {
+            var user = HttpContext.User.Identity;
+            var roles = GetUserRoles;
+
             var res = await unitOfWork.FilmRoleRepository.Get()
                                                          .Include(g => g.RoleCategory)
                                                          .OrderBy(fr => fr.RoleName)

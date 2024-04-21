@@ -18,6 +18,15 @@ namespace nmdb.Endpoints.Films.FilmRole
         {
             Get(GetAllFilmRolesRequest.Route);
             Roles(AuthorizationConstants.AdminRole);
+            Summary(s =>
+            {
+                s.ExampleRequest = new GetAllFilmRolesRequest
+                {
+                    PageNumber = 1,
+                    PageSize = 4,
+                    SearchKeyword = "Focus"
+                };
+            });
         }
 
         public override async Task HandleAsync(GetAllFilmRolesRequest request,
