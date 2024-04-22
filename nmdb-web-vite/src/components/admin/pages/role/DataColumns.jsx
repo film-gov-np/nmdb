@@ -10,10 +10,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 // import { DataTableRowActions } from "@/components/ui/custom/data-table-row-actions";
-import {
-  CheckIcon,
-  LinkNone2Icon,
-} from "@radix-ui/react-icons";
 import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -33,15 +29,13 @@ export const labels = [
   },
 ];
 
-export const facetedFilters = [
-
-];
+export const facetedFilters = [];
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   return (
-    <div className="flex">
+    <div className="flex justify-center">
       <DeleteItemsDialog
         open={showDeleteTaskDialog}
         onOpenChange={setShowDeleteTaskDialog}
@@ -128,6 +122,7 @@ export const columns = [
   },
   {
     accessorKey: "roleName",
+    meta: "Role",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role" />
     ),
@@ -135,6 +130,7 @@ export const columns = [
   },
   {
     accessorKey: "categoryName",
+    meta: "Category",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
@@ -143,6 +139,7 @@ export const columns = [
   },
   {
     accessorKey: "createdBy",
+    meta: "Created By",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created By" />
     ),

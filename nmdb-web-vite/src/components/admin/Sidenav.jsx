@@ -28,37 +28,37 @@ const adminRouteElement = [
     title: "Dashboard",
     label: "DB",
     icon: Home,
-    path: Paths.Route_Admin + Paths.Route_Admin_Dashboard,
+    path: Paths.Route_Admin_Dashboard,
   },
   {
     title: "Movie",
     icon: Video,
-    path: Paths.Route_Admin + Paths.Route_Admin_Movie,
+    path: Paths.Route_Admin_Movie,
   },
   {
     title: "Crew",
     icon: Users,
-    path: Paths.Route_Admin + Paths.Route_Admin_Crew,
+    path: Paths.Route_Admin_Crew,
   },
   {
     title: "Role",
     icon: BriefcaseBusiness,
-    path: Paths.Route_Admin + Paths.Route_Admin_Role,
+    path: Paths.Route_Admin_Role,
   },
   {
     title: "Production House",
     icon: Clapperboard,
-    path: Paths.Route_Admin + Paths.Route_Admin_ProductionHouse,
+    path: Paths.Route_Admin_ProductionHouse,
   },
   {
     title: "Theatre",
     icon: Projector,
-    path: Paths.Route_Admin + Paths.Route_Admin_Theatre,
+    path: Paths.Route_Admin_Theatre,
   },
   {
     title: "Awards",
     icon: Award,
-    path: Paths.Route_Admin + Paths.Route_Admin_Awards,
+    path: Paths.Route_Admin_ProductionHouse,
   },
   {
     title: "Scholarship",
@@ -68,12 +68,12 @@ const adminRouteElement = [
       {
         title: "Bachelors",
         icon: BookOpen,
-        path: Paths.Route_Admin + "/scholarship/bachelors",
+        path: Paths.Route_Admin_Scholarship_Bachelors,
       },
       {
         title: "Masters",
         icon: BookText,
-        path: Paths.Route_Admin + "/scholarship/masters",
+        path: Paths.Route_Admin_Scholarship_Masters,
       },
     ],
   },
@@ -89,23 +89,26 @@ const NavLinkCustom = ({
   ...rest
 }) => {
   return (
-    
-      <div className={cn(isSubLink && "ps-4")}>
-        <NavLink
-          to={path}
-          onClick={()=>{isMobileSidebar && setOpen(false)}}
-          className={cn(isMobileSidebar && "mx-[-0.65rem] gap-4", "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary")}
-        >
-          <rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />
-          {title}
-          {label && (
-            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-              {label}
-            </Badge>
-          )}
-        </NavLink>
-      </div>
-    
+    <div className={cn(isSubLink && "ps-4")}>
+      <NavLink
+        to={path}
+        onClick={() => {
+          isMobileSidebar && setOpen(false);
+        }}
+        className={cn(
+          isMobileSidebar && "mx-[-0.65rem] gap-4",
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+        )}
+      >
+        <rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />
+        {title}
+        {label && (
+          <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+            {label}
+          </Badge>
+        )}
+      </NavLink>
+    </div>
   );
 };
 
@@ -129,11 +132,7 @@ const NavLinkDropdown = ({
             " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
         )}
       >
-        {
-          <rest.icon
-            className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")}
-          />
-        }
+        {<rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />}
         {title}
         {label && (
           <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">

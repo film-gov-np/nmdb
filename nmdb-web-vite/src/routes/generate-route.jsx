@@ -7,13 +7,10 @@ const generateFlattenRoutes = (routes, parentPath = "") => {
   if (!routes) return [];
 
   return flattenDeep(
-    routes.map(({ routes: subRoutes, path: currentPath, ...rest }) => {
-      const fullPath = parentPath + currentPath; // to concat with parent routes
-      return [
-        { ...rest, path: fullPath },
-        generateFlattenRoutes(subRoutes, fullPath),
-      ];
-    }),
+    routes.map(({ routes: subRoutes, ...rest }) => [
+      rest,
+      generateFlattenRoutes(subRoutes),
+    ]),
   );
 };
 

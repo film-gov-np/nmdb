@@ -10,14 +10,7 @@ const Movies = () => {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       {movies && movies.length ? (
         <>
-          <ListPageHeader
-            label="movies"
-            pathTo={
-              Paths.Route_Admin +
-              Paths.Route_Admin_Movie +
-              Paths.Route_Admin_Movie_Add
-            }
-          />
+          <ListPageHeader label="movies" pathTo={Paths.Route_Admin_Movie_Add} />
           <DataTableAdvanced
             data={movies}
             columns={columns}
@@ -25,14 +18,7 @@ const Movies = () => {
           />
         </>
       ) : (
-        <NoDataComponent
-          label={"movie"}
-          pathTo={
-            Paths.Route_Admin +
-            Paths.Route_Admin_Movie +
-            Paths.Route_Admin_Movie_Add
-          }
-        />
+        <NoDataComponent label={"movie"} pathTo={Paths.Route_Admin_Movie_Add} />
       )}
     </main>
   );

@@ -24,6 +24,9 @@ import AddProductionHouse from "@/components/admin/pages/productionHouse/AddProd
 import AuthLayout from "@/components/layouts/AuthLayout";
 import ForgotPassword from "@/components/landing/pages/auth/ForgotPassword";
 import AddMovie from "@/components/admin/pages/movies/AddMovie";
+import Celebrities from "@/components/landing/pages/celebrities/Celebrities";
+import CelebritiesDetails from "@/components/landing/pages/celebrities/CelebrityDetail";
+import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
 
 export const routes = [
   {
@@ -135,21 +138,21 @@ export const routes = [
             name: "Scholarship",
             title: "Scholarship",
             component: ScholarshipBachelors,
-            path: "/scholarship",
+            path: Paths.Route_Admin_Scholarship,
             isPublic: false,
             routes: [
               {
                 name: "Scholarship Bachelors",
                 title: "Scholarship Bachelors",
                 component: ScholarshipBachelors,
-                path: "/bachelors",
+                path: Paths.Route_Admin_Scholarship_Bachelors,
                 isPublic: false,
               },
               {
                 name: "Scholarship Masters",
                 title: "Scholarship Masters",
                 component: ScholarshipMasters,
-                path: "/masters",
+                path: Paths.Route_Admin_Scholarship_Masters,
                 isPublic: false,
               },
             ],
@@ -167,6 +170,38 @@ export const routes = [
         component: Home,
         path: Paths.Route_Home,
         isPublic: true,
+      },
+      {
+        name: "celebrities",
+        title: "Celebrities page",
+        component: Celebrities,
+        path: Paths.Route_Celebrities,
+        isPublic: true,
+        routes: [
+          {
+            name: "celebrities detail",
+            title: "Celebrities Detail page",
+            component: CelebritiesDetails,
+            path: Paths.Route_Celebrity_Detail,
+            isPublic: true,
+          },
+        ],
+      },
+      {
+        name: "movies",
+        title: "Movies page",
+        component: Movies,
+        path: Paths.Route_Movies,
+        isPublic: true,
+        routes: [
+          {
+            name: "movie detail",
+            title: "Movie Detail page",
+            component: MovieDetail,
+            path: Paths.Route_Movie_Detail,
+            isPublic: true,
+          },
+        ],
       },
     ],
   },

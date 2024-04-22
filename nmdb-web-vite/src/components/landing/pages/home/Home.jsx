@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Paths } from "@/constants/routePaths";
 import { NavLink } from "react-router-dom";
 
 const Home = () => {
@@ -49,7 +50,9 @@ const Home = () => {
             <CardHeader>
               <CardTitle>Artists</CardTitle>
             </CardHeader>
-            <CardContent className="h-44">Artists Here</CardContent>
+            <CardContent className="h-44 flex flex-col "><span className="mb-6">Artists Here</span>
+            <NavLink to={Paths.Route_Celebrities+"/1"} >Rajesh Hamal</NavLink>
+            </CardContent>
           </Card>
         </div>
         <div className="grid gap-6">
@@ -57,7 +60,9 @@ const Home = () => {
             <CardHeader>
               <CardTitle>Trending</CardTitle>
             </CardHeader>
-            <CardContent className="h-96">Movies Here</CardContent>
+            <CardContent className="h-44 flex flex-col "><span className="mb-6">Movies Here</span>
+            <NavLink to={Paths.Route_Movies+"/1"} >Mahapurush</NavLink>
+            </CardContent>
           </Card>
         </div>
       </div>

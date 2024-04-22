@@ -46,7 +46,7 @@ const AddMovie = () => {
       <AddPageHeader
         className=" "
         label={"movie"}
-        pathTo={Paths.Route_Admin + Paths.Route_Admin_Movie}
+        pathTo={Paths.Route_Admin_Movie}
       />
 
       <Form {...form}>

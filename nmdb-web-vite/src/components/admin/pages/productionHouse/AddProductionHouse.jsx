@@ -159,7 +159,7 @@ const AddProductionHouse = () => {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader
         label="production house"
-        pathTo={Paths.Route_Admin + Paths.Route_Admin_ProductionHouse}
+        pathTo={Paths.Route_Admin_ProductionHouse}
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

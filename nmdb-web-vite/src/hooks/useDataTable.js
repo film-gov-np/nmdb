@@ -11,11 +11,11 @@ import {
 } from "@tanstack/react-table";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
+const useDataTable = ({ data, columns, pageCount, facetedFilters }) => {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
-  const [sorting, setSorting] = useState([]);
+
   const [globalFilter, setGlobalFilter] = useState("");
   const debouncedGlobalFilter = useDebouncedState(globalFilter, 500);
 
@@ -29,7 +29,7 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
   const per_page = searchParams?.get("pageSize") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
-
+  const [column, order] = searchParams?.get("sort")?.split(".") ?? [];
   const createQueryString = useCallback(
     (params) => {
       const newSearchParams = new URLSearchParams(searchParams?.toString());
@@ -46,6 +46,23 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     },
     [searchParams],
   );
+  // Handle server side sorting
+  const [sorting, setSorting] = useState([
+    {
+      id: column ?? "",
+      desc: order === "desc",
+    },
+  ]);
+
+  useEffect(() => {
+    navigate(
+      `${pathname}?${createQueryString({
+        sort: sorting[0]?.id
+          ? `${sorting[0]?.id}.${sorting[0]?.desc ? "desc" : "asc"}`
+          : null,
+      })}`,
+    );
+  }, [sorting]);
 
   // Handle server-side pagination
   const [{ pageIndex, pageSize }, setPagination] = useState({
@@ -55,8 +72,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
   useEffect(() => {
     navigate(
       `${pathname}?${createQueryString({
-        pageNo : pageIndex + 1,
-        pageSize : pageSize,
+        pageNo: pageIndex + 1,
+        pageSize: pageSize,
       })}`,
       { replace: true },
     );
@@ -66,8 +83,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     if (debouncedGlobalFilter?.length > 0) {
       navigate(
         `${pathname}?${createQueryString({
-          pageNo : null,
-          pageSize : null,
+          pageNo: null,
+          pageSize: null,
           search: debouncedGlobalFilter,
         })}`,
       );
@@ -78,8 +95,8 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     ) {
       navigate(
         `${pathname}?${createQueryString({
-          pageNo : null,
-          pageSize : null,
+          pageNo: null,
+          pageSize: null,
           search: null,
         })}`,
       );
@@ -123,9 +140,10 @@ const useDataTable = ({ data, columns, pageCount, facetedFilters })=> {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     manualPagination: true,
     manualFiltering: true,
+    manualSorting: true,
   });
 
   return { table };
-}
+};
 
-export {useDataTable};
+export { useDataTable };

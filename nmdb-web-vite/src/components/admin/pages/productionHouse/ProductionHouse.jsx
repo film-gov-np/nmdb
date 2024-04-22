@@ -47,11 +47,7 @@ const ProductionHouse = () => {
         <>
           <ListPageHeader
             label={"production house"}
-            pathTo={
-              Paths.Route_Admin +
-              Paths.Route_Admin_ProductionHouse +
-              Paths.Route_Admin_ProductionHouse_Add
-            }
+            pathTo={Paths.Route_Admin_ProductionHouse_Add}
           />
           <DataTableAdvancedWithServerPagination
             searchKey="country"
@@ -66,11 +62,7 @@ const ProductionHouse = () => {
       ) : (
         <NoDataComponent
           label={"production house"}
-          pathTo={
-            Paths.Route_Admin +
-            Paths.Route_Admin_ProductionHouse +
-            Paths.Route_Admin_ProductionHouse_Add
-          }
+          pathTo={Paths.Route_Admin_ProductionHouse_Add}
         />
       )}
     </main>

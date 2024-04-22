@@ -23,7 +23,7 @@ const AuthLayout = () => {
                 alt="Image"
                 width="1920"
                 height="1080"
-                className="h-full w-full object-cover object-center dark:brightness-[0.25] dark:grayscale lg:max-w-3xl xl:max-w-4xl"
+                className="h-full w-full object-cover object-center dark:brightness-[0.4] lg:max-w-3xl xl:max-w-4xl"
               />
             </div>
           </div>
