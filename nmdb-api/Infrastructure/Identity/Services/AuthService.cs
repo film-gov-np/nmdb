@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Dtos;
 using Application.Dtos.Auth;
 using AutoMapper;
 using Azure.Core;
@@ -81,20 +82,20 @@ namespace Infrastructure.Identity.Services
             }
             throw new UnauthorizedAccessException("Invalid login attempt.");
         }
-        public string ValidateToken(string token)
-        {
-            return _jwtTokenGenerator.ValidateJwtToken(token);
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+        //public string ValidateToken(string token)
+        //{
+        //    return _jwtTokenGenerator.ValidateJwtToken(token);
+        //    //var tokenHandler = new JwtSecurityTokenHandler();
+        //    //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 
-            //tokenHandler.ValidateToken(token, new TokenValidationParameters
-            //{
-            //    ValidateIssuerSigningKey = true,
-            //    IssuerSigningKey = new SymmetricSecurityKey(key),
-            //    ValidateIssuer = false,
-            //    ValidateAudience = false
-            //}, out SecurityToken validatedToken);
-        }
+        //    //tokenHandler.ValidateToken(token, new TokenValidationParameters
+        //    //{
+        //    //    ValidateIssuerSigningKey = true,
+        //    //    IssuerSigningKey = new SymmetricSecurityKey(key),
+        //    //    ValidateIssuer = false,
+        //    //    ValidateAudience = false
+        //    //}, out SecurityToken validatedToken);
+        //}
 
 
 
@@ -154,7 +155,26 @@ namespace Infrastructure.Identity.Services
             // Check if the email and origin combination exists
             return !_context.Users.Any(u => u.Email == email);
         }
-
+        public CurrentUser GetUserFromClaims(IEnumerable<Claim> claims)
+        {
+            CurrentUser user = new CurrentUser();
+            foreach (Claim c in claims)
+            {
+                switch (c.Type)
+                {
+                    case ClaimTypes.NameIdentifier:
+                        user.ID = c.Value;
+                        break;
+                    case ClaimTypes.Name:
+                        user.UserName = c.Value;
+                        break;
+                    case ClaimTypes.Role:
+                        user.Roles = c.Value;
+                        break;
+                }
+            }
+            return user;
+        }
         public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
             var userToRegister = new ApplicationUser

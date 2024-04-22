@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.Auth;
 using Core;
+using Core.Constants;
 using FastEndpoints;
 using Infrastructure.Identity.Services;
 using System.Net;
@@ -10,9 +11,11 @@ public class Authenticate
     : Endpoint<AuthenticateRequest, ApiResponse<AuthenticateResponse>>
 {
     private readonly IAuthService _authService;
-    public Authenticate(IAuthService authService)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public Authenticate(IAuthService authService, IHttpContextAccessor contextAccessor)
     {
         _authService = authService;
+        _httpContextAccessor = contextAccessor;
     }
     private const string Route = "api/auth/authenticate";
     public override void Configure()
@@ -36,12 +39,37 @@ public class Authenticate
         try
         {
             var authenticateResponse = await _authService.Authenticate(request, "");
+            setTokenCookie(authenticateResponse.JwtToken, authenticateResponse.RefreshToken);
             Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
         }
         catch (UnauthorizedAccessException ex)
         {
             Response = ApiResponse<AuthenticateResponse>.ErrorResponse(ex.Message, HttpStatusCode.Unauthorized);
         }
+    }
+
+    private void setTokenCookie(string accessToken, string refreshToken = "")
+    {
+        // append cookie with refresh token to the http response
+        //var cookieOptions = new CookieOptions
+        //{
+        //    HttpOnly = true,
+        //    Expires = DateTime.UtcNow.AddDays(7),
+        //    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+        //    Secure = true,
+
+        //};
+        //_httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.RefreshToken, refreshToken, cookieOptions);
+
+        var cookieOptions = new CookieOptions()
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddDays(2),
+            SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None
+        };
+        _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.AccessToken, accessToken, cookieOptions);
+
     }
 }
 

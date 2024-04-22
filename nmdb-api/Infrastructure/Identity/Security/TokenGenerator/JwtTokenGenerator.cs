@@ -25,7 +25,7 @@ public interface IJwtTokenGenerator
     /// </summary>
     /// <param name="token"></param>
     /// <returns></returns>
-    public string ValidateJwtToken(string token);
+    //public string ValidateJwtToken(string token);
     /// <summary>
     /// Refreshes Jwt and return it along with the refresh token
     /// </summary>
@@ -34,6 +34,8 @@ public interface IJwtTokenGenerator
     public Task<RefreshToken> GenerateRefreshToken(string ipAddress);
 
     public ClaimsPrincipal GetClaimsPrincipalFromToken(string token);
+
+    public bool IsTokenExpired(string token);
 }
 
 public class JwtTokenGenerator : IJwtTokenGenerator
@@ -74,39 +76,48 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
-    public string ValidateJwtToken(string token)
+    public bool IsTokenExpired(string token)
     {
-        if (token == null)
-            return null;
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-        try
-        {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                RequireExpirationTime = true,
-                // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var accountId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
-            // return account id from JWT token if validation successful
-            return accountId;
-        }
-        catch
-        {
-            // return null if validation fails
-            return null;
-        }
+        var jwthandler = new JwtSecurityTokenHandler();
+        var jwttoken = jwthandler.ReadToken(token);
+        var expDate = jwttoken.ValidTo;
+        if (expDate < DateTime.UtcNow)
+            return true;
+        else
+            return false;
     }
+    //public string ValidateJwtToken(string token)
+    //{
+    //    if (token == null)
+    //        return null;
+
+    //    var tokenHandler = new JwtSecurityTokenHandler();
+    //    var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+    //    try
+    //    {
+    //        tokenHandler.ValidateToken(token, new TokenValidationParameters
+    //        {
+    //            ValidateIssuerSigningKey = true,
+    //            IssuerSigningKey = new SymmetricSecurityKey(key),
+    //            ValidateIssuer = false,
+    //            ValidateAudience = false,
+    //            RequireExpirationTime = true,
+    //            // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+    //            ClockSkew = TimeSpan.Zero
+    //        }, out SecurityToken validatedToken);
+
+    //        var jwtToken = (JwtSecurityToken)validatedToken;
+    //        var accountId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+    //        // return account id from JWT token if validation successful
+    //        return accountId;
+    //    }
+    //    catch
+    //    {
+    //        // return null if validation fails
+    //        return null;
+    //    }
+    //}
 
     public async Task<RefreshToken> GenerateRefreshToken(string ipAddress)
     {
