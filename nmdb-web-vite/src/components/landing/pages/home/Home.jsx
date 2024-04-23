@@ -221,6 +221,7 @@ const Home = () => {
                       aspectRatio="portrait"
                       width={150}
                       height={210}
+                      navigateTo={Paths.Route_Movies + "/" + cast.id}
                     />
                   ))}
                 </div>
@@ -244,6 +245,7 @@ const Home = () => {
                       aspectRatio="portrait"
                       width={150}
                       height={210}
+                      navigateTo={Paths.Route_Celebrities + "/" + cast.id}
                     />
                   ))}
                 </div>
