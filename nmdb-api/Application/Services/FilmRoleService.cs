@@ -49,7 +49,18 @@ public class FilmRoleService : IFilmRoleService
 
         if (filterParameters.SortColumn != null)
         {
-            orderByColumn = query => query.RoleName;
+            switch (filterParameters.SortColumn.ToLower())
+            {
+                case "rolename":
+                    orderByColumn = query => query.RoleName;
+                    break;
+                case "categoryname":
+                    orderByColumn = query => query.RoleCategory.CategoryName;
+                    break;
+                // Add more cases for other columns
+                default:
+                    throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");                    
+            }
         }
 
         var (query, totalItems) = await _unitOfWork.FilmRoleRepository.GetWithFilter(filterParameters, filter: filter, orderByColumn: orderByColumn);
