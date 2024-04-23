@@ -24,14 +24,15 @@ namespace nmdb.Endpoints.Films.FilmRole
                 {
                     PageNumber = 1,
                     PageSize = 4,
-                    SearchKeyword = "Focus"
+                    SearchKeyword = "Focus",
+                    //OrderByColumn = query => query.RoleName
                 };
             });
         }
 
         public override async Task HandleAsync(GetAllFilmRolesRequest request,
           CancellationToken cancellationToken)
-        {            
+        {
             var filmRolesQuery = unitOfWork.FilmRoleRepository.Get();
             var totalItems = await filmRolesQuery.CountAsync();
             var filmRoles = await filmRolesQuery
@@ -45,7 +46,7 @@ namespace nmdb.Endpoints.Films.FilmRole
                                                         fr.RoleCategory != null ? fr.RoleCategory.CategoryName : null,
                                                         fr.DisplayOrder))
                                         .ToListAsync();
-            
+
             var response = new PaginationResponse<FilmRoleResponse>
             {
                 Items = filmRoles,

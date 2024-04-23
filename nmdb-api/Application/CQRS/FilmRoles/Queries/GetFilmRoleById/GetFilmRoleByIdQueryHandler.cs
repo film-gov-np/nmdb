@@ -25,7 +25,7 @@ namespace Application.CQRS.FilmRoles.Queries.GetFilmRoleById
             var filmRole = await _unitOfWork.FilmRoleRepository.GetByIdAsync(request.FilmRoleId);
             if (filmRole == null)
             {
-                return ApiResponse<FilmRoleResponse>.ErrorResponse($"The film role with Id {request.FilmRoleId} was not found.", HttpStatusCode.BadRequest);
+                return ApiResponse<FilmRoleResponse>.ErrorResponse($"The film role with Id {request.FilmRoleId} was not found.", HttpStatusCode.NotFound);
                 //return Result.Failure<FilmRoleResponse>(new Error(
                 //    "FilmRole.NotFound",
                 //    $"The film role with Id {request.FilmRoleId} was not found."

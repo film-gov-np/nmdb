@@ -1,4 +1,10 @@
+using Application.CQRS.FilmRoles.Queries;
+using Application.Dtos;
+using Application.Dtos.FilterParameters;
+using Application.Helpers.Response;
 using Application.Interfaces;
+using Application.Interfaces.Services;
+using Azure.Core;
 using Core.Constants;
 using Core.Entities;
 using Infrastructure.Identity;
@@ -6,73 +12,58 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using nmdb.Common;
+using System.Linq.Expressions;
 using System.Security.Claims;
+using static Dapper.SqlMapper;
 
-namespace nmdb.Controllers
+namespace nmdb.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class FilmRoleController : AuthorizedController
 {
-    [ApiController]
-    //[TypeFilter(typeof(AuthorizeAccount))]
-    [Route("[controller]")]
-    public class FilmRoleController : AuthorizedController
+    private readonly ILogger<FilmRoleController> _logger;
+    private readonly IHttpContextAccessor _contextAccessor;
+    private readonly IFilmRoleService _filmRoleService;
+    private readonly IUnitOfWork _unitOfWork;
+    public FilmRoleController(ILogger<FilmRoleController> logger, IHttpContextAccessor contextAccessor,IFilmRoleService filmRoleService, IUnitOfWork unitOfWork)
     {
-        private readonly ILogger<FilmRoleController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        public FilmRoleController(ILogger<FilmRoleController> logger, IHttpContextAccessor contextAccessor)
-        {
-            _logger = logger;
-            _contextAccessor = contextAccessor;
-        }
+        _logger = logger;
+        _contextAccessor = contextAccessor;
+        _filmRoleService = filmRoleService;
+        _unitOfWork = unitOfWork;   
+    }
 
-        [HttpGet("GetFilmRoles")]
-        [Authorize(Roles = AuthorizationConstants.AdminRole)]
-        public async Task<object> GetFilmRoles(IUnitOfWork unitOfWork, int pageNo = 1, int pageSize = 10)
-        {
-            var user = HttpContext.User.Identity;
-            var roles = GetUserRoles;
+    [HttpGet("GetFilmRoles")]
+    [Authorize(Roles = AuthorizationConstants.AdminRole)]
+    public async Task<IActionResult> GetFilmRoles([FromQuery] FilmRoleFilterParameters filterParameters)
+    {
+        var response = await _filmRoleService.GetAll(filterParameters);        
+        return Ok(response);
+    }
 
-            var res = await unitOfWork.FilmRoleRepository.Get()
-                                                         .Include(g => g.RoleCategory)
-                                                         .OrderBy(fr => fr.RoleName)
-                                                         .Skip((pageNo - 1) * pageSize)
-                                                         .Take(pageSize)
-                                                         .ToListAsync();
-            return new
+    [HttpPost("AddFilmRoles")]
+    public async Task<object> AddFilmRoles()
+    {
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            FilmRole filmRole = new()
             {
-                FilmRoles = res.Select(fr => new
-                {
-                    fr.Id,
-                    fr.RoleName,
-                    fr.RoleCategory?.CategoryName,
-                    fr.RoleCategoryId,
-                    fr.CreatedAt,
-                    fr.CreatedBy
-                }).ToList()
+                RoleName = "another test role",
+                RoleCategoryId = 1,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = "test"
             };
+            await _unitOfWork.FilmRoleRepository.AddAsync(filmRole);
+            await _unitOfWork.CommitAsync();
+            return new { Success = true };
         }
-
-        [HttpPost("AddFilmRoles")]
-        public async Task<object> AddFilmRoles(IUnitOfWork unitOfWork)
+        catch (Exception ex)
         {
-            try
-            {
-                await unitOfWork.BeginTransactionAsync();
-                FilmRole filmRole = new()
-                {
-                    RoleName = "another test role",
-                    RoleCategoryId = 1,
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = "test"
-                };
-                await unitOfWork.FilmRoleRepository.AddAsync(filmRole);
-                await unitOfWork.CommitAsync();
-                return new { Success = true };
-            }
-            catch (Exception ex)
-            {
-                unitOfWork.Rollback();
-                return new { Success = false };
+            _unitOfWork.Rollback();
+            return new { Success = false };
 
-            }
         }
     }
 }

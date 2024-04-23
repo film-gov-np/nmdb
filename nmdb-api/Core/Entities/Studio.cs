@@ -15,4 +15,6 @@ public class Studio : BaseEntity<int>
     public string Chairman { get; set; }
     public bool IsActive { get; set; } = true;
     public bool IsCollasped { get; set; } = false;
+
+    public ICollection<MovieStudio> MovieStudios { get; set;} = new List<MovieStudio>();
 }

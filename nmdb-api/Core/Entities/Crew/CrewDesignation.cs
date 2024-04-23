@@ -11,3 +11,13 @@ public class CrewDesignation : BaseEntity<int>
     [MaxLength(5)]
     public string? Title { get; set; }
 }
+
+
+public class CrewRole : BaseEntity<int>
+{
+    public int CrewId { get; set; }
+    public  Crew Crew { get; set; }
+
+    public int RoleId { get; set; }
+    public FilmRole FilmRole { get; set; }
+}

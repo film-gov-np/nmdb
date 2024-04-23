@@ -25,5 +25,7 @@ namespace Core.Entities
         public int? DisplayOrder { get; set; }
         public string? WebsiteAddress { get; set; }
         public bool IsActive { get; set; }
+
+        public ICollection<MovieTheatre> MovieTheatres { get; set; } = new List<MovieTheatre>();
     }
 }

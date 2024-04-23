@@ -13,6 +13,7 @@ public static class DependencyInjection
     {
         // MediatR and other application services
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IFilmRoleService, FilmRoleService>();
         services.AddScoped<IFilmRoleCategoryService, FilmRoleCategoryService>();
         return services;
     }

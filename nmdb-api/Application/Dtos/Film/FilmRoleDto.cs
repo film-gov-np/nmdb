@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace Application.Dtos.Film
 {
-    internal class EFRepository
-    {
-    }
+public record FilmRoleDto(string RoleNames,string RoleCatgeoryId, int? DisplayOrder);
 }

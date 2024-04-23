@@ -14,5 +14,7 @@ namespace nmdb.Endpoints.Films.FilmRole
         //[QueryParam, BindFrom("searchKeyword")]
 
         public string? SearchKeyword { get; set; }
+        public string? Orderby { get; set; }
+        public string? SortColumn { get; set; }
     }
 }

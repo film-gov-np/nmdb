@@ -18,7 +18,7 @@ public class Movie : BaseEntity<int>
     public DateTime? ReleaseDate { get; set; }
     public string ReleaseDateBS { get; set; }
     public string Category { get; set; }
-    public string Status { get; set; }
+    public int Status { get; set; }
     public string Tagline { get; set; }
     public string OfficialSiteUrl { get; set; }
     public decimal? Budget { get; set; }
@@ -30,11 +30,18 @@ public class Movie : BaseEntity<int>
     public bool IsTrending { get; set; } = false;
     public bool IsFeatured { get; set; } = false;
 
-    private ICollection<MovieGenre> MovieGenres { get; set; }= new List<MovieGenre>();
+
+    // Navigational Properties
+    public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     [NotMapped]
     public ICollection<Genre> Genres => MovieGenres.Select(ml => ml.Genre).ToList();
 
     public ICollection<MovieLanguage> MovieLanguages { get; set; } = new List<MovieLanguage>();
     [NotMapped]
     public ICollection<Language> Languages => MovieLanguages.Select(ml => ml.Language).ToList();
+
+    public ICollection<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
+    public ICollection<MovieTheatre> MovieTheatres { get; set; } = new List<MovieTheatre>();
+    public ICollection<MovieStudio> MovieStudios { get; set; } = new List<MovieStudio>();
+
 }

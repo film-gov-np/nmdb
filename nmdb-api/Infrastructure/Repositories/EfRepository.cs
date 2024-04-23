@@ -1,5 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Application.Dtos.FilterParameters;
+using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Printing;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories
@@ -14,8 +16,84 @@ namespace Infrastructure.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = _context.Set<TEntity>();
         }
+        public virtual async Task<(IQueryable<TEntity> Query, int TotalItems)> GetWithFilter<TFilterParameters>(TFilterParameters filterParams,
+                    Expression<Func<TEntity, bool>> filter = null,
+                    Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                    Expression<Func<TEntity, object>> orderByColumn = null) where TFilterParameters : BaseFilterParameters
+        {
+            IQueryable<TEntity> query = filterParams.EnableNoTracking ? _dbSet.AsNoTracking() : _dbSet;
 
-        public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "", int? pageNumber = default(int?), int? pageSize = default(int?), bool enableNoTracking = true, bool ignoreQueryFilters = false)
+            if (filterParams.RetrieveAll)
+            {
+                if (orderByColumn != null)
+                {
+                    if (filterParams.Descending)
+                    {
+                        query = query.OrderByDescending(orderByColumn);
+                    }
+                    else
+                    {
+                        query = query.OrderBy(orderByColumn);
+                    }
+                }
+
+                return (query, await query.CountAsync());
+            }
+
+            if (filterParams.IgnoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrEmpty(filterParams.IncludeProperties))
+            {
+                var propertiesToInclude = filterParams.IncludeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProperty in propertiesToInclude)
+                {
+                    query = query.Include(includeProperty.Trim());
+                }
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            else if (orderByColumn != null)
+            {
+                if (filterParams.Descending)
+                {
+                    query = query.OrderByDescending(orderByColumn);
+                }
+                else
+                {
+                    query = query.OrderBy(orderByColumn);
+                }
+            }
+
+            int totalItems = await query.CountAsync();
+
+            // paginate the result
+            var skip = (filterParams.PageNumber - 1) * filterParams.PageSize;
+            query = query.Skip(skip).Take(filterParams.PageSize);
+
+
+            return (query, totalItems);
+        }
+        public virtual IQueryable<TEntity> Get(
+            Expression<Func<TEntity, bool>> filter = null
+            , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+            , Expression<Func<TEntity, object>> orderByColumn = null
+            , string includeProperties = ""
+            , int? pageNumber = default(int?)
+            , int? pageSize = default(int?)
+            , bool enableNoTracking = true
+            , bool ignoreQueryFilters = false
+            , bool descending = false)
         {
             IQueryable<TEntity> query = enableNoTracking ? _dbSet.AsNoTracking() : _dbSet;
 
@@ -40,7 +118,17 @@ namespace Infrastructure.Repositories
             {
                 query = orderBy(query);
             }
-
+            else if (orderByColumn != null)
+            {
+                if (descending)
+                {
+                    query = query.OrderByDescending(orderByColumn);
+                }
+                else
+                {
+                    query = query.OrderBy(orderByColumn);
+                }
+            }
             if (pageNumber != null && pageSize != null)
             {
                 var skip = ((int)pageNumber - 1) * (int)pageSize;

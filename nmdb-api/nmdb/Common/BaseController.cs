@@ -13,6 +13,10 @@ public class AuthorizedController : ControllerBase
     {
         get
         {
+            //Since we are using ASP.NET Identity,
+            //user claims are typically stored in the authentication cookie,
+            //and ASP.NET Identity middleware automatically populates HttpContext.
+            //User with these claims during the authentication process. 
             return User.FindFirst(ClaimTypes.Role)?.Value;
         }
     }

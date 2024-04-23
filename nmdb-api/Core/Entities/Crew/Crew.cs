@@ -46,4 +46,8 @@ public class Crew : BaseEntity<int>
     public int? ViewCount { get; set; }
     public bool IsVerified { get; set; } = false;
     public bool IsActive { get; set; } = false;
+
+    public ICollection<CrewRole> CrewRoles { get; set; } = new List<CrewRole>();
+    public ICollection<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
+
 }
