@@ -27,6 +27,7 @@ import AddMovie from "@/components/admin/pages/movies/AddMovie";
 import Celebrities from "@/components/landing/pages/celebrities/Celebrities";
 import CelebritiesDetails from "@/components/landing/pages/celebrities/CelebrityDetail";
 import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
+import { default as MoviesHome } from "@/components/landing/pages/movies/Movies";
 
 export const routes = [
   {
@@ -190,7 +191,7 @@ export const routes = [
       {
         name: "movies",
         title: "Movies page",
-        component: Movies,
+        component: MoviesHome,
         path: Paths.Route_Movies,
         isPublic: true,
         routes: [

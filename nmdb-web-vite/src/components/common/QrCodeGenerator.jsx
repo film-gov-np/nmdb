@@ -13,8 +13,9 @@ import QRCode from "react-qr-code";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
+import { QrCode } from "lucide-react";
 
-const QrCodeGenerator = ({ url }) => {
+const QrCodeGenerator = ({ url, details }) => {
   const qrBlockRef = useRef(null);
   const downloadQRCode = () => {
     toJpeg(qrBlockRef.current)
@@ -31,7 +32,7 @@ const QrCodeGenerator = ({ url }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">QR card</Button>
+        <Button variant="outline" size="sm" className="p-2" ><QrCode className="h-6 w-6 rounded-lg" /></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -58,10 +59,10 @@ const QrCodeGenerator = ({ url }) => {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-xl font-medium leading-none">
-                    Rajesh Hamal
+                    {details.name}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Actor Producer
+                    {details.known_for_department}
                   </p>
                 </div>
               </div>
