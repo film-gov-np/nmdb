@@ -199,7 +199,8 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext />
+            <CarouselNext className="-right-9"/>
+
           </Carousel>
         </div>
       </div>
@@ -297,7 +298,7 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext />
+            <CarouselNext className="-bottom-9" />
           </Carousel>
         </div>
       </div>

@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { ModeToggle } from "../mode-toggle";
+import Footer from "../landing/Footer";
 
 const MainLayout = () => {
   return (
@@ -100,6 +101,7 @@ const MainLayout = () => {
             </div>
           </header>
           <Outlet />
+          <Footer />
         </div>
       </div>
     </div>

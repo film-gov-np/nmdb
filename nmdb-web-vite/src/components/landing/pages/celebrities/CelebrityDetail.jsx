@@ -69,12 +69,13 @@ const CelebritiesDetails = () => {
               <img
                 src={
                   celebDetails.profile_path
-                    ? "https://image.tmdb.org/t/p/w500/" + celebDetails.profile_path
+                    ? "https://image.tmdb.org/t/p/w500/" +
+                      celebDetails.profile_path
                     : "/placeholder.svg"
                 }
                 alt={celebDetails.name}
                 className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
-                onError={(e)=>(e.target.src="/placeholder.svg")}
+                onError={(e) => (e.target.src = "/placeholder.svg")}
               />
               <div className="flex flex-1 flex-col gap-4 ">
                 <div className="flex flex-row space-x-4">
@@ -156,6 +157,7 @@ const CelebritiesDetails = () => {
                               aspectRatio="portrait"
                               width={150}
                               height={210}
+                              navigateTo={Paths.Route_Movies +"/"+ cast.id}
                             />
                           ))}
                     </div>
@@ -165,24 +167,30 @@ const CelebritiesDetails = () => {
               </div>
               <div className="space-y-4">
                 <h3 className="text-2xl font-bold ">Filmography</h3>
-                <div className="grid gap-8 rounded-lg border border-input p-4 md:grid-cols-2 lg:grid-cols-3 line-clamp-5">
-                  {celebDetails?.combined_credits?.cast.map((cast) => (
-                    <div
-                      key={"flimography" + (cast.title || cast.name)}
-                      className="flex flex-row items-center space-x-3 "
-                    ><CircleIcon className="h-1.5 w-1.5 fill-foreground " />
-                      <div className="" >
-                        <NavLink to={Paths.Route_Movies + "/" + cast.id}>
-                          <h3 className="text-md font-bold ">
-                            {cast.title || cast.name}
-                          </h3>
-                        </NavLink>
-                        <p className="text-xs text-muted-foreground">
-                          {cast.release_date || cast.first_air_date}
-                        </p>
-                      </div>
+                <div className="rounded-lg border border-input p-1">
+                  <ScrollArea viewPortClass="max-h-[620px]">
+                    <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">
+                      {celebDetails?.combined_credits?.cast.map((cast) => (
+                        <div
+                          key={"flimography" + (cast.title || cast.name)}
+                          className="flex flex-row items-center space-x-3 "
+                        >
+                          <CircleIcon className="h-1.5 w-1.5 fill-foreground " />
+                          <div className="">
+                            <NavLink to={Paths.Route_Movies + "/" + cast.id}>
+                              <h3 className="text-md font-bold ">
+                                {cast.title || cast.name}
+                              </h3>
+                            </NavLink>
+                            <p className="text-xs text-muted-foreground">
+                              {cast.release_date || cast.first_air_date}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                    <ScrollBar orientation="vertical" />
+                  </ScrollArea>
                 </div>
               </div>
             </div>
