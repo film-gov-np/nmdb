@@ -9,6 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Endpoints\Films\**" />
+    <Compile Remove="Endpoints\Movies\**" />
+    <Content Remove="Endpoints\Films\**" />
+    <Content Remove="Endpoints\Movies\**" />
+    <EmbeddedResource Remove="Endpoints\Films\**" />
+    <EmbeddedResource Remove="Endpoints\Movies\**" />
+    <None Remove="Endpoints\Films\**" />
+    <None Remove="Endpoints\Movies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CoreAdmin" Version="3.0.0" />

@@ -47,7 +47,7 @@ public class FilmRoleService : IFilmRoleService
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.RoleName.Contains(filterParameters.SearchKeyword));
         }
 
-        if (filterParameters.SortColumn != null)
+        if (!string.IsNullOrEmpty(filterParameters.SortColumn))
         {
             switch (filterParameters.SortColumn.ToLower())
             {

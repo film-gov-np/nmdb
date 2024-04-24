@@ -19,7 +19,7 @@ using static Dapper.SqlMapper;
 namespace nmdb.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/film/")]
 public class FilmRoleController : AuthorizedController
 {
     private readonly ILogger<FilmRoleController> _logger;
@@ -34,7 +34,7 @@ public class FilmRoleController : AuthorizedController
         _unitOfWork = unitOfWork;   
     }
 
-    [HttpGet("GetFilmRoles")]
+    [HttpGet("roles")]
     [Authorize(Roles = AuthorizationConstants.AdminRole)]
     public async Task<IActionResult> GetFilmRoles([FromQuery] FilmRoleFilterParameters filterParameters)
     {
@@ -42,7 +42,7 @@ public class FilmRoleController : AuthorizedController
         return Ok(response);
     }
 
-    [HttpPost("AddFilmRoles")]
+    [HttpPost("role")]
     public async Task<object> AddFilmRoles()
     {
         try

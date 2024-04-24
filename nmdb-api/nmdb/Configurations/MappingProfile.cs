@@ -4,7 +4,6 @@ using Application.Dtos.Auth;
 using AutoMapper;
 using Core.Entities;
 using Infrastructure.Identity;
-using nmdb.Endpoints.Films.FilmRole;
 
 namespace nmdb.Configurations
 {
@@ -12,7 +11,7 @@ namespace nmdb.Configurations
     {
         public MappingProfile()
         {
-            CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();
+            //CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();
             CreateMap<ApplicationUser, AuthenticateResponse>();
             CreateMap<RegisterRequest, ApplicationUser>();
             CreateMap<CreateRequest, ApplicationUser>();

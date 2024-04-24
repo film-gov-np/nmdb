@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Application.Helpers.Response;
 using Application.Interfaces.Services;
+using Application.Dtos.FilterParameters;
+using Microsoft.AspNetCore.Mvc;
 
 namespace nmdb.Endpoints.Films.FilmRole
 {
-    public class GetAll(IUnitOfWork unitOfWork, AutoMapper.IMapper mapper)
-        : Endpoint<GetAllFilmRolesRequest>
+    public class GetAll(IFilmRoleService filmRoleService, AutoMapper.IMapper mapper)
+        : Endpoint<FilmRoleFilterParameters>
     {
         public override void Configure()
         {
@@ -20,41 +22,20 @@ namespace nmdb.Endpoints.Films.FilmRole
             Roles(AuthorizationConstants.AdminRole);
             Summary(s =>
             {
-                s.ExampleRequest = new GetAllFilmRolesRequest
+                s.ExampleRequest = new FilmRoleFilterParameters
                 {
                     PageNumber = 1,
                     PageSize = 4,
                     SearchKeyword = "Focus",
-                    //OrderByColumn = query => query.RoleName
+                    SortColumn="RoleName"
                 };
             });
         }
 
-        public override async Task HandleAsync(GetAllFilmRolesRequest request,
+        public override async Task HandleAsync([FromQuery] FilmRoleFilterParameters request,
           CancellationToken cancellationToken)
         {
-            var filmRolesQuery = unitOfWork.FilmRoleRepository.Get();
-            var totalItems = await filmRolesQuery.CountAsync();
-            var filmRoles = await filmRolesQuery
-                                        .Include(g => g.RoleCategory)
-                                        .OrderBy(fr => fr.RoleName)
-                                        .Skip((request.PageNumber - 1) * request.PageSize)
-                                        .Take(request.PageSize)
-                                        .Select(fr => new FilmRoleResponse(
-                                                        fr.Id,
-                                                        fr.RoleName,
-                                                        fr.RoleCategory != null ? fr.RoleCategory.CategoryName : null,
-                                                        fr.DisplayOrder))
-                                        .ToListAsync();
-
-            var response = new PaginationResponse<FilmRoleResponse>
-            {
-                Items = filmRoles,
-                TotalItems = totalItems,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize
-            };
-
+            var response = await filmRoleService.GetAll(request);
             Response = response;
         }
     }
