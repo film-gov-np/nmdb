@@ -5,6 +5,7 @@ using AutoMapper;
 using Azure.Core;
 using BCrypt.Net;
 using Core;
+using Core.Constants;
 using Infrastructure.Data;
 using Infrastructure.Identity.Security.TokenGenerator;
 using Microsoft.AspNetCore.Identity;
@@ -187,16 +188,18 @@ namespace Infrastructure.Identity.Services
                 CreatedBy = "superuser@nmdb.com" // Handle this by getting email from jwt claims
             };
 
-            var result = await _userManager.CreateAsync(userToRegister, request.Password);
+            var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
 
-            if (result.Succeeded)
+            if (registrationResult.Succeeded)
             {
+                var created_user = await _userManager.FindByEmailAsync(request.Email);
+                await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
                 var account = _mapper.Map<ApplicationUser>(request);
                 account.VerificationToken = await generateVerificationToken();
                 await sendVerificationEmail(account, request.Password);
                 return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
             }
-            var errorMessage = string.Join(", ", result.Errors);
+            var errorMessage = string.Join(", ", registrationResult.Errors);
             return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
         }
 
