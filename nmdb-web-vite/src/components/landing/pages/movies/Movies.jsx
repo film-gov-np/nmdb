@@ -38,12 +38,7 @@ const Movies = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
-      queryKey: [
-        "movies",
-        currentPage,
-        "searchMovies",
-        debouncedSearchTerm,
-      ],
+      queryKey: ["movies" + currentPage, "searchMovies" + debouncedSearchTerm],
       queryFn: () => getCelebList(currentPage, debouncedSearchTerm),
       keepPreviousData: true,
     });
@@ -53,9 +48,7 @@ const Movies = () => {
       <div className="relative ">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-5xl font-semibold tracking-tight">
-              Movies
-            </h2>
+            <h2 className="text-5xl font-semibold tracking-tight">Movies</h2>
           </div>
           <form className="ml-auto flex-1 sm:flex-initial">
             <div className="relative">
@@ -112,4 +105,3 @@ const Movies = () => {
 };
 
 export default Movies;
-

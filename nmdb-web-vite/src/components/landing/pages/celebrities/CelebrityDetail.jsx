@@ -69,7 +69,7 @@ const CelebritiesDetails = () => {
               <img
                 src={
                   celebDetails.profile_path
-                    ? "https://image.tmdb.org/t/p/w500/" +
+                    ? "https://image.tmdb.org/t/p/original/" +
                       celebDetails.profile_path
                     : "/placeholder.svg"
                 }

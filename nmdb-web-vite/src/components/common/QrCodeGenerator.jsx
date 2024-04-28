@@ -22,7 +22,7 @@ const QrCodeGenerator = ({ url, details }) => {
       .then(function (dataUrl) {
         const link = document.createElement("a");
         link.href = dataUrl;
-        link.download = "rajesh_hamal.jpeg";
+        link.download = details.name + ".jpeg";
         link.click();
       })
       .catch(function (error) {
@@ -32,17 +32,19 @@ const QrCodeGenerator = ({ url, details }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="p-2" ><QrCode className="h-6 w-6 rounded-lg" /></Button>
+        <Button variant="outline" size="sm" className="p-2">
+          <QrCode className="h-6 w-6 rounded-lg" />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>QR Code</DialogTitle>
         </DialogHeader>
-        <div className="my-2 overflow-hidden" ref={qrBlockRef}>
-          <div className="rounded-lg border border-input p-6">
-            <div className="grid grid-flow-row  gap-2 ">
+        <div className="my-2 overflow-hidden" >
+          <div className=" border border-input p-6" ref={qrBlockRef}>
+            <div className="grid grid-flow-row items-center justify-center  gap-2 ">
               {url && (
-                <div className="m-2 h-auto max-w-xs rounded-lg bg-white p-6">
+                <div className="mx-auto max-h-[18rem] max-w-[18rem] rounded-lg bg-white p-6">
                   <QRCode
                     value={url}
                     size={256}
@@ -52,18 +54,34 @@ const QrCodeGenerator = ({ url, details }) => {
                 </div>
               )}
               <Separator className="my-8" />
-              <div className="flex  items-center gap-4">
-                <Avatar className="flex h-12 w-12">
-                  <AvatarImage src="/avatars/01.png" alt="Avatar" />
+              <div className="flex  items-start gap-4">
+                <Avatar className="flex h-36 w-28 rounded-lg">
+                  <AvatarImage
+                    src={
+                      "https://image.tmdb.org/t/p/original/" +
+                      details.profile_path
+                    }
+                    alt="Avatar"
+                  />
                   <AvatarFallback>RH</AvatarFallback>
                 </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-xl font-medium leading-none">
-                    {details.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {details.known_for_department}
-                  </p>
+                <div className="grid gap-4">
+                  <div className="grid gap-1">
+                    <p className="text-xl font-medium leading-none">
+                      {details.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {details.known_for_department}
+                    </p>
+                  </div>
+                  <div className="grid gap-1">
+                    <span className="text-md font-medium leading-none">
+                      Address
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      {details.place_of_birth}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

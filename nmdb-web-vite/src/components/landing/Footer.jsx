@@ -1,5 +1,5 @@
 import { Paths } from "@/constants/routePaths";
-import { Facebook, Mail, MapPin, Phone, Smartphone, Youtube } from "lucide-react";
+import { Facebook, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Separator } from "../ui/separator";
@@ -7,22 +7,24 @@ import { TwitterLogoIcon } from "@radix-ui/react-icons";
 
 const Footer = () => {
   return (
-    <footer className="mt-12 bg-muted/20 px-12 pt-12 shadow-lg content-baseline">
+    <footer className="mt-12 bg-muted/20 px-4 md:px-6 lg:px-12 pt-12 shadow-lg content-baseline">
       <div className="mx-auto grid w-full max-w-screen-2xl gap-6 p-4 py-6 lg:py-8">
-        <div className="grid md:grid-cols-[5fr_2px_4fr] md:gap-8">
-          <div className="space-y-8">
-            <div>
-              <img src="/nmdb-logo.png" class="max-h-28 max-w-sm" alt="NMDB" />
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_2px_4fr] gap-8">
+          <div className="flex flex-col  items-center lg:items-start">
+            <div className="space-y-6">
+                <div>
+                  <img src="/nmdb-logo.png" className="max-h-28 max-w-[16rem] sm:max-w-xs md:max-w-sm" alt="NMDB" />
+                </div>
+                <p className="max-w-lg text-sm text-muted-foreground">
+                  Film Development Board (FDB) is established on 30 June 2000 by the
+                  Government of Nepal according to the existed Motion Picture
+                  (Production, Exhibition and Distribution) Act amended on 20th
+                  November 1991.
+                </p>
             </div>
-            <p className="max-w-lg text-sm text-muted-foreground">
-              Film Development Board (FDB) is established on 30 June 2000 by the
-              Government of Nepal according to the existed Motion Picture
-              (Production, Exhibition and Distribution) Act amended on 20th
-              November 1991.
-            </p>
           </div>
-          <Separator orientation="vertical" />
-          <div className="flex justify-evenly">
+          <Separator className="hidden lg:block"  orientation="vertical" />
+          <div className="flex space-x-4 justify-evenly ">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold leading-none tracking-tight ">
                 Useful Links
@@ -46,7 +48,7 @@ const Footer = () => {
               <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <NavLink to={"tel:014812387"} className="flex items-center hover:underline">
-                    <Phone className="mr-4 h-4 w-4" />
+                    <Phone className="mr-1 lg:mr-4 h-4 w-4" />
                     +977 1 4812332, 4812387
                   </NavLink>
                 </li>
@@ -55,13 +57,13 @@ const Footer = () => {
                     to={"mailto:nmdb@gmail.com"}
                     className="flex items-center hover:underline"
                   >
-                    <Mail className="mr-4 h-4 w-4" />
+                    <Mail className="mr-1 lg:mr-4 h-4 w-4" />
                     nmdb@gmail.com
                   </NavLink>
                 </li>
                 <li>
                   <div className="flex items-center">
-                    <MapPin className="mr-4 h-4 w-4" />
+                    <MapPin className="mr-1 lg:mr-4 h-4 w-4" />
                     Chabahil, Kathmandu, Nepal
                   </div>
                 </li>
@@ -71,7 +73,7 @@ const Footer = () => {
         </div>
         <Separator />
         <div className="grid gap-8 grid-flow-col justify-evenly">
-          <span class="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground">
             © {new Date().getFullYear()}{" "}
             <NavLink to="https://flim.gov.np" className="hover:underline">
               Flim Development Board

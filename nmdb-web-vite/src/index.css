@@ -86,3 +86,23 @@
 nav.sidebar-nav a.active{
   @apply bg-muted;
 }
+
+/* width */
+::-webkit-scrollbar {
+  @apply w-3.5;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-500/40 rounded-lg;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-zinc-400/40;
+}

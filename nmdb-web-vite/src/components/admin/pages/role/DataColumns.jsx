@@ -29,7 +29,19 @@ export const labels = [
   },
 ];
 
-export const facetedFilters = [];
+export const facetedFilters = [{
+  name: "categoryName",
+  filters: [
+    {
+      value: "Writer",
+      label: "Writer",
+    },
+    {
+      value: "Visual Effects",
+      label: "Visual Effects",
+    },
+  ],
+},];
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;
@@ -137,16 +149,6 @@ export const columns = [
     cell: ({ row }) => <div className="">{row.getValue("categoryName")}</div>,
     enableGlobalFilter: true,
   },
-  {
-    accessorKey: "createdBy",
-    meta: "Created By",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created By" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("createdBy")}</div>,
-    enableGlobalFilter: true,
-  },
-
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

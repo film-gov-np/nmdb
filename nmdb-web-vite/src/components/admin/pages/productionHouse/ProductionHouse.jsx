@@ -1,4 +1,4 @@
-import { DataTableAdvancedWithServerPagination } from "@/components/ui/custom/data-table/data-table-advanced-server-paginated";
+import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { Paths } from "@/constants/routePaths";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -49,7 +49,7 @@ const ProductionHouse = () => {
             label={"production house"}
             pathTo={Paths.Route_Admin_ProductionHouse_Add}
           />
-          <DataTableAdvancedWithServerPagination
+          <DataTableAdvancedServerControlled
             searchKey="country"
             pageNo={page}
             columns={columns}

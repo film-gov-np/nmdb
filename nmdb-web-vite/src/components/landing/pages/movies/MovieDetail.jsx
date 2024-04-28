@@ -82,12 +82,12 @@ const MovieDetail = () => {
       {movie && (
         <div className="grid grid-cols-1">
           <div
-            className="flex min-h-[60vh] items-center justify-between bg-cover bg-center shadow-2xl lg:min-h-[70vh] "
+            className="flex min-h-[60vh] items-center justify-between bg-cover bg-center shadow-2xl lg:min-h-[75vh] "
             style={{
-              backgroundImage: `url("https://image.tmdb.org/t/p/w500/${movie.poster_path}")`,
+              backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie.backdrop_path}")`,
             }}
           >
-            <div className="grid h-full w-full items-center gap-6 bg-zinc-900/50 p-4 filter backdrop-blur-lg  backdrop-grayscale backdrop-opacity-75 md:grid-cols-[3fr_5fr] md:gap-4  md:p-10 lg:grid-cols-[1fr_3fr]">
+            <div className="grid h-full w-full items-center gap-6 bg-stone-900/60  p-4 filter backdrop-blur-md  backdrop-opacity-75 md:grid-cols-[3fr_5fr] md:gap-4  md:p-10 lg:grid-cols-[1fr_3fr]">
               <div className="mx-auto max-w-sm md:max-w-xs">
                 <img
                   src={
