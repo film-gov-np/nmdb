@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+} from "@/components/ui/table";
+import {  useState } from "react";
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -24,7 +24,6 @@ import { useDebouncedState } from "@/hooks/useDebouncedState";
 import axiosInstance from "@/helpers/axiosSetup";
 import { DataTableSkeleton } from "./data-table-skeleton";
 import ListPageHeader from "@/components/admin/ListPageHeader";
-import { Paths } from "@/constants/routePaths";
 import NoDataComponent from "@/components/admin/NoDataComponent";
 
 const defaultQueryParameters = {
@@ -77,7 +76,7 @@ export function DataTableAdvancedServerControlled({
   queryParameters = defaultQueryParameters,
   nameLabel = "",
   addNewPath = "",
-  pageSizeOptions = [10, 20, 30, 40, 50],
+  pageSizeOptions,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -239,7 +238,7 @@ export function DataTableAdvancedServerControlled({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
     </div>
   );
 }
