@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {  useState } from "react";
+import { useState } from "react";
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -41,7 +41,7 @@ const generateQueryPath = ({
   debouncedGlobalFilter,
   columnFilters,
 }) => {
-  console.log(columnFilters);
+  console.log("column-filters", columnFilters);
   let queryPath = `?PageNumber=${pageIndex + 1}&PageSize=${pageSize}&id=1`;
   if (sorting[0]?.id) {
     queryPath += `&SortColumn=${sorting[0]?.id}&Descending=${sorting[0]?.desc}`;
@@ -56,11 +56,11 @@ const getDataFromServer = async (apiPath, parameters) => {
   const data = await axiosInstance
     .get(apiPath + generateQueryPath(parameters))
     .then((response) => {
-      console.log(response);
+      console.log("data", response);
       return response.data;
     })
     .catch((error) => {
-      console.log(error);
+      console.log("error", error);
       return [];
     });
   return {
@@ -98,8 +98,6 @@ export function DataTableAdvancedServerControlled({
     queryParameters.sortColumn,
     queryParameters.descending ? "desc" : "asc",
   ];
-  console.log(column, order);
-
   // Handle server side sorting
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: fallbackPage - 1,
@@ -181,8 +179,8 @@ export function DataTableAdvancedServerControlled({
         shrinkZero
       />
     );
-  if (totalDataCount === 0)
-    return <NoDataComponent label={nameLabel} pathTo={addNewPath} />;
+  // if (totalDataCount === 0)
+  //   return <NoDataComponent label={nameLabel} pathTo={addNewPath} />;
   if (isError) return `Error: ${error}`;
   return (
     <div className="space-y-4">
