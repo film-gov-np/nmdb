@@ -25,7 +25,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<FilmRole> FilmRoles { get; set; }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Crew> Crews { get; set; }
-    public DbSet<CrewRole> CrewRoles { get; set; }
+    public DbSet<CrewDesignation> CrewRoles { get; set; }
     public DbSet<MovieCrewRole> MovieCrewRoles { get; set; }
     public DbSet<MovieGenre> MovieGenre { get; set; }
     public DbSet<MovieLanguage> MovieLanguages { get; set; }
@@ -53,15 +53,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 
         // Crew Role/Designation
-        builder.Entity<CrewRole>()
+        builder.Entity<CrewDesignation>()
             .HasKey(cr => new { cr.CrewId, cr.RoleId });
 
-        builder.Entity<CrewRole>()
+        builder.Entity<CrewDesignation>()
             .HasOne(cr => cr.Crew)
-            .WithMany(c => c.CrewRoles)
+            .WithMany(c => c.CrewDesignations)
             .HasForeignKey(cr => cr.CrewId);
 
-        builder.Entity<CrewRole>()
+        builder.Entity<CrewDesignation>()
             .HasOne(cr => cr.FilmRole)
             .WithMany(r => r.CrewRoles)
             .HasForeignKey(cr => cr.RoleId);

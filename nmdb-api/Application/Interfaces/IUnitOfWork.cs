@@ -8,6 +8,7 @@ namespace Application.Interfaces
         IRolesRepository RolesRepository { get; }
         IFilmRoleRepository FilmRoleRepository { get; }
         IFilmRoleCategoryRepository FilmRoleCategoryRepository { get; }
+        ICrewRepository CrewRepository { get; }
         Task CommitAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync();
         void Rollback();

@@ -2,7 +2,7 @@ import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-t
 import { Paths } from "@/constants/routePaths";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { columns, facetedFilters } from "./DataColumns";
+import { columns, facetedFilters } from "./dataColumns";
 import { DataTableSkeleton } from "@/components/ui/custom/data-table/data-table-skeleton";
 import NoDataComponent from "../../NoDataComponent";
 import ListPageHeader from "../../ListPageHeader";
@@ -18,7 +18,7 @@ const ProductionHouse = () => {
   const fetchPost = () => {
     fetch(
       `https://api.slingacademy.com/v1/sample-data/users?offset=${offset}&limit=${pageLimit}` +
-        (country ? `&search=${country}` : ""),
+      (country ? `&search=${country}` : ""),
     )
       .then((res) => res.json())
       .then((res) => {

@@ -124,7 +124,7 @@ public class RestService : IService
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
-            var paginated_res = new PaginatedResult<T2>
+            var paginated_res = new PaginationResponseOld<T2>
             {
                 Data = _mapper.Map<IList<T2>>(result),
                 TotalCount = totalCount,

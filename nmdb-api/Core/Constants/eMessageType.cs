@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Constants
 {
-    public enum MessageType
+    public enum eMessageType
     {
         Success, Error, Warning, Info
     }

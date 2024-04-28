@@ -16,7 +16,7 @@ namespace Infrastructure.Identity.Services
         Task ForgotPassword(ForgotPasswordRequest model);
         Task ValidateResetToken(ValidateResetTokenRequest model);
         Task ResetPassword(ResetPasswordRequest model);
-        Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword);
+        Task<PaginationResponseOld<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword);
         Task<AccountResponse> GetByIdx(string idx);
         Task<AccountResponse> GetById(string id);
         Task<AccountResponse> Create(CreateRequest model);

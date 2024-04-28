@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Core.Constants;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,27 +11,38 @@ namespace Core.Entities;
 
 public class Movie : BaseEntity<int>
 {
+    [MaxLength(255)]
     public string Name { get; set; }
+    [MaxLength(255)]
+
     public string NepaliName { get; set; }
     public int? Runtime { get; set; }
-    public string Color { get; set; }
+    [MaxLength(100)]
+    public string? Color { get; set; }
     public DateTime? ShootingDate { get; set; }
-    public string ShootingDateBS { get; set; }
+    [MaxLength(16)]
+    public string? ShootingDateBS { get; set; }
     public DateTime? ReleaseDate { get; set; }
-    public string ReleaseDateBS { get; set; }
-    public string Category { get; set; }
-    public int Status { get; set; }
-    public string Tagline { get; set; }
-    public string OfficialSiteUrl { get; set; }
+    [MaxLength(16)]
+    public string? ReleaseDateBS { get; set; }
+    [MaxLength(50)]
+    public string Category { get; set; } = "Movie";
+    public eMovieStatus Status { get; set; } = eMovieStatus.Released;    
+    [MaxLength(255)]
+    public string? OfficialSiteUrl { get; set; }
     public decimal? Budget { get; set; }
-    public string FilmingLocation { get; set; }
-    public string OneLiner { get; set; }
-    public string Image { get; set; }
-    public string FullMovieLink { get; set; }
-    public string TrailerLink { get; set; }
+    [MaxLength(255)]
+    public string? FilmingLocation { get; set; }   
+    public string Tagline { get; set; }
+    public string OneLiner{ get; set; }
+    [MaxLength(255)]
+    public string? Image { get; set; }
+    [MaxLength(255)]
+    public string? FullMovieLink { get; set; }
+    [MaxLength(255)]
+    public string? TrailerLink { get; set; }
     public bool IsTrending { get; set; } = false;
     public bool IsFeatured { get; set; } = false;
-
 
     // Navigational Properties
     public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();

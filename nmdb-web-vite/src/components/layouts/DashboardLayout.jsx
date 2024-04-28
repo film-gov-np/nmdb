@@ -106,6 +106,7 @@ const DashboardLayout = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
+                    localStorage.clear();
                     setIsAuthorized(false);
                     navigate(Paths.Route_Home);
                   }}

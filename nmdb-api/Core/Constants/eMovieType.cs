@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants;
 
-public enum MovieType
+public enum eMovieType
 {
     Celluloid = 1,
     Digital,

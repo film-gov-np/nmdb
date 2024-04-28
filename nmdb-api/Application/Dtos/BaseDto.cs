@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Constants
+namespace Application.Dtos
 {
-    public enum ePostTypes
+    public class BaseDto
     {
-        POST, GET
+        public string Authorship { get; set; } = "";
+
+
     }
 }
