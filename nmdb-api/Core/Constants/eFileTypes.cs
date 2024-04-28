@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Core.Constants
 {
-    public enum MovieStatus
+    public enum eFileTypes
     {
-        Released = 1,
-        Unreleased,
-        PostProduction,
-        Censored,
-        Unknown,
-        ComingSoon
+        Image = 1,
+        Video,
+        Audio,
+        Document,
+        Other
     }
 }

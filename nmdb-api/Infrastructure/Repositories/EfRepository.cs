@@ -16,7 +16,8 @@ namespace Infrastructure.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = _context.Set<TEntity>();
         }
-        public virtual async Task<(IQueryable<TEntity> Query, int TotalItems)> GetWithFilter<TFilterParameters>(TFilterParameters filterParams,
+        public virtual async Task<(IQueryable<TEntity> Query, int TotalItems)> GetWithFilter<TFilterParameters>(
+                    TFilterParameters filterParams = null,
                     Expression<Func<TEntity, bool>> filter = null,
                     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                     Expression<Func<TEntity, object>> orderByColumn = null) where TFilterParameters : BaseFilterParameters

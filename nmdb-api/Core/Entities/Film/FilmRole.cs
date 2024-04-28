@@ -18,7 +18,7 @@ namespace Core.Entities
         public string RoleName { get; set; }
         public int? DisplayOrder { get; set; }
 
-        public ICollection<CrewRole> CrewRoles { get; set; } = new List<CrewRole>();
+        public ICollection<CrewDesignation> CrewRoles { get; set; } = new List<CrewDesignation>();
         public ICollection<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
 
     }

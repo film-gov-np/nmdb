@@ -11,8 +11,8 @@ namespace Application.Interfaces.Services
 {
     public interface IFileService
     {
-        public Task<ApiResponse<UploadResult>> UploadFile(FileDTO model, string webRootPath);
-        public bool RemoveFile(string filename, string webRootPath);
+        Task<ApiResponse<UploadResult>> UploadFile(FileDTO model);
+        bool RemoveFile(string filename);
 
         //public Task<ApiResponse<IList<MediaDTO>>> GetByFilter(FilterBase filter);
         //public Task<ApiResponse<MediaDTO>> GetById(int id);

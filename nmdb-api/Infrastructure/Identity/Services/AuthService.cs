@@ -254,7 +254,7 @@ namespace Infrastructure.Identity.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword)
+        public async Task<PaginationResponseOld<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword)
         {
             var query = _context.Users.AsQueryable();
             query = query.Where(p => (p.FirstName.Contains(keyword) || p.LastName.Contains(keyword) || p.Email.Contains(keyword)));
@@ -265,7 +265,7 @@ namespace Infrastructure.Identity.Services
                 .Take(pageSize)
                 .ToList();
 
-            var result = new PaginatedResult<AccountResponse>
+            var result = new PaginationResponseOld<AccountResponse>
             {
                 Data = _mapper.Map<IList<AccountResponse>>(Users),
                 TotalCount = totalCount,

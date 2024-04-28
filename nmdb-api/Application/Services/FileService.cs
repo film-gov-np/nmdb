@@ -7,6 +7,7 @@ using Core;
 using Core.Constants;
 using Core.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,16 @@ namespace Application.Services
 {
     public class FileService : IFileService
     {
-        public async Task<ApiResponse<UploadResult>> UploadFile(FileDTO model, string webRootPath)
+        private readonly string _uploadFolderPath;
+        public FileService(IConfiguration configuration)
+        {
+            _uploadFolderPath = configuration["UploadFolderPath"];
+            if (!Directory.Exists(_uploadFolderPath))
+            {
+                Directory.CreateDirectory(_uploadFolderPath);
+            }
+        }
+        public async Task<ApiResponse<UploadResult>> UploadFile(FileDTO model)
         {
             if (model.Files == null || model.Files.Length == 0)
             {
@@ -29,7 +39,7 @@ namespace Application.Services
             if (fileValid.Valid)
             {
                 string savePath = GetFilePath(fileValid.FileType);
-                string path = Path.Combine(webRootPath, savePath);
+                string path = Path.Combine(_uploadFolderPath, savePath);
                 string fileName = helper.GetFileNewName(model.Files.FileName, path, model.ReadableName);
                 if (!Directory.Exists(path))
                 {
@@ -53,7 +63,7 @@ namespace Application.Services
 
                 //If image file and thumbnail is set to true, 
                 //create thumbnai of different sizes(small,medium and large)
-                if (fileValid.FileType == FileTypes.Image && model.Thumbnail)
+                if (fileValid.FileType == eFileTypes.Image && model.Thumbnail)
                 {
 
                     string pathThumbSm = Path.Combine(path, "small");
@@ -85,14 +95,14 @@ namespace Application.Services
 
         }
 
-        public bool RemoveFile(string filename, string webRootPath)
+        public bool RemoveFile(string filename)
         {
             try
             {
                 FileHelper fileHelper = new FileHelper();
                 var fileValid = fileHelper.EnsureValidFile(filename);
                 string filePath = GetFilePath(fileValid.FileType);// later take filetype input for media management
-                var file = Path.Combine(webRootPath, string.Concat(filePath, '\\', filename));
+                var file = Path.Combine(_uploadFolderPath, string.Concat(filePath, '\\', filename));
                 if (File.Exists(file))
                     File.Delete(file);
 
@@ -105,25 +115,25 @@ namespace Application.Services
             }
         }
 
-        private static string GetFilePath(FileTypes fileType)
+        private static string GetFilePath(eFileTypes fileType)
         {
             string savePath;
             switch (fileType)
             {
-                case FileTypes.Image:
-                    savePath = Path.Combine("upload", "img");
+                case eFileTypes.Image:
+                    savePath = Path.Combine("uploads", "img");
                     break;
-                case FileTypes.Video:
-                    savePath = Path.Combine("upload", "video");
+                case eFileTypes.Video:
+                    savePath = Path.Combine("uploads", "video");
                     break;
-                case FileTypes.Audio:
-                    savePath = Path.Combine("upload", "audio");
+                case eFileTypes.Audio:
+                    savePath = Path.Combine("uploads", "audio");
                     break;
-                case FileTypes.Document:
-                    savePath = Path.Combine("upload", "doc");
+                case eFileTypes.Document:
+                    savePath = Path.Combine("uploads", "doc");
                     break;
                 default:
-                    savePath = Path.Combine("upload", "other");
+                    savePath = Path.Combine("uploads", "other");
                     break;
             }
             return savePath;

@@ -17,5 +17,6 @@ public interface IFilmRoleService
     Task<bool> Update(int Id, FilmRoleCategoryDto filmRoleDto);
     Task<FilmRoleResponse> GetById(int roleId);
     Task<bool> DeleteById(string roleId);
-    Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filmRoleFilterParameters);
+    Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filterParameters);
+    //Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filmRoleFilterParameters);
 }

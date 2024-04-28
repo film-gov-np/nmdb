@@ -28,7 +28,7 @@ public interface IAccountService
     Task ForgotPassword(ForgotPasswordRequest model);
     Task ValidateResetToken(ValidateResetTokenRequest model);
     Task ResetPassword(ResetPasswordRequest model);
-    Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword);
+    Task<PaginationResponseOld<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword);
     Task<AccountResponse> GetByIdx(string idx);
     Task<AccountResponse> GetById(int id);
     Task<AccountResponse> Create(CreateRequest model);
@@ -244,7 +244,7 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<PaginatedResult<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword)
+    public async Task<PaginationResponseOld<AccountResponse>> GetAll(int pageNumber, int pageSize, string keyword)
     {
         var query = _context.Accounts.AsQueryable();
         query = query.Where(p => (p.FirstName.Contains(keyword) || p.LastName.Contains(keyword) || p.Email.Contains(keyword)));
@@ -255,7 +255,7 @@ public class AccountService : IAccountService
             .Take(pageSize)
             .ToList();
 
-        var result = new PaginatedResult<AccountResponse>
+        var result = new PaginationResponseOld<AccountResponse>
         {
             Data = _mapper.Map<IList<AccountResponse>>(accounts),
             TotalCount = totalCount,

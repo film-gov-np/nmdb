@@ -16,7 +16,7 @@ namespace Core.Helper.Extensions
         /// <param name="httpContext">httpContext</param>
         /// <param name="message">message  to be shown</param>
         /// <param name="messageType">Type of message : MessageType </param>
-        public static void ShowMessage(this IHttpContextAccessor httpContextAccessor, string message, MessageType messageType)
+        public static void ShowMessage(this IHttpContextAccessor httpContextAccessor, string message, eMessageType messageType)
         {
             if (httpContextAccessor.HttpContext != null)
             {

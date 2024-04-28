@@ -5,5 +5,5 @@ namespace Application.Dtos.Media;
 public class FileValidationResult
 {
     public bool Valid { get; set; }
-    public FileTypes FileType { get; set; }
+    public eFileTypes FileType { get; set; }
 }

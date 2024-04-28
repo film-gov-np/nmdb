@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public class PaginatedResult<T>
+    public class PaginationResponseOld<T>
     {
         public IEnumerable<T> Data { get; set; }
         public int TotalCount { get; set; }

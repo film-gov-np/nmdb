@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Constants
+namespace Application.Dtos;
+
+public class CrewResponseDto : CrewDto
 {
-    public enum ePostTypes
-    {
-        POST, GET
-    }
 }

@@ -86,40 +86,40 @@ namespace Application.Helpers
         public FileValidationResult EnsureValidFile(string fileName, string allowedExtensions = "")
         {
             string ext = Path.GetExtension(fileName);
-            FileValidationResult validationResult = new FileValidationResult() { FileType = FileTypes.Other };
+            FileValidationResult validationResult = new FileValidationResult() { FileType = eFileTypes.Other };
             if (string.IsNullOrEmpty(allowedExtensions))
             {
                 if (AllowedUploadFiles.Image.Contains(ext.ToLower()))
                 {
                     validationResult.Valid = true;
-                    validationResult.FileType = FileTypes.Image;
+                    validationResult.FileType = eFileTypes.Image;
                 }
                 else if (AllowedUploadFiles.Video.Contains(ext))
                 {
                     validationResult.Valid = true;
-                    validationResult.FileType = FileTypes.Video;
+                    validationResult.FileType = eFileTypes.Video;
                 }
                 else if (AllowedUploadFiles.Audio.Contains(ext))
                 {
                     validationResult.Valid = true;
-                    validationResult.FileType = FileTypes.Audio;
+                    validationResult.FileType = eFileTypes.Audio;
                 }
                 else if (
               AllowedUploadFiles.Document.Contains(ext))
                 {
                     validationResult.Valid = true;
-                    validationResult.FileType = FileTypes.Document;
+                    validationResult.FileType = eFileTypes.Document;
                 }
                 else if (AllowedUploadFiles.OtherFiles.Contains(ext))
                 {
                     validationResult.Valid = true;
-                    validationResult.FileType = FileTypes.Other;
+                    validationResult.FileType = eFileTypes.Other;
                 }
             }
             else
             {
                 List<string> AllowedStringList = allowedExtensions.Split(",").ToList();
-                validationResult.FileType = FileTypes.Other;
+                validationResult.FileType = eFileTypes.Other;
                 validationResult.Valid = AllowedStringList.Exists(x => x.Trim().ToLower() == ext.Trim().ToLower());
             }
             return validationResult;
