@@ -13,7 +13,7 @@ namespace Neptics.Application.Helpers
             CreateMap<FilmRole, CreateFilmRoleCommand>().ReverseMap();
             CreateMap<FilmRoleCategory, FilmRoleCategoryDto>().ReverseMap();
             CreateMap<FilmRole, FilmRoleResponse>().ReverseMap();
-            CreateMap<FilmRole, FilmRoleDto>().ReverseMap();
+            CreateMap<FilmRole, FilmRoleRequest>().ReverseMap();
             //CreateMap<List<FilmRoleCategory>, List<FilmRoleCategoryDto>>().ReverseMap();
             //CreateMap<UserProfile,UserDTO>().ReverseMap();
             //CreateMap<User, UserDTO>().ReverseMap();

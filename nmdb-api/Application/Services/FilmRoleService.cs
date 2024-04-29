@@ -4,6 +4,7 @@ using Application.Dtos.FilterParameters;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Services;
+using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Entities;
@@ -19,36 +20,45 @@ public class FilmRoleService : IFilmRoleService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<FilmRoleService> _logger;
+    //private readonly FilmRoleRequestValidator _filmRoleValidator;
 
     public FilmRoleService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FilmRoleService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        //_filmRoleValidator = filmRoleValidator;
     }
 
-    public async Task<ApiResponse<FilmRoleDto>> CreateAsync(FilmRoleDto filmRoleDto)
+    public async Task<ApiResponse<string>> CreateAsync(FilmRoleRequest filmRoleDto)
     {
+        //// Validate the filmRoleDto using FluentValidation
+        //var validationResult = await _filmRoleValidator.ValidateAsync(filmRoleDto);
+        //if (!validationResult.IsValid)
+        //{
+        //    // If validation fails, return a response with validation errors
+        //    return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
+        //}
         try
         {
             var filmRole = _mapper.Map<FilmRole>(filmRoleDto);
             await _unitOfWork.FilmRoleRepository.AddAsync(filmRole);
             await _unitOfWork.CommitAsync();
-            return ApiResponse<FilmRoleDto>.SuccessResponse(filmRoleDto, "Film role created successfully.", HttpStatusCode.Created);
+            return ApiResponse<string>.SuccessResponseWithoutData("Film role created successfully.", HttpStatusCode.Created);
         }
         catch (AppException ex)
         {
             _logger.LogError(ex, "An error occurred while creating the film role.");
-            return ApiResponse<FilmRoleDto>.ErrorResponse
+            return ApiResponse<string>.ErrorResponse
             (
                 new List<string> { "An error occurred while creating the film role." },
                 HttpStatusCode.InternalServerError
             );
         }
     }
-    public async Task<ApiResponse<FilmRoleDto>> UpdateAsync(int roleId, FilmRoleDto filmRoleDto)
+    public async Task<ApiResponse<string>> UpdateAsync(int roleId, FilmRoleRequest filmRoleDto)
     {
-        var response = new ApiResponse<FilmRoleDto>();
+        var response = new ApiResponse<string>();
 
         try
         {
@@ -56,7 +66,7 @@ public class FilmRoleService : IFilmRoleService
 
             if (filmRole == null)
             {
-                return ApiResponse<FilmRoleDto>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
+                return ApiResponse<string>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(filmRoleDto, filmRole);
@@ -64,23 +74,21 @@ public class FilmRoleService : IFilmRoleService
             await _unitOfWork.FilmRoleRepository.UpdateAsync(filmRole);
             await _unitOfWork.CommitAsync();
 
-            response = ApiResponse<FilmRoleDto>
-                .SuccessResponse(_mapper.Map<FilmRoleDto>(filmRole)
-                , "Film role updated successfully."
-                );
+            response = ApiResponse<string>
+                .SuccessResponseWithoutData("Film role updated successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while updating a film role.");
-            response = ApiResponse<FilmRoleDto>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
+            response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
         }
 
         return response;
     }
 
-    public async Task<ApiResponse<FilmRoleDto>> UpdateDisplayOrderAsync(int roleId, int displayOrder)
+    public async Task<ApiResponse<string>> UpdateDisplayOrderAsync(int roleId, int displayOrder)
     {
-        var response = new ApiResponse<FilmRoleDto>();
+        var response = new ApiResponse<string>();
 
         try
         {
@@ -88,7 +96,7 @@ public class FilmRoleService : IFilmRoleService
 
             if (filmRole == null)
             {
-                return ApiResponse<FilmRoleDto>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
+                return ApiResponse<string>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
             }
 
             filmRole.DisplayOrder = displayOrder;
@@ -96,13 +104,13 @@ public class FilmRoleService : IFilmRoleService
             await _unitOfWork.FilmRoleRepository.UpdateAsync(filmRole);
             await _unitOfWork.CommitAsync();
 
-            response = ApiResponse<FilmRoleDto>
+            response = ApiResponse<string>
                 .SuccessResponse(data: null, message: $"Film role's display order updated to '{displayOrder}'.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while updating display order of the film role.");
-            response = ApiResponse<FilmRoleDto>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
+            response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
         }
 
         return response;

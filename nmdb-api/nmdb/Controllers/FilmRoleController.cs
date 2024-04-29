@@ -62,11 +62,11 @@ public class FilmRoleController : AuthorizedController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] FilmRoleDto filmRoleDto)
+    public async Task<IActionResult> Create([FromBody] FilmRoleRequest filmRoleDto)
     {
         if (filmRoleDto == null)
         {
-            return BadRequest(ApiResponse<FilmRoleDto>.ErrorResponse("Invalid film role data.", HttpStatusCode.BadRequest));
+            return BadRequest(ApiResponse<FilmRoleRequest>.ErrorResponse("Invalid film role data.", HttpStatusCode.BadRequest));
         }
 
         var result = await _filmRoleService.CreateAsync(filmRoleDto);
@@ -82,7 +82,7 @@ public class FilmRoleController : AuthorizedController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] FilmRoleDto filmRoleDto)
+    public async Task<IActionResult> Update(int id, [FromBody] FilmRoleRequest filmRoleDto)
     {
         var result = await _filmRoleService.UpdateAsync(id, filmRoleDto);
 
