@@ -15,7 +15,8 @@ public interface IFilmRoleService
 {
     Task<ApiResponse<FilmRoleDto>> CreateAsync(FilmRoleDto filmRoleDto);
     Task<ApiResponse<FilmRoleDto>> UpdateAsync(int Id, FilmRoleDto filmRoleDto);
+    Task<ApiResponse<FilmRoleDto>> UpdateDisplayOrderAsync(int roleId, int displayOrder);
     Task<ApiResponse<FilmRoleResponse>> GetByIdAsync(int roleId);
-    Task<ApiResponse<bool>> DeleteByIdAsync(int roleId);
-    Task<PaginationResponse<FilmRoleResponse>> GetAllAsync(FilmRoleFilterParameters filterParameters);
+    Task<ApiResponse<string>> DeleteByIdAsync(int roleId);
+    Task<ApiResponse<PaginationResponse<FilmRoleResponse>>> GetAllAsync(FilmRoleFilterParameters filterParameters);
 }

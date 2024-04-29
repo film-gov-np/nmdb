@@ -63,10 +63,10 @@ namespace Infrastructure.Repositories
             if (orderBy != null)
             {
                 query = orderBy(query);
-            }
+}
             else if (orderByColumn != null)
             {
-                if (filterParams.Descending)
+                            if (filterParams.Descending)
                 {
                     query = query.OrderByDescending(orderByColumn);
                 }
