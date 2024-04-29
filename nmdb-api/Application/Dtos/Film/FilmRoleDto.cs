@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos.Film
 {
-public record FilmRoleDto(string RoleNames,string RoleCatgeoryId, int? DisplayOrder);
+public record FilmRoleDto(int? Id, string RoleName,int RoleCategoryId, int? DisplayOrder);
 }

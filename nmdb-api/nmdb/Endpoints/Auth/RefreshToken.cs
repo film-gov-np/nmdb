@@ -56,11 +56,15 @@ public class RefreshToken
 
             setTokenCookie(refreshTokenResponse.JwtToken, refreshTokenResponse.RefreshToken);
 
-            Response = ApiResponse<AuthenticateResponse>.SuccessResponse(refreshTokenResponse, "Token refreshed successfully.");
+            await SendOkAsync(ApiResponse<AuthenticateResponse>.SuccessResponse(refreshTokenResponse, "Token refreshed successfully."));
         }
         catch (Exception ex)
         {
-            Response = ApiResponse<AuthenticateResponse>.ErrorResponse("Something went wrong while refreshing token.", HttpStatusCode.BadGateway);
+            // Log errrors
+            await SendAsync(ApiResponse<AuthenticateResponse>
+                .ErrorResponse(ex.Message
+                , HttpStatusCode.Unauthorized),
+                (int)HttpStatusCode.Unauthorized, cancellationToken);
         }
     }
     private void setTokenCookie(string accessToken, string refreshToken = "")

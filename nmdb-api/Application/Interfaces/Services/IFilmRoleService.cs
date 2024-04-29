@@ -13,10 +13,9 @@ namespace Application.Interfaces.Services;
 
 public interface IFilmRoleService
 {
-    Task<bool> Create(FilmRoleDto filmRoleDto);
-    Task<bool> Update(int Id, FilmRoleCategoryDto filmRoleDto);
-    Task<FilmRoleResponse> GetById(int roleId);
-    Task<bool> DeleteById(string roleId);
-    Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filterParameters);
-    //Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filmRoleFilterParameters);
+    Task<ApiResponse<FilmRoleDto>> CreateAsync(FilmRoleDto filmRoleDto);
+    Task<ApiResponse<FilmRoleDto>> UpdateAsync(int Id, FilmRoleDto filmRoleDto);
+    Task<ApiResponse<FilmRoleResponse>> GetByIdAsync(int roleId);
+    Task<ApiResponse<bool>> DeleteByIdAsync(int roleId);
+    Task<PaginationResponse<FilmRoleResponse>> GetAllAsync(FilmRoleFilterParameters filterParameters);
 }

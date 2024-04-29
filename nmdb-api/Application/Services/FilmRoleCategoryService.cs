@@ -53,11 +53,11 @@ public class FilmRoleCategoryService : IFilmRoleCategoryService
         throw new NotImplementedException();
     }
 
-    public async Task<ApiResponse<List<FilmRoleCategoryDto>>> GetAll()
+    public async Task<List<FilmRoleCategoryDto>> GetAllAsync()
     {
-        var filmRoleCategoryList = await _service.List<FilmRoleCategory,FilmRoleCategoryDto>();
+        var filmRoleCategoryList = await _service.List<FilmRoleCategory, FilmRoleCategoryDto>();
         var filmRoleCategoryListDto = _mapper.Map<List<FilmRoleCategoryDto>>(filmRoleCategoryList);
-        return ApiResponse<List<FilmRoleCategoryDto>>.SuccessResponse(data: filmRoleCategoryListDto);
+        return filmRoleCategoryListDto;
     }
 
     public async Task<ApiResponse<FilmRoleCategoryDto>> GetById(int roleId)

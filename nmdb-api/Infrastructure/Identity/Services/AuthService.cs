@@ -342,26 +342,26 @@ namespace Infrastructure.Identity.Services
 
         private async Task<ApplicationUser> getAccount(string idx)
         {
-            var account = _context.Users.SingleOrDefault(u => u.Id == idx);
+            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.Id == idx);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
         private async Task<ApplicationUser> getAccountById(string id)
         {
-            var account = _context.Users.SingleOrDefault(u => u.Id == id);
+            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.Id == id);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
         private async Task<ApplicationUser> getAccountByRefreshToken(string token)
         {
-            var account = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
             if (account == null) throw new AppException("Invalid token");
             return account;
         }
 
         private async Task<ApplicationUser> getAccountByResetToken(string token)
         {
-            var account = _context.Users.SingleOrDefault(x =>
+            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
             if (account == null) throw new AppException("Invalid token");
             return account;
@@ -373,7 +373,7 @@ namespace Infrastructure.Identity.Services
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
             // ensure token is unique by checking against db
-            var tokenIsUnique = !_context.Users.Any(x => x.ResetToken == token);
+            var tokenIsUnique = !_userManager.Users.Any(x => x.ResetToken == token);
             if (!tokenIsUnique)
                 return await generateResetToken();
 
@@ -386,7 +386,7 @@ namespace Infrastructure.Identity.Services
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
             // ensure token is unique by checking against db
-            var tokenIsUnique = !_context.Users.Any(x => x.VerificationToken == token);
+            var tokenIsUnique = !_userManager.Users.Any(x => x.VerificationToken == token);
             if (!tokenIsUnique)
                 return await generateVerificationToken();
 
