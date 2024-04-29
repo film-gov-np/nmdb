@@ -63,6 +63,28 @@ const renderModes = {
   Render_Mode_Details: "details",
 };
 
+const getFlimRole = async (id) => {
+  let apiPath = `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`;
+  if (debouncedSearchTerm) {
+    apiPath = `https://api.themoviedb.org/3/search/movie?query=${debouncedSearchTerm}&include_adult=true&language=en-US&page=${page}`;
+  }
+  const response = await axios
+    .get(apiPath, {
+      headers: {
+        accept: "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZWQzN2IzZTg2NjNlOTU4ZTEwMDc1OGM2NTI4ODFhNyIsInN1YiI6IjY2MjYzNzMzN2E5N2FiMDE2MzhkNWQ1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5GUH1UisCLdYilrhHLQPDWyPLyifw6GWhcloNhzEptM",
+      },
+    })
+    .catch((err) => console.error(err));
+  const totalData = response.data.total_results;
+  const data = response.data.results;
+  return {
+    movies: data,
+    totalData,
+  };
+};
+
 const CreateRole = () => {
   const { slug } = useParams();
   const { pathname } = useLocation();
@@ -74,6 +96,13 @@ const CreateRole = () => {
     renderMode = renderModes.Render_Mode_Edit;
   else renderMode = renderModes.Render_Mode_Details;
   const { toast } = useToast();
+
+  const { isLoading, data, isError, isFetching, isPreviousData, error } =
+    useQuery({
+      queryKey: ["movies" + currentPage, "searchMovies" + debouncedSearchTerm],
+      queryFn: () => getCelebList(currentPage, debouncedSearchTerm),
+      keepPreviousData: true,
+    });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
