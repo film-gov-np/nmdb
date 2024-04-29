@@ -28,6 +28,7 @@ import Celebrities from "@/components/landing/pages/celebrities/Celebrities";
 import CelebritiesDetails from "@/components/landing/pages/celebrities/CelebrityDetail";
 import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
 import { default as MoviesHome } from "@/components/landing/pages/movies/Movies";
+import CreateRole from "@/components/admin/pages/role/CreateRole";
 
 export const routes = [
   {
@@ -90,6 +91,29 @@ export const routes = [
             component: Role,
             path: Paths.Route_Admin_Role,
             isPublic: false,
+            routes: [
+              {
+                name: "RoleAdd",
+                title: "Role Add page",
+                component: CreateRole,
+                path: Paths.Route_Admin_Role_Add,
+                isPublic: false,
+              },
+              {
+                name: "RoleEdit",
+                title: "Role Edit page",
+                component: CreateRole,
+                path: Paths.Route_Admin_Role+ "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "RoleDetail",
+                title: "Role Detail page",
+                component: CreateRole,
+                path: Paths.Route_Admin_Role+ "/:slug",
+                isPublic: false,
+              },
+            ],
           },
           {
             name: "productionHouse",

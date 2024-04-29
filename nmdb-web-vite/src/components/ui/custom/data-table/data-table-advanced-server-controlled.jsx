@@ -25,6 +25,8 @@ import axiosInstance from "@/helpers/axiosSetup";
 import { DataTableSkeleton } from "./data-table-skeleton";
 import ListPageHeader from "@/components/admin/ListPageHeader";
 import NoDataComponent from "@/components/admin/NoDataComponent";
+import ErrorBanner from "@/components/common/ErrorBanner";
+import { DataTableSkeletonTableRows } from "./data-table-skeleton-table-rows";
 
 const defaultQueryParameters = {
   pageNumber: 1,
@@ -61,7 +63,7 @@ const getDataFromServer = async (apiPath, parameters) => {
     })
     .catch((error) => {
       console.log("error", error);
-      return [];
+      throw error;
     });
   return {
     roles: data.items,
@@ -141,7 +143,7 @@ export function DataTableAdvancedServerControlled({
     setGlobalFilter(data);
   };
   const table = useReactTable({
-    data: data?.roles,
+    data: data?.roles || [],
     columns,
     pageCount: pageCount ?? -1,
     state: {
@@ -169,73 +171,89 @@ export function DataTableAdvancedServerControlled({
     manualFiltering: true,
     manualSorting: true,
   });
-  if (isLoading || isFetching)
+  // if (isLoading)
+  //   return (
+  //     <DataTableSkeleton
+  //       columnCount={5}
+  //       searchableColumnCount={1}
+  //       filterableColumnCount={2}
+  //       cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem"]}
+  //       shrinkZero
+  //     />
+  //   );
+  if (data?.roles === 0)
+    return <NoDataComponent label={nameLabel} pathTo={addNewPath} />;
+  if (isError)
     return (
-      <DataTableSkeleton
-        columnCount={5}
-        searchableColumnCount={1}
-        filterableColumnCount={2}
-        cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem"]}
-        shrinkZero
-      />
+      <>
+        <ListPageHeader label={nameLabel} pathTo={addNewPath} />
+
+        <ErrorBanner />
+      </>
     );
-  // if (totalDataCount === 0)
-  //   return <NoDataComponent label={nameLabel} pathTo={addNewPath} />;
-  if (isError) return `Error: ${error}`;
   return (
     <div className="space-y-4">
       <ListPageHeader label={nameLabel} pathTo={addNewPath} />
       <DataTableToolbar table={table} facetedFilters={facetedFilters} />
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+
+      {isFetching || isLoading ? (
+        <DataTableSkeletonTableRows
+        columnCount={4}
+        cellWidths={["8rem", "40rem", "12rem", "12rem"]}
+        shrinkZero
+      />
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
       <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
     </div>
   );

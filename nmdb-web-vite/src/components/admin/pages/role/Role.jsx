@@ -13,7 +13,7 @@ const Role = () => {
         facetedFilters={facetedFilters}
         nameLabel="role"
         addNewPath={Paths.Route_Admin_Role_Add}
-        pageSizeOptions={[10,25,50,75,100]}
+        pageSizeOptions={[10, 25, 50, 75, 100]}
       />
     </main>
   );
