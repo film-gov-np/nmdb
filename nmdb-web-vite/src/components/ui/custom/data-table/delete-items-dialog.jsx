@@ -13,16 +13,51 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useTransition } from "react"
-import { useToast } from "../../use-toast"
+import { useToast } from "@/components/ui/use-toast"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import axiosInstance from "@/helpers/axiosSetup"
+
+
+const deleteItems = async ({apiBasePath, itemsToDelete}) => {
+  const itemId = itemsToDelete[0].original.id 
+  console.log("delete", itemId)
+  let apiPath = `${apiBasePath}/${itemId}`;
+  const { data } = await axiosInstance
+  .delete(apiPath)
+  .then((response) => {
+    console.log("api-response-delete", response);
+
+    return response;
+  })
+  .catch((err) => console.error(err));
+  return data;
+}
 
 export function DeleteItemsDialog({
   selectedData,
   onSuccess,
   showTrigger = true,
+  apiBasePath,
   ...props}
 ) {
   const [isDeletePending, startDeleteTransition] = useTransition()
+  const queryClient = useQueryClient()
   const {toast} = useToast()
+
+  const {mutate} = useMutation(
+    {
+      mutationFn: deleteItems,
+      onSuccess: (data, variables, context) => {
+        toast({description:"Successfully deleted the role."})
+      },
+      onError: (error, variables, context) => {
+        toast({description:"Something went wrong.Please try again."})
+      },
+      onSettled: (data, error, variables, context) => {
+        queryClient.invalidateQueries('delete');
+      }
+      
+  })
 
   return (
     <Dialog {...props}>
@@ -57,15 +92,7 @@ export function DeleteItemsDialog({
               variant="destructive"
               onClick={() => {
                 startDeleteTransition(() => {
-                  toast({
-                    title: "You submitted the following values:",
-                    description: (
-                      <pre className="mt-2 w-[440px] max-h-96 rounded-md bg-slate-950 p-4">
-                        <code className="text-white">{JSON.stringify(selectedData, null, 2)}</code>
-                      </pre>
-                    ),
-                  });
-                  
+                  mutate({apiBasePath, itemsToDelete:selectedData})
                   onSuccess()
                 })
               }}

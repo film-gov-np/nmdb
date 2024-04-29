@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Paths } from "@/constants/routePaths";
 
 export const labels = [
   {
@@ -53,6 +54,7 @@ function DataTableRowActions({ row }) {
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}
         showTrigger={false}
+        apiBasePath = {"/film/role"}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
       <TooltipProvider>
@@ -70,7 +72,7 @@ function DataTableRowActions({ row }) {
                 <span className="sr-only">View Details</span>
               </NavLink>
             </TooltipTrigger>
-            <TooltipContent side="top">Edit</TooltipContent>
+            <TooltipContent side="top">Details</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>

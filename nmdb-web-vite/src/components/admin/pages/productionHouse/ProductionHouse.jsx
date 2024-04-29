@@ -3,7 +3,7 @@ import { Paths } from "@/constants/routePaths";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { columns, facetedFilters } from "./dataColumns";
-import { DataTableSkeleton } from "@/components/ui/custom/data-table/data-table-skeleton";
+import { DataTableSkeleton } from "@/components/ui/custom/skeleton/data-table-skeleton";
 import NoDataComponent from "../../NoDataComponent";
 import ListPageHeader from "../../ListPageHeader";
 

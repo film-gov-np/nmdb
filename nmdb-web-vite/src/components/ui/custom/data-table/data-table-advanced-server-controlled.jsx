@@ -22,11 +22,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 import axiosInstance from "@/helpers/axiosSetup";
-import { DataTableSkeleton } from "./data-table-skeleton";
+import { DataTableSkeleton } from "../skeleton/data-table-skeleton";
 import ListPageHeader from "@/components/admin/ListPageHeader";
 import NoDataComponent from "@/components/admin/NoDataComponent";
 import ErrorBanner from "@/components/common/ErrorBanner";
-import { DataTableSkeletonTableRows } from "./data-table-skeleton-table-rows";
+import { DataTableSkeletonTableRows } from "../skeleton/data-table-skeleton-table-rows";
 
 const defaultQueryParameters = {
   pageNumber: 1,
@@ -198,10 +198,10 @@ export function DataTableAdvancedServerControlled({
 
       {isFetching || isLoading ? (
         <DataTableSkeletonTableRows
-        columnCount={4}
-        cellWidths={["8rem", "40rem", "12rem", "12rem"]}
-        shrinkZero
-      />
+          columnCount={4}
+          cellWidths={["8rem", "40rem", "12rem", "12rem"]}
+          shrinkZero
+        />
       ) : (
         <div className="rounded-md border">
           <Table>
