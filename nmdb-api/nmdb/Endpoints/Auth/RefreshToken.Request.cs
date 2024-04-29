@@ -5,8 +5,7 @@ namespace nmdb.Endpoints.Auth
 {
     public class RefreshTokenRequest
     {
-        public const string Route = "api/auth/refresh";
-        [FromBody]
+        public const string Route = "api/auth/refresh";        
         public string RefreshToken { get; set; }
         public RefreshTokenRequest(string refreshToken)
         {
