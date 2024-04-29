@@ -14,6 +14,7 @@ import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Paths } from "@/constants/routePaths";
+import { ApiPaths } from "@/constants/apiPaths";
 
 export const labels = [
   {
@@ -54,7 +55,7 @@ function DataTableRowActions({ row }) {
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}
         showTrigger={false}
-        apiBasePath = {"/film/role"}
+        apiBasePath = {ApiPaths.Path_FlimRoles_Delete}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
       <TooltipProvider>

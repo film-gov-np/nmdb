@@ -44,7 +44,7 @@ const generateQueryPath = ({
   columnFilters,
 }) => {
   console.log("column-filters", columnFilters);
-  let queryPath = `?PageNumber=${pageIndex + 1}&PageSize=${pageSize}&id=1`;
+  let queryPath = `?PageNumber=${pageIndex + 1}&PageSize=${pageSize}`;
   if (sorting[0]?.id) {
     queryPath += `&SortColumn=${sorting[0]?.id}&Descending=${sorting[0]?.desc}`;
   }
@@ -59,7 +59,7 @@ const getDataFromServer = async (apiPath, parameters) => {
     .get(apiPath + generateQueryPath(parameters))
     .then((response) => {
       console.log("data", response);
-      return response.data;
+      return response.data.data;
     })
     .catch((error) => {
       console.log("error", error);

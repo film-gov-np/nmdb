@@ -33,6 +33,8 @@ import { Input } from "@/components/ui/input";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
+import { ApiPaths } from "@/constants/apiPaths";
+import { useState } from "react";
 
 const formSchema = z.object({
   roleName: z.string().min(2, {
@@ -48,7 +50,7 @@ const renderModes = {
 };
 
 const getFlimRole = async (id, renderMode) => {
-  let apiPath = `/film/role/${id}`;
+  let apiPath = `${ApiPaths.Path_FilmRoles}/${id}`;
   let data = {};
   if (renderMode === renderModes.Render_Mode_Create)
     return { roleName: "", roleCategoryId: "" };
@@ -56,7 +58,6 @@ const getFlimRole = async (id, renderMode) => {
     .get(apiPath)
     .then((response) => {
       console.log("api-response", response.data);
-
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -70,7 +71,7 @@ const getFlimRole = async (id, renderMode) => {
 };
 
 const getCategories = async () => {
-  let apiPath = "/film/role-categories";
+  let apiPath = ApiPaths.Path_Flim_RoleCategories;
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
@@ -84,7 +85,7 @@ const getCategories = async () => {
 
 const createOrEditRole = async ({ postData, isEditMode, slug }) => {
   debugger;
-  let apiPath = `/film/role`;
+  let apiPath = ApiPaths.Path_FilmRoles;
   if (isEditMode) {
     apiPath += "/" + slug;
     postData.id = slug;
@@ -150,26 +151,37 @@ const CreateRole = () => {
       slug,
     });
   };
-
-  if (isLoading || isFetching || categories.isLoading || categories.isFetching)
-    return (
-      <FormSkeleton
-        columnCount={4}
-        cellWidths={["8rem", "40rem", "12rem", "12rem"]}
-        shrinkZero
-      />
-    );
+  // let isContentLoading = true
+  // if (isLoading || isFetching || categories.isLoading || categories.isFetching)
+  //   return (
+  //     <div>
+  //       <AddPageHeader label="role" pathTo={Paths.Route_Admin_Role} />
+  //       <FormSkeleton
+  //         columnCount={4}
+  //         cellWidths={["8rem", "40rem", "12rem", "12rem"]}
+  //         shrinkZero
+  //       />
+  //     </div>
+  //   );
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="role" pathTo={Paths.Route_Admin_Role} />
-      {data &&categories && (
-        <RoleForm
-          role={data}
-          categories={categories.data}
-          renderMode={renderMode}
-          onSubmit={onSubmit}
-        />
+      {isLoading ||
+      isFetching ||
+      categories.isLoading ||
+      categories.isFetching ? (
+        <FormSkeleton columnCount={2} rowCount={1} repeat={1} shrinkZero />
+      ) : (
+        data &&
+        categories && (
+          <RoleForm
+            role={data}
+            categories={categories.data}
+            renderMode={renderMode}
+            onSubmit={onSubmit}
+          />
+        )
       )}
     </main>
   );
@@ -177,6 +189,7 @@ const CreateRole = () => {
 
 function RoleForm({ role, categories, renderMode, onSubmit }) {
   debugger;
+  const [openCategorySelection, setOpenCategorySelection] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -203,7 +216,11 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Category</FormLabel>
-                  <Popover className="py-2">
+                  <Popover
+                    className="py-2"
+                    open={openCategorySelection}
+                    onOpenChange={setOpenCategorySelection}
+                  >
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -235,6 +252,7 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                                 key={"category" + id}
                                 onSelect={() => {
                                   form.setValue("roleCategoryId", id);
+                                  setOpenCategorySelection(false);
                                 }}
                               >
                                 <Check
