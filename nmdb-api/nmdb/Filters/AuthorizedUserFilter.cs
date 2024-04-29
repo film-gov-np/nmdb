@@ -49,7 +49,8 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                 }
             }
         }
-        else            
-            context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse(MessageConstants.Unauthorized, HttpStatusCode.Unauthorized));
+        return;
+        //else            
+        //    context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse(MessageConstants.Unauthorized, HttpStatusCode.Unauthorized));
     }
 }

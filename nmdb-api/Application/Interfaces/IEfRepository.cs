@@ -21,7 +21,7 @@ public interface IEfRepository<TEntity> where TEntity : class
     Task<bool> DeleteAsync(object id);
     Task<(IQueryable<TEntity> Query, int TotalItems)> GetWithFilter<TFilterParameters>(
         TFilterParameters filterParams = null,
-        Expression<Func<TEntity, bool>> filter = null,
+        Expression<Func<TEntity, bool>> filterExpression = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-        Expression<Func<TEntity, object>> orderByColumn = null) where TFilterParameters : BaseFilterParameters;
+        Expression<Func<TEntity, object>> orderByColumnExpression = null) where TFilterParameters : BaseFilterParameters;
 }

@@ -4,38 +4,110 @@ using Application.Dtos.FilterParameters;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Services;
+using Application.Models;
+using AutoMapper;
+using Core;
 using Core.Entities;
+using Core.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using static Dapper.SqlMapper;
+using System.Net;
 
 namespace Application.Services;
 
 public class FilmRoleService : IFilmRoleService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly ILogger<FilmRoleService> _logger;
 
-    public FilmRoleService(IUnitOfWork unitOfWork)
+    public FilmRoleService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FilmRoleService> logger)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _logger = logger;
     }
 
-    public Task<bool> Create(FilmRoleDto filmRoleDto)
+    public async Task<ApiResponse<FilmRoleDto>> CreateAsync(FilmRoleDto filmRoleDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var filmRole = _mapper.Map<FilmRole>(filmRoleDto);
+            await _unitOfWork.FilmRoleRepository.AddAsync(filmRole);
+            await _unitOfWork.CommitAsync();
+            return ApiResponse<FilmRoleDto>.SuccessResponse(filmRoleDto, "Film role created successfully.", HttpStatusCode.Created);
+        }
+        catch (AppException ex)
+        {
+            _logger.LogError(ex, "An error occurred while creating the film role.");
+            return ApiResponse<FilmRoleDto>.ErrorResponse
+            (
+                new List<string> { "An error occurred while creating the film role." },
+                HttpStatusCode.InternalServerError
+            );
+        }
     }
-
-    public Task<bool> DeleteById(string roleId)
+    public async Task<ApiResponse<FilmRoleDto>> UpdateAsync(int roleId, FilmRoleDto filmRoleDto)
     {
-        throw new NotImplementedException();
+        var response = new ApiResponse<FilmRoleDto>();
+
+        try
+        {
+            var filmRole = await _unitOfWork.FilmRoleRepository.GetByIdAsync(roleId);
+
+            if (filmRole == null)
+            {
+                return ApiResponse<FilmRoleDto>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
+            }
+
+            _mapper.Map(filmRoleDto, filmRole);
+            await _unitOfWork.FilmRoleRepository.UpdateAsync(filmRole);
+            await _unitOfWork.CommitAsync();
+
+            response = ApiResponse<FilmRoleDto>.SuccessResponse(_mapper.Map<FilmRoleDto>(filmRole), "Film role updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating a film role.");
+            response = ApiResponse<FilmRoleDto>.ErrorResponse("An error occurred while processing the request.");
+        }
+
+        return response;
     }
 
-    public async Task<PaginationResponse<FilmRoleResponse>> GetAll(FilmRoleFilterParameters filterParameters)
+    public async Task<ApiResponse<bool>> DeleteByIdAsync(int roleId)
+    {
+        var response = new ApiResponse<bool>();
+
+        try
+        {
+            var filmRole = await _unitOfWork.FilmRoleRepository.GetByIdAsync(roleId);
+
+            if (filmRole == null)
+            {
+                return ApiResponse<bool>.ErrorResponse("Film role not found.", HttpStatusCode.NotFound);
+            }
+
+            var deleteResult = await _unitOfWork.FilmRoleRepository.DeleteAsync(filmRole);
+            await _unitOfWork.CommitAsync();
+
+            response = ApiResponse<bool>.SuccessResponseWithoutData("Film role deleted successfully.", HttpStatusCode.NoContent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while deleting a film role.");
+            response = ApiResponse<bool>.ErrorResponse(ex.Message, HttpStatusCode.InternalServerError);
+        }
+
+        return response;
+    }
+
+
+    public async Task<PaginationResponse<FilmRoleResponse>> GetAllAsync(FilmRoleFilterParameters filterParameters)
     {
         Expression<Func<FilmRole, bool>> filter = null;
         Expression<Func<FilmRole, object>> orderByColumn = null;
@@ -59,11 +131,11 @@ public class FilmRoleService : IFilmRoleService
                     break;
                 // Add more cases for other columns
                 default:
-                    throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");                    
+                    throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
             }
         }
 
-        var (query, totalItems) = await _unitOfWork.FilmRoleRepository.GetWithFilter(filterParameters, filter: filter, orderByColumn: orderByColumn);
+        var (query, totalItems) = await _unitOfWork.FilmRoleRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
         var filmRoleResponse = await query.Select(
         fr => new FilmRoleResponse(
                          fr.Id,
@@ -82,13 +154,43 @@ public class FilmRoleService : IFilmRoleService
         return response;
     }
 
-    public Task<FilmRoleResponse> GetById(int roleId)
+    public async Task<ApiResponse<FilmRoleResponse>> GetByIdAsync(int roleId)
     {
-        throw new NotImplementedException();
-    }
+        var response = new ApiResponse<FilmRoleResponse>();
 
-    public Task<bool> Update(int Id, FilmRoleCategoryDto filmRoleDto)
-    {
-        throw new NotImplementedException();
+        try
+        {
+            var filmRole = await _unitOfWork.FilmRoleRepository.GetByIdAsync(roleId);
+
+            if (filmRole == null)
+            {
+                response.IsSuccess = false;
+                response.Errors.Add("Film role not found.");
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
+            }
+
+            if (filmRole.RoleCategory == null && filmRole.RoleCategoryId != null)
+            {
+                filmRole.RoleCategory = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(filmRole.RoleCategoryId);
+            }
+
+            var filmRoleResponse = _mapper.Map<FilmRoleResponse>(filmRole);
+
+            filmRoleResponse.CategoryName = filmRole.RoleCategory?.CategoryName ?? string.Empty;
+
+            response.IsSuccess = true;
+            response.Data = filmRoleResponse;
+            response.StatusCode = HttpStatusCode.OK;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving a film role.");
+            response.IsSuccess = false;
+            response.Errors.Add("An error occurred while processing the request.");
+            response.StatusCode = HttpStatusCode.InternalServerError;
+        }
+
+        return response;
     }
 }

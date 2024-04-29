@@ -15,6 +15,11 @@ public static class DependencyInjection
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();
+        
+        services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddConsole();
+        });
         services.Configure<AllowedUploadFiles>(configuration.GetSection(AllowedUploadFiles.Section));
 
         services.AddCors(options =>
@@ -66,6 +71,6 @@ public static class DependencyInjection
             //builder.Services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
         }
         return services;
-}
-
     }
+
+}

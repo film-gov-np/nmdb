@@ -9,5 +9,5 @@ public interface IFilmRoleCategoryService
     Task<ApiResponse<string>> Update(int Id, FilmRoleCategoryDto filmRoleCategory);
     Task<ApiResponse<FilmRoleCategoryDto>> GetById(int roleId);
     Task<ApiResponse<string>> DeleteById(string roleId);
-    Task<ApiResponse<List<FilmRoleCategoryDto>>> GetAll();
+    Task<List<FilmRoleCategoryDto>> GetAllAsync();
 }
