@@ -23,7 +23,7 @@ namespace nmdb.Controllers;
 
 [ApiController]
 [Authorize(Roles = AuthorizationConstants.AdminRole)]
-[Route("api/film/")]
+[Route("api/film-roles/")]
 public class FilmRoleController : AuthorizedController
 {
     private readonly ILogger<FilmRoleController> _logger;
@@ -35,14 +35,13 @@ public class FilmRoleController : AuthorizedController
         _contextAccessor = contextAccessor;
         _filmRoleService = filmRoleService;
     }
-
-    [HttpGet("roles")]
+        
     public async Task<IActionResult> GetAll([FromQuery] FilmRoleFilterParameters filterParameters)
     {
         var response = await _filmRoleService.GetAllAsync(filterParameters);
         return Ok(response);
     }
-    [HttpGet("role/{id}")]
+    [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetById(int id)
     {
@@ -62,19 +61,19 @@ public class FilmRoleController : AuthorizedController
         }
     }
 
-    [HttpPost("role")]
-    public async Task<IActionResult> Create([FromBody] FilmRoleDto filmRoleDto)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] FilmRoleRequest filmRoleDto)
     {
         if (filmRoleDto == null)
         {
-            return BadRequest(ApiResponse<FilmRoleDto>.ErrorResponse("Invalid film role data.", HttpStatusCode.BadRequest));
+            return BadRequest(ApiResponse<FilmRoleRequest>.ErrorResponse("Invalid film role data.", HttpStatusCode.BadRequest));
         }
 
         var result = await _filmRoleService.CreateAsync(filmRoleDto);
 
         if (result.IsSuccess)
         {
-            return Ok(filmRoleDto);
+            return Ok(result);
         }
         else
         {
@@ -82,10 +81,29 @@ public class FilmRoleController : AuthorizedController
         }
     }
 
-    [HttpPut("role/{id}")]
-    public async Task<IActionResult> Update(int id, FilmRoleDto filmRoleDto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] FilmRoleRequest filmRoleDto)
     {
         var result = await _filmRoleService.UpdateAsync(id, filmRoleDto);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        else if (result.StatusCode == HttpStatusCode.NotFound)
+        {
+            return NotFound(result);
+        }
+        else
+        {
+            return BadRequest(result);
+        }
+    }
+
+    [HttpPatch("{id}/display-order")]
+    public async Task<IActionResult> UpdateFilmRoleDisplayOrder(int id, [FromBody] int displayOrder)
+    {
+        var result = await _filmRoleService.UpdateDisplayOrderAsync(id, displayOrder);
 
         if (result.IsSuccess)
         {

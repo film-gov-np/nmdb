@@ -19,7 +19,7 @@ namespace Core
             Errors = new List<string>();
         }
 
-        public static ApiResponse<T> SuccessResponse(T data, string? message = default(string?), HttpStatusCode statusCode = HttpStatusCode.OK)
+        public static ApiResponse<T> SuccessResponse(T? data, string? message = default(string?), HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             return new ApiResponse<T> { IsSuccess = true, StatusCode = statusCode, Data = data, Message = message };
         }
