@@ -55,7 +55,7 @@ public static class DependencyInjection
                         });
 
         services.AddCoreAdmin();
-        services.AddTransient<AuthorizedUserMiddleware>();
+        //services.AddTransient<AuthorizedUserMiddleware>();
         services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
         services.AddAutoMapper(typeof(MappingProfile).Assembly);
         ConfigureMediatR();
