@@ -152,7 +152,7 @@ public class FilmRoleService : IFilmRoleService
         // Apply filtering
         if (!string.IsNullOrEmpty(filterParameters.CategoryIds) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {
-            int[] intCategoryIds = filterParameters.CategoryIds.Split(',').Select(int.Parse).ToArray();
+            int[] intCategoryIds = filterParameters.CategoryIds?.Split(',').Select(int.Parse).ToArray();
             filter = query =>
                 (string.IsNullOrEmpty(filterParameters.CategoryIds) || intCategoryIds.Contains(query.RoleCategoryId)) &&
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.RoleName.Contains(filterParameters.SearchKeyword));
