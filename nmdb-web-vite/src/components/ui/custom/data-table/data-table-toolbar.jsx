@@ -88,7 +88,7 @@ export function DataTableToolbar({ table, facetedFilters }) {
                 <DataTableFacetedFilter
                   key={filter.name}
                   column={table.getColumn(filter.name)}
-                  title={filter.name}
+                  title={filter.title}
                   options={filter.filters}
                 />
               ),

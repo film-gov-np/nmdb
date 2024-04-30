@@ -11,7 +11,7 @@ export function FormSkeleton({
   return (
     <div className="w-full space-y-5 overflow-auto">
       {Array.from({ length: repeat }).map((_, i) => (
-        <div className="mt-6 rounded-md border">
+        <div key={"main-row"+ i} className="mt-6 rounded-md border">
           <Skeleton className="-mt-4 ml-4 h-8 w-36" />
           <Table>
             <TableBody>

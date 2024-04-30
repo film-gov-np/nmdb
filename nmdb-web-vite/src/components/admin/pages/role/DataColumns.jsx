@@ -33,13 +33,15 @@ export const labels = [
 
 export const facetedFilters = [{
   name: "categoryName",
+  title: "Category",
+  accessorKey:"CategoryId",
   filters: [
     {
-      value: "Writer",
+      value: "1",
       label: "Writer",
     },
     {
-      value: "Visual Effects",
+      value: "2",
       label: "Visual Effects",
     },
   ],
@@ -150,7 +152,7 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("categoryName")}</div>,
-    enableGlobalFilter: true,
+    // enableGlobalFilter: true,
   },
   {
     id: "actions",

@@ -89,7 +89,7 @@ nav.sidebar-nav a.active{
 
 /* width */
 ::-webkit-scrollbar {
-  @apply w-3.5;
+  @apply w-2.5;
 }
 
 /* Track */

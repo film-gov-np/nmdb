@@ -42,6 +42,7 @@ const generateQueryPath = ({
   sorting,
   debouncedGlobalFilter,
   columnFilters,
+  facetedFilters,
 }) => {
   console.log("column-filters", columnFilters);
   let queryPath = `?PageNumber=${pageIndex + 1}&PageSize=${pageSize}`;
@@ -51,6 +52,16 @@ const generateQueryPath = ({
   if (debouncedGlobalFilter) {
     queryPath += `&SearchKeyword=${debouncedGlobalFilter}`;
   }
+  debugger;
+  if (columnFilters?.length > 0) {
+    columnFilters.forEach((filter) => {
+      const columnKey = facetedFilters.find(
+        (faceted) => faceted.name === filter.id,
+      )?.accessorKey;
+
+      if (columnKey) queryPath += `&${columnKey}=${filter.value[0]}`;
+    });
+  }
   return queryPath;
 };
 
@@ -58,8 +69,10 @@ const getDataFromServer = async (apiPath, parameters) => {
   const data = await axiosInstance
     .get(apiPath + generateQueryPath(parameters))
     .then((response) => {
-      console.log("data", response);
-      return response.data.data;
+      if(response.data.isSuccess)
+        return response.data?.data;
+      else
+        throw response.data.message
     })
     .catch((error) => {
       console.log("error", error);
@@ -128,6 +141,7 @@ export function DataTableAdvancedServerControlled({
           sorting,
           debouncedGlobalFilter,
           columnFilters,
+          facetedFilters,
         }),
       keepPreviousData: true,
     });
@@ -141,6 +155,10 @@ export function DataTableAdvancedServerControlled({
   const onGlobalFilterChange = (data) => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
     setGlobalFilter(data);
+  };
+  const onColumnFiltersChange = (data) => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    setColumnFilters(data);
   };
   const table = useReactTable({
     data: data?.roles || [],
@@ -157,14 +175,14 @@ export function DataTableAdvancedServerControlled({
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange,
     onGlobalFilterChange,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    // getFilteredRowModel: getFilteredRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
+    // getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     manualPagination: true,

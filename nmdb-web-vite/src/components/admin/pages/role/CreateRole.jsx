@@ -9,7 +9,12 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
 import {
@@ -83,7 +88,7 @@ const getCategories = async () => {
   return apiResponse;
 };
 
-const createOrEditRole = async ({ postData, isEditMode, slug }) => {
+const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
   debugger;
   let apiPath = ApiPaths.Path_FilmRoles;
   if (isEditMode) {
@@ -97,7 +102,11 @@ const createOrEditRole = async ({ postData, isEditMode, slug }) => {
   })
     .then((response) => {
       console.log("api-response-categories", response);
-
+      toast({
+        description:
+          response.data?.message || "Successfully completed the action.",
+        duration: 5000,
+      });
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -106,6 +115,7 @@ const createOrEditRole = async ({ postData, isEditMode, slug }) => {
 
 const CreateRole = () => {
   const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const { slug } = useParams();
   const { pathname } = useLocation();
@@ -132,14 +142,13 @@ const CreateRole = () => {
   const mutateRole = useMutation({
     mutationFn: createOrEditRole,
     onSuccess: (data, variables, context) => {
-      toast({ description: "Successfully created the role." });
       navigate(Paths.Route_Admin_Role);
     },
     onError: (error, variables, context) => {
       toast({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries("create");
+      // queryClient.invalidateQueries("flimRoleDetail");
     },
   });
 
@@ -149,6 +158,7 @@ const CreateRole = () => {
       postData: data,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,
       slug,
+      toast,
     });
   };
   // let isContentLoading = true
