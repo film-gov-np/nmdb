@@ -8,6 +8,9 @@ using Core;
 using Infrastructure.Identity.Services;
 using System.Net;
 using Core.Constants;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using System.Reflection;
 
 namespace nmdb.Filters;
 public class AuthorizedUserFilter : IAsyncAuthorizationFilter
@@ -42,6 +45,52 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                     ClaimsIdentity claimsIdentity = claimPrincipal.Claims.FirstOrDefault().Subject;
                     CurrentUser user = _usrAuth.GetUserFromClaims(claimsIdentity.Claims);
                     context.HttpContext.Items["CurrentUser"] = user;
+
+                    // Role base access control
+                    var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+
+                    if (controllerActionDescriptor != null)
+                    {
+                        // Check if the controller has the CustomAuthorize attribute
+                        // CustomAuthorize is used becaus default Authorize attribute is
+                        // conflicting with our custom authorization filter
+                        var controllerAuthorizeAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<CustomAuthorizeAttribute>();
+
+                        // Check if the action method has the CustomAuthorize attribute
+                        var actionAuthorizeAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<CustomAuthorizeAttribute>();
+
+                        var controllerAllowAnonymousAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowAnonymousAttribute>();
+                        var actionAllowAnonymousAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowAnonymousAttribute>();
+                        
+                        // Allow anonymous access, proceed with the request without further authorization checks
+                        if (controllerAllowAnonymousAttribute != null || actionAllowAnonymousAttribute != null)
+                        {
+                            return;
+                        }
+
+                        if (controllerAuthorizeAttribute != null || actionAuthorizeAttribute != null)
+                        {
+                            // Combine roles from controller and action level attributes
+                            string[] controllerRoles = controllerAuthorizeAttribute?.Roles ?? new string[0];
+                            string[] actionRoles = actionAuthorizeAttribute?.Roles ?? new string[0];
+                            string[] requiredRoles = controllerRoles.Concat(actionRoles).Distinct().ToArray();
+
+                            string[] userRoles = user.Roles.Split(",");
+
+                            bool isSuperuser = userRoles.Contains(AuthorizationConstants.SuperUserRole);
+
+                            // Check if the user has any of the required roles
+                            bool hasRequiredRole = requiredRoles.Any(role => userRoles.Contains(role.Trim())) || isSuperuser;
+
+                            if (!hasRequiredRole)
+                            {
+                                // User doesn't have the required role, return unauthorized response
+                                context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Unauthorized access. User does not have the required role.", HttpStatusCode.Forbidden));
+                                return;
+                            }
+                        }
+
+                    }
                 }
                 else
                 {

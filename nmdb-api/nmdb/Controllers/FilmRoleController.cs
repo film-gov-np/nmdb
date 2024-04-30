@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using nmdb.Common;
+using nmdb.Filters;
 using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
@@ -22,20 +23,22 @@ using static Dapper.SqlMapper;
 namespace nmdb.Controllers;
 
 [ApiController]
-[Authorize(Roles = AuthorizationConstants.AdminRole)]
+[AllowAnonymous]
+//[CustomAuthorize(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
 [Route("api/film-roles/")]
 public class FilmRoleController : AuthorizedController
 {
     private readonly ILogger<FilmRoleController> _logger;
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly IFilmRoleService _filmRoleService;    
+    private readonly IFilmRoleService _filmRoleService;
     public FilmRoleController(ILogger<FilmRoleController> logger, IHttpContextAccessor contextAccessor, IFilmRoleService filmRoleService)
     {
         _logger = logger;
         _contextAccessor = contextAccessor;
         _filmRoleService = filmRoleService;
     }
-        
+
+    [CustomAuthorize(AuthorizationConstants.AdminRole)]
     public async Task<IActionResult> GetAll([FromQuery] FilmRoleFilterParameters filterParameters)
     {
         var response = await _filmRoleService.GetAllAsync(filterParameters);

@@ -38,7 +38,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<AuthorizedUserMiddleware>();
+//app.UseMiddleware<AuthorizedUserMiddleware>();
 
 app.MapControllers();
 app.MapDefaultControllerRoute();
