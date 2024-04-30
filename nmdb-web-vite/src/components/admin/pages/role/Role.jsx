@@ -1,6 +1,6 @@
 import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { Paths } from "@/constants/routePaths";
-import { columns, facetedFilters } from "./dataColumns";
+import { columns, facetedFilters } from "./DataColumns";
 import { ApiPaths } from "@/constants/apiPaths";
 
 const Role = () => {
