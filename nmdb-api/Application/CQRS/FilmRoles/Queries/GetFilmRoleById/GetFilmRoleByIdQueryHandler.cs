@@ -32,8 +32,8 @@ namespace Application.CQRS.FilmRoles.Queries.GetFilmRoleById
                 //    ));
             }
             // Get Include Properties Also in the generic
-            var filmRoleCategory  = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(filmRole.RoleCategoryId);
-            var response = new FilmRoleResponse(filmRole.Id, filmRole.RoleName, filmRoleCategory.CategoryName, filmRole.DisplayOrder);
+            var filmRoleCategory = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(filmRole.RoleCategoryId);
+            var response = new FilmRoleResponse(filmRole.Id, filmRole.RoleName, filmRoleCategory.Id, filmRoleCategory.CategoryName, filmRole.DisplayOrder);
             return ApiResponse<FilmRoleResponse>.SuccessResponse(response);
         }
     }

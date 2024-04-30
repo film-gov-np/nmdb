@@ -10,16 +10,18 @@ namespace Application.CQRS.FilmRoles.Queries
     {
         public int Id { get; set; }
         public string RoleName { get; set; }
+        public int RoleCategoryId { get; set; }
         public string CategoryName { get; set; }
         public int? DisplayOrder { get; set; }
 
 
-        public FilmRoleResponse(int id, string roleName, string categoryName, int? displayOrder)
+        public FilmRoleResponse(int id, string roleName, int roleCategoryId, string categoryName, int? displayOrder)
         {
             Id = id;
             RoleName = roleName;
             CategoryName = categoryName;
             DisplayOrder = displayOrder;
+            RoleCategoryId = roleCategoryId;
         }
 
         public FilmRoleResponse() { }

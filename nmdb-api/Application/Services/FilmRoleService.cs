@@ -150,10 +150,11 @@ public class FilmRoleService : IFilmRoleService
 
 
         // Apply filtering
-        if (filterParameters.CategoryId != null || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if (!string.IsNullOrEmpty(filterParameters.CategoryIds) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {
+            int[] intCategoryIds = filterParameters.CategoryIds.Split(',').Select(int.Parse).ToArray();
             filter = query =>
-                (filterParameters.CategoryId == null || query.RoleCategoryId == filterParameters.CategoryId) &&
+                (string.IsNullOrEmpty(filterParameters.CategoryIds) || intCategoryIds.Contains(query.RoleCategoryId)) &&
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.RoleName.Contains(filterParameters.SearchKeyword));
         }
 
@@ -178,6 +179,7 @@ public class FilmRoleService : IFilmRoleService
         fr => new FilmRoleResponse(
                          fr.Id,
                          fr.RoleName,
+                         fr.RoleCategory.Id,
                          fr.RoleCategory.CategoryName,
                          fr.DisplayOrder)).ToListAsync();
 
