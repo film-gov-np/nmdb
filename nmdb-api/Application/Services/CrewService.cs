@@ -7,11 +7,13 @@ using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
+using Application.Models;
 using AutoMapper;
 using Core;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Web.Mvc;
 
@@ -20,19 +22,20 @@ namespace Application.Services;
 public class CrewService : ICrewService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IFilmRoleRepository _filmRoleRepository;
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
+    private readonly ILogger<CrewService> _logger;
+
     public CrewService(IUnitOfWork unitOfWork
-        , IFilmRoleRepository filmRoleRepository
         , IMapper mapper
-        , IFileService fileService
+        , IFileService fileService,
+        ILogger<CrewService> logger
         )
     {
         _unitOfWork = unitOfWork;
-        _filmRoleRepository = filmRoleRepository;
         _mapper = mapper;
         _fileService = fileService;
+        _logger = logger;
     }
     public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
     {
@@ -40,12 +43,12 @@ public class CrewService : ICrewService
         {
             await _unitOfWork.BeginTransactionAsync();
             var crewEntity = _mapper.Map<Crew>(crewRequestDto);
-            var designations = await _filmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
+            var filmRoles = await _unitOfWork.FilmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
 
-            // Associate crew with designation
-            foreach (var designation in designations)
+            // Associate crew with roleid
+            foreach (int roleid in filmRoles)
             {
-                crewEntity.CrewDesignations.Add(new CrewDesignation { FilmRole = designation });
+                crewEntity.CrewDesignations.Add(new CrewDesignation { RoleId = roleid });
             }
 
             string profilePhotoUrl = null;
@@ -67,18 +70,67 @@ public class CrewService : ICrewService
         }
         catch (Exception ex)
         {
+            _unitOfWork.Rollback();
             return ApiResponse<string>.ErrorResponse($"Failed to create crew: {ex.Message}", HttpStatusCode.InternalServerError);
         }
     }
 
-    public Task<ApiResponse<bool>> DeleteCrewAsync(int crewId)
+    public async Task<ApiResponse<string>> DeleteCrewAsync(int crewId)
     {
-        throw new NotImplementedException();
+        var response = new ApiResponse<string>();
+        try
+        {
+            var deleteResult = await _unitOfWork.CrewRepository.DeleteAsync(crewId);
+
+            if (!deleteResult)
+            {
+                return ApiResponse<string>.ErrorResponse("Crew not found.", HttpStatusCode.NotFound);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            response = ApiResponse<string>.SuccessResponseWithoutData("Crew deleted successfully.", HttpStatusCode.NoContent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while deleting crew.");
+            response = ApiResponse<string>.ErrorResponse(ex.Message, HttpStatusCode.InternalServerError);
+        }
+        return response;
     }
 
-    public Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId)
+    public async Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId)
     {
-        throw new NotImplementedException();
+        var response = new ApiResponse<CrewResponseDto>();
+
+        try
+        {
+            var crew = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+
+            if (crew == null)
+            {
+                response.IsSuccess = false;
+                response.Errors.Add("Crew not found.");
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
+            }
+
+            var crewResponse = _mapper.Map<CrewResponseDto>(crew);
+
+
+            response.IsSuccess = true;
+            response.Data = crewResponse;
+            response.StatusCode = HttpStatusCode.OK;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving crew.");
+            response.IsSuccess = false;
+            response.Errors.Add("An error occurred while processing the request.");
+            response.StatusCode = HttpStatusCode.InternalServerError;
+        }
+
+        return response;
     }
 
     public async Task<Application.Helpers.Response.PaginationResponse<CrewListDto>> GetCrewsAsync(CrewFilterParameters crewFilterParameters)

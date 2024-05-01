@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IFilmRoleService, FilmRoleService>();
         services.AddScoped<IFilmRoleCategoryService, FilmRoleCategoryService>();
+        services.AddScoped<ICrewService, CrewService>();
         return services;
     }
 }
