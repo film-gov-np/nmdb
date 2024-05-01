@@ -15,5 +15,5 @@ public interface ICrewService
     Task<PaginationResponseOld<CrewListDto>> GetCrewsAsync();
     Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId);
     Task<ApiResponse<string>> UpdateCrewAsync(CrewRequestDto crewRequestDto);
-    Task<ApiResponse<bool>> DeleteCrewAsync(int crewId);
+    Task<ApiResponse<string>> DeleteCrewAsync(int crewId);
 }

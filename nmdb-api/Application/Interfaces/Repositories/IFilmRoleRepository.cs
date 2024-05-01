@@ -4,5 +4,5 @@ namespace Application.Interfaces.Repositories;
 
 public interface IFilmRoleRepository : IEfRepository<FilmRole>
 {
-    Task<IEnumerable<FilmRole>> GetRolesByIdsAsync(IEnumerable<int> roleIds);
+    Task<IEnumerable<int>> GetRolesByIdsAsync(IEnumerable<int> roleIds);
 }

@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class FilmRoleRepository: EfRepository<FilmRole>, IFilmRoleRepository
+public class FilmRoleRepository : EfRepository<FilmRole>, IFilmRoleRepository
 {
     public FilmRoleRepository(AppDbContext dbContext) : base(dbContext)
     {
 
     }
 
-    public async Task<IEnumerable<FilmRole>> GetRolesByIdsAsync(IEnumerable<int> roleIds)
+    public async Task<IEnumerable<int>> GetRolesByIdsAsync(IEnumerable<int> roleIds)
     {
-        return await Get(r => roleIds.Contains(r.Id)).ToListAsync();
+        return await Get(r => roleIds.Contains(r.Id)).Select(s => s.Id).ToListAsync();
     }
 }
