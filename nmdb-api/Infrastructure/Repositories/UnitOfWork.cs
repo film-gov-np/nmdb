@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories
         private IFilmRoleCategoryRepository _filmRoleCategoryRepository;
         private IFilmRoleRepository _filmRoleRepository;
         private ICrewRepository _crewRepository;
+        private ITheatreRepository _theatreRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -29,6 +30,7 @@ namespace Infrastructure.Repositories
         public IFilmRoleCategoryRepository FilmRoleCategoryRepository => _filmRoleCategoryRepository ??= new FilmRoleCategoryRepository(_context);
         public IFilmRoleRepository FilmRoleRepository => _filmRoleRepository ??= new FilmRoleRepository(_context);
         public ICrewRepository CrewRepository => _crewRepository ??= new CrewRepository(_context);
+        public ITheatreRepository TheatreRepository => _theatreRepository ??= new TheatreRepository(_context);
 
         public async Task BeginTransactionAsync()
         {

@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Interfaces.Services;
+using Application.Services;
 using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Identity;
@@ -39,6 +41,7 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.Section));
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITheatreService, TheatreService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }

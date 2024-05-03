@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.FilmRoles.Commands.CreateFilmRole;
 using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos.Film;
+using Application.Dtos.Theatre;
 using AutoMapper;
 using Core.Entities;
 
@@ -14,11 +15,11 @@ namespace Neptics.Application.Helpers
             CreateMap<FilmRoleCategory, FilmRoleCategoryDto>().ReverseMap();
             CreateMap<FilmRole, FilmRoleResponse>().ReverseMap();
             CreateMap<FilmRole, FilmRoleRequest>().ReverseMap();
-            //CreateMap<List<FilmRoleCategory>, List<FilmRoleCategoryDto>>().ReverseMap();
-            //CreateMap<UserProfile,UserDTO>().ReverseMap();
-            //CreateMap<User, UserDTO>().ReverseMap();
-            //CreateMap<User, LoggedInUser>().ReverseMap();
-            //CreateMap<UserProfile, UserListItem>().ReverseMap();
+            
+            // Theatre
+            CreateMap<Theatre, TheatreRequestDto>().ReverseMap();
+            CreateMap<Theatre, TheatreResponseDto>().ReverseMap();
+
         }
     }
 }
