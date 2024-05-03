@@ -23,10 +23,6 @@ namespace Application.Services
         public FileService(IConfiguration configuration)
         {
             _uploadFolderPath = configuration["UploadFolderPath"];
-            if (!Directory.Exists(_uploadFolderPath))
-            {
-                Directory.CreateDirectory(_uploadFolderPath);
-            }
         }
         public async Task<ApiResponse<UploadResult>> UploadFile(FileDTO model)
         {
