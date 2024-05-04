@@ -14,5 +14,6 @@ namespace Application.Interfaces.Services
         Task<ApiResponse<ProductionHouseResDto>> GetById(int roleId);
         Task<ApiResponse<string>> DeleteById(int roleId);
         Task<List<ProductionHouseResDto>> GetAllAsync();
+        Task<ApiResponse<ProductionHouseResDto>> GetByNameAsync(string name);
     }
 }

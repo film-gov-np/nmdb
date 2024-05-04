@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Application.Dtos.ProductionHouse;
 using Application.Interfaces.Services;
+using Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using nmdb.Common;
@@ -23,11 +26,11 @@ namespace nmdb.Controllers
             _httpContextAccessor = httpContextAccessor;
             _productHouseService = productHouseService;
         }
-
         [HttpPost]
-        public async Task<IActionResult> CreateProductionHouse([FromBody] ProductionHouse productionHouse)
+        public async Task<IActionResult> Create([FromBody] ProductionHouseReqDto productionHouseReqDto)
         {
-            return Ok();
+            if (productionHouseReqDto is null) return BadRequest(ApiResponse<ProductionHouseReqDto>.ErrorResponse("Production house detials are null", HttpStatusCode.BadRequest));
+            var
         }
         [HttpGet]
         public async Task<IActionResult> GetAllProductionHouse()
