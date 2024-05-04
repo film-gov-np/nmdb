@@ -35,7 +35,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
         }
 
 
-        if (!string.IsNullOrEmpty(accessToken))
+         if (!string.IsNullOrEmpty(accessToken))
         {
             if (!_jwtTokenGenerator.IsTokenExpired(accessToken))
             {
@@ -47,17 +47,16 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                     context.HttpContext.Items["CurrentUser"] = user;
 
                     // Role base access control
-                    var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+                     var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
                     if (controllerActionDescriptor != null)
                     {
-                        // Check if the controller has the CustomAuthorize attribute
-                        // CustomAuthorize is used becaus default Authorize attribute is
-                        // conflicting with our custom authorization filter
-                        var controllerAuthorizeAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<CustomAuthorizeAttribute>();
+                        // Check if the controller has the RequiredRoles attribute
+                        // RequiredRoles is used along with Authorize attribute 
+                        var controllerAuthorizeAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<RequiredRolesAttribute>();
 
                         // Check if the action method has the CustomAuthorize attribute
-                        var actionAuthorizeAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<CustomAuthorizeAttribute>();
+                        var actionAuthorizeAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<RequiredRolesAttribute>();
 
                         var controllerAllowAnonymousAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowAnonymousAttribute>();
                         var actionAllowAnonymousAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowAnonymousAttribute>();

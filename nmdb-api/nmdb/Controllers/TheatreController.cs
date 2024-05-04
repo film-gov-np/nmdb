@@ -13,7 +13,8 @@ using System.Net;
 namespace nmdb.Controllers
 {
     [ApiController]
-    [CustomAuthorize(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+    [Authorize]
+    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
     [Route("api/theatres/")]
     public class TheatreController : AuthorizedController
     {
@@ -60,6 +61,7 @@ namespace nmdb.Controllers
                 return BadRequest(ApiResponse<string>.ErrorResponse("Invalid theatre data.", HttpStatusCode.BadRequest));
             }
 
+            theatreRequestDto.AuditedBy = GetUserId;
             var result = await _theatreService.CreateAsync(theatreRequestDto);
 
             if (result.IsSuccess)
@@ -75,6 +77,7 @@ namespace nmdb.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TheatreRequestDto theatreRequestDto)
         {
+            theatreRequestDto.AuditedBy = GetUserId;
             var result = await _theatreService.UpdateAsync(id, theatreRequestDto);
 
             if (result.IsSuccess)

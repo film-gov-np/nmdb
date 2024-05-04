@@ -1,4 +1,6 @@
-﻿namespace Application.Dtos.Theatre
+﻿using System.Text.Json.Serialization;
+
+namespace Application.Dtos.Theatre
 {
     public class TheatreRequestDto : TheatreBaseDto
     {
@@ -6,6 +8,8 @@
         public string Email { get; set; }
         public string EstablishedDate { get; set; }
         public string WebsiteUrl { get; set; }
-        public string Remarks { get; set; }        
+        public string Remarks { get; set; }
+        [JsonIgnore]
+        public string? AuditedBy { get; set; }
     }
 }

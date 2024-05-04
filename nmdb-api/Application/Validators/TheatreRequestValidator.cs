@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.Validators;
 
-public class TheatreRequestValidation : AbstractValidator<TheatreRequestDto>
+public class TheatreRequestValidator : AbstractValidator<TheatreRequestDto>
 {
-    public TheatreRequestValidation()
+    public TheatreRequestValidator()
     {
         RuleFor(tr => tr.Name)
            .NotEmpty().WithMessage("Name is required.")
@@ -41,9 +41,9 @@ public class TheatreRequestValidation : AbstractValidator<TheatreRequestDto>
             .NotNull().WithMessage("IsRunning flag is required.");
 
         // Validation for Id when used for creating
-        RuleFor(tr => tr.Id)
-            .Cascade(RuleLevelCascadeMode)
-            .Null().Must(id => id == null || id == 0).WithMessage("Id must be null when creating.")
-            .GreaterThan(0).When(tr => tr.Id != null).WithMessage("Id must be greater than 0 when not null.");
+        //RuleFor(tr => tr.Id)
+        //    //.Cascade(RuleLevelCascadeMode)
+        //    //.Null().Must(id => id == null || id == 0).WithMessage("Id must be null or 0 when creating.")
+        //    .GreaterThan(0).When(tr => tr.Id != null && tr.Id != 0).WithMessage("Id must be greater than 0 when not null.");
     }
 }

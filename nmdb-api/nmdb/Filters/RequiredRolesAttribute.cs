@@ -1,11 +1,13 @@
-﻿namespace nmdb.Filters
-{
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace nmdb.Filters
+{    
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class CustomAuthorizeAttribute : Attribute
+    public class RequiredRolesAttribute : Attribute
     {
         public string[] Roles { get; }
 
-        public CustomAuthorizeAttribute(params string[] roles)
+        public RequiredRolesAttribute(params string[] roles)
         {
             Roles = roles;
         }

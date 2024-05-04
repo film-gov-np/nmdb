@@ -37,6 +37,15 @@ public class AuthorizedController : ControllerBase
             return userName;
         }
     }
+
+    public string GetUserId
+    {
+        get
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return userId;
+        }
+    }
     public string HostUrl
     {
         get

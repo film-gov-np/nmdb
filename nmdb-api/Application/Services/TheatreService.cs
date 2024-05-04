@@ -5,6 +5,7 @@ using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using Application.Models;
+using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Entities;
@@ -20,11 +21,14 @@ public class TheatreService : ITheatreService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<TheatreService> _logger;
-    public TheatreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TheatreService> logger)
+    private readonly TheatreRequestValidator _theatreRequestValidator;
+
+    public TheatreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TheatreService> logger, TheatreRequestValidator theatreRequestValidator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _theatreRequestValidator = theatreRequestValidator;
     }
     public async Task<ApiResponse<string>> CreateAsync(TheatreRequestDto theatreRequestDto)
     {
@@ -32,7 +36,14 @@ public class TheatreService : ITheatreService
 
         try
         {
+            var validationResult = await _theatreRequestValidator.ValidateAsync(theatreRequestDto);
+            if (!validationResult.IsValid)
+            {
+                // If validation fails, return a response with validation errors
+                return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
+            }
             var theatreEntity = _mapper.Map<Theatre>(theatreRequestDto);
+            theatreEntity.CreatedBy = theatreRequestDto.AuditedBy;
             await _unitOfWork.TheatreRepository.AddAsync(theatreEntity);
             await _unitOfWork.CommitAsync();
             response = ApiResponse<string>.SuccessResponseWithoutData($"Theatre '{theatreRequestDto.Name}' created successfully.", HttpStatusCode.Created);
@@ -168,15 +179,22 @@ public class TheatreService : ITheatreService
 
         try
         {
+            var validationResult = await _theatreRequestValidator.ValidateAsync(theatreRequestDto);
+            if (!validationResult.IsValid)
+            {                
+                return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
+            }
+
             var theatre = await _unitOfWork.TheatreRepository.GetByIdAsync(theatreId);
 
             if (theatre == null)
             {
                 return ApiResponse<string>.ErrorResponse($"Theatre with '{theatreRequestDto.Id}' could not be found.", HttpStatusCode.NotFound);
             }
-
+            
             _mapper.Map(theatreRequestDto, theatre);
             theatre.Id = theatreId;
+            theatre.UpdatedBy = theatreRequestDto.AuditedBy;
             await _unitOfWork.TheatreRepository.UpdateAsync(theatre);
             await _unitOfWork.CommitAsync();
 
