@@ -5,7 +5,7 @@ namespace Application.Helpers
 {
     public interface IService
     {
-        public Task<T> Create<T>(T model) where T : class;
+        public Task<T> Create<T>(T model, string uniqueKey = "", string uniqueValue = "") where T : class;
         public Task<T> Update<T>(string Pid, JsonPatchDocument<T> model) where T : class;
         public Task<bool> Delete<T>(T model, bool force_delete) where T : class;
         public Task<T> Retrieve<T>(string Pid) where T : class;

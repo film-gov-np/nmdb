@@ -9,6 +9,7 @@ namespace Application.Interfaces
         IFilmRoleRepository FilmRoleRepository { get; }
         IFilmRoleCategoryRepository FilmRoleCategoryRepository { get; }
         ICrewRepository CrewRepository { get; }
+        IProductionHouseRepository productionHouseRepository { get; }
         Task CommitAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync();
         void Rollback();
