@@ -51,18 +51,28 @@ const formSchema = z.object({
       message: "Established date must be in the past.",
     },
   ),
-//   seatCapacity: z.string(),
-//   .number()
-//   .min(0, { message: "Seat capacity must be a positive number." }),
-//   numberOfScreen: z.number(),
-//   .number()
-//   .min(0, { message: "Number of screens must be a positive number." }),
+  seatCapacity: z.coerce.number().positive(),
+  numberOfScreen: z.coerce.number().positive(),
   websiteUrl: z.string().url(),
   email: z.string().email(),  
-  contactPerson: z.string(),
-  address: z.string(),
+  contactPerson: z.string().min(1),
+  address: z.string().min(1),
   remarks: z.string(),
 });
+ 
+const defaultValues = {
+  address: '',
+  contactNumber: '',
+  contactPerson: '',
+  email: '',
+  establishedDate: '',
+  isRunning: '',
+  name: '',
+  numberOfScreen: 0,
+  remarks: '',
+  websiteUrl: '',
+  seatCapacity: 0,
+}
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -73,7 +83,7 @@ const renderModes = {
 const getTheatre = async (id, renderMode) => {
   let apiPath = `${ApiPaths.Path_Theatres}/${id}`;
   let data = {};
-  if (renderMode === renderModes.Render_Mode_Create) return {};
+  if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
@@ -178,19 +188,7 @@ const CreateTheatre = () => {
 function TheatreForm({ theatre, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      address: theatre.address,
-      contactNumber: theatre.contactNumber,
-      contactPerson: theatre.contactPerson,
-      email: theatre.email,
-      establishedDate: theatre.establishedDate,
-      isRunning: theatre.isRunning,
-      name: theatre.name,
-      numberOfScreen: theatre.numberOfScreen,
-      remarks: theatre.remarks,
-      websiteUrl: theatre.websiteUrl,
-      seatCapacity: theatre.seatCapacity,
-    },
+    defaultValues: theatre,
   });
   return (
     <Form {...form}>
@@ -227,12 +225,8 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                     <Input
                       type="number"
                       placeholder="Seat Capacity"
+                      min={0}
                       {...field}
-                      value={
-                        field.value !== null && field.value !== undefined
-                          ? parseInt(field.value, 10)
-                          : 0
-                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -250,12 +244,8 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                     <Input
                       type="number"
                       placeholder="Number of Screen"
+                      min={0}
                       {...field}
-                      value={
-                        field.value !== null && field.value !== undefined
-                          ? parseInt(field.value, 10)
-                          : 0
-                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -368,8 +358,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                   <FormControl>
                     <Input
                       placeholder="Website URL"
-                      value={field.value ?? ""}
-                      onChange={field.onChange}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -387,8 +376,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                     <Input
                       type="text"
                       placeholder="Remarks"
-                      value={field.value ?? ""}
-                      onChange={field.onChange}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
