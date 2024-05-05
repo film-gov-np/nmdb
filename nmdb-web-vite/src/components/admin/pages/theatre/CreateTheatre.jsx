@@ -54,25 +54,26 @@ const formSchema = z.object({
   seatCapacity: z.coerce.number().positive(),
   numberOfScreen: z.coerce.number().positive(),
   websiteUrl: z.string().url(),
-  email: z.string().email(),  
+  email: z.string().email(),
   contactPerson: z.string().min(1),
   address: z.string().min(1),
   remarks: z.string(),
+  isRunning: z.enum(["true", "false"]).transform((value) => value === "true"),
 });
- 
+
 const defaultValues = {
-  address: '',
-  contactNumber: '',
-  contactPerson: '',
-  email: '',
-  establishedDate: '',
-  isRunning: '',
-  name: '',
+  address: "",
+  contactNumber: "",
+  contactPerson: "",
+  email: "",
+  establishedDate: "",
+  isRunning: "",
+  name: "",
   numberOfScreen: 0,
-  remarks: '',
-  websiteUrl: '',
+  remarks: "",
+  websiteUrl: "",
   seatCapacity: 0,
-}
+};
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -92,11 +93,13 @@ const getTheatre = async (id, renderMode) => {
     })
     .catch((err) => console.error(err));
 
-  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)    
+  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
     // conversion is required as establishedDate response is of type string
     // it is stored in BS
-    apiResponse.data.establishedDate = new Date(apiResponse.data.establishedDate);
-    data = apiResponse.data;
+    apiResponse.data.establishedDate = new Date(
+      apiResponse.data.establishedDate,
+    );
+  data = apiResponse.data;
   return data;
 };
 
@@ -356,10 +359,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Website URL"
-                      {...field}
-                    />
+                    <Input placeholder="Website URL" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -373,11 +373,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Remarks"
-                      {...field}
-                    />
+                    <Input type="text" placeholder="Remarks" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -391,16 +387,17 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                   <FormLabel>Is Running?</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}                    
+                    defaultValue={field.defaultValue?.toString()}
+                    value={field.value?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Is the theater running?" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={true}>Yes</SelectItem>
-                      <SelectItem value={false}>No</SelectItem>
+                      <SelectItem value="true">Yes</SelectItem>
+                      <SelectItem value="false">No</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
