@@ -91,11 +91,11 @@ const getTheatre = async (id, renderMode) => {
       return response.data;
     })
     .catch((err) => console.error(err));
-  console.log(
-    "api-response",
-    apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200,
-  );
-  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
+
+  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)    
+    // conversion is required as establishedDate response is of type string
+    // it is stored in BS
+    apiResponse.data.establishedDate = new Date(apiResponse.data.establishedDate);
     data = apiResponse.data;
   return data;
 };
@@ -171,7 +171,7 @@ const CreateTheatre = () => {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="theatre" pathTo={Paths.Route_Admin_Theatre} />
       {isLoading || isFetching ? (
-        <FormSkeleton columnCount={11} rowCount={6} repeat={1} shrinkZero />
+        <FormSkeleton columnCount={2} rowCount={6} repeat={1} shrinkZero />
       ) : (
         data && (
           <TheatreForm
@@ -391,8 +391,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                   <FormLabel>Is Running?</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={true}
+                    value={field.value}                    
                   >
                     <FormControl>
                       <SelectTrigger>
