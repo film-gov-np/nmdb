@@ -105,10 +105,10 @@ public class TheatreService : ITheatreService
         {
             switch (filterParameters.SortColumn.ToLower())
             {
-                case "contactperson":
+                case "name":
                     orderByColumn = query => query.ContactPerson;
                     break;
-                case "contactnumber":
+                case "contactperson":
                     orderByColumn = query => query.ContactNumber;
                     break;
                 // Add more cases for other columns

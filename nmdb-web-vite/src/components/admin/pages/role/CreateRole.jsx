@@ -198,9 +198,9 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      roleCategoryId: categories.find(
+      roleCategoryId:categories? categories.find(
         ({ id, categoryName }) => categoryName === role.categoryName,
-      )?.id,
+      )?.id:null,
       roleName: role.roleName,
     },
   });
@@ -251,7 +251,7 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                         <CommandList>
                           <CommandEmpty>No category found.</CommandEmpty>
                           <CommandGroup>
-                            {categories.map(({ id, categoryName }) => (
+                            {categories? categories.map(({ id, categoryName }) => (
                               <CommandItem
                                 value={categoryName}
                                 key={"category" + id}
@@ -270,7 +270,7 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                                 />
                                 {categoryName}
                               </CommandItem>
-                            ))}
+                            )):""}
                           </CommandGroup>
                         </CommandList>
                       </Command>

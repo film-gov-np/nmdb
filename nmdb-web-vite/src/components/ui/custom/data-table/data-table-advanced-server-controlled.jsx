@@ -52,7 +52,7 @@ const generateQueryPath = ({
   if (debouncedGlobalFilter) {
     queryPath += `&SearchKeyword=${debouncedGlobalFilter}`;
   }
-  debugger;
+  
   if (columnFilters?.length > 0) {
     columnFilters.forEach((filter) => {
       const columnKey = facetedFilters.find(
@@ -79,7 +79,7 @@ const getDataFromServer = async (apiPath, parameters) => {
       throw error;
     });
   return {
-    roles: data.items,
+    listItems: data.items,
     totalData: data.totalItems,
   };
 };
@@ -127,7 +127,7 @@ export function DataTableAdvancedServerControlled({
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: [
-        "flimRoles",
+        "",
         pageIndex,
         pageSize,
         sorting,
@@ -161,7 +161,7 @@ export function DataTableAdvancedServerControlled({
     setColumnFilters(data);
   };
   const table = useReactTable({
-    data: data?.roles || [],
+    data: data?.listItems || [],
     columns,
     pageCount: pageCount ?? -1,
     state: {
@@ -199,7 +199,7 @@ export function DataTableAdvancedServerControlled({
   //       shrinkZero
   //     />
   //   );
-  if (data?.roles === 0)
+  if (data?.listItems === 0)
     return <NoDataComponent label={nameLabel} pathTo={addNewPath} />;
   if (isError)
     return (
@@ -211,6 +211,7 @@ export function DataTableAdvancedServerControlled({
     );
   return (
     <div className="space-y-4">
+      
       <ListPageHeader label={nameLabel} pathTo={addNewPath} />
       <DataTableToolbar table={table} facetedFilters={facetedFilters} />
 

@@ -29,6 +29,7 @@ import CelebritiesDetails from "@/components/landing/pages/celebrities/Celebrity
 import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
 import { default as MoviesHome } from "@/components/landing/pages/movies/Movies";
 import CreateRole from "@/components/admin/pages/role/CreateRole";
+import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 
 export const routes = [
   {
@@ -151,6 +152,29 @@ export const routes = [
             component: Theatre,
             path: Paths.Route_Admin_Theatre,
             isPublic: false,
+            routes:[
+              {
+                name: "TheatreAdd",
+                title: "Theatre Add page",
+                component: CreateTheatre,
+                path: Paths.Route_Admin_Theatre_Add,
+                isPublic: false,
+              },
+              {
+                name: "TheatreEdit",
+                title: "Theatre Edit page",
+                component: CreateTheatre,
+                path: Paths.Route_Admin_Theatre+ "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "TheatreDetail",
+                title: "Theatre Detail page",
+                component: CreateTheatre,
+                path: Paths.Route_Admin_Theatre+ "/:slug",
+                isPublic: false,
+              },
+            ]
           },
           {
             name: "awards",

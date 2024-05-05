@@ -9,6 +9,9 @@ namespace Application.Dtos.Theatre
         public string EstablishedDate { get; set; }
         public string WebsiteUrl { get; set; }
         public string Remarks { get; set; }
+        public int NumberOfScreen { get; set; }
+        public int SeatCapacity { get; set; }
+        public string? NepaliName { get; set; }
         [JsonIgnore]
         public string? AuditedBy { get; set; }
     }

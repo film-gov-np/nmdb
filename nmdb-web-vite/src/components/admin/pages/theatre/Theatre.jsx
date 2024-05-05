@@ -1,5 +1,24 @@
-const Theatre = () => {
-  return <div>Theatre</div>;
+import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
+import { Paths } from "@/constants/routePaths";
+import { columns } from ".//dataColumns";
+import { ApiPaths } from "@/constants/apiPaths";
+// import { useQuery, useQueryClient } from "@tanstack/react-query";
+// import axiosInstance from "@/helpers/axiosSetup";
+
+const Theatre = () =>{
+  return (
+    <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
+      <DataTableAdvancedServerControlled
+        apiPath={ApiPaths.Path_Theatres}
+        columns={columns}
+        // facetedFilters={facetedFilters}
+        nameLabel="Theatre"
+        addNewPath={Paths.Route_Admin_Theatre_Add}
+        pageSizeOptions={[10, 25, 50, 75, 100]}
+      />
+    </main>
+  );
 };
+
 
 export default Theatre;

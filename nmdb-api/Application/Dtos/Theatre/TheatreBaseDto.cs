@@ -14,6 +14,6 @@ public class TheatreBaseDto
         Name = string.Empty;
         ContactPerson = string.Empty;
         ContactNumber = string.Empty;
-        IsRunning = false;
+        IsRunning = true;
     }
 }
