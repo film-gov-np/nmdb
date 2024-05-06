@@ -5,5 +5,8 @@ export const ApiPaths = {
   Path_Flim_RoleCategories: "/film/role-categories",
 
   // Theatre
-  Path_Theatres:"/theatres"
+  Path_Theatres:"/theatres",
+
+  // Production House
+  Path_ProductionHouse: "/production-house"
 };

@@ -20,7 +20,7 @@ import Awards from "@/components/admin/pages/awards/Awards";
 import Role from "@/components/admin/pages/role/Role";
 import ProductionHouse from "@/components/admin/pages/productionHouse/ProductionHouse";
 import Theatre from "@/components/admin/pages/theatre/Theatre";
-import AddProductionHouse from "@/components/admin/pages/productionHouse/AddProductionHouse";
+import CreateProductionHouse from "@/components/admin/pages/productionHouse/CreateProductionHouse";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import ForgotPassword from "@/components/landing/pages/auth/ForgotPassword";
 import AddMovie from "@/components/admin/pages/movies/AddMovie";
@@ -126,21 +126,21 @@ export const routes = [
               {
                 name: "productionHouseAdd",
                 title: "Production House Add page",
-                component: AddProductionHouse,
+                component: CreateProductionHouse,
                 path: Paths.Route_Admin_ProductionHouse_Add,
                 isPublic: false,
               },
               {
                 name: "productionHouseEdit",
                 title: "Production House Edit page",
-                component: AddProductionHouse,
+                component: CreateProductionHouse,
                 path: "/:slug/edit",
                 isPublic: false,
               },
               {
                 name: "productionHouseDetail",
                 title: "Production House Detail page",
-                component: AddProductionHouse,
+                component: CreateProductionHouse,
                 path: "/:slug",
                 isPublic: false,
               },

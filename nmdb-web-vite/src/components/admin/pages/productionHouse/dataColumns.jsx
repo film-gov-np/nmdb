@@ -10,57 +10,30 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 // import { DataTableRowActions } from "@/components/ui/custom/data-table-row-actions";
-import {
-  CheckIcon,
-  LinkNone2Icon,
-} from "@radix-ui/react-icons";
 import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Paths } from "@/constants/routePaths";
+import { ApiPaths } from "@/constants/apiPaths";
+import { Badge } from "@/components/ui/badge";
 
 export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
+  
 ];
 
-export const facetedFilters = [
-  {
-    name: "gender",
-    filters: [
-      {
-        value: "female",
-        label: "Female",
-        icon: CheckIcon,
-      },
-      {
-        value: "male",
-        label: "Male",
-        icon: LinkNone2Icon,
-      },
-    ],
-  },
-];
+export const facetedFilters = [];
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   return (
-    <div className="flex">
+    <div className="flex justify-center">
       <DeleteItemsDialog
         open={showDeleteTaskDialog}
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}
         showTrigger={false}
+        apiBasePath = {ApiPaths.Path_FlimRoles_Delete}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
       <TooltipProvider>
@@ -68,7 +41,7 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={`/admin/production-house/${row.original.id}`}
+                to={Paths.Route_Admin_ProductionHouse + "/"+ row.original.id}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-blue-500",
@@ -78,12 +51,12 @@ function DataTableRowActions({ row }) {
                 <span className="sr-only">View Details</span>
               </NavLink>
             </TooltipTrigger>
-            <TooltipContent side="top">Edit</TooltipContent>
+            <TooltipContent side="top">Details</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={`/admin/production-house/${row.original.id}/edit`}
+                to={Paths.Route_Admin_ProductionHouse + "/"+ row.original.id + "/edit"}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-green-500",
@@ -117,92 +90,38 @@ function DataTableRowActions({ row }) {
 
 export const columns = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "first_name",
+    accessorKey: "name",
+    meta: "Name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("first_name")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "country",
+    accessorKey: "chairmanName",
+    meta: "Chairman Name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Country" />
+      <DataTableColumnHeader column={column} title="Chairman Name" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("country")}</div>,
-    enableGlobalFilter: true,
+    cell: ({ row }) => <div className="">{row.getValue("chairmanName")}</div>,
+    // enableGlobalFilter: true,
   },
   {
-    accessorKey: "email",
+    accessorKey: "isRunning",
+    meta: "Is Running",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="email" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
-    enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "job",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Company" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("job")}</div>,
-    enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "gender",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Gender" />
+      <DataTableColumnHeader column={column} title="Is Running" />
     ),
     cell: ({ row }) => {
-      const categories = facetedFilters.find(
-        (filter) => filter.name === "gender",
-      );
-      const category = categories?.filters?.find(
-        (category) => category.value === row.getValue("gender"),
-      );
-
-      if (!category) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {category.icon && (
-            <category.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{category.label}</span>
-        </div>
+      let isRunning = row.getValue("isRunning");
+      return(
+      <Badge variant={isRunning ? "" : "destructive"}>
+        {isRunning.toString()}
+      </Badge>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-    enableGlobalFilter: false,
+    enableSorting: false,    
   },
-
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

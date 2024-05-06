@@ -2,6 +2,7 @@
 using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos.Film;
 using Application.Dtos.Theatre;
+using Application.Dtos.ProductionHouse;
 using AutoMapper;
 using Core.Entities;
 
@@ -19,7 +20,10 @@ namespace Neptics.Application.Helpers
             // Theatre
             CreateMap<Theatre, TheatreRequestDto>().ReverseMap();
             CreateMap<Theatre, TheatreResponseDto>().ReverseMap();
-
+            
+            // ProductionHouse
+            CreateMap<ProductionHouse, ProductionHouseRequestDto>().ReverseMap();
+            CreateMap<ProductionHouse, ProductionHouseResponseDto>().ReverseMap();
         }
     }
 }
