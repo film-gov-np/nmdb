@@ -90,6 +90,7 @@ export function DataTableToolbar({ table, facetedFilters }) {
                   column={table.getColumn(filter.name)}
                   title={filter.title}
                   options={filter.filters}
+                  isMultiSelector={filter.isMultiSelector}
                 />
               ),
           )}

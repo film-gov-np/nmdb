@@ -59,7 +59,7 @@ const generateQueryPath = ({
         (faceted) => faceted.name === filter.id,
       )?.accessorKey;
 
-      if (columnKey) queryPath += `&${columnKey}=${filter.value[0]}`;
+      if (columnKey) queryPath += `&${columnKey}=${filter.value.join(",")}`;
     });
   }
   return queryPath;
@@ -88,6 +88,7 @@ export function DataTableAdvancedServerControlled({
   apiPath,
   columns,
   facetedFilters,
+  queryKey="",
   queryParameters = defaultQueryParameters,
   nameLabel = "",
   addNewPath = "",
@@ -127,7 +128,7 @@ export function DataTableAdvancedServerControlled({
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: [
-        "",
+        queryKey,
         pageIndex,
         pageSize,
         sorting,

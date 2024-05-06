@@ -94,22 +94,25 @@ public class ProductionHouseService : IProductionHouseService
 
 
         // Apply filtering
-        if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
-        {            
+        if ((filterParameters.IsRunning != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        {         
             filter = query =>                
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
-                || query.ContactPerson.Contains(filterParameters.SearchKeyword));
+                || query.ChairmanName.Contains(filterParameters.SearchKeyword)) &&(
+                    (filterParameters.IsRunning == null || filterParameters.IsRunning == query.IsRunning)
+                );
         }
+
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))
         {
             switch (filterParameters.SortColumn.ToLower())
             {
                 case "name":
-                    orderByColumn = query => query.ContactPerson;
+                    orderByColumn = query => query.Name;
                     break;
-                case "contactperson":
-                    orderByColumn = query => query.ContactNumber;
+                case "chairmanname":
+                    orderByColumn = query => query.ChairmanName;
                     break;
                 // Add more cases for other columns
                 default:

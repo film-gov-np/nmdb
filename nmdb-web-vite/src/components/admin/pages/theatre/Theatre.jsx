@@ -2,8 +2,22 @@ import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-t
 import { Paths } from "@/constants/routePaths";
 import { columns } from ".//dataColumns";
 import { ApiPaths } from "@/constants/apiPaths";
-// import { useQuery, useQueryClient } from "@tanstack/react-query";
-// import axiosInstance from "@/helpers/axiosSetup";
+
+export const facetedFilters = [{
+  name: "isRunning",
+  title: "Is Running",
+  accessorKey:"IsRunning",
+  filters: [
+    {
+      value: true,
+      label: "Yes",
+    },
+    {
+      value: false,
+      label: "No",
+    },
+  ],
+}];
 
 const Theatre = () =>{
   return (
@@ -11,7 +25,8 @@ const Theatre = () =>{
       <DataTableAdvancedServerControlled
         apiPath={ApiPaths.Path_Theatres}
         columns={columns}
-        // facetedFilters={facetedFilters}
+        facetedFilters={facetedFilters}
+        queryKey="datatable-theatres"
         nameLabel="Theatre"
         addNewPath={Paths.Route_Admin_Theatre_Add}
         pageSizeOptions={[10, 25, 50, 75, 100]}

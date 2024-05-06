@@ -94,11 +94,13 @@ public class TheatreService : ITheatreService
 
 
         // Apply filtering
-        if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if ((filterParameters.IsRunning != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {            
             filter = query =>                
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
-                || query.ContactPerson.Contains(filterParameters.SearchKeyword));
+                || query.ContactPerson.Contains(filterParameters.SearchKeyword))&&(
+                    (filterParameters.IsRunning == null || filterParameters.IsRunning == query.IsRunning)
+                );
         }
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))

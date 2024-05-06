@@ -35,7 +35,8 @@ const Role = () => {
   const facetedFilters = [{
     name: "categoryName",
     title: "Category",
-    accessorKey:"CategoryId",
+    accessorKey:"CategoryIds",
+    isMultiSelector: true,
     filters: categories?.data?.map((categroy) => (
       {value: categroy.id, label: categroy.categoryName}
     ))  || []
@@ -47,6 +48,7 @@ const Role = () => {
         columns={columns}
         facetedFilters={facetedFilters}
         nameLabel="role"
+        queryKey="datatable-flim-roles"
         addNewPath={Paths.Route_Admin_Role_Add}
         pageSizeOptions={[10, 25, 50, 75, 100]}
       />

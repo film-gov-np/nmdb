@@ -3,6 +3,22 @@ import { Paths } from "@/constants/routePaths";
 import { columns } from "./dataColumns";
 import { ApiPaths } from "@/constants/apiPaths";
 
+export const facetedFilters = [{
+  name: "isRunning",
+  title: "Is Running",
+  accessorKey:"IsRunning",
+  filters: [
+    {
+      value: true,
+      label: "Yes",
+    },
+    {
+      value: false,
+      label: "No",
+    },
+  ],
+}];
+
 const ProductionHouse = () => {
 
   return (
@@ -11,6 +27,8 @@ const ProductionHouse = () => {
         apiPath={ApiPaths.Path_ProductionHouse}
         columns={columns}
         nameLabel="production house"
+        queryKey="datatable-production-house"
+        facetedFilters={facetedFilters}
         addNewPath={Paths.Route_Admin_ProductionHouse_Add}
       />
     </main>

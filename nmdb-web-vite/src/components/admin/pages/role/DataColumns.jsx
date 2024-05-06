@@ -16,20 +16,7 @@ import { NavLink } from "react-router-dom";
 import { Paths } from "@/constants/routePaths";
 import { ApiPaths } from "@/constants/apiPaths";
 
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
-];
+export const labels = [];
 
 export const facetedFilters = [{
   name: "categoryName",
@@ -45,7 +32,7 @@ export const facetedFilters = [{
       label: "Visual Effects",
     },
   ],
-},];
+}];
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;

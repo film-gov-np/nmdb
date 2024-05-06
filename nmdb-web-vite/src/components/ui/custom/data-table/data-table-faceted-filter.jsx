@@ -18,12 +18,19 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { useState } from "react";
 
-export function DataTableFacetedFilter({ column, title, options }) {
+export function DataTableFacetedFilter({
+  column,
+  title,
+  options,
+  isMultiSelector = false,
+}) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue());
+  const [open, setOpen] = useState(false)
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircledIcon className="mr-2 h-4 w-4" />
@@ -78,7 +85,12 @@ export function DataTableFacetedFilter({ column, title, options }) {
                       if (isSelected) {
                         selectedValues.delete(option.value);
                       } else {
-                        selectedValues.add(option.value);
+                        if (isMultiSelector) selectedValues.add(option.value)
+                        else {
+                          selectedValues.clear();
+                          selectedValues.add(option.value);
+                          setOpen(false)
+                        }
                       }
                       const filterValues = Array.from(selectedValues);
                       column?.setFilterValue(
