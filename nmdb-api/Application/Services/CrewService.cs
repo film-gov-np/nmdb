@@ -3,6 +3,7 @@ using Application.Dtos;
 using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
+using Application.Dtos.Theatre;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
@@ -14,6 +15,7 @@ using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 using System.Net;
 using System.Web.Mvc;
 
@@ -36,6 +38,57 @@ public class CrewService : ICrewService
         _mapper = mapper;
         _fileService = fileService;
         _logger = logger;
+    }
+    public async Task<ApiResponse<PaginationResponse<CrewResponseDto>>> GetAllAsync(CrewFilterParameters filterParameters)
+    {
+        Expression<Func<Crew, bool>> filter = null;
+        Expression<Func<Crew, object>> orderByColumn = null;
+        Func<IQueryable<Crew>, IOrderedQueryable<Crew>> orderBy = null;
+
+
+        // Apply filtering
+        if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        {
+            filter = query =>
+                (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
+                || query.NickName.Contains(filterParameters.SearchKeyword));
+        }
+
+        if (!string.IsNullOrEmpty(filterParameters.SortColumn))
+        {
+            switch (filterParameters.SortColumn.ToLower())
+            {
+                case "name":
+                    orderByColumn = query => query.Name;
+                    break;
+                case "nickname":
+                    orderByColumn = query => query.ContactNumber;
+                    break;
+                // Add more cases for other columns
+                default:
+                    throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
+            }
+        }
+
+        var (query, totalItems) = await _unitOfWork.CrewRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
+        var theatreResponse = await query.Select(
+                                            tr => new CrewResponseDto
+                                            {
+                                                Id = tr.Id,
+                                                Name = tr.Name,
+                                                NickName = tr.NickName,
+                                                ContactNumber = tr.ContactNumber,
+                                            }).ToListAsync();
+
+        var response = new PaginationResponse<CrewResponseDto>
+        {
+            Items = theatreResponse,
+            TotalItems = totalItems,
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize
+        };
+
+        return ApiResponse<PaginationResponse<CrewResponseDto>>.SuccessResponse(response);
     }
     public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
     {
@@ -73,6 +126,32 @@ public class CrewService : ICrewService
             _unitOfWork.Rollback();
             return ApiResponse<string>.ErrorResponse($"Failed to create crew: {ex.Message}", HttpStatusCode.InternalServerError);
         }
+    }
+
+    public async Task<ApiResponse<string>> UpdateCrewAsync(int crewId, CrewRequestDto crewRequestDto)
+    {
+        var response = new ApiResponse<string>();
+        try
+        {
+            var crew = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+
+            if (crew == null)
+            {
+                return ApiResponse<string>.ErrorResponse($"Crew with '{crewRequestDto.Id}' could not be found.", HttpStatusCode.NotFound);
+            }
+
+            _mapper.Map(crewRequestDto, crew);
+            crew.Id = crewId;
+            crew.UpdatedBy = crewRequestDto.AuditedBy;
+            await _unitOfWork.CrewRepository.UpdateAsync(crew);
+            await _unitOfWork.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating crew.");
+            response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
+        }
+        return response;
     }
 
     public async Task<ApiResponse<string>> DeleteCrewAsync(int crewId)
@@ -133,38 +212,6 @@ public class CrewService : ICrewService
         return response;
     }
 
-    public async Task<Application.Helpers.Response.PaginationResponse<CrewListDto>> GetCrewsAsync(CrewFilterParameters crewFilterParameters)
-    {
-        var query = _unitOfWork.CrewRepository.Get();
-        var crewResponse = await query.Select(
-        cr => new CrewListDto(
-                         cr.Id,
-                         cr.Name,
-                         cr.FatherName,
-                         cr.MotherName,
-                         cr.NickName)).ToListAsync();
 
-        int totalItems = await query.CountAsync();
 
-        var paginatedResponse = new Helpers.Response.PaginationResponse<CrewListDto>
-        {
-            Items = crewResponse,
-            TotalItems = totalItems,
-            PageNumber = crewFilterParameters.PageNumber,
-            PageSize = crewFilterParameters.PageSize
-        };
-
-        return paginatedResponse;
-
-    }
-
-    public Task<Core.PaginationResponseOld<CrewListDto>> GetCrewsAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<ApiResponse<string>> UpdateCrewAsync(CrewRequestDto crewRequestDto)
-    {
-        throw new NotImplementedException();
-    }
 }
