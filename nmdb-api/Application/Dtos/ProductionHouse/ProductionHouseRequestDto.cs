@@ -6,7 +6,8 @@ namespace Application.Dtos.ProductionHouse
     {
         public string Address { get; set; }
         public string EstablishedDate { get; set; }
-        public string ChairmanName { get; set; }
+        public string ContactPerson { get; set; }
+        public string ContactNumber { get; set; }
 
         [JsonIgnore]
         public string? AuditedBy { get; set; }

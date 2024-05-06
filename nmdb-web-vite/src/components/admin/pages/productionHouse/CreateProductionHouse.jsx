@@ -46,7 +46,7 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   address: z.string(),
-  // chairmanName: z.string(),
+  chairmanName: z.string(),
   contactPerson: z.string().min(2, {
     message: "Contact person name must be at least 2 characters.",
   }),
@@ -68,11 +68,11 @@ const defaultValues = {
   name: "",
   nepaliName: "",
   address: "",
-  // chairmanName: "",
+  chairmanName: "",
   contactPerson: "",
   contactNumber: "",
   establishedDate: "",
-  isRunning: "",
+  isRunning: "true",
 };
 
 const getPrductionHouse = async (id, renderMode) => {
@@ -200,8 +200,9 @@ const CreateProductionHouse = () => {
 function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: productionHouse,
+    defaultValues: {...productionHouse, isRunning: productionHouse.isRunning.toString()},
   });
+  console.log(form)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -275,7 +276,7 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
-            {/* <FormField
+            <FormField
               control={form.control}
               name="chairmanName"
               render={({ field }) => (
@@ -287,7 +288,7 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
             <FormField
               control={form.control}
               name="establishedDate"
@@ -382,7 +383,7 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
                 <FormItem>
                   <FormLabel>Contact person number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name in nepali" {...field} />
+                    <Input placeholder="Phone number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

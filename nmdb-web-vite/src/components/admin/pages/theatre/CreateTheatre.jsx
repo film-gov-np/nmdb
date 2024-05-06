@@ -191,7 +191,7 @@ const CreateTheatre = () => {
 function TheatreForm({ theatre, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: theatre,
+    defaultValues: {...theatre, isRunning: theatre.isRunning.toString()},
   });
   return (
     <Form {...form}>
