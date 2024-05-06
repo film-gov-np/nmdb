@@ -121,7 +121,7 @@ export const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contact Name" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("contactPerson")}</div>,    
+    cell: ({ row }) => <div className="">{row.getValue("contactPerson")}</div>,
   },
   {
     accessorKey: "contactNumber",
@@ -129,8 +129,8 @@ export const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contact Number" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("contactNumber")}</div>,    
-    enableSorting: false,    
+    cell: ({ row }) => <div className="">{row.getValue("contactNumber")}</div>,
+    enableSorting: false,
   },
   {
     accessorKey: "isRunning",
@@ -140,18 +140,25 @@ export const columns = [
     ),
     cell: ({ row }) => {
       let isRunning = row.getValue("isRunning");
-      return(
-      <Badge variant={isRunning ? "" : "destructive"}>
-        {isRunning.toString()}
-      </Badge>
+      return (
+        <Badge
+          variant={isRunning ? "secondary" : "destructive"}
+          className="px-4"
+        >
+          {isRunning ? "Yes" : "No"}
+        </Badge>
       );
     },
-    enableSorting: false,    
+    enableSorting: false,
   },
   {
     id: "actions",
-    meta:"Actions",
-    header:()=>(<div className="flex items-center space-x-2 justify-center"><span>Actions</span></div>),
+    meta: "Actions",
+    header: () => (
+      <div className="flex items-center justify-center space-x-2">
+        <span>Actions</span>
+      </div>
+    ),
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

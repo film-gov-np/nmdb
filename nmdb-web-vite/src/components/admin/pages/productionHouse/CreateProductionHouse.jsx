@@ -202,7 +202,6 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
     resolver: zodResolver(formSchema),
     defaultValues: {...productionHouse, isRunning: productionHouse.isRunning.toString()},
   });
-  console.log(form)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

@@ -48,7 +48,7 @@ export function DeleteItemsDialog({
     {
       mutationFn: deleteItems,
       onSuccess: (data, variables, context) => {
-        toast({description:"Successfully deleted the role."})
+        toast({description:"Successfully deleted from the sysetm."})
       },
       onError: (error, variables, context) => {
         toast({description:"Something went wrong.Please try again."})

@@ -17,9 +17,7 @@ import { Paths } from "@/constants/routePaths";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Badge } from "@/components/ui/badge";
 
-export const labels = [
-  
-];
+export const labels = [];
 
 export const facetedFilters = [];
 
@@ -33,7 +31,7 @@ function DataTableRowActions({ row }) {
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}
         showTrigger={false}
-        apiBasePath = {ApiPaths.Path_FlimRoles_Delete}
+        apiBasePath={ApiPaths.Path_ProductionHouse}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
       <TooltipProvider>
@@ -41,7 +39,7 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={Paths.Route_Admin_ProductionHouse + "/"+ row.original.id}
+                to={Paths.Route_Admin_ProductionHouse + "/" + row.original.id}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-blue-500",
@@ -56,7 +54,12 @@ function DataTableRowActions({ row }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to={Paths.Route_Admin_ProductionHouse + "/"+ row.original.id + "/edit"}
+                to={
+                  Paths.Route_Admin_ProductionHouse +
+                  "/" +
+                  row.original.id +
+                  "/edit"
+                }
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-green-500",
@@ -95,7 +98,18 @@ export const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-col space-y-2">
+          {row.getValue("name")}
+          {row.original.nepaliName && (
+            <span className="text-xs text-muted-foreground">
+              {row.original.nepaliName}
+            </span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "chairmanName",
@@ -114,13 +128,16 @@ export const columns = [
     ),
     cell: ({ row }) => {
       let isRunning = row.getValue("isRunning");
-      return(
-      <Badge variant={isRunning ? "" : "destructive"}>
-        {isRunning.toString()}
-      </Badge>
+      return (
+        <Badge
+          variant={isRunning ? "secondary" : "destructive"}
+          className="px-4 "
+        >
+          {isRunning ? "Yes" : "No"}
+        </Badge>
       );
     },
-    enableSorting: false,    
+    enableSorting: false,
   },
   {
     id: "actions",

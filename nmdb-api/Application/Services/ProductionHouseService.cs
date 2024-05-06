@@ -123,6 +123,7 @@ public class ProductionHouseService : IProductionHouseService
                                             {
                                                 Id = tr.Id,
                                                 Name = tr.Name,
+                                                NepaliName = tr.NepaliName,
                                                 ChairmanName = tr.ChairmanName,
                                                 IsRunning = tr.IsRunning
 
