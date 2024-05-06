@@ -30,6 +30,7 @@ import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
 import { default as MoviesHome } from "@/components/landing/pages/movies/Movies";
 import CreateRole from "@/components/admin/pages/role/CreateRole";
 import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
+import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 
 export const routes = [
   {
@@ -85,6 +86,15 @@ export const routes = [
             component: Crew,
             path: Paths.Route_Admin_Crew,
             isPublic: false,
+            routes: [
+              {
+                name: "CrewAdd",
+                title: "Crew Add page",
+                component: CreateCrew,
+                path: Paths.Route_Admin_Crew_Add,
+                isPublic: false,
+              }
+            ],
           },
           {
             name: "role",

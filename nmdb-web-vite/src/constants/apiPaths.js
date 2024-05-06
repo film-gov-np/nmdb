@@ -8,5 +8,7 @@ export const ApiPaths = {
   Path_Theatres:"/theatres",
 
   // Production House
-  Path_ProductionHouse: "/production-house"
+  Path_ProductionHouse: "/production-house",
+
+  Path_Crews: "/crews"
 };

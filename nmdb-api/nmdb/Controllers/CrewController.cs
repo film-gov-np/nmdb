@@ -1,4 +1,9 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Dtos;
+using Application.Dtos.FilterParameters;
+using Application.Dtos.Theatre;
+using Application.Interfaces.Services;
+using Application.Services;
+using Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using nmdb.Common;
@@ -13,10 +18,17 @@ namespace nmdb.Controllers
         private readonly ILogger<CrewController> _logger;
         private readonly ICrewService _crewService;
 
-        public CrewController(ILogger<CrewController> logger,  ICrewService crewService)
+        public CrewController(ILogger<CrewController> logger, ICrewService crewService)
         {
             _logger = logger;
             _crewService = crewService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
+        {
+            var response = await _crewService.GetAllAsync(filterParameters);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
@@ -37,6 +49,69 @@ namespace nmdb.Controllers
             {
                 return BadRequest(result);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CrewRequestDto crewRequestDto)
+        {
+            if (crewRequestDto == null)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+            }
+
+            crewRequestDto.AuditedBy = GetUserId;
+            var result = await _crewService.CreateCrewAsync(crewRequestDto);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] CrewRequestDto crewRequestDto)
+        {
+            if (crewRequestDto == null)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+            }
+            crewRequestDto.AuditedBy = GetUserId;
+            var result = await _crewService.UpdateCrewAsync(id, crewRequestDto);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _crewService.DeleteCrewAsync(id);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            else
+                return BadRequest(result);
+
         }
     }
 }
