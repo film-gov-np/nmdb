@@ -1,6 +1,6 @@
 import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { Paths } from "@/constants/routePaths";
-import { columns } from "./dataColumns";
+import { columns } from "./DataColumns";
 import { ApiPaths } from "@/constants/apiPaths";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
@@ -35,11 +35,11 @@ const Role = () => {
   const facetedFilters = [{
     name: "categoryName",
     title: "Category",
-    accessorKey:"CategoryIds",
+    accessorKey: "CategoryIds",
     isMultiSelector: true,
     filters: categories?.data?.map((categroy) => (
-      {value: categroy.id, label: categroy.categoryName}
-    ))  || []
+      { value: categroy.id, label: categroy.categoryName }
+    )) || []
   },];
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
