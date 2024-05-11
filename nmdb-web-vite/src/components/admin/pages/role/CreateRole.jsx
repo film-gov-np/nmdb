@@ -84,7 +84,6 @@ const getCategories = async () => {
 };
 
 const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
-  debugger;
   let apiPath = ApiPaths.Path_FilmRoles;
   if (isEditMode) {
     apiPath += "/" + slug;
@@ -173,9 +172,9 @@ const CreateRole = () => {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="role" pathTo={Paths.Route_Admin_Role} />
       {isLoading ||
-      isFetching ||
-      categories.isLoading ||
-      categories.isFetching ? (
+        isFetching ||
+        categories.isLoading ||
+        categories.isFetching ? (
         <FormSkeleton columnCount={2} rowCount={1} repeat={1} shrinkZero />
       ) : (
         data &&
@@ -193,14 +192,13 @@ const CreateRole = () => {
 };
 
 function RoleForm({ role, categories, renderMode, onSubmit }) {
-  debugger;
   const [openCategorySelection, setOpenCategorySelection] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      roleCategoryId:categories? categories.find(
+      roleCategoryId: categories ? categories.find(
         ({ id, categoryName }) => categoryName === role.categoryName,
-      )?.id:null,
+      )?.id : null,
       roleName: role.roleName,
     },
   });
@@ -238,8 +236,8 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                         >
                           {field.value
                             ? categories.find(
-                                ({ id, categoryName }) => id === field.value,
-                              )?.categoryName
+                              ({ id, categoryName }) => id === field.value,
+                            )?.categoryName
                             : "Select categroy"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -251,7 +249,7 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                         <CommandList>
                           <CommandEmpty>No category found.</CommandEmpty>
                           <CommandGroup>
-                            {categories? categories.map(({ id, categoryName }) => (
+                            {categories ? categories.map(({ id, categoryName }) => (
                               <CommandItem
                                 value={categoryName}
                                 key={"category" + id}
@@ -270,7 +268,7 @@ function RoleForm({ role, categories, renderMode, onSubmit }) {
                                 />
                                 {categoryName}
                               </CommandItem>
-                            )):""}
+                            )) : ""}
                           </CommandGroup>
                         </CommandList>
                       </Command>

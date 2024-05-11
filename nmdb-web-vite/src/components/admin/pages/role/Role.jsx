@@ -1,6 +1,6 @@
 import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { Paths } from "@/constants/routePaths";
-import { columns } from "./dataColumns";
+import { columns } from "./DataColumns";
 import { ApiPaths } from "@/constants/apiPaths";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
