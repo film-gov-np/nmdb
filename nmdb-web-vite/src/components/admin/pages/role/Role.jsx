@@ -24,7 +24,7 @@ const Role = () => {
     queryKey: ["flimRoleCategories"],
     queryFn: async () => {
       const cache = getFromCache(`flimRoleCategories`);
-      if (cache) {
+      if (cache && cache.length > 0) {
         console.log("cachedCategories", cache);
         return cache;
       }
@@ -32,15 +32,21 @@ const Role = () => {
     },
     keepPreviousData: true,
   });
-  const facetedFilters = [{
-    name: "categoryName",
-    title: "Category",
-    accessorKey:"CategoryIds",
-    isMultiSelector: true,
-    filters: categories?.data?.map((categroy) => (
-      {value: categroy.id, label: categroy.categoryName}
-    ))  || []
-  },];
+  const facetedFilters = [];
+  if (categories?.data?.length > 0) {
+    facetedFilters.push({
+      name: "categoryName",
+      title: "Category",
+      accessorKey: "CategoryIds",
+      isMultiSelector: true,
+      filters:
+        categories?.data?.map((categroy) => ({
+          value: categroy.id,
+          label: categroy.categoryName,
+        })) || [],
+    });
+  }
+
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <DataTableAdvancedServerControlled

@@ -44,7 +44,6 @@ const generateQueryPath = ({
   columnFilters,
   facetedFilters,
 }) => {
-  console.log("column-filters", columnFilters);
   let queryPath = `?PageNumber=${pageIndex + 1}&PageSize=${pageSize}`;
   if (sorting[0]?.id) {
     queryPath += `&SortColumn=${sorting[0]?.id}&Descending=${sorting[0]?.desc}`;
