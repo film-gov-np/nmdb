@@ -45,6 +45,7 @@ public class Movie : BaseEntity<int>
     public bool IsFeatured { get; set; } = false;
 
     // Navigational Properties
+    public MovieCensor Censor { get; set; }
     public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     [NotMapped]
     public ICollection<Genre> Genres => MovieGenres.Select(ml => ml.Genre).ToList();
@@ -55,6 +56,6 @@ public class Movie : BaseEntity<int>
 
     public ICollection<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
     public ICollection<MovieTheatre> MovieTheatres { get; set; } = new List<MovieTheatre>();
-    public ICollection<MovieStudio> MovieStudios { get; set; } = new List<MovieStudio>();
+    public ICollection<MovieProductionHouse> MovieProductionHouses { get; set; } = new List<MovieProductionHouse>();
 
 }

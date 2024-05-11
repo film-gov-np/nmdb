@@ -16,7 +16,9 @@ namespace Core.Entities
         [MaxLength(20)]
         public string? ContactNumber { get; set; }
         public DateTime? EstablishedDate { get; set; }
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; set; } = true;
         public string? ChairmanName{ get; set; }
+
+        public ICollection<MovieProductionHouse> MovieProductionHouses { get; set; } = new List<MovieProductionHouse>();
     }
 }

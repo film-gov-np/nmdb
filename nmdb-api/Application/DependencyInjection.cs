@@ -18,6 +18,9 @@ public static class DependencyInjection
         services.AddScoped<IFilmRoleService, FilmRoleService>();
         services.AddScoped<IFilmRoleCategoryService, FilmRoleCategoryService>();
         services.AddScoped<ICrewService, CrewService>();
+        services.AddScoped<ITheatreService, TheatreService>();
+        services.AddScoped<IProductionHouseService, ProductionHouseService>();
+        services.AddScoped<IMovieService, MovieService>();
         services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AssemblyReference>());
         return services;
     }

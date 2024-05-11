@@ -11,6 +11,7 @@ namespace Application.Interfaces
         ICrewRepository CrewRepository { get; }
         ITheatreRepository TheatreRepository { get; }
         IProductionHouseRepository ProductionHouseRepository { get; }
+        IMovieRepository MovieRepository { get; }
         Task CommitAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync();
         void Rollback();

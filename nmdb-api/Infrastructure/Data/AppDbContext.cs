@@ -27,9 +27,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Crew> Crews { get; set; }
     public DbSet<CrewDesignation> CrewRoles { get; set; }
     public DbSet<MovieCrewRole> MovieCrewRoles { get; set; }
+    public DbSet<MovieCensor> MovieCensors { get; set; }
     public DbSet<MovieGenre> MovieGenre { get; set; }
     public DbSet<MovieLanguage> MovieLanguages { get; set; }
-    public DbSet<MovieStudio> MovieStudios { get; set; }
+    //public DbSet<MovieStudio> MovieStudios { get; set; }
+    public DbSet<MovieProductionHouse> MovieProductionHouses { get; set; }
+
     public DbSet<MovieTheatre> MovieTheatres { get; set; }
 
     public DbSet<MovieType> MovieTypes { get; set; }
@@ -86,7 +89,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithMany(r => r.MovieCrewRoles)
             .HasForeignKey(mcr => mcr.RoleId);
 
-        
+
         // Movie Genre
         builder.Entity<MovieGenre>()
             .HasKey(mcr => new { mcr.MovieId, mcr.GenreId });
@@ -116,20 +119,20 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithMany(m => m.MovieLanguages)
             .HasForeignKey(mcr => mcr.LanguageId);
 
-        
-        // Movie Studio
-        builder.Entity<MovieStudio>()
-             .HasKey(mcr => new { mcr.MovieId, mcr.StudioId });
 
-        builder.Entity<MovieStudio>()
+        // Movie Production House
+        builder.Entity<MovieProductionHouse>()
+             .HasKey(mcr => new { mcr.MovieId, mcr.ProductionHouseId });
+
+        builder.Entity<MovieProductionHouse>()
             .HasOne(mcr => mcr.Movie)
-            .WithMany(m => m.MovieStudios)
+            .WithMany(m => m.MovieProductionHouses)
             .HasForeignKey(mcr => mcr.MovieId);
 
-        builder.Entity<MovieStudio>()
-            .HasOne(mcr => mcr.Studio)
-            .WithMany(m => m.MovieStudios)
-            .HasForeignKey(mcr => mcr.StudioId);
+        builder.Entity<MovieProductionHouse>()
+            .HasOne(mcr => mcr.ProductionHouse)
+            .WithMany(m => m.MovieProductionHouses)
+            .HasForeignKey(mcr => mcr.ProductionHouseId);
 
 
         // Movie Theatre
@@ -137,9 +140,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasKey(mt => new { mt.MovieId, mt.TheatreId });
 
         builder.Entity<MovieTheatre>()
-            .HasOne(mt=> mt.Movie)
-            .WithMany(mt=>mt.MovieTheatres)
-            .HasForeignKey(mt=>mt.MovieId);
+            .HasOne(mt => mt.Movie)
+            .WithMany(mt => mt.MovieTheatres)
+            .HasForeignKey(mt => mt.MovieId);
 
         builder.Entity<MovieTheatre>()
             .HasOne(mt => mt.Theatre)
