@@ -33,7 +33,7 @@ const Role = () => {
     keepPreviousData: true,
   });
   const facetedFilters = [];
-  if (categories?.data?.length > 0) {
+  if (categories.status === "success" && categories?.data?.length > 0) {
     facetedFilters.push({
       name: "categoryName",
       title: "Category",
