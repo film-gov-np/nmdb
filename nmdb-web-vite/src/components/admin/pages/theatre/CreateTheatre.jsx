@@ -192,7 +192,7 @@ const CreateTheatre = () => {
 function TheatreForm({ theatre, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {...theatre, isRunning: theatre.isRunning.toString()},
+    defaultValues: { ...theatre, isRunning: theatre.isRunning.toString() },
   });
   return (
     <Form {...form}>
@@ -374,12 +374,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
-                  <Textarea
-                  placeholder="Remarks"
-                  className="resize-none"
-                  {...field}
-                />
-                    {/* <Input type="text" placeholder="Remarks" {...field} /> */}
+                    <Textarea
+                      placeholder="Remarks"
+                      className="resize-none"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
