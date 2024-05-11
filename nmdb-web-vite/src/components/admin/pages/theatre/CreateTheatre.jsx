@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -373,7 +374,12 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Remarks" {...field} />
+                  <Textarea
+                  placeholder="Remarks"
+                  className="resize-none"
+                  {...field}
+                />
+                    {/* <Input type="text" placeholder="Remarks" {...field} /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
