@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240511162612_StudioToProductionHouse")]
+    partial class StudioToProductionHouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -669,75 +672,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
-                });
-
-            modelBuilder.Entity("Core.Entities.MovieCensor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ApplicationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CensorType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CensoredDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CertificateNumber")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReelLength")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ReelSize")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ValidForInYears")
-                        .HasColumnType("int")
-                        .HasColumnName("ValidYears");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId")
-                        .IsUnique();
-
-                    b.ToTable("MovieCensorInfo");
                 });
 
             modelBuilder.Entity("Core.Entities.MovieCrewRole", b =>
@@ -1579,17 +1513,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("RoleCategory");
                 });
 
-            modelBuilder.Entity("Core.Entities.MovieCensor", b =>
-                {
-                    b.HasOne("Core.Entities.Movie", "Movie")
-                        .WithOne("Censor")
-                        .HasForeignKey("Core.Entities.MovieCensor", "MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("Core.Entities.MovieCrewRole", b =>
                 {
                     b.HasOne("Core.Entities.Crew", "Crew")
@@ -1803,9 +1726,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.Movie", b =>
                 {
-                    b.Navigation("Censor")
-                        .IsRequired();
-
                     b.Navigation("MovieCrewRoles");
 
                     b.Navigation("MovieGenres");

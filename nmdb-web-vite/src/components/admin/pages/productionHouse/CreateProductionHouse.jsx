@@ -315,12 +315,14 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
+                        showOutsideDays={true}
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
+                        captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
                         initialFocus
                       />
                     </PopoverContent>
