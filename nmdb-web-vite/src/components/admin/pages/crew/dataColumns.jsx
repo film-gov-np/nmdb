@@ -1,85 +1,86 @@
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
 import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
-import { DataTableRowActions } from "@/components/ui/custom/data-table/data-table-row-actions";
-import { Badge } from "@/components/ui/badge";
+
 import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  CheckCircledIcon,
-  CircleIcon,
-  CrossCircledIcon,
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
-} from "@radix-ui/react-icons";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+// import { DataTableRowActions } from "@/components/ui/custom/data-table-row-actions";
+import { SquarePen, Trash, View } from "lucide-react";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { ApiPaths } from "@/constants/apiPaths";
+import { Checkbox } from "@radix-ui/react-checkbox";
+import { Badge } from "@/components/ui/badge";
 
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
-];
+function DataTableRowActions({ row }) {
+  const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
 
-export const facetedFilters = [
-  {
-    name: "status",
-    filters: [
-      {
-        value: "backlog",
-        label: "Backlog",
-        icon: QuestionMarkCircledIcon,
-      },
-      {
-        value: "todo",
-        label: "Todo",
-        icon: CircleIcon,
-      },
-      {
-        value: "in progress",
-        label: "In Progress",
-        icon: StopwatchIcon,
-      },
-      {
-        value: "done",
-        label: "Done",
-        icon: CheckCircledIcon,
-      },
-      {
-        value: "canceled",
-        label: "Canceled",
-        icon: CrossCircledIcon,
-      },
-    ],
-  },
-  {
-    name: "priority",
-    filters: [
-      {
-        label: "Low",
-        value: "low",
-        icon: ArrowDownIcon,
-      },
-      {
-        label: "Medium",
-        value: "medium",
-        icon: ArrowRightIcon,
-      },
-      {
-        label: "High",
-        value: "high",
-        icon: ArrowUpIcon,
-      },
-    ],
-  },
-];
+  return (
+    <div className="flex justify-center">
+      <DeleteItemsDialog
+        open={showDeleteTaskDialog}
+        onOpenChange={setShowDeleteTaskDialog}
+        selectedData={[row]}
+        showTrigger={false}
+        apiBasePath={ApiPaths.Path_Crews}
+        onSuccess={() => setShowDeleteTaskDialog(false)}
+      />
+      <TooltipProvider>
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to={`/admin/crew/${row.original.id}`}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  " text-blue-500",
+                )}
+              >
+                <View className="h-4 w-4" />
+                <span className="sr-only">View Details</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="top">Details</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to={`/admin/crew/${row.original.id}/edit`}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  " text-green-500",
+                )}
+              >
+                <SquarePen className="h-4 w-4" />
+                <span className="sr-only">Edit</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="top">Edit</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                className=" text-destructive"
+                onClick={() => setShowDeleteTaskDialog(true)}
+                variant="outline"
+                size="icon"
+              >
+                <Trash className="h-4 w-4" />
+                <span className="sr-only">Delete</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Delete</TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
+    </div>
+  );
+}
 
 export const columns = [
   {
@@ -107,94 +108,64 @@ export const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "name",
+    meta: "Name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task" />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="flex flex-col space-y-2">
+      {row.getValue("name")}
+      {row.original.nepaliName && (
+        <span className="text-xs text-muted-foreground">
+          {row.original.nepaliName}
+        </span>
+      )}
+    </div>,
+  },
+  {
+    accessorKey: "nickName",
+    meta: "Nick Name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nick Name" />
+    ),
+    cell: ({ row }) => <div className="">{row.getValue("nickName")}</div>,
+  },
+  {
+    accessorKey: "fatherName",
+    meta: "Father Name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Father Name" />
+    ),
+    cell: ({ row }) => <div className="">{row.getValue("fatherName")}</div>,
     enableSorting: false,
-    enableHiding: false,
   },
   {
-    accessorKey: "title",
+    accessorKey: "isVerified",
+    meta: "Is Verified",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} title="Is Verified" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label);
-
+      let isVerified = row.getValue("isVerified");
       return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
-          </span>
-        </div>
+        <Badge
+          variant={isVerified ? "secondary" : "destructive"}
+          className="px-4"
+        >
+          {isVerified ? "Yes" : "No"}
+        </Badge>
       );
     },
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ row }) => {
-      const statuses = facetedFilters.find(
-        (filter) => filter.name === "status",
-      );
-      const status = statuses?.filters?.find(
-        (status) => status.value === row.getValue("status"),
-      );
-
-      if (!status) {
-        return null;
-      }
-
-      return (
-        <div className="flex w-[100px] items-center">
-          {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "priority",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
-    ),
-    cell: ({ row }) => {
-      const priorities = facetedFilters.find(
-        (filter) => filter.name === "priority",
-      );
-      const priority = priorities?.filters?.find(
-        (priority) => priority.value === row.getValue("priority"),
-      );
-
-      if (!priority) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+    enableSorting: false,
   },
   {
     id: "actions",
+    meta: "Actions",
+    header: () => (
+      <div className="flex items-center justify-center space-x-2">
+        <span>Actions</span>
+      </div>
+    ),
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

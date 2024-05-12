@@ -79,7 +79,13 @@ public class CrewService : ICrewService
                                             {
                                                 Id = tr.Id,
                                                 Name = tr.Name,
+                                                BirthName = tr.BirthName,
                                                 NickName = tr.NickName,
+                                                FatherName = tr.FatherName,
+                                                MotherName = tr.MotherName,
+                                                IsVerified = tr.IsVerified,
+                                                NepaliName = tr.NepaliName,
+                                                ProfilePhoto = tr.ProfilePhoto
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewResponseDto>

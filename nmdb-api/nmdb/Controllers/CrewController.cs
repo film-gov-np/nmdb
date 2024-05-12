@@ -52,7 +52,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CrewRequestDto crewRequestDto)
+        public async Task<IActionResult> Create([FromBody] CrewRequestDto crewRequestDto)
         {
             try
             {

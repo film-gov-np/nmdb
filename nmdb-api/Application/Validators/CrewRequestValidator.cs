@@ -13,7 +13,7 @@ namespace Application.Validators
     {
         public CrewRequestValidator()
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Name gaida is required");
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
             RuleFor(x => x.NepaliName).NotEmpty().WithMessage("Nepali Name is required");
         }
     }
