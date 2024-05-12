@@ -52,23 +52,30 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CrewRequestDto crewRequestDto)
+        public async Task<IActionResult> Create([FromForm] CrewRequestDto crewRequestDto)
         {
-            if (crewRequestDto == null)
+            try
             {
-                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
-            }
+                if (crewRequestDto == null)
+                {
+                    return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+                }
 
-            crewRequestDto.AuditedBy = GetUserId;
-            var result = await _crewService.CreateCrewAsync(crewRequestDto);
+                crewRequestDto.AuditedBy = GetUserId;
+                var result = await _crewService.CreateCrewAsync(crewRequestDto);
 
-            if (result.IsSuccess)
-            {
-                return Ok(result);
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(result);
+                throw;
             }
         }
 

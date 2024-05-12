@@ -3,12 +3,14 @@ using Application.Dtos;
 using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
+using Application.Dtos.ProductionHouse;
 using Application.Dtos.Theatre;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.Models;
+using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Entities;
@@ -27,6 +29,7 @@ public class CrewService : ICrewService
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
+
 
     public CrewService(IUnitOfWork unitOfWork
         , IMapper mapper
@@ -77,7 +80,6 @@ public class CrewService : ICrewService
                                                 Id = tr.Id,
                                                 Name = tr.Name,
                                                 NickName = tr.NickName,
-                                                ContactNumber = tr.ContactNumber,
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewResponseDto>
@@ -94,6 +96,12 @@ public class CrewService : ICrewService
     {
         try
         {
+            //var validationResult = await _crewRequestValidator.ValidateAsync(crewRequestDto);
+            //if (!validationResult.IsValid)
+            //{
+            //    // If validation fails, return a response with validation errors
+            //    return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
+            //}
             await _unitOfWork.BeginTransactionAsync();
             var crewEntity = _mapper.Map<Crew>(crewRequestDto);
             var filmRoles = await _unitOfWork.FilmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
