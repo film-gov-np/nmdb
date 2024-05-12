@@ -36,12 +36,12 @@ public class TheatreService : ITheatreService
 
         try
         {
-            var validationResult = await _theatreRequestValidator.ValidateAsync(theatreRequestDto);
-            if (!validationResult.IsValid)
-            {
-                // If validation fails, return a response with validation errors
-                return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
-            }
+            //var validationResult = await _theatreRequestValidator.ValidateAsync(theatreRequestDto);
+            //if (!validationResult.IsValid)
+            //{
+            //    // If validation fails, return a response with validation errors
+            //    return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
+            //}
             var theatreEntity = _mapper.Map<Theatre>(theatreRequestDto);
             theatreEntity.CreatedBy = theatreRequestDto.AuditedBy;
             await _unitOfWork.TheatreRepository.AddAsync(theatreEntity);

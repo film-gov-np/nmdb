@@ -26,12 +26,12 @@ public class FilmRoleService : IFilmRoleService
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _logger = logger;
-        //_filmRoleValidator = filmRoleValidator;
+        _logger = logger;        
     }
 
     public async Task<ApiResponse<string>> CreateAsync(FilmRoleRequest filmRoleDto)
     {
+        // Below validation is not required/ Handled by service registration
         //// Validate the filmRoleDto using FluentValidation
         //var validationResult = await _filmRoleValidator.ValidateAsync(filmRoleDto);
         //if (!validationResult.IsValid)

@@ -7,4 +7,5 @@ public class MovieListResponseDto
     public string NepaliName { get; set; }
     public string Category { get; set; }
     public string Status { get; set; }
+    public string Image { get; set; }
 }
