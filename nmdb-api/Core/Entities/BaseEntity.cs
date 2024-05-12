@@ -13,7 +13,7 @@ public abstract class BaseEntity <TId> : IBaseEntity<TId>
 
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     [DefaultValue(typeof(DateTime), "GETUTCDATE()")]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public string? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }

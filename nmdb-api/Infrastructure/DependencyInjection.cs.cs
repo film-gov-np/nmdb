@@ -41,8 +41,6 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.Section));
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ITheatreService, TheatreService>();
-        services.AddScoped<IProductionHouseService, ProductionHouseService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
