@@ -51,13 +51,19 @@ public class MovieService : IMovieService
                 //var crewRoleEntities = _mapper.Map<List<MovieCrewRole>>(movieRequestDto.CrewRoles);
                 foreach (var crewRole in movieRequestDto.CrewRoles)
                 {
-                    var crewRoleEntity = new MovieCrewRole
+                    foreach(var crewId in crewRole.CrewIds)
                     {
-                        //MovieId = createdMovie.Id,
-                        CrewId = crewRole.CrewId,
-                        RoleId = crewRole.RoleId,
-                    };
+                        var crewRoleEntity = new MovieCrewRole
+                        {
+                            //MovieId = createdMovie.Id,
+                            CrewId = crewId,
+                            RoleId = crewRole.RoleId,
+                            RoleNickName=crewRole.RoleNickName,
+                            RoleNickNameNepali=crewRole.RoleNickNameNepali
+                        };
+
                     movieEntity.MovieCrewRoles.Add(crewRoleEntity);
+                    }
                 }
             }
 
@@ -267,13 +273,18 @@ public class MovieService : IMovieService
                 //var crewRoleEntities = _mapper.Map<List<MovieCrewRole>>(movieRequestDto.CrewRoles);
                 foreach (var crewRole in movieRequestDto.CrewRoles)
                 {
-                    var crewRoleEntity = new MovieCrewRole
+                    foreach (var crewId in crewRole.CrewIds)
                     {
-                        //MovieId = createdMovie.Id,
-                        CrewId = crewRole.CrewId,
-                        RoleId = crewRole.RoleId,
-                    };
-                    movieEntity.MovieCrewRoles.Add(crewRoleEntity);
+                        var crewRoleEntity = new MovieCrewRole
+                        {                            
+                            CrewId = crewId,
+                            RoleId = crewRole.RoleId,
+                            RoleNickName = crewRole.RoleNickName,
+                            RoleNickNameNepali = crewRole.RoleNickNameNepali
+                        };
+
+                        movieEntity.MovieCrewRoles.Add(crewRoleEntity);
+                    }
                 }
             }
 
@@ -343,6 +354,7 @@ public class MovieService : IMovieService
         }
         catch (Exception ex)
         {
+            _unitOfWork.Rollback();
             _logger.LogError(ex, "An error occurred while updating the movie.");
             response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
         }
