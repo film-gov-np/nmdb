@@ -19,7 +19,7 @@ public class Crew : BaseEntity<int>
     public string MotherName { get; set; }
     [MaxLength(100)]
     public string NickName { get; set; }
-    public eGender Gender { get; set; } = eGender.Male;
+    public int? Gender { get; set; }
     public DateTime? DateOfBirthInAD { get; set; }
     public string? DateOfBirthInBS { get; set; }
     public DateTime? DateOfDeathInAD { get; set; }
@@ -37,7 +37,7 @@ public class Crew : BaseEntity<int>
     public string? BiographyInNepali { get; set; }
     [MaxLength(100)]
     public string? TradeMark { get; set; }
-    public string? Trivia { get; set; }    
+    public string? Trivia { get; set; }
     public string? Activities { get; set; }
     [MaxLength(255)]
     public string? ProfilePhoto { get; set; }
@@ -50,14 +50,14 @@ public class Crew : BaseEntity<int>
     [MaxLength(255)]
     public string? TwitterID { get; set; }
     [MaxLength(20)]
-    public string ContactNumber { get; set; }
+    public string? ContactNumber { get; set; }
     [MaxLength(20)]
     public string? MobileNumber { get; set; }
     public int? ViewCount { get; set; }
     public bool IsVerified { get; set; } = false;
     public bool IsActive { get; set; } = false;
 
-    public ICollection<CrewDesignation> CrewDesignations { get; set; } = new List<CrewDesignation>();//Designation and Fiml Role are treated as the same
-    public ICollection<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
+    public virtual List<CrewDesignation> CrewDesignations { get; set; } = new List<CrewDesignation>();//Designation and Film Role are treated as the same
+    public virtual List<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
 
 }

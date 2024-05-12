@@ -119,15 +119,15 @@ public class CrewService : ICrewService
             }
 
             string profilePhotoUrl = null;
-            if (crewRequestDto.ProfilePhoto != null && crewRequestDto.ProfilePhoto.Length > 0)
-            {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhoto });
-                if (!uploadResultApiResponse.IsSuccess)
-                {
-                    return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
-                }
-                profilePhotoUrl = uploadResultApiResponse.Data.FilePath;
-            }
+            //if (crewRequestDto.ProfilePhoto != null && crewRequestDto.ProfilePhoto.Length > 0)
+            //{
+            //    var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhoto });
+            //    if (!uploadResultApiResponse.IsSuccess)
+            //    {
+            //        return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
+            //    }
+            //    profilePhotoUrl = uploadResultApiResponse.Data.FilePath;
+            //}
 
             crewEntity.ProfilePhoto = profilePhotoUrl;
             await _unitOfWork.CrewRepository.AddAsync(crewEntity);
@@ -192,9 +192,9 @@ public class CrewService : ICrewService
         return response;
     }
 
-    public async Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId)
+    public async Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId)
     {
-        var response = new ApiResponse<CrewResponseDto>();
+        var response = new ApiResponse<CrewRequestDto>();
 
         try
         {
@@ -208,7 +208,7 @@ public class CrewService : ICrewService
                 return response;
             }
 
-            var crewResponse = _mapper.Map<CrewResponseDto>(crew);
+            var crewResponse = _mapper.Map<CrewRequestDto>(crew);
 
 
             response.IsSuccess = true;

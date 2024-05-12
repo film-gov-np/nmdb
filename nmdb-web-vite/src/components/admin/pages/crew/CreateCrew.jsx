@@ -12,7 +12,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ const renderModes = {
     Render_Mode_Edit: "edit",
     Render_Mode_Details: "details",
 };
+
 const formSchema = z.object({
     name: z.string().min(2, {
         message: "Crew name must be at least 2 characters.",
@@ -39,23 +40,53 @@ const formSchema = z.object({
     motherName: z.string(),
     designation: z.string(),
     gender: z.string(),
-    birthDate: z.string(),
+    dateOfBirthInAD: z.string(),
+    dateOfDeathInAD: z.string(),
     birthPlace: z.string(),
     height: z.string(),
     starSign: z.string(),
     currentAddress: z.string(),
-    siteURL: z.string(),
-    facebookURL: z.string(),
-    twitterURL: z.string(),
+    officialSite: z.string(),
+    facebookID: z.string(),
+    twitterID: z.string(),
     mobile: z.string(),
     image: z.string(),
     biography: z.string(),
-    nepaliBiography: z.string(),
+    biographyInNepali: z.string(),
     activities: z.string(),
     trivia: z.string(),
     tradeMark: z.string(),
-    isFeatured: z.string(),
+    isVerified: z.string(),
 });
+
+const defaultValues = {
+    name: '',
+    nepaliName: '',
+    birthName: '',
+    nickName: '',
+    fatherName: '',
+    motherName: '',
+    designation: '',
+    gender: '',
+    dateOfBirthInAD: '',
+    dateOfDeathInAD: '',
+    birthPlace: '',
+    height: '',
+    starSign: '',
+    currentAddress: '',
+    officialSite: '',
+    facebookID: '',
+    twitterID: '',
+    mobile: '',
+    image: '',
+    biography: '',
+    biographyInNepali: '',
+    activities: '',
+    trivia: '',
+    tradeMark: '',
+    isVerified: '',
+};
+
 function CreateCrew() {
 
     const navigate = useNavigate();
@@ -70,11 +101,17 @@ function CreateCrew() {
     else renderMode = renderModes.Render_Mode_Details;
     const { toast } = useToast();
 
+
+
+    const { isLoading, data, isError, isFetching, isPreviousData, error } = useQuery({
+        queryKey: ["crewDetail"],
+        queryFn: () => getCrew(slug, renderMode),
+        keepPreviousData: true,
+    });
+
     const form = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            roleName: '',
-        },
+        defaultValues: { ...data },
     });
 
     const onSubmit = (data) => {
@@ -124,7 +161,26 @@ function CreateCrew() {
         },
     });
 
+    const getCrew = async (id, renderMode) => {
+        let apiPath = `${ApiPaths.Path_Crews}/${id}`;
+        let data = {};
+        if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
+        const apiResponse = await axiosInstance
+            .get(apiPath)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((err) => console.error(err));
 
+        if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
+            // conversion is required as establishedDate response is of type string
+            // it is stored in BS
+            apiResponse.data.establishedDate = new Date(
+                apiResponse.data.establishedDate,
+            );
+        data = apiResponse.data;
+        return data;
+    };
 
     return (
         <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
@@ -249,12 +305,25 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="birthDate"
+                                name="dateOfBirthInAD"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Birth Date</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Birth Date" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dateOfDeathInAD"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Death Date</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Death Date" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -319,12 +388,12 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="siteURL"
+                                name="officialSite"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Site URL</FormLabel>
+                                        <FormLabel>Official Site</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Site URL" {...field} />
+                                            <Input placeholder="Official Site" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -333,7 +402,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="facebookURL"
+                                name="facebookID"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Facebook URL</FormLabel>
@@ -347,7 +416,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="twitterURL"
+                                name="twitterID"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Twitter URL</FormLabel>
@@ -361,12 +430,12 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="mobile"
+                                name="mobileNumber"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Mobile</FormLabel>
+                                        <FormLabel>Mobile Number</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Mobile" {...field} />
+                                            <Input placeholder="Mobile Number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -392,7 +461,7 @@ function CreateCrew() {
                                 name="biography"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>English Boigraphy</FormLabel>
+                                        <FormLabel>Boigraphy</FormLabel>
                                         <FormControl>
                                             <Textarea
                                                 placeholder="English Boigraphy"
@@ -407,7 +476,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="nepaliBiography"
+                                name="biographyInNepali"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Nepali Biography</FormLabel>
@@ -479,10 +548,10 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="isFeatured"
+                                name="isVerified"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Is Featured</FormLabel>
+                                        <FormLabel>Is Verified</FormLabel>
                                         <FormControl>
                                             <Select
                                                 onValueChange={field.onChange}
@@ -491,7 +560,7 @@ function CreateCrew() {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Is the crew featured?" />
+                                                        <SelectValue placeholder="Is the crew verfied?" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -504,7 +573,6 @@ function CreateCrew() {
                                     </FormItem>
                                 )}
                             />
-
                         </fieldset>
                     </div>
                     {renderMode !== renderModes.Render_Mode_Details && (
