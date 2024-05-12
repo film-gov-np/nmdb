@@ -198,8 +198,9 @@ public class MovieService : IMovieService
                                                 Id = mr.Id,
                                                 Name = mr.Name,
                                                 NepaliName = mr.NepaliName,
-                                                Category = mr.Category,
-                                                Status = mr.Status.GetDisplayName()
+                                                Category = mr.Category.GetDisplayName(),
+                                                Status = mr.Status.GetDisplayName(),
+                                                Image=mr.Image
 
                                             }).ToListAsync();
 
@@ -333,7 +334,7 @@ public class MovieService : IMovieService
                     movieEntity.MovieGenres.Add(movieGenreEntity);
                 }
             }
-            movieEntity.CreatedBy = movieRequestDto.AuditedBy;
+            movieEntity.UpdatedBy = movieRequestDto.AuditedBy;
 
             await _unitOfWork.MovieRepository.UpdateAsync(movieEntity);
             await _unitOfWork.CommitAsync();

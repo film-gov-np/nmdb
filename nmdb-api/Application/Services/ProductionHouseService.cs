@@ -23,12 +23,11 @@ public class ProductionHouseService : IProductionHouseService
     private readonly ILogger<ProductionHouseService> _logger;
     private readonly ProductionHouseRequestValidator _productionHouseRequestValidator;
 
-    public ProductionHouseService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ProductionHouseService> logger, ProductionHouseRequestValidator productionHouseRequestValidator)
+    public ProductionHouseService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ProductionHouseService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _logger = logger;
-        _productionHouseRequestValidator = productionHouseRequestValidator;
+        _logger = logger;        
     }
     public async Task<ApiResponse<string>> CreateAsync(ProductionHouseRequestDto productionHouseRequestDto)
     {
@@ -36,12 +35,6 @@ public class ProductionHouseService : IProductionHouseService
 
         try
         {
-            var validationResult = await _productionHouseRequestValidator.ValidateAsync(productionHouseRequestDto);
-            if (!validationResult.IsValid)
-            {
-                // If validation fails, return a response with validation errors
-                return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
-            }
             var productionHouseEntity = _mapper.Map<ProductionHouse>(productionHouseRequestDto);
             productionHouseEntity.CreatedBy = productionHouseRequestDto.AuditedBy;
             await _unitOfWork.ProductionHouseRepository.AddAsync(productionHouseEntity);
