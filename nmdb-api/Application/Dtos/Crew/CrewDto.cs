@@ -22,7 +22,7 @@ public class CrewDto : BaseDto
 
     public string NickName { get; set; }
 
-    public string Gender { get; set; }
+    public int? Gender { get; set; }
 
     public DateTime? DateOfBirthInAD { get; set; }
 
@@ -60,7 +60,7 @@ public class CrewDto : BaseDto
 
     public string? TwitterID { get; set; }
 
-    public string ContactNumber { get; set; }
+    public string? ContactNumber { get; set; }
 
     public string? MobileNumber { get; set; }
 

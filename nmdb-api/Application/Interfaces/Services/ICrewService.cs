@@ -16,6 +16,6 @@ public interface ICrewService
     Task<ApiResponse<PaginationResponse<CrewResponseDto>>> GetAllAsync(CrewFilterParameters filterParameters);
     Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto);
     Task<ApiResponse<string>> UpdateCrewAsync(int crewId, CrewRequestDto crewRequestDto);
-    Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId);
+    Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId);
     Task<ApiResponse<string>> DeleteCrewAsync(int crewId);
 }
