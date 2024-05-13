@@ -30,9 +30,9 @@ namespace Neptics.Application.Helpers
 
             // Movie
             CreateMap<Movie, MovieRequestDto>().ReverseMap();
-            //CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
-            //CreateMap<MovieTheatre, MovieTheatreDto>().ReverseMap();
-            //CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();            
+            CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
+            CreateMap<MovieTheatre, MovieTheatreDto>().ReverseMap();
+            CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();
             //CreateMap<List<MovieCrewRole>, List<MovieCrewRoleDto>>().ReverseMap();
             //CreateMap<List<MovieTheatre>, List<MovieTheatreDto>>().ReverseMap();
             //CreateMap<List<MovieProductionHouse>, List<MovieProductionHouseDto>>().ReverseMap();

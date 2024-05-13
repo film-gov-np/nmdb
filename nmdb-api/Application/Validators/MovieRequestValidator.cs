@@ -42,7 +42,7 @@ public class MovieRequestValidator : AbstractValidator<MovieRequestDto>
         RuleFor(dto => dto.Theatres)
                 .NotEmpty().WithMessage("At least one theatre must be provided");
 
-        RuleFor(dto => dto.ProductionHouses)
+        RuleFor(dto => dto.ProductionHouseIds)
                 .NotEmpty().WithMessage("At least one production house must be provided");
          
     }

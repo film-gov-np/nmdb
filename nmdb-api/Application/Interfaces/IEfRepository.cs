@@ -15,7 +15,7 @@ public interface IEfRepository<TEntity> where TEntity : class
             , bool enableNoTracking = true
             , bool ignoreQueryFilters = false
             , bool descending = false);
-    Task<TEntity> GetByIdAsync(object id);
+    Task<TEntity> GetByIdAsync(object id, string includeProperties="");
     Task<TEntity> AddAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity);
     Task<bool> DeleteAsync(object id);
