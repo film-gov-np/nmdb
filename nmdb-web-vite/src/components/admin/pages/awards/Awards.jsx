@@ -1,10 +1,10 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import * as React from "react";
+import { useState } from "react";
 import { useController, useForm } from "react-hook-form";
 const FileInput = ({ field }) => {
   // const { field } = useController({ control, name });
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = useState("");
   return (
     <Input
       type="file"
@@ -24,26 +24,26 @@ const Awards = () => {
 
   return (
     <div>
-<Form {...form}>
+      <Form {...form}>
 
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-      <FormField
-        control={form.control}
-        name="file"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Name(in nepali)</FormLabel>
-            <FormControl>
-            <FileInput field={field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-        
-        <input type="submit" />
-      </form>
-</Form>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="file"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name(in nepali)</FormLabel>
+                <FormControl>
+                  <FileInput field={field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <input type="submit" />
+        </form>
+      </Form>
     </div>
   );
 };

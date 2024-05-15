@@ -20,8 +20,50 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
+const FileInput = ({ field, previews, setPreviews }) => {
 
+    const handleUploadedFile = (event) => {
+        const files = event.target.files;
+        const urlImages = [];
+        for (const key in files) {
+            if (typeof files[key] !== "object") continue;
+            urlImages.push(URL.createObjectURL(files[key]));
+        }
+        setPreviews(urlImages);
+    };
+
+    return (
+        <div>
+            <Input
+                type="file"
+                onChange={(e) => {
+                    field.onChange(e.target.files);
+                    handleUploadedFile(e);
+                }}
+            />
+            {previews && previews.length > 0 &&
+                <>
+                    {previews.map((preview, index) => (
+                        <div key={"image-preview-" + index} className="mt-2 flex flex-wrap gap-2">
+                            <div
+                                className="max-h-[320px] flex-grow basis-1/3"
+                                key={"thumbnailMovie" + index}
+                            >
+                                <img
+                                    className="h-full w-full rounded-md  object-cover"
+                                    src={preview}
+                                    alt={"Picture" + index}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </>
+            }
+        </div>
+    );
+};
 
 const renderModes = {
     Render_Mode_Create: "create",
@@ -33,29 +75,29 @@ const formSchema = z.object({
     name: z.string().min(2, {
         message: "Crew name must be at least 2 characters.",
     }),
-    nepaliName: z.string(),
-    birthName: z.string(),
-    nickName: z.string(),
-    fatherName: z.string(),
-    motherName: z.string(),
+    nepaliName: z.string().min(2).optional().or(z.literal('')),
+    birthName: z.string().min(2).optional().or(z.literal('')),
+    nickName: z.string().min(2).optional().or(z.literal('')),
+    fatherName: z.string().min(2).optional().or(z.literal('')),
+    motherName: z.string().min(2).optional().or(z.literal('')),
     designation: z.string(),
     gender: z.string(),
-    dateOfBirthInAD: z.string(),
-    dateOfDeathInAD: z.string(),
-    birthPlace: z.string(),
-    height: z.string(),
-    starSign: z.string(),
-    currentAddress: z.string(),
-    officialSite: z.string(),
-    facebookID: z.string(),
-    twitterID: z.string(),
-    mobile: z.string(),
+    dateOfBirthInAD: z.date().optional(),
+    dateOfDeathInAD: z.date().optional(),
+    birthPlace: z.string().min(2).optional().or(z.literal('')),
+    height: z.string().optional().or(z.literal('')),
+    starSign: z.string().optional().or(z.literal('')),
+    currentAddress: z.string().min(2).optional().or(z.literal('')),
+    officialSite: z.string().optional().or(z.literal('')),
+    facebookID: z.string().optional().or(z.literal('')),
+    twitterID: z.string().optional().or(z.literal('')),
+    mobile: z.string().optional().or(z.literal('')),
     image: z.string(),
-    biography: z.string(),
-    biographyInNepali: z.string(),
-    activities: z.string(),
-    trivia: z.string(),
-    tradeMark: z.string(),
+    biography: z.string().optional().or(z.literal('')),
+    biographyInNepali: z.string().optional().or(z.literal('')),
+    activities: z.string().optional().or(z.literal('')),
+    trivia: z.string().optional().or(z.literal('')),
+    tradeMark: z.string().optional().or(z.literal('')),
     isVerified: z.string(),
 });
 
@@ -68,8 +110,8 @@ const defaultValues = {
     motherName: '',
     designation: '',
     gender: '',
-    dateOfBirthInAD: '',
-    dateOfDeathInAD: '',
+    dateOfBirthInAD: null,
+    dateOfDeathInAD: null,
     birthPlace: '',
     height: '',
     starSign: '',
@@ -100,6 +142,8 @@ function CreateCrew() {
         renderMode = renderModes.Render_Mode_Edit;
     else renderMode = renderModes.Render_Mode_Details;
     const { toast } = useToast();
+    const [previews, setPreviews] = useState([]);
+
 
 
 
@@ -442,7 +486,7 @@ function CreateCrew() {
                                 )}
                             />
 
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="image"
                                 render={({ field }) => (
@@ -450,6 +494,24 @@ function CreateCrew() {
                                         <FormLabel>Image</FormLabel>
                                         <FormControl>
                                             <Input type='file' placeholder="image" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            /> */}
+
+                            <FormField
+                                control={form.control}
+                                name="file"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image</FormLabel>
+                                        <FormControl>
+                                            <FileInput
+                                                field={field}
+                                                previews={previews}
+                                                setPreviews={setPreviews}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

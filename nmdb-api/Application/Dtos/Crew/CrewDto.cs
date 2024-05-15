@@ -22,7 +22,7 @@ public class CrewDto : BaseDto
 
     public string NickName { get; set; }
 
-    public int? Gender { get; set; }
+    public string? Gender { get; set; }
 
     public DateTime? DateOfBirthInAD { get; set; }
 
