@@ -44,19 +44,19 @@ public class MovieService : IMovieService
             await _unitOfWork.BeginTransactionAsync();
 
             var movieEntity = _mapper.Map<Movie>(movieRequestDto);
-            //var createdMovie = await _unitOfWork.MovieRepository.AddAsync(movieEntity);                        
+            var createdMovie = await _unitOfWork.MovieRepository.AddAsync(movieEntity);
 
             if (movieRequestDto.CrewRoles != null && movieRequestDto.CrewRoles.Any())
             {
                 //var crewRoleEntities = _mapper.Map<List<MovieCrewRole>>(movieRequestDto.CrewRoles);
                 foreach (var crewRole in movieRequestDto.CrewRoles)
                 {
-                    foreach (var crewId in crewRole.CrewIds)
+                    foreach (var crew in crewRole.Crews)
                     {
                         var crewRoleEntity = new MovieCrewRole
                         {
                             //MovieId = createdMovie.Id,
-                            CrewId = crewId,
+                            CrewId = crew.CrewId,
                             RoleId = crewRole.RoleId,
                             RoleNickName = crewRole.RoleNickName,
                             RoleNickNameNepali = crewRole.RoleNickNameNepali
@@ -222,15 +222,15 @@ public class MovieService : IMovieService
         return ApiResponse<PaginationResponse<MovieListResponseDto>>.SuccessResponse(response);
     }
 
-    public async Task<ApiResponse<MovieRequestDto>> GetByIdAsync(int movieId)
+    public async Task<ApiResponse<MovieResponseDto>> GetByIdAsync(int movieId)
     {
-        var response = new ApiResponse<MovieRequestDto>();
+        var response = new ApiResponse<MovieResponseDto>();
 
         try
         {
-            string includeProperties = "MovieTheatres,MovieGenres,MovieLanguages,MovieCrewRoles,MovieProductionHouses,Censor";
-            var movieEntity = await _unitOfWork.MovieRepository.GetByIdAsync(movieId, includeProperties);
+            //string includeProperties = "MovieTheatres,MovieGenres,MovieLanguages,MovieCrewRoles,MovieProductionHouses,Censor";
 
+            var movieEntity = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
             if (movieEntity == null)
             {
                 response.IsSuccess = false;
@@ -239,13 +239,13 @@ public class MovieService : IMovieService
                 return response;
             }
 
-            var movieResponse = _mapper.Map<MovieRequestDto>(movieEntity);
+            var movieResponse = _mapper.Map<MovieResponseDto>(movieEntity);
             movieResponse.Censor = _mapper.Map<MovieCensorDto>(movieEntity.Censor);
             movieResponse.GenreIds = movieEntity.MovieGenres.Select(g => g.GenreId).ToList();
             movieResponse.LanguageIds = movieEntity.MovieLanguages.Select(l => l.LanguageId).ToList();
             movieResponse.ProductionHouseIds = movieEntity.MovieProductionHouses.Select(mvp => mvp.ProductionHouseId).ToList();
             movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
-            movieResponse.Theatres = _mapper.Map<List<MovieTheatreDto>>(movieEntity.MovieTheatres);
+            movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());// _mapper.Map<List<MovieTheatreDto>>(movieEntity.MovieTheatres);
 
 
             response.IsSuccess = true;
@@ -263,23 +263,44 @@ public class MovieService : IMovieService
         return response;
     }
 
+    private List<MovieTheatreDto> MapMovieTheatres(List<MovieTheatre> movieTheatres)
+    {
+        var movieTheatresDto = new List<MovieTheatreDto>();
+        foreach (var theatre in movieTheatres)
+        {
+            movieTheatresDto.Add(new MovieTheatreDto()
+            {
+                TheatreId = theatre.TheatreId,
+                Name = theatre.Theatre.Name,
+                Address = theatre.Theatre.Address,
+                ShowingDate = theatre.ShowingDate
+            });
+        }
+
+        return movieTheatresDto;
+    }
+
     private List<MovieCrewRoleDto> MapToMovieCrewRoleDto(List<MovieCrewRole> movieCrewRoles)
     {
         var crewRolesDtos = new List<MovieCrewRoleDto>();
-        var groupByRole = movieCrewRoles.GroupBy(mcr => mcr.RoleId);
-
-        foreach (var group in groupByRole)
-        {
-            var crewRoleDto = new MovieCrewRoleDto
+        var groupedByRole = movieCrewRoles
+            .GroupBy(mcr => new { mcr.RoleId, mcr.RoleNickName, mcr.RoleNickNameNepali })
+            .Select(group => new MovieCrewRoleDto
             {
-                RoleId = group.Key,
-                CrewIds = group.Select(mcr => mcr.CrewId).ToList(),
-                RoleNickName = group.First().RoleNickName,
-                RoleNickNameNepali = group.First().RoleNickNameNepali
-            };
-            crewRolesDtos.Add(crewRoleDto);
-        }
-        return crewRolesDtos;
+                RoleId = group.Key.RoleId,
+                RoleNickName = group.Key.RoleNickName,
+                RoleNickNameNepali = group.Key.RoleNickNameNepali,
+                Crews = group.Select(mcr => mcr.Crew)
+                            .Select(c => new CrewBasicDto
+                            {
+                                CrewId = c.Id,
+                                Name = c.Name
+                            })
+                            .ToList()
+            })
+            .ToList();
+
+        return groupedByRole;
     }
 
     public async Task<ApiResponse<string>> UpdateAsync(int movieId, MovieRequestDto movieRequestDto)
@@ -383,11 +404,11 @@ public class MovieService : IMovieService
                 existingMovie.MovieCrewRoles.Clear();
                 foreach (var crewRole in movieRequestDto.CrewRoles)
                 {
-                    foreach (var crewId in crewRole.CrewIds)
+                    foreach (var crew in crewRole.Crews)
                     {
                         var crewRoleEntity = new MovieCrewRole
                         {
-                            CrewId = crewId,
+                            CrewId = crew.CrewId,
                             RoleId = crewRole.RoleId,
                             RoleNickName = crewRole.RoleNickName,
                             RoleNickNameNepali = crewRole.RoleNickNameNepali
@@ -405,7 +426,7 @@ public class MovieService : IMovieService
                 if (existingCensor == null)
                 {
                     var newCensor = _mapper.Map<MovieCensor>(movieRequestDto.Censor);
-                    newCensor.MovieId = existingMovie.Id; // Ensure MovieId is set
+                    newCensor.MovieId = existingMovie.Id;
                     existingMovie.Censor = newCensor;
                 }
                 else
