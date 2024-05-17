@@ -14,7 +14,7 @@ export const Paths = {
   Route_Admin: "/admin",
   Route_Admin_Dashboard: "/admin/dashboard",
   Route_Admin_Movie: "/admin/movies",
-  Route_Admin_Movie_Add: "/admin/movies/add",
+  Route_Admin_Movie_Add: "/admin/movies/create",
   Route_Admin_Crew: "/admin/crew",
   Route_Admin_Crew_Add: "/admin/crew/create",
   Route_Admin_Role: "/admin/role",

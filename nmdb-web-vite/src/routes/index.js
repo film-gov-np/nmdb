@@ -23,7 +23,7 @@ import Theatre from "@/components/admin/pages/theatre/Theatre";
 import CreateProductionHouse from "@/components/admin/pages/productionHouse/CreateProductionHouse";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import ForgotPassword from "@/components/landing/pages/auth/ForgotPassword";
-import AddMovie from "@/components/admin/pages/movies/AddMovie";
+import AddMovie from "@/components/admin/pages/movies/CreateMovie";
 import Celebrities from "@/components/landing/pages/celebrities/Celebrities";
 import CelebritiesDetails from "@/components/landing/pages/celebrities/CelebrityDetail";
 import MovieDetail from "@/components/landing/pages/movies/MovieDetail";
