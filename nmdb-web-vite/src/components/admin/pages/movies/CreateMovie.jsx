@@ -187,7 +187,7 @@ function MovieForm({ movie, renderMode, onSubmit }) {
             <div className="mt-4 rounded-md border border-input">
               <ScrollArea
                 className="py-2"
-                viewPortClass="max-h-[calc(100vh-100px)]"
+                viewPortClass="max-h-[calc(100vh-80px)]"
               >
                 <TabsContent value="basic_information" className="h-full ">
                   <FormBasicInfo
@@ -198,7 +198,7 @@ function MovieForm({ movie, renderMode, onSubmit }) {
                 </TabsContent>
                 <TabsContent value="crew_information">
                   <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="address"
                       render={({ field }) => (
@@ -210,17 +210,17 @@ function MovieForm({ movie, renderMode, onSubmit }) {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                   </div>
                 </TabsContent>
                 <TabsContent value="censor_information" className="h-full">
                   <FormCensorInfo form={form} />
                 </TabsContent>
                 <TabsContent value="theater_information" className="h-full">
-                  <FormTheatreInfo form={form} />
+                  {/* <FormTheatreInfo form={form} /> */}
                 </TabsContent>
                 <TabsContent value="role_information" className="h-full">
-                  <FormRoleInfo form={form} />
+                  {/* <FormRoleInfo form={form} /> */}
                 </TabsContent>
               </ScrollArea>
             </div>
