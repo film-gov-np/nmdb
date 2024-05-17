@@ -1,3 +1,4 @@
+import { ApiPaths } from "@/constants/apiPaths";
 import { BaseAPIUrl } from "@/constants/authConstant";
 import axios from "axios";
 
@@ -34,7 +35,7 @@ axiosInstance.interceptors.response.use(
       retryQueue.push(
         new Promise((resolve, reject) => {
           axiosInstance
-            .post("Accounts/refresh-token")
+            .post(ApiPaths.Path_Auth+"/refresh")
             .then((resp) => {
               if (resp) {
                 const { jwtToken } = resp.data.data;

@@ -14,6 +14,7 @@ import axiosInstance from "@/helpers/axiosSetup";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginSchemaResolver } from "./authSchema";
+import { ApiPaths } from "@/constants/apiPaths";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Login = () => {
       password: password,
     };
     axiosInstance
-      .post("auth/authenticate", postData)
+      .post(ApiPaths.Path_Auth + "/authenticate", postData)
       .then((resp) => {
         if (resp) {
           const {
@@ -51,7 +52,7 @@ const Login = () => {
           navigate("/admin/dashboard");
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   return (

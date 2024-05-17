@@ -1,4 +1,5 @@
 export const ApiPaths = {
+  Path_Auth: "/Auth",
   Path_FilmRoles: "/film-roles",
   Path_FlimRoles_Delete: "/film-roles/role",
 
