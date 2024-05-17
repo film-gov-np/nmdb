@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repositories
 {
@@ -138,9 +139,23 @@ namespace Infrastructure.Repositories
             return query;
         }
 
-        public async Task<TEntity> GetByIdAsync(object id)
+        public async Task<TEntity> GetByIdAsync(object id, string includeProperties="")
         {
-            return await _dbSet.FindAsync(id);
+            //var entity = await _dbSet.FindAsync(id);
+            var query = _dbSet.AsQueryable();
+
+            // Apply filtering by ID
+            query = query.Where(e => EF.Property<object>(e, "Id") == id);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach(var includeProperty in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query=query.Include(includeProperty.Trim());
+                    //await _context.Entry(entity).Collection(includeProperty.Trim()).LoadAsync();
+                }
+            }
+            var entity = await query.FirstOrDefaultAsync();
+            return entity;
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)

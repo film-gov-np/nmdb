@@ -12,7 +12,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import { Input } from "@/components/ui/input";
@@ -20,42 +20,115 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
+const FileInput = ({ field, previews, setPreviews }) => {
 
+    const handleUploadedFile = (event) => {
+        const files = event.target.files;
+        const urlImages = [];
+        for (const key in files) {
+            if (typeof files[key] !== "object") continue;
+            urlImages.push(URL.createObjectURL(files[key]));
+        }
+        setPreviews(urlImages);
+    };
+
+    return (
+        <div>
+            <Input
+                type="file"
+                onChange={(e) => {
+                    field.onChange(e.target.files);
+                    handleUploadedFile(e);
+                }}
+            />
+            {previews && previews.length > 0 &&
+                <>
+                    {previews.map((preview, index) => (
+                        <div key={"image-preview-" + index} className="mt-2 flex flex-wrap gap-2">
+                            <div
+                                className="max-h-[320px] flex-grow basis-1/3"
+                                key={"thumbnailMovie" + index}
+                            >
+                                <img
+                                    className="h-full w-full rounded-md  object-cover"
+                                    src={preview}
+                                    alt={"Picture" + index}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </>
+            }
+        </div>
+    );
+};
 
 const renderModes = {
     Render_Mode_Create: "create",
     Render_Mode_Edit: "edit",
     Render_Mode_Details: "details",
 };
+
 const formSchema = z.object({
     name: z.string().min(2, {
         message: "Crew name must be at least 2 characters.",
     }),
-    nepaliName: z.string(),
-    birthName: z.string(),
-    nickName: z.string(),
-    fatherName: z.string(),
-    motherName: z.string(),
+    nepaliName: z.string().min(2).optional().or(z.literal('')),
+    birthName: z.string().min(2).optional().or(z.literal('')),
+    nickName: z.string().min(2).optional().or(z.literal('')),
+    fatherName: z.string().min(2).optional().or(z.literal('')),
+    motherName: z.string().min(2).optional().or(z.literal('')),
     designation: z.string(),
     gender: z.string(),
-    birthDate: z.string(),
-    birthPlace: z.string(),
-    height: z.string(),
-    starSign: z.string(),
-    currentAddress: z.string(),
-    siteURL: z.string(),
-    facebookURL: z.string(),
-    twitterURL: z.string(),
-    mobile: z.string(),
+    dateOfBirthInAD: z.date().optional(),
+    dateOfDeathInAD: z.date().optional(),
+    birthPlace: z.string().min(2).optional().or(z.literal('')),
+    height: z.string().optional().or(z.literal('')),
+    starSign: z.string().optional().or(z.literal('')),
+    currentAddress: z.string().min(2).optional().or(z.literal('')),
+    officialSite: z.string().optional().or(z.literal('')),
+    facebookID: z.string().optional().or(z.literal('')),
+    twitterID: z.string().optional().or(z.literal('')),
+    mobile: z.string().optional().or(z.literal('')),
     image: z.string(),
-    biography: z.string(),
-    nepaliBiography: z.string(),
-    activities: z.string(),
-    trivia: z.string(),
-    tradeMark: z.string(),
-    isFeatured: z.string(),
+    biography: z.string().optional().or(z.literal('')),
+    biographyInNepali: z.string().optional().or(z.literal('')),
+    activities: z.string().optional().or(z.literal('')),
+    trivia: z.string().optional().or(z.literal('')),
+    tradeMark: z.string().optional().or(z.literal('')),
+    isVerified: z.string(),
 });
+
+const defaultValues = {
+    name: '',
+    nepaliName: '',
+    birthName: '',
+    nickName: '',
+    fatherName: '',
+    motherName: '',
+    designation: '',
+    gender: '',
+    dateOfBirthInAD: null,
+    dateOfDeathInAD: null,
+    birthPlace: '',
+    height: '',
+    starSign: '',
+    currentAddress: '',
+    officialSite: '',
+    facebookID: '',
+    twitterID: '',
+    mobile: '',
+    image: '',
+    biography: '',
+    biographyInNepali: '',
+    activities: '',
+    trivia: '',
+    tradeMark: '',
+    isVerified: '',
+};
+
 function CreateCrew() {
 
     const navigate = useNavigate();
@@ -69,12 +142,20 @@ function CreateCrew() {
         renderMode = renderModes.Render_Mode_Edit;
     else renderMode = renderModes.Render_Mode_Details;
     const { toast } = useToast();
+    const [previews, setPreviews] = useState([]);
+
+
+
+
+    const { isLoading, data, isError, isFetching, isPreviousData, error } = useQuery({
+        queryKey: ["crewDetail"],
+        queryFn: () => getCrew(slug, renderMode),
+        keepPreviousData: true,
+    });
 
     const form = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            roleName: '',
-        },
+        defaultValues: { ...data },
     });
 
     const onSubmit = (data) => {
@@ -124,7 +205,26 @@ function CreateCrew() {
         },
     });
 
+    const getCrew = async (id, renderMode) => {
+        let apiPath = `${ApiPaths.Path_Crews}/${id}`;
+        let data = {};
+        if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
+        const apiResponse = await axiosInstance
+            .get(apiPath)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((err) => console.error(err));
 
+        if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
+            // conversion is required as establishedDate response is of type string
+            // it is stored in BS
+            apiResponse.data.establishedDate = new Date(
+                apiResponse.data.establishedDate,
+            );
+        data = apiResponse.data;
+        return data;
+    };
 
     return (
         <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
@@ -249,12 +349,25 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="birthDate"
+                                name="dateOfBirthInAD"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Birth Date</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Birth Date" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dateOfDeathInAD"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Death Date</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Death Date" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -319,12 +432,12 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="siteURL"
+                                name="officialSite"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Site URL</FormLabel>
+                                        <FormLabel>Official Site</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Site URL" {...field} />
+                                            <Input placeholder="Official Site" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -333,7 +446,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="facebookURL"
+                                name="facebookID"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Facebook URL</FormLabel>
@@ -347,7 +460,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="twitterURL"
+                                name="twitterID"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Twitter URL</FormLabel>
@@ -361,19 +474,19 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="mobile"
+                                name="mobileNumber"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Mobile</FormLabel>
+                                        <FormLabel>Mobile Number</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Mobile" {...field} />
+                                            <Input placeholder="Mobile Number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
 
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="image"
                                 render={({ field }) => (
@@ -385,6 +498,24 @@ function CreateCrew() {
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                            /> */}
+
+                            <FormField
+                                control={form.control}
+                                name="file"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image</FormLabel>
+                                        <FormControl>
+                                            <FileInput
+                                                field={field}
+                                                previews={previews}
+                                                setPreviews={setPreviews}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
 
                             <FormField
@@ -392,7 +523,7 @@ function CreateCrew() {
                                 name="biography"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>English Boigraphy</FormLabel>
+                                        <FormLabel>Boigraphy</FormLabel>
                                         <FormControl>
                                             <Textarea
                                                 placeholder="English Boigraphy"
@@ -407,7 +538,7 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="nepaliBiography"
+                                name="biographyInNepali"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Nepali Biography</FormLabel>
@@ -479,10 +610,10 @@ function CreateCrew() {
 
                             <FormField
                                 control={form.control}
-                                name="isFeatured"
+                                name="isVerified"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Is Featured</FormLabel>
+                                        <FormLabel>Is Verified</FormLabel>
                                         <FormControl>
                                             <Select
                                                 onValueChange={field.onChange}
@@ -491,7 +622,7 @@ function CreateCrew() {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Is the crew featured?" />
+                                                        <SelectValue placeholder="Is the crew verfied?" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -504,7 +635,6 @@ function CreateCrew() {
                                     </FormItem>
                                 )}
                             />
-
                         </fieldset>
                     </div>
                     {renderMode !== renderModes.Render_Mode_Details && (

@@ -26,7 +26,8 @@ public class Movie : BaseEntity<int>
     [MaxLength(16)]
     public string? ReleaseDateBS { get; set; }
     [MaxLength(50)]
-    public string Category { get; set; } = "Movie";
+    //public string Category { get; set; } = "Movie";
+    public eMovieCategory Category { get; set; } = eMovieCategory.Movie;
     public eMovieStatus Status { get; set; } = eMovieStatus.Released;    
     [MaxLength(255)]
     public string? OfficialSiteUrl { get; set; }
@@ -45,7 +46,7 @@ public class Movie : BaseEntity<int>
     public bool IsFeatured { get; set; } = false;
 
     // Navigational Properties
-    public MovieCensor Censor { get; set; }
+    public virtual MovieCensor Censor { get; set; }
     public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     [NotMapped]
     public ICollection<Genre> Genres => MovieGenres.Select(ml => ml.Genre).ToList();

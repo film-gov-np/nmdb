@@ -29,12 +29,11 @@ public class MovieRequestDto
     public string? TrailerLink { get; set; }
     public bool IsTrending { get; set; } = false;
     public bool IsFeatured { get; set; } = false;
-
     public ICollection<int> GenreIds { get; set; }
     public ICollection<int> LanguageIds { get; set; }
+    public ICollection<int> ProductionHouseIds { get; set; }
     public ICollection<MovieCrewRoleDto> CrewRoles { get; set; }
-    public ICollection<MovieTheatreDto> Theatres { get; set; }
-    public ICollection<MovieProductionHouseDto> ProductionHouses { get; set; }
+    public ICollection<MovieTheatreDto> Theatres { get; set; }    
     public MovieCensorDto Censor { get; set; }
 
     [JsonIgnore]

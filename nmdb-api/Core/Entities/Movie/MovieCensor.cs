@@ -18,8 +18,8 @@ public class MovieCensor : BaseEntity<int>
     public string CertificateNumber { get; set; } = "NA";
     public DateTime? ApplicationDate { get; set; }
     public DateTime? CensoredDate { get; set; }
-    public eCensorType CensorType { get; set; }
-    public eMovieType MovieType { get; set; }
+    public eCensorType CensorType { get; set; }=eCensorType.PG;
+    public eMovieType MovieType { get; set; } = eMovieType.Celluloid;
     [MaxLength(255)]
     public string ReelLength { get; set; } = "NA";
     [MaxLength(255)]

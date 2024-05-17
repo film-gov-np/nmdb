@@ -6,6 +6,7 @@ using Application.Dtos.ProductionHouse;
 using AutoMapper;
 using Core.Entities;
 using Application.Dtos.Movie;
+using Application.Dtos;
 
 namespace Neptics.Application.Helpers
 {
@@ -29,13 +30,17 @@ namespace Neptics.Application.Helpers
 
             // Movie
             CreateMap<Movie, MovieRequestDto>().ReverseMap();
-            //CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
-            //CreateMap<MovieTheatre, MovieTheatreDto>().ReverseMap();
-            //CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();            
+            CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
+            CreateMap<MovieTheatre, MovieTheatreDto>().ReverseMap();
+            CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();
             //CreateMap<List<MovieCrewRole>, List<MovieCrewRoleDto>>().ReverseMap();
             //CreateMap<List<MovieTheatre>, List<MovieTheatreDto>>().ReverseMap();
             //CreateMap<List<MovieProductionHouse>, List<MovieProductionHouseDto>>().ReverseMap();
             CreateMap<MovieCensor, MovieCensorDto>().ReverseMap();
+
+            // Crew
+            CreateMap<Crew, CrewRequestDto>().ReverseMap();
+            CreateMap<Crew, CrewResponseDto>().ReverseMap();
 
         }
     }

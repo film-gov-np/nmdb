@@ -93,7 +93,21 @@ export const routes = [
                 component: CreateCrew,
                 path: Paths.Route_Admin_Crew_Add,
                 isPublic: false,
-              }
+              },
+              {
+                name: "CrewEdit",
+                title: "Crew Edit page",
+                component: CreateCrew,
+                path: Paths.Route_Admin_Crew+ "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "CrewDetail",
+                title: "Crew Detail page",
+                component: CreateCrew,
+                path: Paths.Route_Admin_Crew+ "/:slug",
+                isPublic: false,
+              },
             ],
           },
           {
