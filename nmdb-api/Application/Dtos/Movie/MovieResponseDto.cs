@@ -1,6 +1,6 @@
 ﻿namespace Application.Dtos.Movie
 {
-    public class MovieResponseDto
+    public class MovieResponseDto:MovieRequestDto
     {
     }
 }
