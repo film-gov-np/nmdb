@@ -6,6 +6,8 @@ using Application.Models;
 using Core;
 using Core.Constants;
 using Core.Shared;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -20,9 +22,11 @@ namespace Application.Services
     public class FileService : IFileService
     {
         private readonly string _uploadFolderPath;
-        public FileService(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+        public FileService(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _uploadFolderPath = configuration["UploadFolderPath"];
+            _environment = environment;
         }
         public async Task<ApiResponse<UploadResult>> UploadFile(FileDTO model)
         {
@@ -35,7 +39,7 @@ namespace Application.Services
             if (fileValid.Valid)
             {
                 string savePath = GetFilePath(fileValid.FileType);
-                string path = Path.Combine(_uploadFolderPath, savePath);
+                string path = Path.Combine(_environment.WebRootPath, savePath);
                 string fileName = helper.GetFileNewName(model.Files.FileName, path, model.ReadableName);
                 if (!Directory.Exists(path))
                 {
@@ -117,19 +121,19 @@ namespace Application.Services
             switch (fileType)
             {
                 case eFileTypes.Image:
-                    savePath = Path.Combine("uploads", "img");
+                    savePath = Path.Combine("upload", "img");
                     break;
                 case eFileTypes.Video:
-                    savePath = Path.Combine("uploads", "video");
+                    savePath = Path.Combine("upload", "video");
                     break;
                 case eFileTypes.Audio:
-                    savePath = Path.Combine("uploads", "audio");
+                    savePath = Path.Combine("upload", "audio");
                     break;
                 case eFileTypes.Document:
-                    savePath = Path.Combine("uploads", "doc");
+                    savePath = Path.Combine("upload", "doc");
                     break;
                 default:
-                    savePath = Path.Combine("uploads", "other");
+                    savePath = Path.Combine("upload", "other");
                     break;
             }
             return savePath;

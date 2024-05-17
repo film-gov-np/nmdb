@@ -1,4 +1,5 @@
-﻿using Application.Dtos.FilterParameters;
+﻿using Application.Dtos;
+using Application.Dtos.FilterParameters;
 using Application.Dtos.Movie;
 using Application.Helpers.Response;
 using Core;
@@ -12,4 +13,6 @@ public interface IMovieService
     Task<ApiResponse<string>> DeleteByIdAsync(int movieId);
     Task<ApiResponse<MovieResponseDto>> GetByIdAsync(int movieId);
     Task<ApiResponse<PaginationResponse<MovieListResponseDto>>> GetAllAsync(MovieFilterParameters filterParameters);
+    Task<ApiResponse<List<LanguageListResponseDto>>> GetAllLanguages();
+    Task<ApiResponse<List<GenresListResponseDto>>> GetAllGenres();
 }

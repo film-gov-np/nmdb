@@ -6,7 +6,7 @@ namespace Application.Dtos;
 
 public class CrewRequestDto: CrewDto
 {
-    public IEnumerable<int> Designations { get; set; }
+    //public IEnumerable<int> Designations { get; set; }
     //[JsonIgnore]
     //public  IFormFile? ProfilePhoto { get; set; }
     [JsonIgnore]

@@ -8,6 +8,7 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using nmdb.Middlewares;
+using Application.Dtos.Media;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services
 
 
 var app = builder.Build();
+
+app.Configuration.GetSection("AllowedUploadFiles").Get<AllowedUploadFiles>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

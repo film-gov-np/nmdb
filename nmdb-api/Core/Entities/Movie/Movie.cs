@@ -18,7 +18,7 @@ public class Movie : BaseEntity<int>
     public string NepaliName { get; set; }
     public int? Runtime { get; set; }
     [MaxLength(100)]
-    public string? Color { get; set; }
+    public eMovieColor Color { get; set; } = eMovieColor.KodakColor;
     public DateTime? ShootingDate { get; set; }
     [MaxLength(16)]
     public string? ShootingDateBS { get; set; }

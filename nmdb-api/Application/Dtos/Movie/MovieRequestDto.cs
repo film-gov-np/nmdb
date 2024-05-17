@@ -11,7 +11,7 @@ public class MovieRequestDto
     public string Name { get; set; }
     public string NepaliName { get; set; }
     public int? Runtime { get; set; }
-    public string? Color { get; set; }
+    public eMovieColor? Color { get; set; } = eMovieColor.None;
     public DateTime? ShootingDate { get; set; }
     public string? ShootingDateBS { get; set; }
     public DateTime? ReleaseDate { get; set; }

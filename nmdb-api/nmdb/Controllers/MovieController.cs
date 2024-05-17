@@ -28,6 +28,34 @@ namespace nmdb.Controllers
             _movieService = movieService;
         }
 
+        [HttpGet("GetAllLanguages")]
+        public async Task<IActionResult> GetAllLanguages()
+        {
+            try
+            {
+                var response = await _movieService.GetAllLanguages();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("GetAllGenres")]
+        public async Task<IActionResult> GetAllGenres()
+        {
+            try
+            {
+                var response = await _movieService.GetAllGenres();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<IActionResult> GetAll([FromQuery] MovieFilterParameters filterParameters)
         {
             var response = await _movieService.GetAllAsync(filterParameters);
@@ -54,7 +82,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MovieRequestDto movieRequestDto)
+        public async Task<IActionResult> Create([FromForm] MovieRequestDto movieRequestDto)
         {
             if (movieRequestDto == null)
             {
@@ -75,7 +103,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] MovieRequestDto movieRequestDto)
+        public async Task<IActionResult> Update(int id, [FromForm] MovieRequestDto movieRequestDto)
         {
             movieRequestDto.AuditedBy = GetUserId;
             var result = await _movieService.UpdateAsync(id, movieRequestDto);
