@@ -1,7 +1,6 @@
 import { PlusCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
-import { capitalize } from "lodash";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +20,7 @@ const ListPageHeader = ({label, pathTo}) => {
           to={
             pathTo
           }
-          className={cn(buttonVariants({ variant: "default" }), capitalize)}
+          className={cn(buttonVariants({ variant: "default" }), "capitalize")}
         >
           <PlusCircle className="mr-2 h-4 w-4" /> Add {label}
         </NavLink>

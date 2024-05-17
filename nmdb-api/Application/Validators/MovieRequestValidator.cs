@@ -32,7 +32,7 @@ public class MovieRequestValidator : AbstractValidator<MovieRequestDto>
                 {
                     crewRole.ChildRules(crewRoleDto =>
                     {
-                        crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.CrewIds)
+                        crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.Crews)
                             .NotEmpty().WithMessage("A role should be assigned to at least one crew.");
 
                         crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.RoleId)
