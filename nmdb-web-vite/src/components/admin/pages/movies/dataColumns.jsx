@@ -1,12 +1,15 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
+import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ApiPaths } from "@/constants/apiPaths";
+import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
 // import { DataTableRowActions } from "@/components/ui/custom/data-table-row-actions";
 import {
@@ -16,7 +19,8 @@ import {
   LinkNone2Icon,
   StopwatchIcon,
 } from "@radix-ui/react-icons";
-import { Film, SquarePen, Trash, Video } from "lucide-react";
+import { Film, SquarePen, Trash, Video, View } from "lucide-react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 export const labels = [
@@ -83,15 +87,39 @@ export const facetedFilters = [
 ];
 
 function DataTableRowActions({ row }) {
-  const movie = row.original;
+  // const movie = row.original;
+  const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   return (
-    <div className="flex">
+    <div className="flex justify-center">
+      <DeleteItemsDialog
+        open={showDeleteTaskDialog}
+        onOpenChange={setShowDeleteTaskDialog}
+        selectedData={[row]}
+        showTrigger={false}
+        apiBasePath={ApiPaths.Path_Movies}
+        onSuccess={() => setShowDeleteTaskDialog(false)}
+      />
       <TooltipProvider>
         <div className="flex gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink
-                to="#"
+                to={Paths.Route_Admin_Movie + "/" + row.original.id}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  " text-blue-500",
+                )}
+              >
+                <View className="h-4 w-4" />
+                <span className="sr-only">View Details</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="top">Details</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to={Paths.Route_Admin_Movie + "/" + row.original.id + "/edit"}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
                   " text-green-500",
@@ -107,7 +135,7 @@ function DataTableRowActions({ row }) {
             <TooltipTrigger asChild>
               <Button
                 className=" text-destructive"
-                onClick={() => console.log(movie.id)}
+                onClick={() => setShowDeleteTaskDialog(true)}
                 variant="outline"
                 size="icon"
               >
@@ -125,43 +153,22 @@ function DataTableRowActions({ row }) {
 
 export const columns = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "nepali_name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nepali Name" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("nepali_name")}</div>,
-    enableGlobalFilter: true,
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-col space-y-2">
+          {row.getValue("name")}
+          {row.original.nepaliName && (
+            <span className="text-xs text-muted-foreground">
+              {row.original.nepaliName}
+            </span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "category",
@@ -189,10 +196,6 @@ export const columns = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-    enableGlobalFilter: false,
   },
   {
     accessorKey: "status",
@@ -220,10 +223,6 @@ export const columns = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-    enableGlobalFilter: false,
   },
 
   {
