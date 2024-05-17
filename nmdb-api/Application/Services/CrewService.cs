@@ -14,6 +14,7 @@ using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 using Microsoft.Extensions.Logging;
@@ -98,36 +99,32 @@ public class CrewService : ICrewService
 
         return ApiResponse<PaginationResponse<CrewResponseDto>>.SuccessResponse(response);
     }
-    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
+    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file)
     {
         try
         {
-            //var validationResult = await _crewRequestValidator.ValidateAsync(crewRequestDto);
-            //if (!validationResult.IsValid)
-            //{
-            //    // If validation fails, return a response with validation errors
-            //    return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
-            //}
+            string? profilePhotoUrl = null;
+
+            if (file != null && file.Length > 0)
+            {
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = file });
+                if (!uploadResultApiResponse.IsSuccess)
+                {
+                    return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
+                }
+                profilePhotoUrl = uploadResultApiResponse?.Data?.FilePath;
+            }
+
             await _unitOfWork.BeginTransactionAsync();
             var crewEntity = _mapper.Map<Crew>(crewRequestDto);
-            var filmRoles = await _unitOfWork.FilmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
+            //var filmRoles = await _unitOfWork.FilmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
 
+            List<int> filmRoles = new();
             // Associate crew with roleid
             foreach (int roleid in filmRoles)
             {
                 crewEntity.CrewDesignations.Add(new CrewDesignation { RoleId = roleid });
             }
-
-            string profilePhotoUrl = null;
-            //if (crewRequestDto.ProfilePhoto != null && crewRequestDto.ProfilePhoto.Length > 0)
-            //{
-            //    var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhoto });
-            //    if (!uploadResultApiResponse.IsSuccess)
-            //    {
-            //        return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
-            //    }
-            //    profilePhotoUrl = uploadResultApiResponse.Data.FilePath;
-            //}
 
             crewEntity.ProfilePhoto = profilePhotoUrl;
             await _unitOfWork.CrewRepository.AddAsync(crewEntity);

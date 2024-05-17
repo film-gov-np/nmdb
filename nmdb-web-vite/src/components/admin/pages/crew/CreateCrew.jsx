@@ -21,6 +21,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const FileInput = ({ field, previews, setPreviews }) => {
 
@@ -29,7 +33,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
         const urlImages = [];
         for (const key in files) {
             if (typeof files[key] !== "object") continue;
-            urlImages.push(URL.createObjectURL(files[key]));
+            urlImages.push(files[key]);
         }
         setPreviews(urlImages);
     };
@@ -45,6 +49,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
             />
             {previews && previews.length > 0 &&
                 <>
+
                     {previews.map((preview, index) => (
                         <div key={"image-preview-" + index} className="mt-2 flex flex-wrap gap-2">
                             <div
@@ -53,7 +58,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
                             >
                                 <img
                                     className="h-full w-full rounded-md  object-cover"
-                                    src={preview}
+                                    src={URL.createObjectURL(preview)}
                                     alt={"Picture" + index}
                                 />
                             </div>
@@ -80,25 +85,54 @@ const formSchema = z.object({
     nickName: z.string().min(2).optional().or(z.literal('')),
     fatherName: z.string().min(2).optional().or(z.literal('')),
     motherName: z.string().min(2).optional().or(z.literal('')),
-    designation: z.string(),
-    gender: z.string(),
-    dateOfBirthInAD: z.date().optional(),
-    dateOfDeathInAD: z.date().optional(),
-    birthPlace: z.string().min(2).optional().or(z.literal('')),
+    // designation: z.string(),
+    gender: z.string().optional(),
+    dateOfBirthInAD: z.string()
+        .optional()
+        .refine((dateString) => {
+            if (!dateString) return true; // Allow empty or undefined values
+            const date = new Date(dateString);
+            return !isNaN(date.getTime());
+        }, {
+            message: 'Invalid date format'
+        })
+        .refine((dateString) => {
+            if (!dateString) return true; // Allow empty or undefined values
+            const date = new Date(dateString);
+            return date <= new Date(); // Check if the date is in the future
+        }, {
+            message: 'Birth date must be in the past.'
+        }),
+    dateOfDeathInAD: z.string()
+        .optional()
+        .refine((dateString) => {
+            if (!dateString) return true; // Allow empty or undefined values
+            const date = new Date(dateString);
+            return !isNaN(date.getTime());
+        }, {
+            message: 'Invalid date format'
+        })
+        .refine((dateString) => {
+            if (!dateString) return true; // Allow empty or undefined values
+            const date = new Date(dateString);
+            return date <= new Date(); // Check if the date is in the future
+        }, {
+            message: 'Death date must be in the past.'
+        }),
+    birthPlace: z.string().optional().or(z.literal('')),
     height: z.string().optional().or(z.literal('')),
     starSign: z.string().optional().or(z.literal('')),
-    currentAddress: z.string().min(2).optional().or(z.literal('')),
+    currentAddress: z.string().optional().or(z.literal('')),
     officialSite: z.string().optional().or(z.literal('')),
     facebookID: z.string().optional().or(z.literal('')),
     twitterID: z.string().optional().or(z.literal('')),
     mobile: z.string().optional().or(z.literal('')),
-    image: z.string(),
     biography: z.string().optional().or(z.literal('')),
     biographyInNepali: z.string().optional().or(z.literal('')),
     activities: z.string().optional().or(z.literal('')),
     trivia: z.string().optional().or(z.literal('')),
     tradeMark: z.string().optional().or(z.literal('')),
-    isVerified: z.string(),
+    isVerified: z.enum(["true", "false"]).transform((value) => value === "true").optional(),
 });
 
 const defaultValues = {
@@ -108,7 +142,7 @@ const defaultValues = {
     nickName: '',
     fatherName: '',
     motherName: '',
-    designation: '',
+    // designation: '',
     gender: '',
     dateOfBirthInAD: null,
     dateOfDeathInAD: null,
@@ -126,7 +160,7 @@ const defaultValues = {
     activities: '',
     trivia: '',
     tradeMark: '',
-    isVerified: '',
+    isVerified: 'false',
 };
 
 function CreateCrew() {
@@ -174,13 +208,22 @@ function CreateCrew() {
             apiPath += "/" + slug;
             postData.id = slug;
         }
+        const formData = new FormData();
+        if (previews.length > 0) {
+            formData.append('file', previews[0]);
+        }
+        for (const key in postData) {
+            formData.append(key, postData[key] ?? defaultValues[key]);
+        }
         const { data } = await axiosInstance({
             method: isEditMode ? "put" : "post",
             url: apiPath,
-            data: postData,
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         })
             .then((response) => {
-                console.log("api-response-categories", response);
                 toast({
                     description:
                         response.data?.message || "Successfully completed the action.",
@@ -319,7 +362,7 @@ function CreateCrew() {
                                 )}
                             />
 
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="designation"
                                 render={({ field }) => (
@@ -331,7 +374,7 @@ function CreateCrew() {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
                             <FormField
                                 control={form.control}
@@ -347,28 +390,90 @@ function CreateCrew() {
                                 )}
                             />
 
+
                             <FormField
                                 control={form.control}
                                 name="dateOfBirthInAD"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Birth Date</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Birth Date" {...field} />
-                                        </FormControl>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground",
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    showOutsideDays={true}
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    disabled={(date) =>
+                                                        date > new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="dateOfDeathInAD"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Death Date</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Death Date" {...field} />
-                                        </FormControl>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground",
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    showOutsideDays={true}
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    disabled={(date) =>
+                                                        date > new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                         <FormMessage />
                                     </FormItem>
                                 )}

@@ -3,6 +3,7 @@ using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
 using Application.Helpers.Response;
 using Core;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Application.Interfaces.Services;
 public interface ICrewService
 {
     Task<ApiResponse<PaginationResponse<CrewResponseDto>>> GetAllAsync(CrewFilterParameters filterParameters);
-    Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto);
+    Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file);
     Task<ApiResponse<string>> UpdateCrewAsync(int crewId, CrewRequestDto crewRequestDto);
     Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId);
     Task<ApiResponse<string>> DeleteCrewAsync(int crewId);
