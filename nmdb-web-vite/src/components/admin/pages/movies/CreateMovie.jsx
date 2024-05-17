@@ -20,16 +20,111 @@ import FormCensorInfo from "./forms/FormCensorInfo";
 import FormRoleInfo from "./forms/FormRoleInfo";
 import { defaultValues, resolver } from "./forms/formSchema";
 import FormTheatreInfo from "./forms/FormTheatreInfo";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ApiPaths } from "@/constants/apiPaths";
+import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const getMovie = async (id, renderMode) => {
+  if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
+  let apiPath = `${ApiPaths.Path_ProductionHouse}/${id}`;
+  let data = {};
+  const apiResponse = await axiosInstance
+    .get(apiPath)
+    .then((response) => {
+      console.log("api-response", response.data);
+      return response.data;
+    })
+    .catch((err) => console.error(err));
+
+  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
+    // conversion is required as establishedDate response is of type string
+    // it is stored in BS
+    apiResponse.data.establishedDate = new Date(
+      apiResponse.data.establishedDate,
+    );
+  data = apiResponse.data;
+  return data;
+};
+
+const createOrEditMovie = async ({
+  postData,
+  isEditMode,
+  slug,
+  toast,
+}) => {
+  let apiPath = ApiPaths.Path_Movies;
+  if (isEditMode) {
+    apiPath += "/" + slug;
+    postData.id = slug;
+  }
+  const { data } = await axiosInstance({
+    method: isEditMode ? "put" : "post",
+    url: apiPath,
+    data: postData,
+  })
+    .then((response) => {
+      console.log("api-response-categories", response);
+      toast({
+        description:
+          response.data?.message || "Successfully completed the action.",
+        duration: 5000,
+      });
+      return response.data;
+    })
+    .catch((err) => console.error(err));
+  return data;
+};
+
+const renderModes = {
+  Render_Mode_Create: "create",
+  Render_Mode_Edit: "edit",
+  Render_Mode_Details: "details",
+};
 
 const AddMovie = () => {
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const { pathname } = useLocation();
+  const pathArray = pathname.split("/").filter((item) => item !== "");
+  let renderMode = null;
+  if (pathArray.includes(renderModes.Render_Mode_Create))
+    renderMode = renderModes.Render_Mode_Create;
+  else if (pathArray.includes(renderModes.Render_Mode_Edit) && slug)
+    renderMode = renderModes.Render_Mode_Edit;
+  else renderMode = renderModes.Render_Mode_Details;
+
   const { toast } = useToast();
-  const form = useForm({
-    // resolver,
-    defaultValues,
+  const { isLoading, data, isError, isFetching, isPreviousData, error } =
+    useQuery({
+      queryKey: ["MovieDetail"],
+      queryFn: () => getMovie(slug, renderMode),
+      keepPreviousData: true,
+    });
+
+  const mutateMovie = useMutation({
+    mutationFn: createOrEditMovie,
+    onSuccess: (data, variables, context) => {
+      navigate(Paths.Route_Admin_Movies);
+    },
+    onError: (error, variables, context) => {
+      debugger;
+      toast({ description: "Something went wrong.Please try again." });
+    },
+    onSettled: (data, error, variables, context) => {
+      // queryClient.invalidateQueries("theatreDetail");
+    },
   });
-  const [previews, setPreviews] = useState([]);
+
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("submitted", data);
+    // mutateProductionHouse.mutate({
+    //   postData: data,
+    //   isEditMode: renderMode === renderModes.Render_Mode_Edit,
+    //   slug,
+    //   toast,
+    // });
     toast({
       title: "You submitted the following values:",
       description: (
@@ -41,54 +136,55 @@ const AddMovie = () => {
       ),
     });
   };
+
+  const form = useForm({
+    // resolver,
+    defaultValues,
+  });
+
+
   return (
-    <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
+<main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader
-        className=" "
-        label={"movie"}
+        label="production house"
         pathTo={Paths.Route_Admin_Movie}
       />
+      {isLoading || isFetching ? (
+        <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
+      ) : (
+        data && (
+          <MovieForm
+            movie={data}
+            renderMode={renderMode}
+            onSubmit={onSubmit}
+          />
+        )
+      )}
+    </main>
+  );
+};
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <Tabs
-            defaultValue="basic_information"
-            className="min-h-[60vh] w-full gap-2 lg:grid lg:grid-cols-[1fr,6fr]"
-            orientation="vertical"
-          >
-            <TabsList className="flex h-full w-full flex-wrap justify-start gap-2 p-2 lg:h-full lg:flex-col lg:p-4 ">
-              <TabsTrigger
-                value="basic_information"
-                className="justify-start lg:w-full"
-              >
-                Basic Info
-              </TabsTrigger>
-              <TabsTrigger
-                value="crew_information"
-                className="justify-start lg:w-full"
-              >
-                Crew Info
-              </TabsTrigger>
-              <TabsTrigger
-                value="censor_information"
-                className="justify-start lg:w-full"
-              >
-                Censor Info
-              </TabsTrigger>
-              <TabsTrigger
-                value="theater_information"
-                className="justify-start lg:w-full"
-              >
+function MovieForm({ movie, renderMode, onSubmit }) {
+  const form = useForm({
+    resolver,
+    defaultValues: movie,
+  });
+  const [previews, setPreviews] = useState([]);
+
+  return (
+    <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" disabled={renderMode === renderModes.Render_Mode_Details}>
+          <Tabs className="w-full" defaultValue="basic_information">
+            <TabsList className="grid h-full min-h-fit w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+              <TabsTrigger value="basic_information">Basic Info</TabsTrigger>
+              <TabsTrigger value="crew_information">Crew Info</TabsTrigger>
+              <TabsTrigger value="censor_information">Censor Info</TabsTrigger>
+              <TabsTrigger value="theater_information">
                 Theater Info
               </TabsTrigger>
-              <TabsTrigger
-                value="role_information"
-                className="justify-start lg:w-full"
-              >
-                Role Info
-              </TabsTrigger>
+              <TabsTrigger value="role_information">Role Info</TabsTrigger>
             </TabsList>
-            <div className="rounded-md border border-input">
+            <div className="mt-4 rounded-md border border-input">
               <ScrollArea
                 className="py-2"
                 viewPortClass="max-h-[calc(100vh-100px)]"
@@ -133,8 +229,7 @@ const AddMovie = () => {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
-    </main>
   );
-};
+}
 
 export default AddMovie;
