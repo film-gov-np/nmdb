@@ -1,4 +1,6 @@
-﻿using Application.Dtos.FilterParameters;
+﻿using Application.Dtos;
+using Application.Dtos.FilterParameters;
+using Application.Dtos.Media;
 using Application.Dtos.Movie;
 using Application.Dtos.Theatre;
 using Application.Helpers.Response;
@@ -12,6 +14,7 @@ using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Extensions;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -22,12 +25,14 @@ public class MovieService : IMovieService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<MovieService> _logger;
+    private readonly IFileService _fileService;
 
-    public MovieService(IMapper mapper, ILogger<MovieService> logger, IUnitOfWork unitOfWork)
+    public MovieService(IMapper mapper, ILogger<MovieService> logger, IUnitOfWork unitOfWork, IFileService fileService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _fileService = fileService;
     }
 
     public async Task<ApiResponse<string>> CreateAsync(MovieRequestDto movieRequestDto)
@@ -44,18 +49,31 @@ public class MovieService : IMovieService
             await _unitOfWork.BeginTransactionAsync();
 
             var movieEntity = _mapper.Map<Movie>(movieRequestDto);
-            var createdMovie = await _unitOfWork.MovieRepository.AddAsync(movieEntity);
+
+            // Image Upload
+            if (movieRequestDto.ImageFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = movieRequestDto.ImageFile,
+                    Thumbnail = false,
+                    ReadableName = true
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    movieEntity.Image = uploadResult.Data.FilePath;
+                }
+            }
 
             if (movieRequestDto.CrewRoles != null && movieRequestDto.CrewRoles.Any())
             {
-                //var crewRoleEntities = _mapper.Map<List<MovieCrewRole>>(movieRequestDto.CrewRoles);
                 foreach (var crewRole in movieRequestDto.CrewRoles)
                 {
                     foreach (var crew in crewRole.Crews)
                     {
                         var crewRoleEntity = new MovieCrewRole
                         {
-                            //MovieId = createdMovie.Id,
                             CrewId = crew.CrewId,
                             RoleId = crewRole.RoleId,
                             RoleNickName = crewRole.RoleNickName,
@@ -82,7 +100,6 @@ public class MovieService : IMovieService
 
             if (movieRequestDto.ProductionHouseIds != null && movieRequestDto.ProductionHouseIds.Any())
             {
-                //var productionHouseEntities = _mapper.Map<List<MovieProductionHouse>>(movieRequestDto.ProductionHouses);
                 foreach (var productionHouseId in movieRequestDto.ProductionHouseIds)
                 {
                     var productionHouseEntity = new MovieProductionHouse
@@ -207,7 +224,8 @@ public class MovieService : IMovieService
                                                 NepaliName = mr.NepaliName,
                                                 Category = mr.Category.GetDisplayName(),
                                                 Status = mr.Status.GetDisplayName(),
-                                                Image = mr.Image
+                                                Image = mr.Image,
+                                                Color = mr.Color
 
                                             }).ToListAsync();
 
@@ -228,8 +246,6 @@ public class MovieService : IMovieService
 
         try
         {
-            //string includeProperties = "MovieTheatres,MovieGenres,MovieLanguages,MovieCrewRoles,MovieProductionHouses,Censor";
-
             var movieEntity = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
             if (movieEntity == null)
             {
@@ -245,7 +261,7 @@ public class MovieService : IMovieService
             movieResponse.LanguageIds = movieEntity.MovieLanguages.Select(l => l.LanguageId).ToList();
             movieResponse.ProductionHouseIds = movieEntity.MovieProductionHouses.Select(mvp => mvp.ProductionHouseId).ToList();
             movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
-            movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());// _mapper.Map<List<MovieTheatreDto>>(movieEntity.MovieTheatres);
+            movieResponse.Theatres = _mapper.Map<List<MovieTheatreDto>>(movieEntity.MovieTheatres);
 
 
             response.IsSuccess = true;
@@ -263,22 +279,22 @@ public class MovieService : IMovieService
         return response;
     }
 
-    private List<MovieTheatreDto> MapMovieTheatres(List<MovieTheatre> movieTheatres)
-    {
-        var movieTheatresDto = new List<MovieTheatreDto>();
-        foreach (var theatre in movieTheatres)
-        {
-            movieTheatresDto.Add(new MovieTheatreDto()
-            {
-                TheatreId = theatre.TheatreId,
-                Name = theatre.Theatre.Name,
-                Address = theatre.Theatre.Address,
-                ShowingDate = theatre.ShowingDate
-            });
-        }
+    //private List<MovieTheatreDto> MapMovieTheatres(List<MovieTheatre> movieTheatres)
+    //{
+    //    var movieTheatresDto = new List<MovieTheatreDto>();
+    //    foreach (var theatre in movieTheatres)
+    //    {
+    //        movieTheatresDto.Add(new MovieTheatreDto()
+    //        {
+    //            TheatreId = theatre.TheatreId,
+    //            Name = theatre.Theatre.Name,
+    //            Address = theatre.Theatre.Address,
+    //            ShowingDate = theatre.ShowingDate
+    //        });
+    //    }
 
-        return movieTheatresDto;
-    }
+    //    return movieTheatresDto;
+    //}
 
     private List<MovieCrewRoleDto> MapToMovieCrewRoleDto(List<MovieCrewRole> movieCrewRoles)
     {
@@ -309,16 +325,39 @@ public class MovieService : IMovieService
 
         try
         {
+
             await _unitOfWork.BeginTransactionAsync();
-            string includeProperties = "MovieGenres,MovieTheatres,MovieProductionHouses,MovieCrewRoles,MovieLanguages,Censor";
-            var existingMovie = await _unitOfWork.MovieRepository.GetByIdAsync(movieId, includeProperties);
+            //string includeProperties = "MovieGenres,MovieTheatres,MovieProductionHouses,MovieCrewRoles,MovieLanguages,Censor";
+            var existingMovie = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
+
 
             if (existingMovie == null)
             {
                 return ApiResponse<string>.ErrorResponse($"Movie with '{movieId}' could not be found.", HttpStatusCode.NotFound);
             }
+            string movieNameBeforeMapping = existingMovie.Name;
 
             _mapper.Map(movieRequestDto, existingMovie);
+
+            // Image Upload
+            if (movieRequestDto.ImageFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = movieRequestDto.ImageFile,
+                    Thumbnail = false,
+                    ReadableName = true
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    // Delete existing image
+                    if (!string.IsNullOrEmpty(existingMovie.Image))
+                        _fileService.RemoveFile(existingMovie.Image);
+
+                    existingMovie.Image = uploadResult.Data.FilePath;
+                }
+            }
 
             if (movieRequestDto.LanguageIds != null && movieRequestDto.LanguageIds.Any())
             {
@@ -440,7 +479,7 @@ public class MovieService : IMovieService
             await _unitOfWork.MovieRepository.UpdateAsync(existingMovie);
             await _unitOfWork.CommitAsync();
 
-            response = ApiResponse<string>.SuccessResponseWithoutData($"The movie '{movieRequestDto.Name}' was created successfully.", HttpStatusCode.Created);
+            response = ApiResponse<string>.SuccessResponseWithoutData($"The movie '{movieNameBeforeMapping}' was updated successfully.", HttpStatusCode.OK);
         }
         catch (Exception ex)
         {
@@ -450,5 +489,19 @@ public class MovieService : IMovieService
         }
 
         return response;
+    }
+
+    public async Task<ApiResponse<List<LanguageListResponseDto>>> GetAllLanguages()
+    {
+        var languages = await _unitOfWork.MovieRepository.GetAllLanguages();
+        var languagesDto = _mapper.Map<List<LanguageListResponseDto>>(languages);
+        return  ApiResponse<List<LanguageListResponseDto>>.SuccessResponse(languagesDto);
+    }
+
+    public async Task<ApiResponse<List<GenresListResponseDto>>> GetAllGenres()
+    {
+        var genres = await _unitOfWork.MovieRepository.GetAllGenres();
+        var genresDto = _mapper.Map<List<GenresListResponseDto>>(genres);
+        return ApiResponse<List<GenresListResponseDto>>.SuccessResponse(genresDto);
     }
 }

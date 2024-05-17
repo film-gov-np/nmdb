@@ -1,4 +1,7 @@
-﻿namespace Application.Dtos.Movie;
+﻿using Core.Constants;
+using Core.Entities;
+
+namespace Application.Dtos.Movie;
 
 public class MovieListResponseDto
 {
@@ -8,4 +11,5 @@ public class MovieListResponseDto
     public string Category { get; set; }
     public string Status { get; set; }
     public string Image { get; set; }
+    public eMovieColor Color { get; set; }
 }

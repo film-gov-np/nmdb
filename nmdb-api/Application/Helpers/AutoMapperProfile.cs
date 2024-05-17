@@ -32,7 +32,17 @@ namespace Neptics.Application.Helpers
             CreateMap<Movie, MovieRequestDto>().ReverseMap();
             CreateMap<Movie, MovieResponseDto>().ReverseMap();
             CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
-            CreateMap<MovieTheatre, MovieTheatreDto>().ReverseMap();
+
+            CreateMap<Theatre, MovieTheatreDto>()
+                        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
+            CreateMap<MovieTheatre, MovieTheatreDto>()
+                        .ForMember(dest => dest.TheatreId, opt => opt.MapFrom(src => src.TheatreId))
+                        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Theatre.Name))
+                        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Theatre.Address))
+                        .ForMember(dest => dest.ShowingDate, opt => opt.MapFrom(src => src.ShowingDate));
+
             CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();
             //CreateMap<List<MovieCrewRole>, List<MovieCrewRoleDto>>().ReverseMap();
             //CreateMap<List<MovieTheatre>, List<MovieTheatreDto>>().ReverseMap();
@@ -42,6 +52,9 @@ namespace Neptics.Application.Helpers
             // Crew
             CreateMap<Crew, CrewRequestDto>().ReverseMap();
             CreateMap<Crew, CrewResponseDto>().ReverseMap();
+
+            CreateMap<Language, LanguageListResponseDto>().ReverseMap();
+            CreateMap<Genre, GenresListResponseDto>().ReverseMap();
 
         }
     }

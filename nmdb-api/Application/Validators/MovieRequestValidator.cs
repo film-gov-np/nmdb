@@ -26,21 +26,21 @@ public class MovieRequestValidator : AbstractValidator<MovieRequestDto>
             .Matches(@"\b(?:https?://|www\.)\S+\b").WithMessage("Invalid URL format.");
         RuleFor(mr => mr.TrailerLink)
             .Matches(@"\b(?:https?://|www\.)\S+\b").WithMessage("Invalid URL format.");
-        RuleFor(dto => dto.CrewRoles)
-                .NotEmpty().WithMessage("At least one crew role must be assigned")
-                .ForEach(crewRole =>
-                {
-                    crewRole.ChildRules(crewRoleDto =>
-                    {
-                        crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.Crews)
-                            .NotEmpty().WithMessage("A role should be assigned to at least one crew.");
+        //RuleFor(dto => dto.CrewRoles)
+        //        .NotEmpty().WithMessage("At least one crew role must be assigned")
+        //        .ForEach(crewRole =>
+        //        {
+        //            crewRole.ChildRules(crewRoleDto =>
+        //            {
+        //                crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.Crews)
+        //                    .NotEmpty().WithMessage("A role should be assigned to at least one crew.");
 
-                        crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.RoleId)
-                            .NotEmpty().WithMessage("Role ID is required");
-                    });
-                });
-        RuleFor(dto => dto.Theatres)
-                .NotEmpty().WithMessage("At least one theatre must be provided");
+        //                crewRoleDto.RuleFor(crewRoleDto => crewRoleDto.RoleId)
+        //                    .NotEmpty().WithMessage("Role ID is required");
+        //            });
+        //        });
+        //RuleFor(dto => dto.Theatres)
+        //        .NotEmpty().WithMessage("At least one theatre must be provided");
 
         RuleFor(dto => dto.ProductionHouseIds)
                 .NotEmpty().WithMessage("At least one production house must be provided");
