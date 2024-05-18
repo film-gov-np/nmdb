@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
-const DatePickerForm = ({
+const DatePickerForForm = ({
   field,
   captionLayout = "dropdown-buttons",
   fromYear = 1900,
@@ -55,4 +55,4 @@ const DatePickerForm = ({
   );
 };
 
-export default DatePickerForm;
+export default DatePickerForForm;

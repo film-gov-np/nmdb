@@ -28,11 +28,11 @@ export const formSchema = z.object({
   trailerLink: z.string().optional().or(z.literal("")),
 
   genre: z.array(z.any()),
-  language:  z.array(z.any()),
+  language: z.array(z.any()),
   studio: z.array(z.any()),
 
   censor: z.object({
-    applicationDate: z.string() .optional().or(z.literal("")),
+    applicationDate: z.string().optional().or(z.literal("")),
     certificateNumber: z.string(),
     censoredDate: z.date().optional().or(z.literal("")),
     censorType: z.string(),
@@ -41,12 +41,11 @@ export const formSchema = z.object({
     reelSize: z.string(),
     movieLength: z.string(),
     validForInYears: z.string(),
-    
   }),
 
-  // theaters: z.array(),
+  theatres: z.array(z.any()),
 
-  // crewRoles: z.array()
+  crewRoles: z.array(z.any()),
 });
 
 export const resolver = zodResolver(formSchema);
@@ -70,15 +69,17 @@ export const defaultValues = {
   fullMovieLink: "",
   trailerLink: "",
 
-  genre: [{id:1, name:"Romantic"}],
+  genre: [{ id: 1, name: "Romantic" }],
   language: [],
-  studio: [{
-    "id": 4,
-    "name": "Royal Nepal Film Corporation",
-    "nepaliName": null,
-    "chairmanName": "NA",
-    "isRunning": true
-}],
+  studio: [
+    {
+      id: 4,
+      name: "Royal Nepal Film Corporation",
+      nepaliName: null,
+      chairmanName: "NA",
+      isRunning: true,
+    },
+  ],
 
   censor: {
     applicationDate: "",
@@ -92,9 +93,12 @@ export const defaultValues = {
     validForInYears: "",
   },
 
-  theatres: [{ theatreId: "", name: "", address: "", showingDate: "" }],
+  theatres: [{ theatre: "", showingDate: "" }],
 
-  crew_and_roles: [
-    { roleId: "", roleNickName:"", crews: [] },
+  crewRoles: [
+    { roleId: "10", roleName: "Director", crews: [] },
+    { roleId: "1", roleName: "Actor", crews: [] },
+    { roleId: "2", roleName: "Actress", crews: [] },
+    { roleId: "27", roleName: "Producer", crews: [] },
   ],
 };

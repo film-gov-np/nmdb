@@ -1,4 +1,4 @@
-import DatePickerForm from "@/components/common/formElements/DatePicker";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 import {
   FormControl,
   FormField,
@@ -10,19 +10,25 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import { movieCensorTypes, movieTypes, movieValidFor } from "../constants";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FormCensorInfo = ({ form }) => {
   return (
     <div className="min-h-[60vh]">
       <div className="grid  grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-      <FormField
+        <FormField
           control={form.control}
           name="censor.applicationDate"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Application Date</FormLabel>
-              <DatePickerForm field={field} />
+              <DatePickerForForm field={field} />
               <FormMessage />
             </FormItem>
           )}
@@ -46,7 +52,7 @@ const FormCensorInfo = ({ form }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Censored Date</FormLabel>
-              <DatePickerForm field={field} />
+              <DatePickerForForm field={field} />
               <FormMessage />
             </FormItem>
           )}

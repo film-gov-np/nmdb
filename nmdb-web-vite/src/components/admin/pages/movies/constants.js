@@ -1,4 +1,8 @@
-import { ExclamationTriangleIcon, LinkNone2Icon, StopwatchIcon } from "@radix-ui/react-icons";
+import {
+  ExclamationTriangleIcon,
+  LinkNone2Icon,
+  StopwatchIcon,
+} from "@radix-ui/react-icons";
 import { CheckIcon, Film, Video } from "lucide-react";
 
 export const movieCategories = [
@@ -17,7 +21,7 @@ export const movieCategories = [
     value: "TV-Show",
     icon: Film,
   },
-]
+];
 
 export const movieStatuses = [
   {
@@ -48,7 +52,7 @@ export const movieStatuses = [
     label: "Unknown",
     icon: ExclamationTriangleIcon,
   },
-]
+];
 
 export const movieColors = [
   {
@@ -75,7 +79,7 @@ export const movieColors = [
     value: "AgfaColor",
     label: "Agfa Color",
   },
-]
+];
 
 export const movieCensorTypes = [
   {
@@ -90,7 +94,7 @@ export const movieCensorTypes = [
     value: "A",
     label: "A",
   },
-]
+];
 export const movieTypes = [
   {
     value: "Celluliod",
@@ -104,7 +108,7 @@ export const movieTypes = [
     value: "Video",
     label: "Video",
   },
-]
+];
 export const movieValidFor = [
   {
     value: "5",
@@ -114,6 +118,4 @@ export const movieValidFor = [
     value: "10",
     label: "10",
   },
-]
-
-
+];

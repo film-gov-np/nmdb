@@ -78,7 +78,7 @@ const MultipleSelectorWithList = React.forwardRef(
       triggerSearchOnFocus,
       disabled,
       className,
-
+      replaceOnMaxSelected = false,
       selectFirstItem = true,
       commandProps,
       inputProps,
@@ -357,13 +357,19 @@ const MultipleSelectorWithList = React.forwardRef(
                                       e.stopPropagation();
                                     }}
                                     onSelect={() => {
-                                      if (selected.length >= maxSelected) {
+                                      if (
+                                        selected.length >= maxSelected &&
+                                        !replaceOnMaxSelected
+                                      ) {
                                         onMaxSelected?.(selected.length);
                                         return;
                                       }
-
+                                      let newOptions = [...selected, option];
+                                      if (replaceOnMaxSelected) {
+                                        newOptions = [option];
+                                        // setOpen(false)
+                                      }
                                       setInputValue("");
-                                      const newOptions = [...selected, option];
                                       setSelected(newOptions);
                                       onChange?.(newOptions);
                                     }}

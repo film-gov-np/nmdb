@@ -1,4 +1,3 @@
-import MultipleSelector from "@/components/ui/custom/multiple-selector/multiple-selector";
 import {
   FormControl,
   FormField,
@@ -7,7 +6,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import MultipleSelectorWithList from "../MultipleSelectionWithList";
 
 const getHelperData = async (apiPath, queryKey) => {

@@ -1,17 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
 import { CalendarDays, Drama, Film, HomeIcon, Theater } from "lucide-react";
@@ -106,7 +105,7 @@ const Home = () => {
 
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
-      <div className="mx-auto grid-cols-1 grid w-full max-w-screen-2xl items-start gap-6 md:grid-cols-[2fr_2px_minmax(0,9fr)]">
+      <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6 md:grid-cols-[2fr_2px_minmax(0,9fr)]">
         <aside className="hidden gap-4 py-4 md:grid">
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
             Menu
@@ -199,12 +198,11 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext className="-right-9"/>
-
+            <CarouselNext className="-right-9" />
           </Carousel>
         </div>
       </div>
-      <div className="mx-auto mt-8 grid-cols-1 grid w-full max-w-screen-2xl items-start gap-6 md:grid-cols-[minmax(0,7fr)_2px_3fr] ">
+      <div className="mx-auto mt-8 grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,7fr)_2px_3fr] ">
         <div className="block">
           <div className="space-y-4">
             <h3 className="text-2xl font-semibold leading-none tracking-tight">
@@ -230,7 +228,7 @@ const Home = () => {
               </ScrollArea>
             </div>
           </div>
-          <div className="space-y-4 mt-8">
+          <div className="mt-8 space-y-4">
             <h3 className="text-2xl font-semibold leading-none tracking-tight">
               Top Artists
             </h3>
@@ -267,7 +265,7 @@ const Home = () => {
           >
             <CarouselContent className="-mt-1 h-[560px]">
               {upcomingMovies.data.movies.map((movie, index) => (
-                <CarouselItem key={index} className="pt-1 basis-1/5">
+                <CarouselItem key={index} className="basis-1/5 pt-1">
                   <div className="flex space-x-6 p-1">
                     <img
                       src={

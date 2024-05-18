@@ -397,7 +397,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Is the theater running?" />
+                        <SelectValue placeholder="Is the theatre running?" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

@@ -3,18 +3,10 @@ import { Paths } from "@/constants/routePaths";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import FormBasicInfo from "./forms/FormBasicInfo";
 import FormCensorInfo from "./forms/FormCensorInfo";
 import FormRoleInfo from "./forms/FormRoleInfo";
@@ -24,7 +16,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
-import { zodResolver } from "@hookform/resolvers/zod";
 import FormCrewInfo from "./forms/FormCrewInfo";
 
 const getMovie = async (id, renderMode) => {
@@ -49,12 +40,7 @@ const getMovie = async (id, renderMode) => {
   return data;
 };
 
-const createOrEditMovie = async ({
-  postData,
-  isEditMode,
-  slug,
-  toast,
-}) => {
+const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
   let apiPath = ApiPaths.Path_Movies;
   if (isEditMode) {
     apiPath += "/" + slug;
@@ -143,9 +129,8 @@ const AddMovie = () => {
     defaultValues,
   });
 
-
   return (
-<main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
+    <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader
         label="production house"
         pathTo={Paths.Route_Admin_Movie}
@@ -154,11 +139,7 @@ const AddMovie = () => {
         <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
       ) : (
         data && (
-          <MovieForm
-            movie={data}
-            renderMode={renderMode}
-            onSubmit={onSubmit}
-          />
+          <MovieForm movie={data} renderMode={renderMode} onSubmit={onSubmit} />
         )
       )}
     </main>
@@ -174,48 +155,50 @@ function MovieForm({ movie, renderMode, onSubmit }) {
 
   return (
     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" disabled={renderMode === renderModes.Render_Mode_Details}>
-          <Tabs className="w-full" defaultValue="basic_information">
-            <TabsList className="grid h-full min-h-fit w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-              <TabsTrigger value="basic_information">Basic Info</TabsTrigger>
-              <TabsTrigger value="crew_information">Crew Info</TabsTrigger>
-              <TabsTrigger value="censor_information">Censor Info</TabsTrigger>
-              <TabsTrigger value="theater_information">
-                Theater Info
-              </TabsTrigger>
-              <TabsTrigger value="role_information">Role Info</TabsTrigger>
-            </TabsList>
-            <div className="mt-4 rounded-md border border-input">
-              <ScrollArea
-                className="py-2"
-                viewPortClass="max-h-[calc(100vh-80px)]"
-              >
-                <TabsContent value="basic_information" className="h-full ">
-                  <FormBasicInfo
-                    form={form}
-                    previews={previews}
-                    setPreviews={setPreviews}
-                  />
-                </TabsContent>
-                <TabsContent value="crew_information">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+        disabled={renderMode === renderModes.Render_Mode_Details}
+      >
+        <Tabs className="w-full" defaultValue="basic_information">
+          <TabsList className="grid h-full min-h-fit w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <TabsTrigger value="basic_information">Basic Info</TabsTrigger>
+            <TabsTrigger value="crew_information">Crew Info</TabsTrigger>
+            <TabsTrigger value="censor_information">Censor Info</TabsTrigger>
+            <TabsTrigger value="theatre_information">Theatre Info</TabsTrigger>
+            <TabsTrigger value="role_information">Role Info</TabsTrigger>
+          </TabsList>
+          <div className="mt-4 rounded-md border border-input">
+            <ScrollArea
+              className="py-2"
+              viewPortClass="max-h-[calc(100vh-80px)]"
+            >
+              <TabsContent value="basic_information" className="h-full ">
+                <FormBasicInfo
+                  form={form}
+                  previews={previews}
+                  setPreviews={setPreviews}
+                />
+              </TabsContent>
+              <TabsContent value="crew_information">
                 <FormCrewInfo form={form} />
-                </TabsContent>
-                <TabsContent value="censor_information" className="h-full">
-                  <FormCensorInfo form={form} />
-                </TabsContent>
-                <TabsContent value="theater_information" className="h-full">
-                  <FormTheatreInfo form={form} />
-                </TabsContent>
-                <TabsContent value="role_information" className="h-full">
-                  <FormRoleInfo form={form} />
-                </TabsContent>
-              </ScrollArea>
-            </div>
-          </Tabs>
+              </TabsContent>
+              <TabsContent value="censor_information" className="h-full">
+                <FormCensorInfo form={form} />
+              </TabsContent>
+              <TabsContent value="theatre_information" className="h-full">
+                <FormTheatreInfo form={form} />
+              </TabsContent>
+              <TabsContent value="role_information" className="h-full">
+                <FormRoleInfo form={form} />
+              </TabsContent>
+            </ScrollArea>
+          </div>
+        </Tabs>
 
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }
 

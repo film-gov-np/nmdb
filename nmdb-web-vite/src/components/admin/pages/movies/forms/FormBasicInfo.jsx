@@ -1,4 +1,4 @@
-import DatePickerForm from "@/components/common/formElements/DatePicker";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 import {
   FormControl,
   FormField,
@@ -97,7 +97,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
           render={({ field }) => (
             <FormItem className="lg:col-span-2">
               <FormLabel>Shooting Date</FormLabel>
-              <DatePickerForm field={field} />
+              <DatePickerForForm field={field} />
               <FormMessage />
             </FormItem>
           )}
@@ -108,7 +108,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
           render={({ field }) => (
             <FormItem className="lg:col-span-2">
               <FormLabel>Release Date</FormLabel>
-              <DatePickerForm field={field} disabled={false} />
+              <DatePickerForForm field={field} disabled={false} />
               <FormMessage />
             </FormItem>
           )}

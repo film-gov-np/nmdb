@@ -22,50 +22,71 @@ import {
 } from "@/components/ui/command";
 import { useFieldArray } from "react-hook-form";
 import { Trash } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "@/helpers/axiosSetup";
 
-const roles = [
-  {
-    value: "director",
-    label: "Director",
-  },
-  {
-    value: "actress",
-    label: "Actress",
-  },
-  {
-    value: "producer",
-    label: "Producer",
-  },
-  {
-    value: "cameraman",
-    label: "Cameraman",
-  },
-  {
-    value: "action-director",
-    label: "Action Director",
-  },
-  {
-    value: "actor",
-    label: "Actor",
-  },
-];
+// const roles = [
+//   {
+//     value: "director",
+//     label: "Director",
+//   },
+//   {
+//     value: "actress",
+//     label: "Actress",
+//   },
+//   {
+//     value: "producer",
+//     label: "Producer",
+//   },
+//   {
+//     value: "cameraman",
+//     label: "Cameraman",
+//   },
+//   {
+//     value: "action-director",
+//     label: "Action Director",
+//   },
+//   {
+//     value: "actor",
+//     label: "Actor",
+//   },
+// ];
+const getCrewFlimRoles = async (apiPath) => {
+  const apiResponse = await axiosInstance
+    .get(apiPath)
+    .then((response) => {
+      console.log("api-response", response.data);
+      return response.data;
+    })
+    .catch((err) => console.error(err));
+  return apiResponse.data;
+};
 
 const FormRoleInfo = ({ form }) => {
   const [open, setOpen] = useState(false);
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "crew_and_roles",
+    name: "crewRoles",
   });
+  const { isLoading, data, isError, isFetching, isPreviousData, error } =
+    useQuery({
+      queryKey: ["FlimRolesforCrews"],
+      queryFn: () => getCrewFlimRoles("/film-roles?RetrieveAll=true"),
+      keepPreviousData: true,
+    });
+    if(isLoading || isFetching) return "loading"
+    if(error) return "error"
+    const roles = data.items
   return (
     <div className="min-h-[60vh]">
       <div className="grid grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-        {fields.map((formFields, index) => (
+        {fields.map((formField, index) => (
           <fieldset
-            key={formFields.id}
+            key={formField.roleId}
             className="grid h-fit grid-cols-1 gap-2 rounded-lg border p-4"
           >
             <legend className="text-md -ml-1 px-1 font-medium capitalize text-muted-foreground">
-              {Object.keys(formFields)[0]}
+              {formField.roleName}
             </legend>
             <Button
               variant="outline"
@@ -77,20 +98,20 @@ const FormRoleInfo = ({ form }) => {
             </Button>
             <FormField
               control={form.control}
-              name={`crew_and_roles.${index}.${Object.keys(formFields)[0]}`}
+              name={`crewRoles.${index}.crews`}
               render={({ field }) => (
                 <FormItem>
-                  {/* <FormLabel>{formFields.role}</FormLabel> */}
                   <FormControl>
                     <MultipleSelectorWithList
                       value={field.value}
                       onChange={field.onChange}
                       triggerOnSearch={true}
                       minSearchTrigger={3}
-                      apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
+                      apiPath="crews?SearchKeyword="
                       keyValue="id"
-                      keyLabel="first_name"
+                      keyLabel="name"
                       imgLabel="profile_picture"
+                      extraLabel="email"
                       placeholder="Begin typing to search crew member..."
                     />
                   </FormControl>
@@ -119,17 +140,15 @@ const FormRoleInfo = ({ form }) => {
                 <CommandGroup>
                   {roles.map((role) => (
                     <CommandItem
-                      key={role.value}
-                      value={role.value}
+                      key={"movie-role-" + role.id}
+                      value={role.id}
                       onSelect={(value) => {
-                        append({
-                          [value]: [],
-                        });
-                        delete roles[roles.indexOf(role)];
                         setOpen(false);
+                        append({ roleId: role.id, roleName: role.roleName, crews: [] });
+                        delete roles[roles.indexOf(role)];
                       }}
                     >
-                      <span>{role.label}</span>
+                      <span>{role.roleName}</span>
                     </CommandItem>
                   ))}
                 </CommandGroup>
