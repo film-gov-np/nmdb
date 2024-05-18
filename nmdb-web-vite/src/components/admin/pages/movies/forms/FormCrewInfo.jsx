@@ -6,21 +6,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useQueries } from "@tanstack/react-query";
-import MultipleSelectorWithList from "../MultipleSelectionWithList";
-
-const getHelperData = async (apiPath, queryKey) => {
-  const apiResponse = await axiosInstance
-    .get(apiPath)
-    .then((response) => {
-      console.log("api-response", response.data);
-      return response.data;
-    })
-    .catch((err) => console.error(err));
-  return apiResponse.data;
-};
+import { useQueries, useQueryClient } from "@tanstack/react-query";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 
 const FormCrewInfo = ({ form }) => {
+  const queryClient = useQueryClient();
+  const getFromCache = (key) => {
+    return queryClient.getQueryData([key]);
+  };
+  const getHelperData = async (apiPath, queryKey) => {
+    const cache = getFromCache(queryKey);
+    if (cache && cache.length > 0) {
+      console.log("cached-data", cache);
+      return cache;
+    }
+    const apiResponse = await axiosInstance
+      .get(apiPath)
+      .then((response) => {
+        console.log("api-response", response.data);
+        return response.data;
+      })
+      .catch((err) => console.error(err));
+    return apiResponse.data;
+  };
   const helperData = useQueries({
     queries: [
       {

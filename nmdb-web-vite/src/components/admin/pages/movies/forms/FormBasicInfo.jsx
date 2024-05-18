@@ -25,7 +25,6 @@ const FileInput = ({ field, previews, setPreviews }) => {
       if (typeof files[key] !== "object") continue;
       urlImages.push(URL.createObjectURL(files[key]));
     }
-
     setPreviews(urlImages);
   };
 

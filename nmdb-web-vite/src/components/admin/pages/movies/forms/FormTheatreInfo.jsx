@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useFieldArray } from "react-hook-form";
-import MultipleSelectorWithList from "../MultipleSelectionWithList";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import { TrashIcon } from "@radix-ui/react-icons";
 import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
@@ -45,9 +45,6 @@ const FormTheatreInfo = ({ form }) => {
                         keyLabel="name"
                         placeholder="Begin typing to search for theatres..."
                         maxSelected={1}
-                        onMaxSelected={(maxLimit) => {
-                          console.log(maxLimit);
-                        }}
                         replaceOnMaxSelected={true}
                       />
                     </FormControl>
@@ -66,11 +63,11 @@ const FormTheatreInfo = ({ form }) => {
                   </FormItem>
                 )}
               />
-              <div className="lg:mt-9">
+              <div className="lg:mt-8">
                 <Button
-                  variant="outline-destructive"
+                  variant="outline"
                   size="sm"
-                  className="ml-auto mr-2 h-8 "
+                  className="ml-auto mr-2 h-9 border-red-300 text-red-300 hover:text-red-400"
                   onClick={() => remove(index)}
                 >
                   <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />

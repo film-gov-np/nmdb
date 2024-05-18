@@ -5,8 +5,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import React, { useState } from "react";
-import MultipleSelectorWithList from "../MultipleSelectionWithList";
+import { useState } from "react";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import {
   Popover,
   PopoverContent,
@@ -25,32 +25,6 @@ import { Trash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 
-// const roles = [
-//   {
-//     value: "director",
-//     label: "Director",
-//   },
-//   {
-//     value: "actress",
-//     label: "Actress",
-//   },
-//   {
-//     value: "producer",
-//     label: "Producer",
-//   },
-//   {
-//     value: "cameraman",
-//     label: "Cameraman",
-//   },
-//   {
-//     value: "action-director",
-//     label: "Action Director",
-//   },
-//   {
-//     value: "actor",
-//     label: "Actor",
-//   },
-// ];
 const getCrewFlimRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
@@ -74,12 +48,12 @@ const FormRoleInfo = ({ form }) => {
       queryFn: () => getCrewFlimRoles("/film-roles?RetrieveAll=true"),
       keepPreviousData: true,
     });
-    if(isLoading || isFetching) return "loading"
-    if(error) return "error"
-    const roles = data.items
+  if (isLoading || isFetching) return "loading";
+  if (error) return "error";
+  const roles = data.items;
   return (
     <div className="min-h-[60vh]">
-      <div className="grid grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 p-4 px-4 py-2 md:grid-cols-2 md:gap-x-3 md:gap-y-4 lg:gap-x-6 lg:gap-y-8">
         {fields.map((formField, index) => (
           <fieldset
             key={formField.roleId}
@@ -91,7 +65,7 @@ const FormRoleInfo = ({ form }) => {
             <Button
               variant="outline"
               size="icon"
-              className="-mt-10 ml-auto h-7 w-7"
+              className="-mt-10 ml-auto h-7 w-7 border-red-300 text-red-300 hover:text-red-400"
               onClick={() => remove(index)}
             >
               <Trash className="h-4 w-4" />
@@ -144,7 +118,11 @@ const FormRoleInfo = ({ form }) => {
                       value={role.id}
                       onSelect={(value) => {
                         setOpen(false);
-                        append({ roleId: role.id, roleName: role.roleName, crews: [] });
+                        append({
+                          roleId: role.id,
+                          roleName: role.roleName,
+                          crews: [],
+                        });
                         delete roles[roles.indexOf(role)];
                       }}
                     >

@@ -97,8 +97,8 @@ export const defaultValues = {
 
   crewRoles: [
     { roleId: "10", roleName: "Director", crews: [] },
+    { roleId: "27", roleName: "Producer", crews: [] },
     { roleId: "1", roleName: "Actor", crews: [] },
     { roleId: "2", roleName: "Actress", crews: [] },
-    { roleId: "27", roleName: "Producer", crews: [] },
   ],
 };

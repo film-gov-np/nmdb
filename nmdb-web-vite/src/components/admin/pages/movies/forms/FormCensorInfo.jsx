@@ -7,7 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
 import { movieCensorTypes, movieTypes, movieValidFor } from "../constants";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -21,18 +20,7 @@ import {
 const FormCensorInfo = ({ form }) => {
   return (
     <div className="min-h-[60vh]">
-      <div className="grid  grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-        <FormField
-          control={form.control}
-          name="censor.applicationDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Application Date</FormLabel>
-              <DatePickerForForm field={field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <div className="grid grid-cols-1 gap-2 p-4 px-4 py-2 md:grid-cols-2 md:gap-x-3 md:gap-y-4 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-8">
         <FormField
           control={form.control}
           name="censor.certificateNumber"
@@ -42,6 +30,17 @@ const FormCensorInfo = ({ form }) => {
               <FormControl>
                 <Input {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="censor.applicationDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Application Date</FormLabel>
+              <DatePickerForForm field={field} />
               <FormMessage />
             </FormItem>
           )}
@@ -121,6 +120,37 @@ const FormCensorInfo = ({ form }) => {
         />
         <FormField
           control={form.control}
+          name="censor.validForInYears"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Valid For ?</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.defaultValue}
+                name="customvalidFor"
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a valid for" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {movieValidFor.map((validFor, index) => (
+                    <SelectItem
+                      key={"movie-valid-for-" + index}
+                      value={validFor.value}
+                    >
+                      {validFor.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="censor.reelLength"
           render={({ field }) => (
             <FormItem>
@@ -160,40 +190,9 @@ const FormCensorInfo = ({ form }) => {
         />
         <FormField
           control={form.control}
-          name="censor.validForInYears"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Valid For ?</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                name="customvalidFor"
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a valid for" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {movieValidFor.map((validFor, index) => (
-                    <SelectItem
-                      key={"movie-valid-for-" + index}
-                      value={validFor.value}
-                    >
-                      {validFor.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="censor.description"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem className="col-span-3 flex flex-col">
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea {...field} />
