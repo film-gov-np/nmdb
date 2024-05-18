@@ -15,7 +15,7 @@ namespace Core.Constants
         EastmanColor,
         [Display(Name = "Kodak Color")]
         KodakColor,
-        [Display(Name = "Gewa Folor")]
+        [Display(Name = "Gewa Color")]
         GewaColor,
         [Display(Name = "Fuji Color")]
         FujiColor,

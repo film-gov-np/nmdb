@@ -12,5 +12,8 @@ public enum eMovieCategory
     Documentary,
 
     [Display(Name = "TV-Show")]
-    TvShow
+    TvShow,
+
+    [Display(Name ="None")]
+    None
 }

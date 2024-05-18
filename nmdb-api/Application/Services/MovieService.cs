@@ -10,6 +10,7 @@ using Application.Interfaces.Services;
 using Application.Validators;
 using AutoMapper;
 using Core;
+using Core.Constants;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -222,12 +223,13 @@ public class MovieService : IMovieService
                                                 Id = mr.Id,
                                                 Name = mr.Name,
                                                 NepaliName = mr.NepaliName,
-                                                Category = mr.Category.GetDisplayName(),
-                                                Status = mr.Status.GetDisplayName(),
+                                                Category = mr.Category != null ? mr.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
+                                                Status = mr.Status != null ? mr.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
+                                                Color = mr.Color != null ? mr.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),
                                                 Image = mr.Image,
-                                                Color = mr.Color
 
                                             }).ToListAsync();
+
 
         var response = new PaginationResponse<MovieListResponseDto>
         {
@@ -495,7 +497,7 @@ public class MovieService : IMovieService
     {
         var languages = await _unitOfWork.MovieRepository.GetAllLanguages();
         var languagesDto = _mapper.Map<List<LanguageListResponseDto>>(languages);
-        return  ApiResponse<List<LanguageListResponseDto>>.SuccessResponse(languagesDto);
+        return ApiResponse<List<LanguageListResponseDto>>.SuccessResponse(languagesDto);
     }
 
     public async Task<ApiResponse<List<GenresListResponseDto>>> GetAllGenres()
