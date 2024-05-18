@@ -15,10 +15,10 @@ public class Movie : BaseEntity<int>
     public string Name { get; set; }
     [MaxLength(255)]
 
-    public string NepaliName { get; set; }
+    public string? NepaliName { get; set; }
     public int? Runtime { get; set; }
     [MaxLength(100)]
-    public eMovieColor Color { get; set; } = eMovieColor.KodakColor;
+    public eMovieColor? Color { get; set; } = eMovieColor.KodakColor;
     public DateTime? ShootingDate { get; set; }
     [MaxLength(16)]
     public string? ShootingDateBS { get; set; }
@@ -27,15 +27,15 @@ public class Movie : BaseEntity<int>
     public string? ReleaseDateBS { get; set; }
     [MaxLength(50)]
     //public string Category { get; set; } = "Movie";
-    public eMovieCategory Category { get; set; } = eMovieCategory.Movie;
-    public eMovieStatus Status { get; set; } = eMovieStatus.Released;    
+    public eMovieCategory? Category { get; set; } = eMovieCategory.Movie;
+    public eMovieStatus? Status { get; set; } = eMovieStatus.Released;    
     [MaxLength(255)]
     public string? OfficialSiteUrl { get; set; }
     public decimal? Budget { get; set; }
     [MaxLength(255)]
     public string? FilmingLocation { get; set; }   
-    public string Tagline { get; set; }
-    public string OneLiner{ get; set; }
+    public string? Tagline { get; set; }
+    public string? OneLiner{ get; set; }
     [MaxLength(255)]
     public string? Image { get; set; }
     [MaxLength(255)]
