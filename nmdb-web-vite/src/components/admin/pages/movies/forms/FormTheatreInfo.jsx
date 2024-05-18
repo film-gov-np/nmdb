@@ -52,6 +52,10 @@ const FormTheatreInfo = ({ form }) => {
                         keyValue="id"
                         keyLabel="name"
                         placeholder="Begin typing to search for theater..."
+                        maxSelected={1}
+                        onMaxSelected={(maxLimit) => {
+                          console.log(maxLimit);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
