@@ -25,6 +25,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
+import FormCrewInfo from "./forms/FormCrewInfo";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
@@ -197,30 +198,16 @@ function MovieForm({ movie, renderMode, onSubmit }) {
                   />
                 </TabsContent>
                 <TabsContent value="crew_information">
-                  <div className="grid min-h-[60vh] grid-cols-1 gap-4 px-4 py-2 md:grid-cols-2">
-                    {/* <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Address</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Address" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
-                  </div>
+                <FormCrewInfo form={form} />
                 </TabsContent>
                 <TabsContent value="censor_information" className="h-full">
                   <FormCensorInfo form={form} />
                 </TabsContent>
                 <TabsContent value="theater_information" className="h-full">
-                  {/* <FormTheatreInfo form={form} /> */}
+                  <FormTheatreInfo form={form} />
                 </TabsContent>
                 <TabsContent value="role_information" className="h-full">
-                  {/* <FormRoleInfo form={form} /> */}
+                  <FormRoleInfo form={form} />
                 </TabsContent>
               </ScrollArea>
             </div>

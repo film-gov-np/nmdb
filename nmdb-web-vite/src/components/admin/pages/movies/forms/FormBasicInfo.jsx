@@ -1,6 +1,4 @@
 import DatePickerForm from "@/components/common/custom/DatePickerForForm";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   FormControl,
   FormField,
@@ -9,14 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { movieCategories, movieColors, movieStatuses } from "../constants";
 import {
   Select,
@@ -74,7 +64,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
 const FormBasicInfo = ({ form, previews, setPreviews }) => {
   return (
     <div className="min-h-[60vh] ">
-      <div className=" px-4 py-2 grid grid-cols-1 gap-2 p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-6 lg:gap-6">
+      <div className="grid grid-cols-1 gap-2 p-4 px-4 py-2 md:grid-cols-2 md:gap-x-3 md:gap-y-4 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-8">
         <FormField
           control={form.control}
           name="name"

@@ -27,9 +27,9 @@ export const formSchema = z.object({
   fullMovieLink: z.string().optional().or(z.literal("")),
   trailerLink: z.string().optional().or(z.literal("")),
 
-  genre: z.string().optional().or(z.literal("")),
-  language: z.string().optional().or(z.literal("")),
-  studio: z.string().optional().or(z.literal("")),
+  genre: z.array(z.any()),
+  language:  z.array(z.any()),
+  studio: z.array(z.any()),
 
   censor: z.object({
     applicationDate: z.string() .optional().or(z.literal("")),
@@ -70,9 +70,15 @@ export const defaultValues = {
   fullMovieLink: "",
   trailerLink: "",
 
-  genre: "",
-  language: "",
-  studio: "",
+  genre: [{id:1, name:"Romantic"}],
+  language: [],
+  studio: [{
+    "id": 4,
+    "name": "Royal Nepal Film Corporation",
+    "nepaliName": null,
+    "chairmanName": "NA",
+    "isRunning": true
+}],
 
   censor: {
     applicationDate: "",
@@ -86,9 +92,9 @@ export const defaultValues = {
     validForInYears: "",
   },
 
-  // theaters: [{ theaterId: "", name: "", address: "", showingDate: "" }],
+  theatres: [{ theatreId: "", name: "", address: "", showingDate: "" }],
 
-  // crew_and_roles: [
-  //   { roleId: "", roleNickName:"", crews: [] },
-  // ],
+  crew_and_roles: [
+    { roleId: "", roleNickName:"", crews: [] },
+  ],
 };

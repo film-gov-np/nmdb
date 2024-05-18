@@ -22,7 +22,7 @@ import { TrashIcon } from "@radix-ui/react-icons"
 const FormTheatreInfo = ({ form }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "theater",
+    name: "theatres",
   });
   return (
     <div className="min-h-[60vh]">
@@ -38,7 +38,7 @@ const FormTheatreInfo = ({ form }) => {
             >
               <FormField
                 control={form.control}
-                name={`theater.${index}.name`}
+                name={`theatres.${index}.name`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Theater Name</FormLabel>
@@ -48,9 +48,9 @@ const FormTheatreInfo = ({ form }) => {
                         onChange={field.onChange}
                         triggerOnSearch={true}
                         minSearchTrigger={3}
-                        apiPath="https://api.slingacademy.com/v1/sample-data/users?limit=100&search="
+                        apiPath="theatres?SearchKeyword="
                         keyValue="id"
-                        keyLabel="first_name"
+                        keyLabel="name"
                         placeholder="Begin typing to search for theater..."
                       />
                     </FormControl>
@@ -60,7 +60,7 @@ const FormTheatreInfo = ({ form }) => {
               />
               <FormField
                 control={form.control}
-                name={`theater.${index}.showingDate`}
+                name={`theatres.${index}.showingDate`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Showing Date</FormLabel>

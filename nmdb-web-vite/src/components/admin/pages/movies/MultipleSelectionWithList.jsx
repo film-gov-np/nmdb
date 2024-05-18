@@ -64,6 +64,7 @@ const MultipleSelectorWithList = React.forwardRef(
       delay,
       keyValue = "value",
       keyLabel = "label",
+      extraLabel = "email",
       imgLabel = "avatar",
       apiPath,
       minSearchTrigger = 1,
@@ -99,12 +100,14 @@ const MultipleSelectorWithList = React.forwardRef(
       const response = await axiosInstance
         .get(apiPath + searchTerm)
         .then((resp) => {
+          console.log(resp);
           if (resp) {
-            const { users } = resp.data;
-            return users;
+            const { items } = resp.data.data;
+            return items;
           }
         })
         .catch((error) => {
+          console.log(error);
           return [];
         });
       return response;
@@ -243,11 +246,55 @@ const MultipleSelectorWithList = React.forwardRef(
           >
             <div
               className={cn(
-                "group h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                "group min-h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
                 className,
               )}
             >
-              <div className="flex flex-wrap gap-1 ">
+              <div className="flex flex-wrap gap-x-2 gap-y-3 ">
+                {selected.map((option, index) => {
+                  return (
+                    <div
+                      key={"badge" + option[keyValue]}
+                      data-fixed={option.fixed}
+                      data-disabled={disabled}
+                      className="flex"
+                    >
+                      <div className="flex items-center gap-1 rounded-md border border-input bg-muted/40 p-1">
+                        {option[imgLabel] && (
+                          <Avatar className="hidden h-6 w-6 sm:flex">
+                            <AvatarImage src={option[imgLabel]} alt="Avatar" />
+                            <AvatarFallback>{option[keyLabel]}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className="grid">
+                          <p className="text-sm font-medium leading-none">
+                            {option[keyLabel]}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {option[extraLabel]}
+                          </p>
+                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-4 w-4"
+                                onClick={() => handleUnselect(option)}
+                              >
+                                <Cross2Icon className="size-3" />
+                                <span className="sr-only">Remove</span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">Remove</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
+                  );
+                })}
+
                 {/* Avoid having the "Search" Icon */}
                 <CommandPrimitive.Input
                   {...inputProps}
@@ -279,7 +326,7 @@ const MultipleSelectorWithList = React.forwardRef(
                 />
               </div>
             </div>
-            <div className="relative mt-2">
+            <div className="relative mt-1">
               {open && (
                 <CommandList className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
                   {isLoading ? (
@@ -330,7 +377,7 @@ const MultipleSelectorWithList = React.forwardRef(
                                       {option[keyValue]}
                                     </div>
                                     {option[keyLabel]}
-                                  
+
                                     {option[imgLabel] && (
                                       <img
                                         src={option[imgLabel]}
@@ -353,49 +400,6 @@ const MultipleSelectorWithList = React.forwardRef(
               )}
             </div>
           </Command>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {selected.map((option, index) => {
-            return (
-              <div
-                key={"badge" + option[keyValue]}
-                data-fixed={option.fixed}
-                data-disabled={disabled}
-                className="flex"
-              >
-                <div className="flex items-center gap-1 rounded-md border border-input p-1">
-                  {option[imgLabel] && (<Avatar className="hidden h-6 w-6 sm:flex">
-                    <AvatarImage src={option[imgLabel]} alt="Avatar" />
-                    <AvatarFallback>{option[keyLabel]}</AvatarFallback>
-                  </Avatar>)}
-                  <div className="grid">
-                    <p className="text-sm font-medium leading-none">
-                      {option[keyLabel]}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {option["email"]}
-                    </p>
-                  </div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-4 w-4"
-                          onClick={() => handleUnselect(option)}
-                        >
-                          <Cross2Icon className="size-3" />
-                          <span className="sr-only">Remove</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Remove</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
     );
