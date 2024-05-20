@@ -64,10 +64,10 @@ namespace Infrastructure.Repositories
             if (orderBy != null)
             {
                 query = orderBy(query);
-}
+            }
             else if (orderByColumn != null)
             {
-                            if (filterParams.Descending)
+                if (filterParams.Descending)
                 {
                     query = query.OrderByDescending(orderByColumn);
                 }
@@ -139,7 +139,7 @@ namespace Infrastructure.Repositories
             return query;
         }
 
-        public async Task<TEntity> GetByIdAsync(object id, string includeProperties="")
+        public async Task<TEntity> GetByIdAsync(object id, string includeProperties = "")
         {
             //var entity = await _dbSet.FindAsync(id);
             var query = _dbSet.AsQueryable();
@@ -148,9 +148,9 @@ namespace Infrastructure.Repositories
             query = query.Where(e => EF.Property<object>(e, "Id") == id);
             if (!string.IsNullOrEmpty(includeProperties))
             {
-                foreach(var includeProperty in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query=query.Include(includeProperty.Trim());
+                    query = query.Include(includeProperty.Trim());
                     //await _context.Entry(entity).Collection(includeProperty.Trim()).LoadAsync();
                 }
             }

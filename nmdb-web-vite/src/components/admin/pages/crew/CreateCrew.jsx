@@ -25,6 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 
 const FileInput = ({ field, previews, setPreviews }) => {
 
@@ -356,6 +357,27 @@ function CreateCrew() {
                                         <FormLabel>Mother Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Mother name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="designation"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Designation</FormLabel>
+                                        <FormControl>
+                                            <MultipleSelectorWithList
+                                                {...field}
+                                                triggerOnSearch={false}
+                                                defaultOptions={[]}
+                                                placeholder="Select designation/s"
+                                                keyValue="id"
+                                                keyLabel="name"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
