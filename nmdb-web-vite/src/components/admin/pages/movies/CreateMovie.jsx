@@ -17,10 +17,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import FormCrewInfo from "./forms/FormCrewInfo";
+import axiosInstance from "@/helpers/axiosSetup";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
-  let apiPath = `${ApiPaths.Path_ProductionHouse}/${id}`;
+  let apiPath = `${ApiPaths.Path_Movies}/${id}`;
   let data = {};
   const apiResponse = await axiosInstance
     .get(apiPath)
@@ -50,6 +51,9 @@ const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
     method: isEditMode ? "put" : "post",
     url: apiPath,
     data: postData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   })
     .then((response) => {
       console.log("api-response-categories", response);
@@ -105,13 +109,22 @@ const AddMovie = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("submitted", data);
-    // mutateProductionHouse.mutate({
-    //   postData: data,
-    //   isEditMode: renderMode === renderModes.Render_Mode_Edit,
-    //   slug,
-    //   toast,
-    // });
+    debugger;
+    const submitData = {
+      ...data,
+      imageFile: data.imageFile[0],
+      theatres: data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
+      genreIds: data.genre.map((item) => item.id.toString()),
+      languageIds: data.language.map((item) => item.id.toString()),
+      productionHouseIds: data.studio.map((item) => item.id.toString()),
+    };
+    console.log("submitted", submitData);
+    mutateMovie.mutate({
+      postData: submitData,
+      isEditMode: renderMode === renderModes.Render_Mode_Edit,
+      slug,
+      toast,
+    });
     toast({
       title: "You submitted the following values:",
       description: (
@@ -131,10 +144,7 @@ const AddMovie = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader
-        label="movie"
-        pathTo={Paths.Route_Admin_Movie}
-      />
+      <AddPageHeader label="movie" pathTo={Paths.Route_Admin_Movie} />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
       ) : (
@@ -149,7 +159,7 @@ const AddMovie = () => {
 function MovieForm({ movie, renderMode, onSubmit }) {
   const form = useForm({
     resolver,
-    defaultValues: movie,
+    defaultValues: {...movie},
   });
   const [previews, setPreviews] = useState([]);
 

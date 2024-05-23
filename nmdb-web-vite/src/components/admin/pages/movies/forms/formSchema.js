@@ -9,7 +9,7 @@ export const formSchema = z.object({
   releaseDate: z.date().optional().or(z.literal("")),
   runtime: z.string().optional().or(z.literal("")),
   image: z.string().optional().or(z.literal("")),
-  file: z.instanceof(FileList).optional().or(z.literal("")),
+  imageFile: z.instanceof(FileList).optional().or(z.literal("")),
   category: z
     .enum(movieCategories.map((c) => c.value))
     .optional()
@@ -41,6 +41,7 @@ export const formSchema = z.object({
     reelSize: z.string(),
     movieLength: z.string(),
     validForInYears: z.string(),
+    description: z.string(),
   }),
 
   theatres: z.array(z.any()),
@@ -57,7 +58,7 @@ export const defaultValues = {
   releaseDate: "",
   runtime: "",
   image: "",
-  file: "",
+  imageFile: "",
   category: "",
   status: "",
   tagline: "",
@@ -91,9 +92,10 @@ export const defaultValues = {
     reelSize: "",
     movieLength: "",
     validForInYears: "",
+    description:""
   },
 
-  theatres: [{ theatre: "", showingDate: "" }],
+  theatres: [{ theatre: [], showingDate: "" }],
 
   crewRoles: [
     { roleId: "10", roleName: "Director", crews: [] },

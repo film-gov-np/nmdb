@@ -128,7 +128,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
 
         <FormField
           control={form.control}
-          name="file"
+          name="imageFile"
           render={({ field }) => (
             <FormItem className="lg:col-span-3">
               <FormLabel>Image / Poster</FormLabel>

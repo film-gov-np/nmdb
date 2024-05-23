@@ -66,6 +66,7 @@ const FormCrewInfo = ({ form }) => {
                   placeholder="Select movie genres"
                   keyValue="id"
                   keyLabel="name"
+                  // setFromIdArray={true}
                 />
               </FormControl>
               <FormMessage />

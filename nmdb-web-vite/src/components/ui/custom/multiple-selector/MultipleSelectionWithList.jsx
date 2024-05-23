@@ -80,6 +80,7 @@ const MultipleSelectorWithList = React.forwardRef(
       className,
       replaceOnMaxSelected = false,
       selectFirstItem = true,
+      setFromIdArray,
       commandProps,
       inputProps,
     },
@@ -88,7 +89,9 @@ const MultipleSelectorWithList = React.forwardRef(
     const inputRef = React.useRef(null);
     const [open, setOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-
+    if(setFromIdArray){
+      value = value?.map(v=>arrayDefaultOptions.find(a => a[keyValue] == v))
+    }
     const [selected, setSelected] = React.useState(value || []);
     const [options, setOptions] = React.useState(
       transToGroupOption(arrayDefaultOptions),

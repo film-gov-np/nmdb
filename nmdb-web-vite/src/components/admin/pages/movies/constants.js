@@ -56,27 +56,27 @@ export const movieStatuses = [
 
 export const movieColors = [
   {
-    value: "BlackAndWhite",
+    value: "1",
     label: "Black And White",
   },
   {
-    value: "EastmanColor",
+    value: "2",
     label: "Eastman Color",
   },
   {
-    value: "KodakColor",
+    value: "3",
     label: "Kodak Color",
   },
   {
-    value: "GewaColor",
+    value: "4",
     label: "Gewa Color",
   },
   {
-    value: "FujiColor",
+    value: "5",
     label: "Fuji Color",
   },
   {
-    value: "AgfaColor",
+    value: "6",
     label: "Agfa Color",
   },
 ];
