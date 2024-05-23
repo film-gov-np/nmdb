@@ -1,4 +1,5 @@
-﻿using Core.Constants;
+﻿using Application.Dtos.ProductionHouse;
+using Core.Constants;
 using Core.Entities;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
@@ -31,12 +32,12 @@ public class MovieRequestDto
     public string? TrailerLink { get; set; }
     public bool IsTrending { get; set; } = false;
     public bool IsFeatured { get; set; } = false;
-    public ICollection<int> GenreIds { get; set; }
-    public ICollection<int> LanguageIds { get; set; }
-    public ICollection<int> ProductionHouseIds { get; set; }
-    public ICollection<MovieCrewRoleDto> CrewRoles { get; set; }
-    public ICollection<MovieTheatreDto> Theatres { get; set; }    
-    public MovieCensorDto Censor { get; set; }
+    public ICollection<GenreDto>? Genres { get; set; }
+    public ICollection<LanguageDto>? Languages { get; set; }
+    public ICollection<ProductionHouseDto>? ProductionHouses { get; set; }
+    public ICollection<MovieCrewRoleDto>? CrewRoles { get; set; }
+    public ICollection<MovieTheatreDto>? Theatres { get; set; }    
+    public MovieCensorDto? Censor { get; set; }
 
     [JsonIgnore]
     public string? AuditedBy { get; set; }

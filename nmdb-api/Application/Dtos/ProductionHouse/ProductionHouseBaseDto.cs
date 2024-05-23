@@ -1,9 +1,8 @@
 namespace Application.Dtos.ProductionHouse;
 
-public class ProductionHouseBaseDto
+public class ProductionHouseBaseDto: ProductionHouseDto
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
+
     public string NepaliName { get; set; }
     public string ChairmanName { get; set; }
     public bool IsRunning { get; set; }
@@ -16,4 +15,11 @@ public class ProductionHouseBaseDto
         ChairmanName = string.Empty;
         IsRunning = true;
     }
+}
+
+
+public class ProductionHouseDto
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
 }

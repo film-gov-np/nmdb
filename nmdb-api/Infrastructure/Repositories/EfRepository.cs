@@ -38,7 +38,10 @@ namespace Infrastructure.Repositories
                         query = query.OrderBy(orderByColumn);
                     }
                 }
-
+                if (!string.IsNullOrEmpty(filterParams.SearchKeyword))
+                {
+                    query = query.Where(filter);
+                }
                 return (query, await query.CountAsync());
             }
 
