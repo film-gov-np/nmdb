@@ -2,12 +2,11 @@
 using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
 using Application.Dtos.Movie;
+using Application.Dtos.ProductionHouse;
 using Application.Dtos.Theatre;
 using Application.Helpers.Response;
 using Application.Interfaces;
-using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
-using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Constants;
@@ -15,7 +14,6 @@ using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Extensions;
-using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -51,7 +49,7 @@ public class MovieService : IMovieService
 
             var movieEntity = _mapper.Map<Movie>(movieRequestDto);
 
-            // Image Upload
+            // Thumbnail Image Upload
             if (movieRequestDto.ThumbnailImageFile != null)
             {
                 FileDTO fileDto = new FileDTO
@@ -64,6 +62,22 @@ public class MovieService : IMovieService
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     movieEntity.ThumbnailImage = uploadResult.Data.FilePath;
+                }
+            }
+
+            // Cover Image Upload
+            if (movieRequestDto.CoverImageFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = movieRequestDto.CoverImageFile,
+                    Thumbnail = false,
+                    ReadableName = true
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    movieEntity.CoverImage = uploadResult.Data.FilePath;
                 }
             }
 
@@ -102,14 +116,14 @@ public class MovieService : IMovieService
                 }
             }
 
-            if (movieRequestDto.ProductionHouseIds != null && movieRequestDto.ProductionHouseIds.Any())
+            if (movieRequestDto.ProductionHouses != null && movieRequestDto.ProductionHouses.Any())
             {
-                foreach (var productionHouseId in movieRequestDto.ProductionHouseIds)
+                foreach (var productionHouse in movieRequestDto.ProductionHouses)
                 {
                     var productionHouseEntity = new MovieProductionHouse
                     {
                         Movie = movieEntity,
-                        ProductionHouseId = productionHouseId
+                        ProductionHouseId = productionHouse.Id,
                     };
                     movieEntity.MovieProductionHouses.Add(productionHouseEntity);
                 }
@@ -121,27 +135,27 @@ public class MovieService : IMovieService
                 movieEntity.Censor = censorEntity;
             }
 
-            if (movieRequestDto.LanguageIds != null && movieRequestDto.LanguageIds.Any())
+            if (movieRequestDto.Languages != null && movieRequestDto.Languages.Any())
             {
-                foreach (var languageId in movieRequestDto.LanguageIds)
+                foreach (var languageDto in movieRequestDto.Languages)
                 {
                     var movieLanguageEntity = new MovieLanguage
                     {
                         Movie = movieEntity,
-                        LanguageId = languageId
+                        LanguageId = languageDto.Id
                     };
                     movieEntity.MovieLanguages.Add(movieLanguageEntity);
                 }
             }
 
-            if (movieRequestDto.GenreIds != null && movieRequestDto.GenreIds.Any())
+            if (movieRequestDto.Genres != null && movieRequestDto.Genres.Any())
             {
-                foreach (var genreId in movieRequestDto.GenreIds)
+                foreach (var genreDto in movieRequestDto.Genres)
                 {
                     var movieGenreEntity = new MovieGenre
                     {
                         Movie = movieEntity,
-                        GenreId = genreId
+                        GenreId = genreDto.Id
                     };
                     movieEntity.MovieGenres.Add(movieGenreEntity);
                 }
@@ -262,9 +276,17 @@ public class MovieService : IMovieService
 
             var movieResponse = _mapper.Map<MovieResponseDto>(movieEntity);
             movieResponse.Censor = _mapper.Map<MovieCensorDto>(movieEntity.Censor);
-            movieResponse.GenreIds = movieEntity.MovieGenres.Select(g => g.GenreId).ToList();
-            movieResponse.LanguageIds = movieEntity.MovieLanguages.Select(l => l.LanguageId).ToList();
-            movieResponse.ProductionHouseIds = movieEntity.MovieProductionHouses.Select(mvp => mvp.ProductionHouseId).ToList();
+            movieResponse.Genres = movieEntity.MovieGenres.Select(g => new GenreDto
+            {
+                Id = g.GenreId,
+                Genre = g.Genre.Name
+            }).ToList();
+            movieResponse.Languages = movieEntity.MovieLanguages.Select(l => new LanguageDto
+            {
+                Id = l.LanguageId,
+                Language=l.Language.Name
+            }).ToList();
+            movieResponse.ProductionHouses = movieEntity.MovieProductionHouses.Select(mvp => new ProductionHouseDto { Id = mvp.ProductionHouseId, Name = mvp.ProductionHouse.Name }).ToList();
             movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
             movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
 
@@ -322,14 +344,14 @@ public class MovieService : IMovieService
             .Select(group => new MovieCrewRoleDto
             {
                 RoleId = group.Key.RoleId,
-                RoleName=group.Key.RoleName,
+                RoleName = group.Key.RoleName,
                 Crews = group.Select(mcr => mcr.Crew)
                             .Select(c => new CrewBasicDto
                             {
                                 CrewId = c.Id,
                                 Name = c.Name,
-                                Email="",//when email is added to the crew load it here
-                                ThumbnailPhoto=c.ThumbnailPhoto,
+                                Email = "",//when email is added to the crew load it here
+                                ThumbnailPhoto = c.ThumbnailPhoto,
                             })
                             .ToList()
             })
@@ -378,43 +400,43 @@ public class MovieService : IMovieService
                 }
             }
 
-            if (movieRequestDto.LanguageIds != null && movieRequestDto.LanguageIds.Any())
+            if (movieRequestDto.Languages != null && movieRequestDto.Languages.Any())
             {
                 existingMovie.MovieLanguages.Clear();
-                foreach (var languageId in movieRequestDto.LanguageIds)
+                foreach (var languageDto in movieRequestDto.Languages)
                 {
                     var movieLanguageEntity = new MovieLanguage
                     {
                         Movie = existingMovie,
-                        LanguageId = languageId
+                        LanguageId = languageDto.Id
                     };
                     existingMovie.MovieLanguages.Add(movieLanguageEntity);
                 }
             }
 
-            if (movieRequestDto.GenreIds != null && movieRequestDto.GenreIds.Any())
+            if (movieRequestDto.Genres != null && movieRequestDto.Genres.Any())
             {
                 existingMovie.MovieGenres.Clear();
-                foreach (var genreId in movieRequestDto.GenreIds)
+                foreach (var genreDto in movieRequestDto.Genres)
                 {
                     var movieLanguageEntity = new MovieGenre
                     {
                         Movie = existingMovie,
-                        GenreId = genreId
+                        GenreId = genreDto.Id
                     };
                     existingMovie.MovieGenres.Add(movieLanguageEntity);
                 }
             }
 
-            if (movieRequestDto.ProductionHouseIds != null && movieRequestDto.ProductionHouseIds.Any())
+            if (movieRequestDto.ProductionHouses != null && movieRequestDto.ProductionHouses.Any())
             {
                 existingMovie.MovieProductionHouses.Clear();
-                foreach (var productionHouseId in movieRequestDto.ProductionHouseIds)
+                foreach (var productionHouseDto in movieRequestDto.ProductionHouses)
                 {
                     var movieProductionHouse = new MovieProductionHouse
                     {
                         Movie = existingMovie,
-                        ProductionHouseId = productionHouseId
+                        ProductionHouseId = productionHouseDto.Id
                     };
                     existingMovie.MovieProductionHouses.Add(movieProductionHouse);
                 }

@@ -23,10 +23,13 @@ public class MovieRepository : EfRepository<Movie>, IMovieRepository
                         .Include(m => m.MovieCrewRoles)
                             .ThenInclude(mcr => mcr.FilmRole)
                         .Include(m => m.MovieLanguages)
+                            .ThenInclude(ml => ml.Language)
                         .Include(m => m.MovieGenres)
+                            .ThenInclude(mg => mg.Genre)
                         .Include(m => m.MovieTheatres)
                             .ThenInclude(mt => mt.Theatre)
                         .Include(m => m.MovieProductionHouses)
+                            .ThenInclude(mp => mp.ProductionHouse)
                         .Include(m => m.Censor)
 
                         .FirstOrDefaultAsync(m => m.Id == movieId);
@@ -40,7 +43,7 @@ public class MovieRepository : EfRepository<Movie>, IMovieRepository
 
     public async Task<List<Language>> GetAllLanguages()
     {
-        var languages = await _context.Languages.ToListAsync(); 
+        var languages = await _context.Languages.ToListAsync();
         return languages;
     }
 
