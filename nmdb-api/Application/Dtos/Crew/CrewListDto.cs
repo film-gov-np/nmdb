@@ -11,21 +11,9 @@ namespace Application.Dtos.Crew
         public int Id { get; set; }
         public string Name { get; set; }
         public string NepaliName { get; set; }
+        public bool IsVerified { get; set; }
+        public string? ProfilePhoto { get; set; }
         public string FatherName { get; set; }
-        public string MotherName { get; set; }
         public string NickName { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public string ModifiedBy { get; set; }
-
-        public CrewListDto(int id, string name, string nickName, string fathersName, string mothersName)
-        {
-            Id = id;
-            Name = name;
-            NickName=  nickName;
-            FatherName = fathersName;
-            MotherName = mothersName;
-        }
     }
 }

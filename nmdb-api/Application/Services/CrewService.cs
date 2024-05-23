@@ -43,7 +43,7 @@ public class CrewService : ICrewService
         _fileService = fileService;
         _logger = logger;
     }
-    public async Task<ApiResponse<PaginationResponse<CrewResponseDto>>> GetAllAsync(CrewFilterParameters filterParameters)
+    public async Task<ApiResponse<PaginationResponse<CrewListDto>>> GetAllAsync(CrewFilterParameters filterParameters)
     {
         Expression<Func<Crew, bool>> filter = null;
         Expression<Func<Crew, object>> orderByColumn = null;
@@ -76,20 +76,18 @@ public class CrewService : ICrewService
 
         var (query, totalItems) = await _unitOfWork.CrewRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
         var theatreResponse = await query.Select(
-                                            tr => new CrewResponseDto
+                                            tr => new CrewListDto
                                             {
                                                 Id = tr.Id,
                                                 Name = tr.Name,
-                                                BirthName = tr.BirthName,
                                                 NickName = tr.NickName,
                                                 FatherName = tr.FatherName,
-                                                MotherName = tr.MotherName,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
                                                 ProfilePhoto = tr.ProfilePhoto
                                             }).ToListAsync();
 
-        var response = new PaginationResponse<CrewResponseDto>
+        var response = new PaginationResponse<CrewListDto>
         {
             Items = theatreResponse,
             TotalItems = totalItems,
@@ -97,7 +95,7 @@ public class CrewService : ICrewService
             PageSize = filterParameters.PageSize
         };
 
-        return ApiResponse<PaginationResponse<CrewResponseDto>>.SuccessResponse(response);
+        return ApiResponse<PaginationResponse<CrewListDto>>.SuccessResponse(response);
     }
     public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file)
     {

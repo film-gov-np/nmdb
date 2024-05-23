@@ -14,7 +14,7 @@ namespace Application.Interfaces.Services;
 
 public interface ICrewService
 {
-    Task<ApiResponse<PaginationResponse<CrewResponseDto>>> GetAllAsync(CrewFilterParameters filterParameters);
+    Task<ApiResponse<PaginationResponse<CrewListDto>>> GetAllAsync(CrewFilterParameters filterParameters);
     Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file);
     Task<ApiResponse<string>> UpdateCrewAsync(int crewId, CrewRequestDto crewRequestDto);
     Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId);
