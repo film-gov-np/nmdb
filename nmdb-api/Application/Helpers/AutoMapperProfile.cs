@@ -33,16 +33,51 @@ namespace Neptics.Application.Helpers
             CreateMap<Movie, MovieResponseDto>().ReverseMap();
             CreateMap<MovieCrewRole, MovieCrewRoleDto>().ReverseMap();
 
-            CreateMap<Theatre, MovieTheatreDto>()
-                        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+            #region Movie Theatre Mapping
+            // Movie Theatre
+            //CreateMap<TheatreDetailsDto, MovieTheatre>()
+            //    .ForMember(dest => dest.TheatreId, opt => opt.MapFrom(src => src.TheatreId))
+            //    .ForMember(dest => dest.Theatre, opt => opt.MapFrom(src => new Theatre
+            //    {
+            //        Id = src.TheatreId,
+            //        Name = src.Name,
+            //        Address = src.Address
+            //    }))
+            //    .ReverseMap()
+            //    .ForPath(src => src.TheatreId, opt => opt.MapFrom(dest => dest.TheatreId))
+            //    .ForPath(src => src.Name, opt => opt.MapFrom(dest => dest.Theatre.Name))
+            //    .ForPath(src => src.Address, opt => opt.MapFrom(dest => dest.Theatre.Address));
 
-            CreateMap<MovieTheatre, MovieTheatreDto>()
-                        .ForMember(dest => dest.TheatreId, opt => opt.MapFrom(src => src.TheatreId))
-                        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Theatre.Name))
-                        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Theatre.Address))
-                        .ForMember(dest => dest.ShowingDate, opt => opt.MapFrom(src => src.ShowingDate));
+            //CreateMap<MovieTheatreDto, ICollection<MovieTheatre>>()
+            //    .ConvertUsing((src, dest, context) =>
+            //    {
+            //        var movieTheatres = new List<MovieTheatre>();
+            //        foreach (var detail in src.MovieTheatreDetails)
+            //        {
+            //            var movieTheatre = context.Mapper.Map<MovieTheatre>(detail);
+            //            movieTheatre.ShowingDate = src.ShowingDate;
+            //            movieTheatres.Add(movieTheatre);
+            //        }
+            //        return movieTheatres;
+            //    });
 
+            //CreateMap<ICollection<MovieTheatre>, MovieTheatreDto>()
+            //    .ConvertUsing((src, dest, context) =>
+            //    {
+            //        var movieTheatreDetails = new List<TheatreDetailsDto>();
+            //        foreach (var movieTheatre in src)
+            //        {
+            //            var detailDto = context.Mapper.Map<TheatreDetailsDto>(movieTheatre.Theatre);
+            //            detailDto.TheatreId = movieTheatre.TheatreId;
+            //            movieTheatreDetails.Add(detailDto);
+            //        }
+            //        return new MovieTheatreDto
+            //        {
+            //            ShowingDate = src.FirstOrDefault()?.ShowingDate ?? default(DateTime),
+            //            MovieTheatreDetails = movieTheatreDetails
+            //        };
+            //    });
+            #endregion
             CreateMap<MovieProductionHouse, MovieProductionHouseDto>().ReverseMap();
             //CreateMap<List<MovieCrewRole>, List<MovieCrewRoleDto>>().ReverseMap();
             //CreateMap<List<MovieTheatre>, List<MovieTheatreDto>>().ReverseMap();

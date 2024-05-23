@@ -2,6 +2,7 @@
 using Application.Helpers;
 using Application.Interfaces.Services;
 using Application.Services;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,11 @@ public static class DependencyInjection
         services.AddScoped<ITheatreService, TheatreService>();
         services.AddScoped<IProductionHouseService, ProductionHouseService>();
         services.AddScoped<IMovieService, MovieService>();
-        services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AssemblyReference>());
+        services.AddFluentValidation(fv =>
+        {
+            fv.RegisterValidatorsFromAssemblyContaining<AssemblyReference>();            
+        });
         return services;
     }
+
 }

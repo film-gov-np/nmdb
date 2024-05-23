@@ -42,6 +42,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 //app.UseMiddleware<AuthorizedUserMiddleware>();
+//app.UseMiddleware<CamelCaseResponseMiddleware>();
 
 app.MapControllers();
 app.MapDefaultControllerRoute();

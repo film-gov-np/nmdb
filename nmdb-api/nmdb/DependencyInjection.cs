@@ -6,6 +6,7 @@ using Neptics.Application.Helpers;
 using nmdb.Configurations;
 using nmdb.Middlewares;
 using System.Reflection;
+using System.Text.Json;
 
 namespace nmdb;
 
@@ -13,7 +14,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+            });
         services.AddEndpointsApiExplorer();
         
         services.AddLogging(loggingBuilder =>

@@ -15,17 +15,19 @@ public class MovieCensor : BaseEntity<int>
     public int MovieId { get; set; }
     public Movie Movie { get; set; }
     [MaxLength(255)]
-    public string CertificateNumber { get; set; } = "NA";
+    public string? CertificateNumber { get; set; } = "NA";
     public DateTime? ApplicationDate { get; set; }
     public DateTime? CensoredDate { get; set; }
-    public eCensorType CensorType { get; set; }=eCensorType.PG;
-    public eMovieType MovieType { get; set; } = eMovieType.Celluloid;
+    public eCensorType? CensorType { get; set; }=eCensorType.PG;
+    public eMovieType? MovieType { get; set; } = eMovieType.Celluloid;
     [MaxLength(255)]
-    public string ReelLength { get; set; } = "NA";
+    public string? ReelLength { get; set; } = "NA";
     [MaxLength(255)]
-    public string ReelSize { get; set; } = "NA";
+    public string? ReelSize { get; set; } = "NA";
     [Column("ValidYears")]
-    public int ValidForInYears { get; set; } = 10;
+    public int? ValidForInYears { get; set; } = 10;
+    // In Minutes
+    public int? MovieLength { get; set; } = 138;
     public string? Description { get; set; }
 }
 
