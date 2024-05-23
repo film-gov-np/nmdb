@@ -9,7 +9,7 @@ public class MovieCrewRoleDto
 
 public class CrewBasicDto
 {
-    public int CrewId { get; set; }
+    public int Id { get; set; }
     public string? Name { get; set; }
     public string? ThumbnailPhoto { get; set; }
     public string? Email { get; set; }

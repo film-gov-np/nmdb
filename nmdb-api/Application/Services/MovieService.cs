@@ -89,7 +89,7 @@ public class MovieService : IMovieService
                     {
                         var crewRoleEntity = new MovieCrewRole
                         {
-                            CrewId = crew.CrewId,
+                            CrewId = crew.Id,
                             RoleId = crewRole.RoleId,
                             Movie = movieEntity
                         };
@@ -107,7 +107,7 @@ public class MovieService : IMovieService
                     {
                         var theatreEntity = new MovieTheatre
                         {
-                            TheatreId = theatre.TheatreId,
+                            TheatreId = theatre.Id,
                             ShowingDate = movie.ShowingDate,
                             Movie = movieEntity
                         };
@@ -320,7 +320,7 @@ public class MovieService : IMovieService
                 ShowingDate = group.Key,
                 MovieTheatreDetails = group.Select(e => new TheatreDetailsDto
                 {
-                    TheatreId = e.TheatreId,
+                    Id = e.TheatreId,
                     Name = e.Theatre.Name,
                     Address = e.Theatre.Address
                 }).ToList()
@@ -348,7 +348,7 @@ public class MovieService : IMovieService
                 Crews = group.Select(mcr => mcr.Crew)
                             .Select(c => new CrewBasicDto
                             {
-                                CrewId = c.Id,
+                                Id = c.Id,
                                 Name = c.Name,
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
@@ -453,7 +453,7 @@ public class MovieService : IMovieService
                     foreach (var theatreDetailDto in theatreDto.MovieTheatreDetails)
                     {
                         var existingMovieTheatre = existingMovieTheatres
-                            .FirstOrDefault(mt => mt.TheatreId == theatreDetailDto.TheatreId);
+                            .FirstOrDefault(mt => mt.TheatreId == theatreDetailDto.Id);
 
                         if (existingMovieTheatre != null)
                         {
@@ -465,7 +465,7 @@ public class MovieService : IMovieService
                             var newMovieTheatre = new MovieTheatre
                             {
                                 MovieId = existingMovie.Id,
-                                TheatreId = theatreDetailDto.TheatreId,
+                                TheatreId = theatreDetailDto.Id,
                                 ShowingDate = theatreDto.ShowingDate,
                                 Movie = existingMovie // Set the relationship
                             };
@@ -477,7 +477,7 @@ public class MovieService : IMovieService
                 // Remove any unnecessary MovieTheatres
                 foreach (var existingMovieTheatre in existingMovieTheatres)
                 {
-                    if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.TheatreId == existingMovieTheatre.TheatreId)))
+                    if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.Id == existingMovieTheatre.TheatreId)))
                     {
                         existingMovie.MovieTheatres.Remove(existingMovieTheatre);
                     }
@@ -493,7 +493,7 @@ public class MovieService : IMovieService
                     {
                         var crewRoleEntity = new MovieCrewRole
                         {
-                            CrewId = crew.CrewId,
+                            CrewId = crew.Id,
                             RoleId = crewRole.RoleId
                         };
 
