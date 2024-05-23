@@ -27,7 +27,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeData } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {useLocation, useNavigate, useParams } from "react-router-dom";
@@ -200,7 +200,7 @@ const CreateProductionHouse = () => {
 function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {...productionHouse, isRunning: productionHouse.isRunning.toString()},
+    defaultValues: sanitizeData({...productionHouse, isRunning: productionHouse.isRunning.toString()}),
   });
   return (
     <Form {...form}>

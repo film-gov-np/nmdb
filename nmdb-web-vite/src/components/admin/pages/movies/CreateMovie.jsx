@@ -18,6 +18,7 @@ import { ApiPaths } from "@/constants/apiPaths";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import FormCrewInfo from "./forms/FormCrewInfo";
 import axiosInstance from "@/helpers/axiosSetup";
+import { sanitizeData } from "@/lib/utils";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
@@ -137,11 +138,6 @@ const AddMovie = () => {
     });
   };
 
-  const form = useForm({
-    // resolver,
-    defaultValues,
-  });
-
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="movie" pathTo={Paths.Route_Admin_Movie} />
@@ -159,7 +155,7 @@ const AddMovie = () => {
 function MovieForm({ movie, renderMode, onSubmit }) {
   const form = useForm({
     resolver,
-    defaultValues: {...movie},
+    defaultValues: sanitizeData(movie),
   });
   const [previews, setPreviews] = useState([]);
 

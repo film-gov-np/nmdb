@@ -8,47 +8,47 @@ import { CheckIcon, Film, Video } from "lucide-react";
 export const movieCategories = [
   {
     label: "Movie",
-    value: "Movie",
+    value: 1,
     icon: Video,
   },
   {
     label: "Documentary",
-    value: "Documentary",
+    value: 2,
     icon: Film,
   },
   {
-    label: "TVShow",
-    value: "TV-Show",
+    label: "TV-Show",
+    value: 3,
     icon: Film,
   },
 ];
 
 export const movieStatuses = [
   {
-    value: "Released",
+    value: 1,
     label: "Released",
     icon: CheckIcon,
   },
   {
-    value: "Unreleased",
+    value: 2,
     label: "Un-Released",
     icon: LinkNone2Icon,
   },
   {
-    value: "PostProduction",
+    value: 3,
     label: "Post-Production",
   },
   {
-    value: "Censored",
+    value: 4,
     label: "Censored",
   },
   {
-    value: "ComingSoon",
+    value: 5,
     label: "Coming Soon",
     icon: StopwatchIcon,
   },
   {
-    value: "Unknown",
+    value: 6,
     label: "Unknown",
     icon: ExclamationTriangleIcon,
   },
@@ -56,66 +56,66 @@ export const movieStatuses = [
 
 export const movieColors = [
   {
-    value: "1",
+    value: 1,
     label: "Black And White",
   },
   {
-    value: "2",
+    value: 2,
     label: "Eastman Color",
   },
   {
-    value: "3",
+    value: 3,
     label: "Kodak Color",
   },
   {
-    value: "4",
+    value: 4,
     label: "Gewa Color",
   },
   {
-    value: "5",
+    value: 5,
     label: "Fuji Color",
   },
   {
-    value: "6",
+    value: 6,
     label: "Agfa Color",
   },
 ];
 
 export const movieCensorTypes = [
   {
-    value: "PG",
+    value: 1,
     label: "PG",
   },
   {
-    value: "UA",
+    value: 2,
     label: "UA",
   },
   {
-    value: "A",
+    value: 3,
     label: "A",
   },
 ];
 export const movieTypes = [
   {
-    value: "Celluliod",
+    value: 1,
     label: "Celluliod",
   },
   {
-    value: "Digital",
+    value: 2,
     label: "Digital",
   },
   {
-    value: "Video",
+    value: 3,
     label: "Video",
   },
 ];
 export const movieValidFor = [
   {
-    value: "5",
+    value: 5,
     label: "5",
   },
   {
-    value: "10",
+    value: 10,
     label: "10",
   },
 ];

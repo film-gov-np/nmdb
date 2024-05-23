@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeData } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
@@ -192,7 +192,7 @@ const CreateTheatre = () => {
 function TheatreForm({ theatre, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { ...theatre, isRunning: theatre.isRunning.toString() },
+    defaultValues: sanitizeData({ ...theatre, isRunning: theatre.isRunning.toString() }),
   });
   return (
     <Form {...form}>
@@ -230,6 +230,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                       type="number"
                       placeholder="Seat Capacity"
                       min={0}
+                      value={field.value ?? ''}
                       {...field}
                     />
                   </FormControl>
@@ -249,6 +250,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                       type="number"
                       placeholder="Number of Screen"
                       min={0}
+                      value={field.value ?? 0}
                       {...field}
                     />
                   </FormControl>
@@ -264,7 +266,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Address" {...field} />
+                    <Input placeholder="Address" value={field.value ?? ''} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -278,7 +280,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Name" {...field} />
+                    <Input placeholder="Contact Person Name" value={field.value ?? ''} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -292,7 +294,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Email" {...field} />
+                    <Input placeholder="Contact Person Email" value={field.value ?? ''} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -306,7 +308,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Numbers" {...field} />
+                    <Input placeholder="Contact Person Numbers" value={field.value ?? ''} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -360,7 +362,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Website URL" {...field} />
+                    <Input placeholder="Website URL" value={field.value || ''} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -161,8 +161,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             <FormItem className="lg:col-span-2">
               <FormLabel>Movie Category</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
+               {...field}
                 name="customCategory"
               >
                 <FormControl>
@@ -192,8 +191,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             <FormItem className="lg:col-span-2">
               <FormLabel>Movie Status</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
+                {...field}
                 name="customStatus"
               >
                 <FormControl>
@@ -223,8 +221,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             <FormItem className="lg:col-span-2">
               <FormLabel>Movie Color</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
+                {...field}
                 name="customColor"
               >
                 <FormControl>
