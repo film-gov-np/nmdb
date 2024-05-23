@@ -111,12 +111,13 @@ const AddMovie = () => {
 
   const onSubmit = (data) => {
     debugger;
+    console.log(data)
     const submitData = {
       ...data,
-      imageFile: data.imageFile[0],
-      theatres: data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
-      genreIds: data.genre.map((item) => item.id.toString()),
-      languageIds: data.language.map((item) => item.id.toString()),
+      imageFile: data.imageFile?.[0],
+      // theatres:  data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
+      genreIds: data.genreIds.every(element => typeof element === 'object') ? data.genreIds.map((item) => item.id.toString()) : data.genreIds,
+      languageIds: data.languageIds.every(element => typeof element === 'object') ?data.languageIds.map((item) => item.id.toString()): data.languageIds,
       productionHouseIds: data.studio.map((item) => item.id.toString()),
     };
     console.log("submitted", submitData);
@@ -153,9 +154,10 @@ const AddMovie = () => {
 };
 
 function MovieForm({ movie, renderMode, onSubmit }) {
+  console.log("sanitizedmovie",sanitizeData(movie))
   const form = useForm({
     resolver,
-    defaultValues: movie,
+    defaultValues: sanitizeData(movie),
   });
   const [previews, setPreviews] = useState([]);
 

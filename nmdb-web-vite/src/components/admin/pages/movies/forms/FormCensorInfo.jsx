@@ -65,6 +65,7 @@ const FormCensorInfo = ({ form }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customCensorType"
               >
                 <FormControl>
@@ -96,6 +97,7 @@ const FormCensorInfo = ({ form }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customMovieType"
               >
                 <FormControl>
@@ -127,6 +129,7 @@ const FormCensorInfo = ({ form }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customvalidFor"
               >
                 <FormControl>

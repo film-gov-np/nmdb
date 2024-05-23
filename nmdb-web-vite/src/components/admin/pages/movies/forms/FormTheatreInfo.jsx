@@ -30,7 +30,7 @@ const FormTheatreInfo = ({ form }) => {
             >
               <FormField
                 control={form.control}
-                name={`theatres.${index}.theatre`}
+                name={`theatres.${index}.movieTheatreDetails`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Theatre Name</FormLabel>
@@ -83,7 +83,7 @@ const FormTheatreInfo = ({ form }) => {
           type="button"
           onClick={() => {
             append({
-              theatre: "",
+              movieTheatreDetails: "",
               showingDate: "",
             });
           }}

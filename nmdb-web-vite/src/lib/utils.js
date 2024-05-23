@@ -5,7 +5,6 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
-
 export const sanitizeData = (data) => {
   if (data === null) return '';
   if (data instanceof Date) return data;
