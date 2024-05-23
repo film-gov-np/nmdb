@@ -27,8 +27,16 @@ namespace nmdb.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
-            var response = await _crewService.GetAllAsync(filterParameters);
-            return Ok(response);
+            try
+            {
+                var response = await _crewService.GetAllAsync(filterParameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         [HttpGet("{id}")]

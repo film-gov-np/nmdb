@@ -12,13 +12,13 @@ public class Crew : BaseEntity<int>
     [MaxLength(100)]
     public string? NepaliName { get; set; }
     [MaxLength(100)]
-    public string BirthName { get; set; }
+    public string? BirthName { get; set; }
     [MaxLength(100)]
-    public string FatherName { get; set; }
+    public string? FatherName { get; set; }
     [MaxLength(100)]
-    public string MotherName { get; set; }
+    public string? MotherName { get; set; }
     [MaxLength(100)]
-    public string NickName { get; set; }
+    public string? NickName { get; set; }
     public int? Gender { get; set; }
     public DateTime? DateOfBirthInAD { get; set; }
     public string? DateOfBirthInBS { get; set; }
