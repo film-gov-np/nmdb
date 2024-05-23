@@ -37,7 +37,9 @@ public class Movie : BaseEntity<int>
     public string? Tagline { get; set; }
     public string? OneLiner{ get; set; }
     [MaxLength(255)]
-    public string? Image { get; set; }
+    public string? ThumbnailImage { get; set; }
+    [MaxLength(255)]
+    public string? CoverImage { get; set; }
     [MaxLength(255)]
     public string? FullMovieLink { get; set; }
     [MaxLength(255)]

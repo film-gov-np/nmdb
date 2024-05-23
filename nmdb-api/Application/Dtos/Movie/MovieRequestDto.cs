@@ -23,8 +23,10 @@ public class MovieRequestDto
     public string? FilmingLocation { get; set; }
     public string Tagline { get; set; }
     public string OneLiner { get; set; }
-    public string? Image { get; set; }
-    public IFormFile? ImageFile { get; set; }
+    public string? ThumbnailImage { get; set; }
+    public IFormFile? ThumbnailImageFile { get; set; }
+    public string? CoverImage { get; set; }
+    public IFormFile? CoverImageFile { get; set; }
     public string? FullMovieLink { get; set; }
     public string? TrailerLink { get; set; }
     public bool IsTrending { get; set; } = false;

@@ -3,8 +3,7 @@
 public class MovieCrewRoleDto
 {    
     public int RoleId { get; set; }
-    public string? RoleNickName { get; set; }
-    public string? RoleNickNameNepali { get; set; }
+    public string? RoleName { get; set; }
     public List<CrewBasicDto> Crews { get; set; } = new List<CrewBasicDto>();
 }
 

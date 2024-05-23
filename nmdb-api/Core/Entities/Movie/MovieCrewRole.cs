@@ -8,6 +8,4 @@ public class MovieCrewRole : BaseEntity<int>
     public Crew Crew { get; set; }
     public int RoleId { get; set; }
     public FilmRole FilmRole { get; set; }
-    public string? RoleNickName { get; set; }
-    public string? RoleNickNameNepali { get; set; }
 }

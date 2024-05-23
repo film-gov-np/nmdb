@@ -20,6 +20,8 @@ public class MovieRepository : EfRepository<Movie>, IMovieRepository
             var movie = await _context.Movies
                         .Include(m => m.MovieCrewRoles)
                             .ThenInclude(mcr => mcr.Crew)
+                        .Include(m => m.MovieCrewRoles)
+                            .ThenInclude(mcr => mcr.FilmRole)
                         .Include(m => m.MovieLanguages)
                         .Include(m => m.MovieGenres)
                         .Include(m => m.MovieTheatres)
