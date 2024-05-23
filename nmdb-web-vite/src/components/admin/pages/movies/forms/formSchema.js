@@ -1,34 +1,35 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { movieCategories, movieStatuses } from "../constants";
+import { movieCategories, movieColors, movieStatuses } from "../constants";
 
+console.log(movieCategories.map((c) => c.value))
 export const formSchema = z.object({
   name: z.string().min(2).optional().or(z.literal("")),
   nepaliName: z.string().min(2).optional().or(z.literal("")),
-  shootingDate: z.date().optional().or(z.literal("")),
-  releaseDate: z.date().optional().or(z.literal("")),
-  runtime: z.string().optional().or(z.literal("")),
+  shootingDate: z.string().optional().or(z.literal("")),
+  releaseDate: z.string().optional().or(z.literal("")),
+  runtime: z.coerce.number().positive().or(z.literal("")),
   image: z.string().optional().or(z.literal("")),
   imageFile: z.instanceof(FileList).optional().or(z.literal("")),
-  category: z
-    .enum(movieCategories.map((c) => c.value))
+  category: z.union(movieCategories.map((c) => z.literal(c.value)))
     .optional()
     .or(z.literal("")),
-  status: z
-    .enum(movieStatuses.map((s) => s.value))
+  status: z.union(movieStatuses.map((s) => z.literal(s.value)))
     .optional()
     .or(z.literal("")),
   tagline: z.string().optional().or(z.literal("")),
   officialSiteUrl: z.string().optional().or(z.literal("")),
-  budget: z.string().optional().or(z.literal("")),
+  budget: z.coerce.number().positive().or(z.literal("")),
   flimingLocation: z.string().optional().or(z.literal("")),
-  color: z.string().optional().or(z.literal("")),
+  color: z.union(movieColors.map((c) => z.literal(c.value)))
+  .optional()
+  .or(z.literal("")),
   oneLiner: z.string().optional().or(z.literal("")),
   fullMovieLink: z.string().optional().or(z.literal("")),
   trailerLink: z.string().optional().or(z.literal("")),
 
-  genre: z.array(z.any()),
-  language: z.array(z.any()),
+  genreIds: z.array(z.any()),
+  languageIds: z.array(z.any()),
   studio: z.array(z.any()),
 
   censor: z.object({
@@ -39,7 +40,7 @@ export const formSchema = z.object({
     movieType: z.string(),
     reelLength: z.string(),
     reelSize: z.string(),
-    movieLength: z.string(),
+    movieLength: z.string().optional().or(z.literal("")),
     validForInYears: z.string(),
     description: z.string(),
   }),
@@ -70,8 +71,8 @@ export const defaultValues = {
   fullMovieLink: "",
   trailerLink: "",
 
-  genre: [{ id: 1, name: "Romantic" }],
-  language: [],
+  genreIds: [],
+  languageIds: [],
   studio: [
     {
       id: 4,
@@ -95,7 +96,7 @@ export const defaultValues = {
     description:""
   },
 
-  theatres: [{ theatre: [], showingDate: "" }],
+  theatres: [{ movieTheatreDetails: [], showingDate: "" }],
 
   crewRoles: [
     { roleId: "10", roleName: "Director", crews: [] },

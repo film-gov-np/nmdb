@@ -163,6 +163,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customCategory"
               >
                 <FormControl>
@@ -194,6 +195,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customStatus"
               >
                 <FormControl>
@@ -225,6 +227,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.defaultValue}
+                value={field.value}
                 name="customColor"
               >
                 <FormControl>

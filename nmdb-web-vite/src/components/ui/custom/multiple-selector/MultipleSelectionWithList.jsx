@@ -46,8 +46,8 @@ function removePickedOption(groupOption, picked, keyLabel, keyValue) {
   const cloneOption = JSON.parse(JSON.stringify(groupOption));
 
   for (const [key, value] of Object.entries(cloneOption)) {
-    cloneOption[key] = value.filter(
-      (val) => !picked.find((p) => p[keyValue] === val[keyValue]),
+    cloneOption[key] = value?.filter(
+      (val) => !picked?.find((p) => p?.[keyValue] === val?.[keyValue]),
     );
   }
   return cloneOption;
@@ -89,7 +89,7 @@ const MultipleSelectorWithList = React.forwardRef(
     const inputRef = React.useRef(null);
     const [open, setOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-    if(setFromIdArray){
+    if(setFromIdArray && value?.length > 0 && value.every(element => typeof element !== 'object')){
       value = value?.map(v=>arrayDefaultOptions.find(a => a[keyValue] == v))
     }
     const [selected, setSelected] = React.useState(value || []);

@@ -8,15 +8,17 @@ import {
 import axiosInstance from "@/helpers/axiosSetup";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
+import useCachedData from "@/hooks/useCachedData";
 
 const FormCrewInfo = ({ form }) => {
-  const queryClient = useQueryClient();
-  const getFromCache = (key) => {
-    return queryClient.getQueryData([key]);
-  };
+  // const queryClient = useQueryClient();
+  // const getFromCache = (key) => {
+  //   return queryClient.getQueryData([key]);
+  // };
+  const { getFromCache } = useCachedData();
   const getHelperData = async (apiPath, queryKey) => {
-    const cache = getFromCache(queryKey);
-    if (cache && cache.length > 0) {
+    const { cache } = getFromCache([queryKey]);
+    if (cache) {
       console.log("cached-data", cache);
       return cache;
     }
@@ -48,25 +50,25 @@ const FormCrewInfo = ({ form }) => {
   if (isError) return "error";
   const genres = helperData[0].data;
   const languages = helperData[1].data;
-  console.log(helperData);
   return (
     <div className="min-h-[60vh]">
       <div className="grid grid-cols-1 gap-2 p-4 px-4 py-2 md:grid-cols-2 md:gap-x-3 md:gap-y-4 lg:gap-x-6 lg:gap-y-8">
         <FormField
           control={form.control}
-          name="genre"
+          name="genreIds"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Genre</FormLabel>
               <FormControl>
                 <MultipleSelectorWithList
                   {...field}
+                  value={field.value}
                   triggerOnSearch={false}
                   defaultOptions={genres}
                   placeholder="Select movie genres"
                   keyValue="id"
                   keyLabel="name"
-                  // setFromIdArray={true}
+                  setFromIdArray={true}
                 />
               </FormControl>
               <FormMessage />
@@ -75,7 +77,7 @@ const FormCrewInfo = ({ form }) => {
         />
         <FormField
           control={form.control}
-          name="language"
+          name="languageIds"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Language</FormLabel>
@@ -87,6 +89,7 @@ const FormCrewInfo = ({ form }) => {
                   placeholder="Select movie languages"
                   keyValue="id"
                   keyLabel="name"
+                  setFromIdArray={true}
                 />
               </FormControl>
               <FormMessage />
