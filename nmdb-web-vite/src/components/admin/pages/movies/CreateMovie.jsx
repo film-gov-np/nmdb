@@ -155,7 +155,7 @@ const AddMovie = () => {
 function MovieForm({ movie, renderMode, onSubmit }) {
   const form = useForm({
     resolver,
-    defaultValues: sanitizeData(movie),
+    defaultValues: movie,
   });
   const [previews, setPreviews] = useState([]);
 
