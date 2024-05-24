@@ -81,11 +81,11 @@ const FormRoleInfo = ({ form }) => {
                       onChange={field.onChange}
                       triggerOnSearch={true}
                       minSearchTrigger={3}
-                      apiPath="crews?SearchKeyword="
+                      apiPath="crews?RetrieveAll=true&SearchKeyword="
                       keyValue="id"
                       keyLabel="name"
-                      imgLabel="profile_picture"
-                      extraLabel="email"
+                      imgLabel="profilePhoto"
+                      extraLabel="nepaliName"
                       placeholder="Begin typing to search crew member..."
                     />
                   </FormControl>

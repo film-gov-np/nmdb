@@ -279,12 +279,12 @@ public class MovieService : IMovieService
             movieResponse.Genres = movieEntity.MovieGenres.Select(g => new GenreDto
             {
                 Id = g.GenreId,
-                Genre = g.Genre.Name
+                Name = g.Genre.Name
             }).ToList();
             movieResponse.Languages = movieEntity.MovieLanguages.Select(l => new LanguageDto
             {
                 Id = l.LanguageId,
-                Language=l.Language.Name
+                Name=l.Language.Name
             }).ToList();
             movieResponse.ProductionHouses = movieEntity.MovieProductionHouses.Select(mvp => new ProductionHouseDto { Id = mvp.ProductionHouseId, Name = mvp.ProductionHouse.Name }).ToList();
             movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
@@ -350,8 +350,11 @@ public class MovieService : IMovieService
                             {
                                 Id = c.Id,
                                 Name = c.Name,
+                                NepaliName = c.NepaliName,
+                                NickName = c.NickName,
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
+                                ProfilePhoto = c.ProfilePhoto,
                             })
                             .ToList()
             })

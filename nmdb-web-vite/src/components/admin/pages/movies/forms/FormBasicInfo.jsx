@@ -16,8 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
-const FileInput = ({ field, previews, setPreviews }) => {
+const FileInput = ({ field}) => {
+  const [previews, setPreviews] = useState([]);
+  // if(field.value){
+  //   setPreviews(field.value)
+  // }
   const handleUploadedFile = (event) => {
     const files = event.target.files;
     const urlImages = [];
@@ -33,8 +38,9 @@ const FileInput = ({ field, previews, setPreviews }) => {
       <FormControl>
         <Input
           type="file"
-          // value={value}
-          multiple
+          {...field}
+          // value={field.value}
+          // multiple
           onChange={(e) => {
             // setValue(e.target.value);
             field.onChange(e.target.files);
@@ -43,7 +49,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
         />
       </FormControl>
       <div className="mt-2 flex flex-wrap gap-2">
-        {previews.map((preview, index) => (
+        {previews?.map((preview, index) => (
           <div
             className="max-h-[320px] flex-grow basis-1/3"
             key={"thumbnailMovie" + index}
@@ -128,10 +134,10 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
 
         <FormField
           control={form.control}
-          name="imageFile"
-          render={({ field }) => (
+          name="thumbnailImageFile"
+          render={({ field: { value, onChange, ...fieldProps } }) => (
             <FormItem className="lg:col-span-3">
-              <FormLabel>Image / Poster</FormLabel>
+              <FormLabel>Thumbnail Image</FormLabel>
               <FileInput
                 field={field}
                 previews={previews}

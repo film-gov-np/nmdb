@@ -6,15 +6,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import useCachedData from "@/hooks/useCachedData";
 
 const FormCrewInfo = ({ form }) => {
-  // const queryClient = useQueryClient();
-  // const getFromCache = (key) => {
-  //   return queryClient.getQueryData([key]);
-  // };
   const { getFromCache } = useCachedData();
   const getHelperData = async (apiPath, queryKey) => {
     const { cache } = getFromCache([queryKey]);
@@ -55,7 +51,7 @@ const FormCrewInfo = ({ form }) => {
       <div className="grid grid-cols-1 gap-2 p-4 px-4 py-2 md:grid-cols-2 md:gap-x-3 md:gap-y-4 lg:gap-x-6 lg:gap-y-8">
         <FormField
           control={form.control}
-          name="genreIds"
+          name="genres"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Genre</FormLabel>
@@ -68,7 +64,6 @@ const FormCrewInfo = ({ form }) => {
                   placeholder="Select movie genres"
                   keyValue="id"
                   keyLabel="name"
-                  setFromIdArray={true}
                 />
               </FormControl>
               <FormMessage />
@@ -77,7 +72,7 @@ const FormCrewInfo = ({ form }) => {
         />
         <FormField
           control={form.control}
-          name="languageIds"
+          name="languages"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Language</FormLabel>
@@ -89,7 +84,6 @@ const FormCrewInfo = ({ form }) => {
                   placeholder="Select movie languages"
                   keyValue="id"
                   keyLabel="name"
-                  setFromIdArray={true}
                 />
               </FormControl>
               <FormMessage />
@@ -98,7 +92,7 @@ const FormCrewInfo = ({ form }) => {
         />
         <FormField
           control={form.control}
-          name="studio"
+          name="productionHouses"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Studio</FormLabel>
@@ -111,7 +105,6 @@ const FormCrewInfo = ({ form }) => {
                   apiPath="production-house?SearchKeyword="
                   keyValue="id"
                   keyLabel="name"
-                  // imgLabel="profile_picture"
                   placeholder="Begin typing to search studios..."
                 />
               </FormControl>

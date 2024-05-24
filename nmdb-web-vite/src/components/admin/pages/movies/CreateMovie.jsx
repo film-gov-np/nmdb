@@ -114,11 +114,12 @@ const AddMovie = () => {
     console.log(data)
     const submitData = {
       ...data,
-      imageFile: data.imageFile?.[0],
+      thumbnailImageFile: data.thumbnailImageFile?.[0],
+      thumbnailImage: data.thumbnailImageFile?.[0].name,
       // theatres:  data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
-      genreIds: data.genreIds.every(element => typeof element === 'object') ? data.genreIds.map((item) => item.id.toString()) : data.genreIds,
-      languageIds: data.languageIds.every(element => typeof element === 'object') ?data.languageIds.map((item) => item.id.toString()): data.languageIds,
-      productionHouseIds: data.studio.map((item) => item.id.toString()),
+      // genreIds: data.genreIds.every(element => typeof element === 'object') ? data.genreIds.map((item) => item.id.toString()) : data.genreIds,
+      // languageIds: data.languageIds.every(element => typeof element === 'object') ?data.languageIds.map((item) => item.id.toString()): data.languageIds,
+      // productionHouseIds: data.studio.map((item) => item.id.toString()),
     };
     console.log("submitted", submitData);
     mutateMovie.mutate({
@@ -159,7 +160,7 @@ function MovieForm({ movie, renderMode, onSubmit }) {
     resolver,
     defaultValues: sanitizeData(movie),
   });
-  const [previews, setPreviews] = useState([]);
+  
 
   return (
     <Form {...form}>
@@ -184,8 +185,6 @@ function MovieForm({ movie, renderMode, onSubmit }) {
               <TabsContent value="basic_information" className="h-full ">
                 <FormBasicInfo
                   form={form}
-                  previews={previews}
-                  setPreviews={setPreviews}
                 />
               </TabsContent>
               <TabsContent value="crew_information">

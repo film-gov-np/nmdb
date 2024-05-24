@@ -8,7 +8,7 @@ import {
 import { Command as CommandPrimitive } from "cmdk";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 import React, { useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, extractInitials } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -89,8 +89,14 @@ const MultipleSelectorWithList = React.forwardRef(
     const inputRef = React.useRef(null);
     const [open, setOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-    if(setFromIdArray && value?.length > 0 && value.every(element => typeof element !== 'object')){
-      value = value?.map(v=>arrayDefaultOptions.find(a => a[keyValue] == v))
+    if (
+      setFromIdArray &&
+      value?.length > 0 &&
+      value.every((element) => typeof element !== "object")
+    ) {
+      value = value?.map((v) =>
+        arrayDefaultOptions.find((a) => a[keyValue] == v),
+      );
     }
     const [selected, setSelected] = React.useState(value || []);
     const [options, setOptions] = React.useState(
@@ -262,20 +268,24 @@ const MultipleSelectorWithList = React.forwardRef(
                       data-disabled={disabled}
                       className="flex"
                     >
-                      <div className="flex items-center gap-1 rounded-md border border-input bg-muted/40 p-1">
+                      <div className="flex items-center gap-2 rounded-md border border-input bg-muted/40 px-2 py-1.5">
                         {option[imgLabel] && (
-                          <Avatar className="hidden h-6 w-6 sm:flex">
+                          <Avatar className="flex h-7 w-7 text-center">
                             <AvatarImage src={option[imgLabel]} alt="Avatar" />
-                            <AvatarFallback>{option[keyLabel]}</AvatarFallback>
+                            <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
+                              {extractInitials(option[keyLabel])}
+                            </AvatarFallback>
                           </Avatar>
                         )}
-                        <div className="grid">
+                        <div className="grid gap-y-1">
                           <p className="text-sm font-medium leading-none">
                             {option[keyLabel]}
                           </p>
-                          <p className="text-xs text-muted-foreground">
-                            {option[extraLabel]}
-                          </p>
+                          {option[extraLabel] && (
+                            <p className="text-xs text-muted-foreground">
+                              {option[extraLabel]}
+                            </p>
+                          )}
                         </div>
                         <TooltipProvider>
                           <Tooltip>
@@ -385,17 +395,18 @@ const MultipleSelectorWithList = React.forwardRef(
                                     <div className="hidden">
                                       {option[keyValue]}
                                     </div>
-                                    {option[keyLabel]}
-
                                     {option[imgLabel] && (
-                                      <img
-                                        src={option[imgLabel]}
-                                        alt="img"
-                                        height={24}
-                                        width={24}
-                                        loading="lazy"
-                                      />
+                                      <Avatar className="flex h-7 w-7 mr-2 text-center">
+                                        <AvatarImage
+                                          src={option[imgLabel]}
+                                          alt="Avatar"
+                                        />
+                                        <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
+                                          {extractInitials(option[keyLabel])}
+                                        </AvatarFallback>
+                                      </Avatar>
                                     )}
+                                    {option[keyLabel]}
                                   </CommandItem>
                                 );
                               })}

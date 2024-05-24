@@ -9,8 +9,10 @@ export const formSchema = z.object({
   shootingDate: z.string().optional().or(z.literal("")),
   releaseDate: z.string().optional().or(z.literal("")),
   runtime: z.coerce.number().positive().or(z.literal("")),
-  image: z.string().optional().or(z.literal("")),
-  imageFile: z.instanceof(FileList).optional().or(z.literal("")),
+  thumbnailImage: z.string().optional().or(z.literal("")),
+  thumbnailImageFile: z.instanceof(FileList).optional().or(z.literal("")),
+  coverImage: z.string().optional().or(z.literal("")),
+  coverImageFile: z.instanceof(FileList).optional().or(z.literal("")),
   category: z.union(movieCategories.map((c) => z.literal(c.value)))
     .optional()
     .or(z.literal("")),
@@ -28,9 +30,9 @@ export const formSchema = z.object({
   fullMovieLink: z.string().optional().or(z.literal("")),
   trailerLink: z.string().optional().or(z.literal("")),
 
-  genreIds: z.array(z.any()),
-  languageIds: z.array(z.any()),
-  studio: z.array(z.any()),
+  genres: z.array(z.any()),
+  languages: z.array(z.any()),
+  productionHouses: z.array(z.any()),
 
   censor: z.object({
     applicationDate: z.string().optional().or(z.literal("")),
@@ -58,8 +60,10 @@ export const defaultValues = {
   shootingDate: "",
   releaseDate: "",
   runtime: "",
-  image: "",
-  imageFile: "",
+  thumbnailImage: "",
+  thumbnailImageFile: "",
+  coverImage: "",
+  coverImageFile: "",
   category: "",
   status: "",
   tagline: "",
@@ -71,9 +75,9 @@ export const defaultValues = {
   fullMovieLink: "",
   trailerLink: "",
 
-  genreIds: [],
-  languageIds: [],
-  studio: [
+  genres: [],
+  languages: [],
+  productionHouses: [
     {
       id: 4,
       name: "Royal Nepal Film Corporation",

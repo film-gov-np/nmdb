@@ -43,6 +43,7 @@ const FormTheatreInfo = ({ form }) => {
                         apiPath="theatres?SearchKeyword="
                         keyValue="id"
                         keyLabel="name"
+                        extraLabel="address"
                         placeholder="Begin typing to search for theatres..."
                         maxSelected={1}
                         replaceOnMaxSelected={true}

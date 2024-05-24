@@ -11,6 +11,9 @@ public class CrewBasicDto
 {
     public int Id { get; set; }
     public string? Name { get; set; }
+    public string? NepaliName { get; set; }
+    public string? NickName { get; set; }
     public string? ThumbnailPhoto { get; set; }
+    public string? ProfilePhoto { get; set; }
     public string? Email { get; set; }
 }
