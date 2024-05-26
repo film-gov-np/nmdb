@@ -4,14 +4,18 @@ using Application.Dtos.Theatre;
 using Application.Interfaces.Services;
 using Application.Services;
 using Core;
+using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using nmdb.Common;
+using nmdb.Filters;
 using System.Net;
 
 namespace nmdb.Controllers
 {
     [ApiController]
+    [Authorize]
+    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
     [Route("api/crews")]
     public class CrewController : AuthorizedController
     {

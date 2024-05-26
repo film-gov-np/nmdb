@@ -35,7 +35,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
         }
 
 
-         if (!string.IsNullOrEmpty(accessToken))
+        if (!string.IsNullOrEmpty(accessToken))
         {
             if (!_jwtTokenGenerator.IsTokenExpired(accessToken))
             {
@@ -47,7 +47,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                     context.HttpContext.Items["CurrentUser"] = user;
 
                     // Role base access control
-                     var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+                    var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
                     if (controllerActionDescriptor != null)
                     {
@@ -60,7 +60,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 
                         var controllerAllowAnonymousAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowAnonymousAttribute>();
                         var actionAllowAnonymousAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowAnonymousAttribute>();
-                        
+
                         // Allow anonymous access, proceed with the request without further authorization checks
                         if (controllerAllowAnonymousAttribute != null || actionAllowAnonymousAttribute != null)
                         {
@@ -96,9 +96,11 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                     context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Invalid Access Token.", HttpStatusCode.NotAcceptable));
                 }
             }
+            else
+            {
+                context.Result = new UnauthorizedResult();
+            }
         }
         return;
-        //else            
-        //    context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse(MessageConstants.Unauthorized, HttpStatusCode.Unauthorized));
     }
 }

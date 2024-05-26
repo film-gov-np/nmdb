@@ -45,9 +45,11 @@ const Login = () => {
             jwtToken,
             lastName,
             updated,
+            refreshToken
           } = resp.data.data;
           //set token to cookie or localStorage
           localStorage.setItem("token", jwtToken);
+          localStorage.setItem("refreshToken", refreshToken);
           setIsAuthorized(true);
           navigate("/admin/dashboard");
         }
