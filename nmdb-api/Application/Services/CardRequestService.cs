@@ -140,7 +140,7 @@ namespace Application.Services
                     (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Crew.Name.Contains(filterParameters.SearchKeyword)
                     || query.Crew.Email.Contains(filterParameters.SearchKeyword))
                     &&
-                    (filterParameters.IsApproved.HasValue || query.IsApproved == filterParameters.IsApproved);
+                    (!filterParameters.IsApproved == null || query.IsApproved == filterParameters.IsApproved);
             }
 
             filterParameters.IncludeProperties = "Crew";
