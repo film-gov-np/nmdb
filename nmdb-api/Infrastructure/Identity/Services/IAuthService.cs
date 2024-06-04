@@ -12,6 +12,7 @@ namespace Infrastructure.Identity.Services
         Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
         Task RevokeToken(string token, string ipAddress);
         Task<ApiResponse<string>> Register(RegisterRequest model);
+        Task<ApiResponse<string>> RegisterCrew(RegisterRequest model);
         Task VerifyEmail(string token);
         Task ForgotPassword(ForgotPasswordRequest model);
         Task ValidateResetToken(ValidateResetTokenRequest model);

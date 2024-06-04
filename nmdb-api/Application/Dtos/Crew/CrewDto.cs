@@ -69,4 +69,6 @@ public class CrewDto : BaseDto
     public bool IsVerified { get; set; }
 
     public bool IsActive { get; set; }
+    public bool? HasRequestedCard { get; set; } = false;
+    public string? Email { get; set; }
 }

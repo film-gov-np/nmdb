@@ -56,8 +56,8 @@ public class Crew : BaseEntity<int>
     public int? ViewCount { get; set; }
     public bool IsVerified { get; set; } = false;
     public bool IsActive { get; set; } = false;
-
+    public string? Email { get; set; }
     public virtual List<CrewDesignation> CrewDesignations { get; set; } = new List<CrewDesignation>();//Designation and Film Role are treated as the same
     public virtual List<MovieCrewRole> MovieCrewRoles { get; set; } = new List<MovieCrewRole>();
-
+    public bool? HasRequestedCard { get; set; } = false;
 }

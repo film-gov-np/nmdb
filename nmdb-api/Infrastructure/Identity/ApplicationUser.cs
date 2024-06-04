@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Identity;
 
-public class ApplicationUser:IdentityUser, IBaseEntity<string>
+public class ApplicationUser : IdentityUser, IBaseEntity<string>
 {
     public string? FirstName { get; set; } = string.Empty;
-    public string? LastName { get; set; }=string.Empty;    
+    public string? LastName { get; set; } = string.Empty;
     public List<RefreshToken> RefreshTokens { get; set; }
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }

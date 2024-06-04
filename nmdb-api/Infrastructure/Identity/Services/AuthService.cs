@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Dtos;
 using Application.Dtos.Auth;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Azure.Core;
 using BCrypt.Net;
@@ -8,11 +9,13 @@ using Core;
 using Core.Constants;
 using Infrastructure.Data;
 using Infrastructure.Identity.Security.TokenGenerator;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -30,6 +33,8 @@ namespace Infrastructure.Identity.Services
         private readonly IMapper _mapper;
         private readonly JwtSettings _appSettings;
         private readonly IEmailService _emailService;
+        private readonly ICrewService _crewService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AuthService(
             AppDbContext context,
@@ -37,6 +42,8 @@ namespace Infrastructure.Identity.Services
             IMapper mapper,
             IOptions<JwtSettings> appSettings,
             IEmailService emailService,
+            ICrewService crewService,
+            IHttpContextAccessor httpContextAccessor,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager)
@@ -49,6 +56,8 @@ namespace Infrastructure.Identity.Services
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _crewService = crewService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -178,6 +187,7 @@ namespace Infrastructure.Identity.Services
         }
         public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
+            
             var userToRegister = new ApplicationUser
             {
                 UserName = request.Email,
@@ -185,7 +195,7 @@ namespace Infrastructure.Identity.Services
                 PhoneNumber = request.PhoneNumber,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                CreatedBy = "superuser@nmdb.com" // Handle this by getting email from jwt claims
+                CreatedBy = request.Email
             };
 
             var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
@@ -194,27 +204,58 @@ namespace Infrastructure.Identity.Services
             {
                 var created_user = await _userManager.FindByEmailAsync(request.Email);
                 await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
+                var account = _mapper.Map<ApplicationUser>(request);                
+                created_user.VerificationToken = await generateVerificationToken();
+                await _userManager.UpdateAsync(created_user);
+                await sendVerificationEmail(created_user, request.Password);
+                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+            }
+            var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
+            return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
+        }
+
+        public async Task<ApiResponse<string>> RegisterCrew(RegisterRequest request)
+        {
+            var crew = await _crewService.GetCrewByEmailAsync(request.Email);
+            if (!crew.IsSuccess &&  crew.Data == null)
+            {
+                return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' not found.", HttpStatusCode.NotFound);
+            }
+
+            var userToRegister = new ApplicationUser
+            {
+                UserName = request.Email,
+                Email = request.Email,
+                CreatedBy = "superuser@nmdb.com"
+            };
+
+            var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
+
+            if (registrationResult.Succeeded)
+            {
+                var created_user = await _userManager.FindByEmailAsync(request.Email);
+                await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.CrewRole);
                 var account = _mapper.Map<ApplicationUser>(request);
                 account.VerificationToken = await generateVerificationToken();
                 await sendVerificationEmail(account, request.Password);
                 return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
             }
-            var errorMessage = string.Join(", ", registrationResult.Errors);
+            var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
             return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
         }
 
         public async Task VerifyEmail(string token)
         {
-            var account = _context.Users.SingleOrDefault(x => x.VerificationToken == token);
+            var account = await _userManager.Users.FirstOrDefaultAsync(u => u.VerificationToken == token);
 
             if (account == null)
                 throw new AppException("Verification failed");
 
             account.Verified = DateTime.UtcNow;
+            account.EmailConfirmed = true;
             account.VerificationToken = null;
 
-            _context.Users.Update(account);
-            await _context.SaveChangesAsync();
+            await _userManager.UpdateAsync(account);            
         }
 
         public async Task ForgotPassword(ForgotPasswordRequest model)
@@ -430,7 +471,10 @@ namespace Infrastructure.Identity.Services
 
         private async Task sendVerificationEmail(ApplicationUser account, string password = "")
         {
-            string emailContent = GetVerificationEmailContent(account.VerificationToken);
+            string hostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}"; // make it global later
+            string verificationLink = $"{hostUrl}/api/{account.VerificationToken}/verify-email";
+
+            string emailContent = GetVerificationEmailContent(verificationLink);
 
             await _emailService.Send(
                  to: account.Email,

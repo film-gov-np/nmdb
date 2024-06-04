@@ -12,6 +12,7 @@ using Application.Interfaces.Services;
 using Application.Models;
 using Application.Validators;
 using AutoMapper;
+using Azure;
 using Core;
 using Core.Entities;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace Application.Services;
 
 public class CrewService : ICrewService
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;    
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
@@ -151,7 +152,7 @@ public class CrewService : ICrewService
 
             _mapper.Map(crewRequestDto, crew);
             crew.Id = crewId;
-            crew.UpdatedBy = crewRequestDto.AuditedBy;
+            crew.UpdatedBy = crewRequestDto.Authorship;
             await _unitOfWork.CrewRepository.UpdateAsync(crew);
             await _unitOfWork.CommitAsync();
         }
@@ -221,6 +222,36 @@ public class CrewService : ICrewService
         return response;
     }
 
+    public async Task<ApiResponse<CrewRequestDto>> GetCrewByEmailAsync(string email)
+    {
+        var response = new ApiResponse<CrewRequestDto>();
+
+        try
+        {
+            var crew = await _unitOfWork.CrewRepository.GetByEmailAsync(email);
+
+            if (crew == null)
+            {
+                response.IsSuccess = false;
+                response.Errors.Add("Crew not found.");
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
+            }
+
+            var crewResponse = _mapper.Map<CrewRequestDto>(crew);
 
 
+            response.IsSuccess = true;
+            response.Data = crewResponse;
+            response.StatusCode = HttpStatusCode.OK;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving crew.");
+            response.IsSuccess = false;
+            response.Errors.Add("An error occurred while processing the request.");
+            response.StatusCode = HttpStatusCode.InternalServerError;
+        }
+        return response;
+    }
 }

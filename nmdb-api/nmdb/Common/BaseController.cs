@@ -38,6 +38,15 @@ public class AuthorizedController : ControllerBase
         }
     }
 
+    public string GetUserEmail
+    {
+        get
+        {
+            string userName = User.FindFirst(ClaimTypes.Email)?.Value;
+            return userName;
+        }
+    }
+
     public string GetUserId
     {
         get

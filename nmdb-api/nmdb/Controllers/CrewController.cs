@@ -73,7 +73,7 @@ namespace nmdb.Controllers
                     return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
                 }
 
-                model.AuditedBy = GetUserId;
+                model.Authorship = GetUserId;
                 var result = await _crewService.CreateCrewAsync(model, file);
 
                 if (result.IsSuccess)
@@ -98,7 +98,7 @@ namespace nmdb.Controllers
             {
                 return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
             }
-            crewRequestDto.AuditedBy = GetUserId;
+            crewRequestDto.Authorship = GetUserId;
             var result = await _crewService.UpdateCrewAsync(id, crewRequestDto);
 
             if (result.IsSuccess)

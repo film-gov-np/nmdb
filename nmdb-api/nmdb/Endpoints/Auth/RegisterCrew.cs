@@ -5,25 +5,22 @@ using Infrastructure.Identity.Services;
 
 namespace nmdb.Endpoints.AuthEndpoints;
 
-public class Register
+public class RegisterCrew
     : Endpoint<RegisterRequest, ApiResponse<string>>
 {
     private readonly IAuthService _authService;
-    public Register(IAuthService authService)
+    public RegisterCrew(IAuthService authService)
     {
         _authService = authService;
     }
     public override void Configure()
     {
-        Post(RegisterRequest.Route);
+        Post("api/auth/register-crew");
         AllowAnonymous();
 
         Summary(s =>
         {
-            // XML Docs are used by default but are overridden by these properties:
-            //s.Summary = "Create a new user.";
-            //s.Description = "Create a new user. A valid name is required.";
-            s.ExampleRequest = new RegisterRequest { Email = "demo@user.com", Password = "User@123", ConfirmPassword = "User@123" };
+            s.ExampleRequest = new RegisterRequest { Email = "crew@nmdb.com", Password = "Crew@123", ConfirmPassword = "Crew@123" };
         });
     }
 
@@ -32,7 +29,7 @@ public class Register
     {
         try
         {
-            var registerResponse = await _authService.Register(request);
+           var registerResponse = await _authService.RegisterCrew(request);
             Response = registerResponse;
         }
         catch (Exception ex)

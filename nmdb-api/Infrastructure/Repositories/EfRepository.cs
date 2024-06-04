@@ -160,6 +160,24 @@ namespace Infrastructure.Repositories
             var entity = await query.FirstOrDefaultAsync();
             return entity;
         }
+        public async Task<TEntity> GetByEmailAsync(string email, string includeProperties = "")
+        {
+            var query = _dbSet.AsQueryable();
+
+            // Apply filtering by Email
+            query = query.Where(e => EF.Property<string>(e, "Email") == email);
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty.Trim());
+                }
+            }
+
+            var entity = await query.FirstOrDefaultAsync();
+            return entity;
+        }
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {

@@ -18,5 +18,6 @@ public interface ICrewService
     Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file);
     Task<ApiResponse<string>> UpdateCrewAsync(int crewId, CrewRequestDto crewRequestDto);
     Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId);
+    Task<ApiResponse<CrewRequestDto>> GetCrewByEmailAsync(string email);
     Task<ApiResponse<string>> DeleteCrewAsync(int crewId);
 }

@@ -1,4 +1,5 @@
-﻿using Application.Models;
+﻿using Application.Dtos;
+using Application.Models;
 using Core.Entities;
 using Core.Entities.Film;
 using Infrastructure.Identity;
@@ -37,6 +38,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
     public DbSet<MovieType> MovieTypes { get; set; }
     public DbSet<MovieStatus> MovieStatus { get; set; }
+    public DbSet<CardRequest> CardRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

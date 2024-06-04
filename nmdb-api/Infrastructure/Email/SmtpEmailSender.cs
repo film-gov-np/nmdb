@@ -31,7 +31,8 @@ public class SmtpEmailService : IEmailService
         using var message = new MailMessage(fromAddress, toAddress)
         {
             Subject = subject,
-            Body = html
+            Body = html,
+            IsBodyHtml = true
         };
         if (!string.IsNullOrEmpty(_mailSettings.CcTo))
         {

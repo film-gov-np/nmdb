@@ -9,6 +9,6 @@ public class CrewRequestDto: CrewDto
     //public IEnumerable<int> Designations { get; set; }
     //[JsonIgnore]
     //public  IFormFile? ProfilePhoto { get; set; }
-    [JsonIgnore]
-    public string? AuditedBy { get; set; }
+    //[JsonIgnore]
+    //public string? AuditedBy { get; set; }
 }
