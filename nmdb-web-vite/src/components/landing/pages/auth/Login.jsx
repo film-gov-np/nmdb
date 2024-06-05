@@ -15,10 +15,14 @@ import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginSchemaResolver } from "./authSchema";
 import { ApiPaths } from "@/constants/apiPaths";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
   const { setIsAuthorized } = useAuthContext();
+  const [errorState, setErrorState] = useState("");
   const form = useForm({
     resolver: loginSchemaResolver,
     defaultValues: {
@@ -35,7 +39,9 @@ const Login = () => {
     axiosInstance
       .post(ApiPaths.Path_Auth + "/authenticate", postData)
       .then((resp) => {
-        if (resp) {
+        debugger
+        const response = resp.data;
+        if (response?.isSuccess) {
           const {
             created,
             email,
@@ -45,16 +51,21 @@ const Login = () => {
             jwtToken,
             lastName,
             updated,
-            refreshToken
-          } = resp.data.data;
+            refreshToken,
+          } = response.data;
           //set token to cookie or localStorage
           localStorage.setItem("token", jwtToken);
           localStorage.setItem("refreshToken", refreshToken);
           setIsAuthorized(true);
           navigate("/admin/dashboard");
+        } else {
+          setErrorState(response.message);
         }
       })
-      .catch((error) => { });
+      .catch((error) => {
+        debugger
+        console.log(error);
+      });
   };
 
   return (
@@ -65,6 +76,12 @@ const Login = () => {
           <p className="text-balance text-muted-foreground">
             Enter your credentials below to login
           </p>
+          {errorState && (
+            <Alert variant="destructive">
+              <AlertTitle>Login Error</AlertTitle>
+              <AlertDescription>{errorState}</AlertDescription>
+            </Alert>
+          )}
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

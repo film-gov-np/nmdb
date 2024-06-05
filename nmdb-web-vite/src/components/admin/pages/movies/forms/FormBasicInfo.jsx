@@ -135,7 +135,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
         <FormField
           control={form.control}
           name="thumbnailImageFile"
-          render={({ field: { value, onChange, ...fieldProps } }) => (
+          render={({field }) => (
             <FormItem className="lg:col-span-3">
               <FormLabel>Thumbnail Image</FormLabel>
               <FileInput
