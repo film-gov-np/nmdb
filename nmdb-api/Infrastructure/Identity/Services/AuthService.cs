@@ -68,7 +68,7 @@ namespace Infrastructure.Identity.Services
                                    .SingleOrDefaultAsync(u => u.Email == request.Email);
             if (requestedUser == null)
             {
-                throw new UserNotFoundException(request.Email);
+                throw new UnauthorizedAccessException("Invalid login attempt.");
             }
             var result = await _signInManager.CheckPasswordSignInAsync(requestedUser, request.Password, lockoutOnFailure: false);
             if (result.Succeeded)

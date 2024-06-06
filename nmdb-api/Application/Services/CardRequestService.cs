@@ -59,7 +59,7 @@ namespace Application.Services
                         return ApiResponse<string>.ErrorResponse("You have already requested a card.", HttpStatusCode.NotModified);
                     }
                     var request = new CardRequest
-                    {                        
+                    {
                         CrewId = crewId,
                         CreatedAt = DateTime.UtcNow,
                         IsApproved = false
@@ -71,14 +71,20 @@ namespace Application.Services
                     await _unitOfWork.CommitAsync();
 
                     await _emailService.Send(
-                        "", // admin or info email
+                        "test@nmdb.com", // admin or info email
                         "Card Requested",
                         EmailTemplate.CardRequested.Replace("{{crew}}", crewEntity.Email)
                         );
+
+                    response.IsSuccess = true;
+                    response.Message = $"Card requested succesfully";                    
                 }
-                response.IsSuccess = false;
-                response.Message = $"Crew with id {crewId} does not exist.";
-                response.StatusCode = HttpStatusCode.NotFound;
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Crew with id {crewId} does not exist.";
+                    response.StatusCode = HttpStatusCode.NotFound;
+                }
             }
             catch (Exception ex)
             {

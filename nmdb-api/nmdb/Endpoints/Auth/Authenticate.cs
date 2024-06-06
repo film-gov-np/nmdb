@@ -40,9 +40,9 @@ public class Authenticate
             setTokenCookie(authenticateResponse.JwtToken, authenticateResponse.RefreshToken);
             Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
         }
-        catch (UnauthorizedAccessException ex)
+        catch (Exception ex)
         {
-            Response = ApiResponse<AuthenticateResponse>.ErrorResponse(ex.Message, HttpStatusCode.Unauthorized);
+            Response = ApiResponse<AuthenticateResponse>.ErrorResponse(ex.Message, HttpStatusCode.InternalServerError);
         }
     }
 
