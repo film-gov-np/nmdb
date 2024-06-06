@@ -54,4 +54,4 @@ jobs:
           app-name: 'nmdb'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_138339575EC7463AB740C244F40CAA64 }}
-          package: ./nmdb.sln
+          package: ${{ github.workspace }}/nmdb.sln
