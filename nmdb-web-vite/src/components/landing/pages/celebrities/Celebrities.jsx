@@ -3,11 +3,13 @@ import axios from "axios";
 import { useState } from "react";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { Separator } from "@/components/ui/separator";
-import { Search } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 import SimplePagination from "@/components/common/SimplePagination";
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 const ITEM_PER_PAGE = 20;
 
 const getCelebList = async (page, debouncedSearchTerm) => {
@@ -32,8 +34,6 @@ const getCelebList = async (page, debouncedSearchTerm) => {
   };
 };
 
-
-
 const Celebrities = () => {
   const [searchCelebs, setSearchCelebs] = useState("");
   const debouncedSearchTerm = useDebouncedState(searchCelebs, 500);
@@ -54,10 +54,18 @@ const Celebrities = () => {
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
       <div className="relative ">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-5xl font-semibold tracking-tight">
-              Celebrities
-            </h2>
+          <div className="flex items-center justify-start gap-6">
+            <NavLink to={Paths.Route_Home}>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Back</span>
+              </Button>
+            </NavLink>
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold tracking-tight md:text-5xl">
+                Celebrities
+              </h2>
+            </div>
           </div>
           <form className="ml-auto flex-1 sm:flex-initial">
             <div className="relative">
@@ -99,13 +107,15 @@ const Celebrities = () => {
                 />
               ))}
             </div>
-            <SimplePagination
-              currentPage={currentPage}
-              totalItems={data.totalData}
-              itemsPerPage={ITEM_PER_PAGE}
-              onPageChange={(page) => setCurrentPage(page)}
-              isPreviousData={isPreviousData}
-            />
+            <div className="py-4">
+              <SimplePagination
+                currentPage={currentPage}
+                totalItems={data.totalData}
+                itemsPerPage={ITEM_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+                isPreviousData={isPreviousData}
+              />
+            </div>
           </div>
         )}
       </div>

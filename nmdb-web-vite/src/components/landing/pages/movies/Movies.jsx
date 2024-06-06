@@ -3,11 +3,13 @@ import axios from "axios";
 import { useState } from "react";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { Separator } from "@/components/ui/separator";
-import { Search } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 import SimplePagination from "@/components/common/SimplePagination";
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 const ITEM_PER_PAGE = 20;
 
 const getCelebList = async (page, debouncedSearchTerm) => {
@@ -46,10 +48,19 @@ const Movies = () => {
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
       <div className="relative ">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-5xl font-semibold tracking-tight">Movies</h2>
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center justify-start gap-6">
+            <NavLink to={Paths.Route_Home}>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Back</span>
+              </Button>
+            </NavLink>
+            <div className="space-y-1">
+              <h2 className="text-xl md:text-5xl font-semibold tracking-tight">Movies</h2>
+            </div>
           </div>
+
           <form className="ml-auto flex-1 sm:flex-initial">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -60,7 +71,7 @@ const Movies = () => {
                   setSearchMovies(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Search celebrities..."
+                placeholder="Search movies..."
                 className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               />
             </div>
@@ -90,13 +101,15 @@ const Movies = () => {
                 />
               ))}
             </div>
-            <SimplePagination
-              currentPage={currentPage}
-              totalItems={data.totalData}
-              itemsPerPage={ITEM_PER_PAGE}
-              onPageChange={(page) => setCurrentPage(page)}
-              isPreviousData={isPreviousData}
-            />
+            <div className="py-4">
+              <SimplePagination
+                currentPage={currentPage}
+                totalItems={data.totalData}
+                itemsPerPage={ITEM_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+                isPreviousData={isPreviousData}
+              />
+            </div>
           </div>
         )}
       </div>

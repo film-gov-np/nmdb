@@ -37,6 +37,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn, sanitizeData } from "@/lib/utils";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
+import { Gender } from "@/constants/general";
+import { BaseAPIUrl, ServerPath } from "@/constants/authConstant";
 
 const FileInput = ({ field, previews, setPreviews }) => {
   const handleUploadedFile = (event) => {
@@ -44,7 +47,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
     const urlImages = [];
     for (const key in files) {
       if (typeof files[key] !== "object") continue;
-      urlImages.push(files[key]);
+      urlImages.push(URL.createObjectURL(files[key]));
     }
     setPreviews(urlImages);
   };
@@ -71,7 +74,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
               >
                 <img
                   className="h-full w-full rounded-md  object-cover"
-                  src={URL.createObjectURL(preview)}
+                  src={preview}
                   alt={"Picture" + index}
                 />
               </div>
@@ -163,6 +166,7 @@ const formSchema = z.object({
     .enum(["true", "false"])
     .transform((value) => value === "true")
     .optional(),
+  file: z.any(),
 });
 
 const defaultValues = {
@@ -184,7 +188,7 @@ const defaultValues = {
   facebookID: "",
   twitterID: "",
   mobile: "",
-  image: "",
+  file: "",
   biography: "",
   biographyInNepali: "",
   activities: "",
@@ -205,7 +209,6 @@ function CreateCrew() {
     renderMode = renderModes.Render_Mode_Edit;
   else renderMode = renderModes.Render_Mode_Details;
   const { toast } = useToast();
-  
 
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
@@ -220,9 +223,14 @@ function CreateCrew() {
   });
 
   const onSubmit = (data) => {
-    console.log("submitted", data);
+    const submitData = {
+      ...data,
+      file: data.file?.[0],
+      // thumbnailImage: data.thumbnailImageFile?.[0].name,
+    };
+    console.log("submitted", submitData);
     mutateRole.mutate({
-      postData: data,
+      postData: submitData,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,
       slug,
       toast,
@@ -230,22 +238,24 @@ function CreateCrew() {
   };
 
   const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
+    debugger;
     let apiPath = ApiPaths.Path_Crews;
     if (isEditMode) {
       apiPath += "/" + slug;
-      postData.id = slug;
+      // postData.id = slug;
     }
-    const formData = new FormData();
-    if (previews.length > 0) {
-      formData.append("file", previews[0]);
-    }
-    for (const key in postData) {
-      formData.append(key, postData[key] ?? defaultValues[key]);
-    }
+    // const formData = new FormData();
+    // if (previews.length > 0) {
+    //   formData.append("file", previews[0]);
+    // }
+    // for (const key in postData) {
+    //   formData.append(key, postData[key] ?? defaultValues[key]);
+    // }
+
     const { data } = await axiosInstance({
       method: isEditMode ? "put" : "post",
       url: apiPath,
-      data: formData,
+      data: postData,
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -300,33 +310,47 @@ function CreateCrew() {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="crew" pathTo={Paths.Route_Admin_Crew} />
       {isLoading || isFetching ? (
-        <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
+        <FormSkeleton columnCount={5} rowCount={2} repeat={2} shrinkZero />
       ) : (
         data && (
-          <CrewForm
-            crew={data}
-            renderMode={renderMode}
-            onSubmit={onSubmit}
-          />
+          <CrewForm crew={data} renderMode={renderMode} onSubmit={onSubmit} />
         )
       )}
     </main>
   );
 }
-
+const getCrewFlimRoles = async (apiPath) => {
+  const apiResponse = await axiosInstance
+    .get(apiPath)
+    .then((response) => {
+      console.log("api-response", response.data);
+      return response.data;
+    })
+    .catch((err) => console.error(err));
+  return apiResponse.data;
+};
 function CrewForm({ crew, renderMode, onSubmit }) {
-    const [previews, setPreviews] = useState([]);
+  const [previews, setPreviews] = useState(crew?.profilePhoto ? [ServerPath + crew?.profilePhoto] : []);
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: sanitizeData(crew),
+    defaultValues: sanitizeData({...crew, isVerified: crew.isVerified.toString()}),
   });
+  const { isLoading, data, isError, isFetching, isPreviousData, error } =
+    useQuery({
+      queryKey: ["FlimRolesforCrews"],
+      queryFn: () => getCrewFlimRoles("/film-roles?RetrieveAll=true"),
+      keepPreviousData: true,
+    });
+  if (isLoading || isFetching) return "loading";
+  if (error) return "error";
+  const roles = data.items;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid gap-8">
           <fieldset
             disabled={renderMode === renderModes.Render_Mode_Details}
-            className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
+            className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6"
           >
             <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
               Create Crew
@@ -419,11 +443,12 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                   <FormControl>
                     <MultipleSelectorWithList
                       {...field}
+                      value={field.value}
                       triggerOnSearch={false}
-                      defaultOptions={[]}
+                      defaultOptions={roles}
                       placeholder="Select designation/s"
                       keyValue="id"
-                      keyLabel="name"
+                      keyLabel="roleName"
                     />
                   </FormControl>
                   <FormMessage />
@@ -431,29 +456,31 @@ function CrewForm({ crew, renderMode, onSubmit }) {
               )}
             />
 
-            {/* <FormField
-                        control={form.control}
-                        name="designation"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Designation</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Designation" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
-
             <FormField
               control={form.control}
               name="gender"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Gender" {...field} />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.defaultValue}
+                    value={field.value}
+                    name="customCategory"
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Gender.map((gender, index) => (
+                        <SelectItem key={"gende" + index} value={gender.value}>
+                          {gender.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -465,87 +492,18 @@ function CrewForm({ crew, renderMode, onSubmit }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Birth Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        showOutsideDays={true}
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        captionLayout="dropdown-buttons"
-                        fromYear={1900}
-                        toYear={new Date().getFullYear()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="dateOfDeathInAD"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Death Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        showOutsideDays={true}
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        captionLayout="dropdown-buttons"
-                        fromYear={1900}
-                        toYear={new Date().getFullYear()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -606,20 +564,14 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="officialSite"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Official Site</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Official Site" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          </fieldset>
+          <fieldset
+            disabled={renderMode === renderModes.Render_Mode_Details}
+            className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
+          >
+            <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
+              Social Info
+            </legend>
 
             <FormField
               control={form.control}
@@ -648,7 +600,19 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="officialSite"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Official Site</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Official Site" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="mobileNumber"
@@ -694,6 +658,14 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
+          </fieldset>
+          <fieldset
+            disabled={renderMode === renderModes.Render_Mode_Details}
+            className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
+          >
+            <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
+              Extra Info
+            </legend>
 
             <FormField
               control={form.control}
@@ -704,7 +676,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                   <FormControl>
                     <Textarea
                       placeholder="English Boigraphy"
-                      className="resize-none"
+                      className="min-h-48"
                       {...field}
                     />
                   </FormControl>
@@ -722,7 +694,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                   <FormControl>
                     <Textarea
                       placeholder="Nepali Boigraphy"
-                      className="resize-none"
+                      className="min-h-48"
                       {...field}
                     />
                   </FormControl>
@@ -740,7 +712,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                   <FormControl>
                     <Textarea
                       placeholder="Activities"
-                      className="resize-none"
+                      className="min-h-48"
                       {...field}
                     />
                   </FormControl>
@@ -758,7 +730,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                   <FormControl>
                     <Textarea
                       placeholder="Trivia"
-                      className="resize-none"
+                      className="min-h-48"
                       {...field}
                     />
                   </FormControl>
