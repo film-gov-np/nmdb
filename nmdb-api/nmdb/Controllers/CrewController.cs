@@ -96,7 +96,7 @@ namespace nmdb.Controllers
         {
             if (crewRequestDto == null)
             {
-                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data provided.", HttpStatusCode.BadRequest));
             }
             crewRequestDto.Authorship = GetUserId;
             var result = await _crewService.UpdateCrewAsync(id, crewRequestDto);
