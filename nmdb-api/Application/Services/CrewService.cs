@@ -148,7 +148,7 @@ public class CrewService : ICrewService
 
             if (crewEntity == null)
             {
-                return ApiResponse<string>.ErrorResponse($"Crew with '{crewRequestDto.Id}' could not be found.", HttpStatusCode.NotFound);
+                return ApiResponse<string>.ErrorResponse($"Crew with '{crewId}' could not be found.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(crewRequestDto, crewEntity);
@@ -202,9 +202,9 @@ public class CrewService : ICrewService
         return response;
     }
 
-    public async Task<ApiResponse<CrewRequestDto>> GetCrewByIdAsync(int crewId)
+    public async Task<ApiResponse<CrewResponseDto>> GetCrewByIdAsync(int crewId)
     {
-        var response = new ApiResponse<CrewRequestDto>();
+        var response = new ApiResponse<CrewResponseDto>();
 
         try
         {
@@ -218,7 +218,7 @@ public class CrewService : ICrewService
                 return response;
             }
 
-            var crewResponse = _mapper.Map<CrewRequestDto>(crew);
+            var crewResponse = _mapper.Map<CrewResponseDto>(crew);
 
             crewResponse.Designations = MapCrewDesignations(crew.CrewDesignations);
             crewResponse.Movies = MapCrewMovies(crew.MovieCrewRoles);
@@ -272,9 +272,9 @@ public class CrewService : ICrewService
         return crewMovieDtos;
     }
 
-    public async Task<ApiResponse<CrewRequestDto>> GetCrewByEmailAsync(string email)
+    public async Task<ApiResponse<CrewResponseDto>> GetCrewByEmailAsync(string email)
     {
-        var response = new ApiResponse<CrewRequestDto>();
+        var response = new ApiResponse<CrewResponseDto>();
 
         try
         {
@@ -288,7 +288,7 @@ public class CrewService : ICrewService
                 return response;
             }
 
-            var crewResponse = _mapper.Map<CrewRequestDto>(crew);
+            var crewResponse = _mapper.Map<CrewResponseDto>(crew);
 
 
             response.IsSuccess = true;
