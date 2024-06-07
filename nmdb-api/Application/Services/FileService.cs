@@ -40,6 +40,10 @@ namespace Application.Services
             {
                 string savePath = GetFilePath(fileValid.FileType);
                 string path = Path.Combine(_environment.WebRootPath, savePath);
+                
+                if (!string.IsNullOrEmpty(model.SubFolder))
+                    path = Path.Combine(path, model.SubFolder);
+
                 string fileName = helper.GetFileNewName(model.Files.FileName, path, model.ReadableName);
                 if (!Directory.Exists(path))
                 {
@@ -54,7 +58,7 @@ namespace Application.Services
                     data: new UploadResult()
                     {
                         FileName = fileName,
-                        FilePath = string.Concat('/', savePath.Replace('\\', '/'), '/', fileName),
+                        FilePath =string.IsNullOrEmpty(model.SubFolder)?string.Concat('/', savePath.Replace('\\', '/'), '/', fileName): string.Concat('/', savePath.Replace('\\', '/'), '/',model.SubFolder,'/', fileName),
                         FileExtension = Path.GetExtension(model.Files.FileName),
                         FileSize = model.Files.Length.ToString()
                     },
@@ -93,6 +97,27 @@ namespace Application.Services
             else
                 return ApiResponse<UploadResult>.ErrorResponse("File format not supported.", HttpStatusCode.NotAcceptable);
 
+        }
+
+        public bool RemoveFile(string filename, string? subFolder)
+        {
+            try
+            {
+                FileHelper fileHelper = new FileHelper();
+                var fileValid = fileHelper.EnsureValidFile(filename);
+                //string filePath = GetFilePath(fileValid.FileType);// later take filetype input for media management
+                string staticFilePath = filename.Replace("/", "\\");
+                var completeFilePath = string.Concat(_environment.WebRootPath, staticFilePath);
+                if (File.Exists(completeFilePath))
+                    File.Delete(completeFilePath);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         public bool RemoveFile(string filename)

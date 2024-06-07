@@ -72,7 +72,8 @@ public class MovieService : IMovieService
                 {
                     Files = movieRequestDto.CoverImageFile,
                     Thumbnail = false,
-                    ReadableName = true
+                    ReadableName = true,
+                    SubFolder = "movies"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -398,14 +399,15 @@ public class MovieService : IMovieService
                 {
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
-                    ReadableName = true
+                    ReadableName = true,
+                    SubFolder="movies"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
-                        _fileService.RemoveFile(existingMovie.ThumbnailImage);
+                        _fileService.RemoveFile(existingMovie.ThumbnailImage, "movies");
 
                     existingMovie.ThumbnailImage = uploadResult.Data.FilePath;
                 }
@@ -458,6 +460,15 @@ public class MovieService : IMovieService
                 // Fetch existing MovieTheatres associated with the existingMovie
                 var existingMovieTheatres = existingMovie.MovieTheatres.ToList();
 
+                // Remove any unnecessary MovieTheatres
+                foreach (var existingMovieTheatre in existingMovieTheatres)
+                {
+                    if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.Id == existingMovieTheatre.TheatreId)))
+                    {
+                        existingMovie.MovieTheatres.Remove(existingMovieTheatre);
+                    }
+                }
+
                 // Update or add new MovieTheatres
                 foreach (var theatreDto in movieRequestDto.Theatres)
                 {
@@ -482,15 +493,6 @@ public class MovieService : IMovieService
                             };
                             existingMovie.MovieTheatres.Add(newMovieTheatre);
                         }
-                    }
-                }
-
-                // Remove any unnecessary MovieTheatres
-                foreach (var existingMovieTheatre in existingMovieTheatres)
-                {
-                    if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.Id == existingMovieTheatre.TheatreId)))
-                    {
-                        existingMovie.MovieTheatres.Remove(existingMovieTheatre);
                     }
                 }
             }
