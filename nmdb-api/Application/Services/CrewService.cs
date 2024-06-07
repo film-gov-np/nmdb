@@ -3,6 +3,7 @@ using Application.Dtos;
 using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
+using Application.Dtos.Movie;
 using Application.Dtos.ProductionHouse;
 using Application.Dtos.Theatre;
 using Application.Helpers.Response;
@@ -116,13 +117,13 @@ public class CrewService : ICrewService
 
             await _unitOfWork.BeginTransactionAsync();
             var crewEntity = _mapper.Map<Crew>(crewRequestDto);
-            //var filmRoles = await _unitOfWork.FilmRoleRepository.GetRolesByIdsAsync(crewRequestDto.Designations);
 
-            List<int> filmRoles = new();
-            // Associate crew with roleid
-            foreach (int roleid in filmRoles)
+            if (crewRequestDto.Designations != null)
             {
-                crewEntity.CrewDesignations.Add(new CrewDesignation { RoleId = roleid });
+                foreach (var designation in crewRequestDto.Designations)
+                {
+                    crewEntity.CrewDesignations.Add(new CrewDesignation { RoleId = designation.Id, Crew = crewEntity });
+                }
             }
 
             crewEntity.ProfilePhoto = profilePhotoUrl;
@@ -143,17 +144,30 @@ public class CrewService : ICrewService
         var response = new ApiResponse<string>();
         try
         {
-            var crew = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+            var crewEntity = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
 
-            if (crew == null)
+            if (crewEntity == null)
             {
                 return ApiResponse<string>.ErrorResponse($"Crew with '{crewRequestDto.Id}' could not be found.", HttpStatusCode.NotFound);
             }
 
-            _mapper.Map(crewRequestDto, crew);
-            crew.Id = crewId;
-            crew.UpdatedBy = crewRequestDto.Authorship;
-            await _unitOfWork.CrewRepository.UpdateAsync(crew);
+            _mapper.Map(crewRequestDto, crewEntity);
+
+            if (crewRequestDto.Designations != null && crewRequestDto.Designations.Any())
+            {
+                crewEntity.CrewDesignations.Clear();
+                foreach (var designationDto in crewRequestDto.Designations)
+                {
+                    var crewDesignation = new CrewDesignation
+                    {
+                        Crew = crewEntity,
+                        RoleId = designationDto.Id
+                    };
+                    crewEntity.CrewDesignations.Add(crewDesignation);
+                }
+            }            
+            crewEntity.UpdatedBy = crewRequestDto.Authorship;
+            await _unitOfWork.CrewRepository.UpdateAsync(crewEntity);
             await _unitOfWork.CommitAsync();
         }
         catch (Exception ex)
@@ -227,12 +241,12 @@ public class CrewService : ICrewService
     private List<CrewDesignationDto> MapCrewDesignations(List<CrewDesignation> crewDesignations)
     {
         var crewDesignationDtos = new List<CrewDesignationDto>();
-        foreach(var designation in crewDesignations)
+        foreach (var designation in crewDesignations)
         {
             CrewDesignationDto designationDto = new CrewDesignationDto
             {
                 Id = designation.FilmRole.Id,
-                RoleName= designation.FilmRole.RoleName
+                RoleName = designation.FilmRole.RoleName
             };
             crewDesignationDtos.Add(designationDto);
         }
