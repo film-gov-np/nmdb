@@ -101,7 +101,7 @@ const formSchema = z.object({
   nickName: z.string().min(2).optional().or(z.literal("")),
   fatherName: z.string().min(2).optional().or(z.literal("")),
   motherName: z.string().min(2).optional().or(z.literal("")),
-  // designation: z.string(),
+  designations: z.any(),
   gender: z.string().optional(),
   dateOfBirthInAD: z
     .string()
@@ -166,7 +166,7 @@ const formSchema = z.object({
     .enum(["true", "false"])
     .transform((value) => value === "true")
     .optional(),
-  file: z.any(),
+  profilePhotoFile: z.any(),
 });
 
 const defaultValues = {
@@ -176,7 +176,7 @@ const defaultValues = {
   nickName: "",
   fatherName: "",
   motherName: "",
-  // designation: '',
+  designations: [],
   gender: "",
   dateOfBirthInAD: null,
   dateOfDeathInAD: null,
@@ -188,7 +188,7 @@ const defaultValues = {
   facebookID: "",
   twitterID: "",
   mobile: "",
-  file: "",
+  profilePhotoFile: "",
   biography: "",
   biographyInNepali: "",
   activities: "",
@@ -225,7 +225,7 @@ function CreateCrew() {
   const onSubmit = (data) => {
     const submitData = {
       ...data,
-      file: data.file?.[0] || null,
+      profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
     debugger
@@ -437,7 +437,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
 
             <FormField
               control={form.control}
-              name="designation"
+              name="designations"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Designation</FormLabel>
@@ -644,7 +644,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
 
             <FormField
               control={form.control}
-              name="file"
+              name="profilePhotoFile"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Image</FormLabel>
