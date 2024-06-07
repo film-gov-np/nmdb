@@ -16,7 +16,7 @@ namespace nmdb.Controllers;
 
 [ApiController]
 [Authorize]
-[RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+[RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/cards")]
 public class CardRequestController : AuthorizedController
 {
@@ -46,27 +46,35 @@ public class CardRequestController : AuthorizedController
         }
         catch (Exception ex)
         {
-            throw ex;
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
         }
     }
 
-    [HttpGet("{id}")]
-    [AllowAnonymous]
+    [HttpGet("{id}")]    
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _cardRequestService.GetByIdAsync(id);
+        try
+        {
 
-        if (result.IsSuccess)
-        {
-            return Ok(result);
+            var result = await _cardRequestService.GetByIdAsync(id);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
-        else if (result.StatusCode == HttpStatusCode.NotFound)
+        catch (Exception ex)
         {
-            return NotFound(result);
-        }
-        else
-        {
-            return BadRequest(result);
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
+
         }
     }
 
@@ -79,14 +87,13 @@ public class CardRequestController : AuthorizedController
             if (!string.IsNullOrEmpty(GetUserId))
             {
 
-                var currentUser =  await _userManager.Users.FirstOrDefaultAsync(u => u.Id == GetUserId);
-                var crew = await _crewService.GetCrewByEmailAsync(currentUser.Email);
-                if (crew.Data == null)
+                var currentUserEmail = GetUserEmail;                
+                if (string.IsNullOrEmpty(currentUserEmail))
                 {
                     return BadRequest(ApiResponse<string>.ErrorResponse("Invalid card data.", HttpStatusCode.BadRequest));
                 }
 
-                var result = await _cardRequestService.RequestCardAsync(crew.Data.Id);
+                var result = await _cardRequestService.RequestCardAsync(currentUserEmail);
 
                 if (result.IsSuccess)
                 {
@@ -101,31 +108,40 @@ public class CardRequestController : AuthorizedController
         }
         catch (Exception ex)
         {
-            throw;
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
+
         }
     }
 
     [HttpPut("{id}/approve")]
     public async Task<IActionResult> ApproveCardRequest(int id, [FromBody] CardRequestDto cardRequestDto)
     {
-        if (cardRequestDto == null)
+        try
         {
-            return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
-        }
-        cardRequestDto.Authorship = GetUserEmail;
-        var result = await _cardRequestService.ApproveCardRequestAsync(id, cardRequestDto);
 
-        if (result.IsSuccess)
-        {
-            return Ok(result);
+            if (cardRequestDto == null)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+            }
+            cardRequestDto.Authorship = GetUserEmail;
+            var result = await _cardRequestService.ApproveCardRequestAsync(id, cardRequestDto);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
-        else if (result.StatusCode == HttpStatusCode.NotFound)
+        catch (Exception ex)
         {
-            return NotFound(result);
-        }
-        else
-        {
-            return BadRequest(result);
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
         }
     }
 }

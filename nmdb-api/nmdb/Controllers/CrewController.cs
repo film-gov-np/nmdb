@@ -15,7 +15,7 @@ namespace nmdb.Controllers
 {
     [ApiController]
     [Authorize]
-    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+    [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/crews")]
     public class CrewController : AuthorizedController
     {
@@ -29,6 +29,7 @@ namespace nmdb.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
             try

@@ -14,7 +14,7 @@ namespace nmdb.Controllers
 {
     [ApiController]
     [Authorize]
-    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+    [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/movies/")]
     public class MovieController : AuthorizedController
     {
@@ -28,6 +28,7 @@ namespace nmdb.Controllers
             _movieService = movieService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllLanguages")]
         public async Task<IActionResult> GetAllLanguages()
         {
@@ -42,6 +43,7 @@ namespace nmdb.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllGenres")]
         public async Task<IActionResult> GetAllGenres()
         {
@@ -56,13 +58,16 @@ namespace nmdb.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] MovieFilterParameters filterParameters)
         {
             var response = await _movieService.GetAllAsync(filterParameters);
             return Ok(response);
         }
-        [HttpGet("{id}")]
+
         [AllowAnonymous]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _movieService.GetByIdAsync(id);

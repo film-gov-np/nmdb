@@ -43,14 +43,14 @@ namespace Application.Services
             _crewService = crewService;
             _logger = logger;
         }
-        public async Task<ApiResponse<string>> RequestCardAsync(int crewId)
+        public async Task<ApiResponse<string>> RequestCardAsync(string email)
         {
             var response = new ApiResponse<string>();
 
             try
             {
-                _unitOfWork.BeginTransactionAsync();
-                var crewEntity = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+                await _unitOfWork.BeginTransactionAsync();
+                var crewEntity = await _unitOfWork.CrewRepository.GetByEmailAsync(email);
 
                 if (crewEntity != null)
                 {
@@ -60,7 +60,7 @@ namespace Application.Services
                     }
                     var request = new CardRequest
                     {
-                        CrewId = crewId,
+                        CrewId = crewEntity.Id,
                         CreatedAt = DateTime.UtcNow,
                         IsApproved = false
                     };
@@ -82,7 +82,7 @@ namespace Application.Services
                 else
                 {
                     response.IsSuccess = false;
-                    response.Message = $"Crew with id {crewId} does not exist.";
+                    response.Message = $"Crew with email '{email}' does not exist.";
                     response.StatusCode = HttpStatusCode.NotFound;
                 }
             }

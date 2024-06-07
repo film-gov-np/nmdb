@@ -5,5 +5,6 @@ namespace Application.Interfaces.Repositories;
 
 public interface ICrewRepository : IEfRepository<Crew>
 {
-    Crew GetCrewByEmail(string email);
+    Task<Crew> GetCrewByEmail(string email);
+    Task<Crew> GetCrewByIdWithAllIncludedProperties(int crewId);
 }
