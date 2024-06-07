@@ -169,7 +169,7 @@ public class CrewService : ICrewService
             }
 
             // Image Upload
-            if (crewRequestDto.ProfilePhoto != null)
+            if (crewRequestDto.ProfilePhotoFile != null)
             {
                 FileDTO fileDto = new FileDTO
                 {
