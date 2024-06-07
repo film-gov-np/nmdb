@@ -98,15 +98,15 @@ public class CrewService : ICrewService
 
         return ApiResponse<PaginationResponse<CrewListDto>>.SuccessResponse(response);
     }
-    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file)
+    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
     {
         try
         {
             string? profilePhotoUrl = null;
 
-            if (file != null && file.Length > 0)
+            if (crewRequestDto.ProfilePhotoFile != null && crewRequestDto.ProfilePhotoFile.Length > 0)
             {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = file });
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile });
                 if (!uploadResultApiResponse.IsSuccess)
                 {
                     return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);

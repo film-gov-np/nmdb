@@ -64,7 +64,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CrewRequestDto model, [FromForm] IFormFile file)
+        public async Task<IActionResult> Create([FromForm] CrewRequestDto model)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace nmdb.Controllers
                 }
 
                 model.Authorship = GetUserId;
-                var result = await _crewService.CreateCrewAsync(model, file);
+                var result = await _crewService.CreateCrewAsync(model);
 
                 if (result.IsSuccess)
                 {
@@ -92,7 +92,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CrewRequestDto crewRequestDto)
+        public async Task<IActionResult> Update(int id, [FromForm] CrewRequestDto crewRequestDto)
         {
             if (crewRequestDto == null)
             {

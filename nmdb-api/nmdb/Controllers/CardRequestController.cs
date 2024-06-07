@@ -8,6 +8,9 @@ using nmdb.Common;
 using nmdb.Filters;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Infrastructure.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace nmdb.Controllers;
 
@@ -19,11 +22,18 @@ public class CardRequestController : AuthorizedController
 {
     private readonly ILogger<CrewController> _logger;
     private readonly ICardRequestService _cardRequestService;
+    private readonly ICrewService _crewService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public CardRequestController(ILogger<CrewController> logger, ICardRequestService cardRequestService)
+    public CardRequestController(ILogger<CrewController> logger,
+        ICardRequestService cardRequestService,
+        UserManager<ApplicationUser> userManager,
+        ICrewService crewService)
     {
         _logger = logger;
         _cardRequestService = cardRequestService;
+        _userManager = userManager;
+        _crewService = crewService;
     }
 
     [HttpGet]
@@ -60,26 +70,34 @@ public class CardRequestController : AuthorizedController
         }
     }
 
-    [HttpPost("{crewId}/request")]
-    public async Task<IActionResult> RequestCard(int crewId)
+    [HttpPost("request")]
+    [RequiredRoles(AuthorizationConstants.CrewRole)]
+    public async Task<IActionResult> RequestCard()
     {
         try
         {
-            if (crewId == null)
+            if (!string.IsNullOrEmpty(GetUserId))
             {
-                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid card data.", HttpStatusCode.BadRequest));
-            }
-                        
-            var result = await _cardRequestService.RequestCardAsync(crewId);
 
-            if (result.IsSuccess)
-            {
-                return Ok(result);
+                var currentUser =  await _userManager.Users.FirstOrDefaultAsync(u => u.Id == GetUserId);
+                var crew = await _crewService.GetCrewByEmailAsync(currentUser.Email);
+                if (crew.Data == null)
+                {
+                    return BadRequest(ApiResponse<string>.ErrorResponse("Invalid card data.", HttpStatusCode.BadRequest));
+                }
+
+                var result = await _cardRequestService.RequestCardAsync(crew.Data.Id);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
             }
-            else
-            {
-                return BadRequest(result);
-            }
+            return NotFound(ApiResponse<string>.ErrorResponse("Something went wrong while requesting for the card."));
         }
         catch (Exception ex)
         {
