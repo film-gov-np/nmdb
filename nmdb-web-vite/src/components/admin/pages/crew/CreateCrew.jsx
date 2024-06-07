@@ -225,9 +225,10 @@ function CreateCrew() {
   const onSubmit = (data) => {
     const submitData = {
       ...data,
-      file: data.file?.[0],
+      file: data.file?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
+    debugger
     console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
