@@ -107,7 +107,7 @@ public class CrewService : ICrewService
 
             if (crewRequestDto.ProfilePhotoFile != null && crewRequestDto.ProfilePhotoFile.Length > 0)
             {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile });
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile, SubFolder="crews" });
                 if (!uploadResultApiResponse.IsSuccess)
                 {
                     return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
@@ -175,14 +175,15 @@ public class CrewService : ICrewService
                 {
                     Files = crewRequestDto.ProfilePhotoFile,
                     Thumbnail = false,
-                    ReadableName = true
+                    ReadableName = false,
+                    SubFolder="crews"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(crewEntity.ProfilePhoto))
-                        _fileService.RemoveFile(crewEntity.ProfilePhoto);
+                        _fileService.RemoveFile(crewEntity.ProfilePhoto,"crews");
 
                     crewEntity.ProfilePhoto = uploadResult.Data.FilePath;
                 }

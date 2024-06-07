@@ -12,6 +12,6 @@ namespace Application.Dtos.Media
         public IFormFile Files { get; set; }
         public bool ReadableName { get; set; }
         public bool Thumbnail { get; set; }
-
+        public string? SubFolder { get; set; }
     }
 }
