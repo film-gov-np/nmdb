@@ -3,6 +3,7 @@ using Application.Interfaces.Repositories;
 using Core;
 using Core.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,19 +19,38 @@ public class CrewRepository : EfRepository<Crew>, ICrewRepository
 
     public CrewRepository(AppDbContext dbContext) : base(dbContext)
     {
-
+        _context = dbContext;
     }
 
-    public Crew GetCrewByEmail(string email)
+    public async Task<Crew> GetCrewByEmail(string email)
     {
         try
         {
-            var crew = _context.Crews.FirstOrDefault(x => x.Email == email);
+            var crew = await _context.Crews.FirstOrDefaultAsync(x => x.Email == email);
             return crew;
         }
         catch (Exception ex)
         {
             throw ex;
+        }
+    }
+
+    public async Task<Crew> GetCrewByIdWithAllIncludedProperties(int crewId)
+    {
+        try
+        {
+            var crew = await _context.Crews
+                            .Include(cd => cd.CrewDesignations)
+                                .ThenInclude(fr => fr.FilmRole)
+                            .Include(mcr => mcr.MovieCrewRoles)
+                                .ThenInclude(m => m.Movie)
+                            .FirstOrDefaultAsync(c => c.Id == crewId);
+
+            return crew;
+        }
+        catch (Exception ex)
+        {
+            return null;
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace nmdb.Controllers
+﻿namespace nmdb.Controllers;
+
+public class UserConroller
 {
-    public class UserConroller
-    {
-    }
 }
