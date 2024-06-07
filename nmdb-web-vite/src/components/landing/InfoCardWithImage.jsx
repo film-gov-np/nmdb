@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { NavLink } from "react-router-dom";
+import Image from "../common/Image";
 
 const InfoCardWithImage = ({
   data,
@@ -13,15 +14,12 @@ const InfoCardWithImage = ({
   className,
   ...props
 }) => {
-  const handleImageLoadError = (e) => {
-    e.target?.src && (e.target.src = "/placeholder.svg");
-  };
 
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
         <NavLink to={navigateTo}>
-          <img
+          <Image
             src={
               imgPath
                 ? "https://image.tmdb.org/t/p/w500/" + imgPath
@@ -31,10 +29,9 @@ const InfoCardWithImage = ({
             width={width}
             height={height}
             className={cn(
-              "dark:brightness-80 h-auto w-full object-cover transition-all hover:scale-105",
+              "transition-all hover:scale-105",
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
             )}
-            onError={handleImageLoadError}
           />
         </NavLink>
       </div>
