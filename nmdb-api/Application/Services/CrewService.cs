@@ -144,7 +144,7 @@ public class CrewService : ICrewService
         var response = new ApiResponse<string>();
         try
         {
-            var crewEntity = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+            var crewEntity = await _unitOfWork.CrewRepository.GetCrewByIdWithAllIncludedProperties(crewId);
 
             if (crewEntity == null)
             {
@@ -169,6 +169,7 @@ public class CrewService : ICrewService
             crewEntity.UpdatedBy = crewRequestDto.Authorship;
             await _unitOfWork.CrewRepository.UpdateAsync(crewEntity);
             await _unitOfWork.CommitAsync();
+            response = ApiResponse<string>.SuccessResponseWithoutData($"The crew '{crewRequestDto.Name}' was updated successfully.", HttpStatusCode.OK);
         }
         catch (Exception ex)
         {
