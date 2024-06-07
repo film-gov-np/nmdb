@@ -14,13 +14,14 @@ namespace nmdb.Controllers
 {
     [ApiController]
     [Authorize]
-    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+    [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/theatres/")]
     public class TheatreController : AuthorizedController
     {
         private readonly ILogger<TheatreController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ITheatreService _theatreService;
+
         public TheatreController(ILogger<TheatreController> logger, IHttpContextAccessor contextAccessor, ITheatreService theatreService)
         {
             _logger = logger;
@@ -28,6 +29,9 @@ namespace nmdb.Controllers
             _theatreService = theatreService;
         }
 
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] TheatreFilterParameters filterParameters)
         {
             var response = await _theatreService.GetAllAsync(filterParameters);

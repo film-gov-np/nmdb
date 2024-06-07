@@ -15,7 +15,7 @@ namespace nmdb.Controllers
 {
     [ApiController]
     [Authorize]
-    [RequiredRoles(AuthorizationConstants.AdminRole, AuthorizationConstants.UserRole)]
+    [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/crews")]
     public class CrewController : AuthorizedController
     {
@@ -29,6 +29,7 @@ namespace nmdb.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
             try
@@ -64,7 +65,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CrewRequestDto model, [FromForm] IFormFile file)
+        public async Task<IActionResult> Create([FromForm] CrewRequestDto model)
         {
             try
             {
@@ -74,7 +75,7 @@ namespace nmdb.Controllers
                 }
 
                 model.Authorship = GetUserId;
-                var result = await _crewService.CreateCrewAsync(model, file);
+                var result = await _crewService.CreateCrewAsync(model);
 
                 if (result.IsSuccess)
                 {
@@ -92,11 +93,11 @@ namespace nmdb.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CrewRequestDto crewRequestDto)
+        public async Task<IActionResult> Update(int id, [FromForm] CrewRequestDto crewRequestDto)
         {
             if (crewRequestDto == null)
             {
-                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
+                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data provided.", HttpStatusCode.BadRequest));
             }
             crewRequestDto.Authorship = GetUserId;
             var result = await _crewService.UpdateCrewAsync(id, crewRequestDto);

@@ -27,7 +27,7 @@ namespace Application.Services;
 
 public class CrewService : ICrewService
 {
-    private readonly IUnitOfWork _unitOfWork;    
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
@@ -98,15 +98,15 @@ public class CrewService : ICrewService
 
         return ApiResponse<PaginationResponse<CrewListDto>>.SuccessResponse(response);
     }
-    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto, IFormFile file)
+    public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
     {
         try
         {
             string? profilePhotoUrl = null;
 
-            if (file != null && file.Length > 0)
+            if (crewRequestDto.ProfilePhotoFile != null && crewRequestDto.ProfilePhotoFile.Length > 0)
             {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = file });
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile });
                 if (!uploadResultApiResponse.IsSuccess)
                 {
                     return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
@@ -194,7 +194,7 @@ public class CrewService : ICrewService
 
         try
         {
-            var crew = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+            var crew = await _unitOfWork.CrewRepository.GetCrewByIdWithAllIncludedProperties(crewId);
 
             if (crew == null)
             {
@@ -206,6 +206,8 @@ public class CrewService : ICrewService
 
             var crewResponse = _mapper.Map<CrewRequestDto>(crew);
 
+            crewResponse.Designations = MapCrewDesignations(crew.CrewDesignations);
+            crewResponse.Movies = MapCrewMovies(crew.MovieCrewRoles);
 
             response.IsSuccess = true;
             response.Data = crewResponse;
@@ -220,6 +222,40 @@ public class CrewService : ICrewService
         }
 
         return response;
+    }
+
+    private List<CrewDesignationDto> MapCrewDesignations(List<CrewDesignation> crewDesignations)
+    {
+        var crewDesignationDtos = new List<CrewDesignationDto>();
+        foreach(var designation in crewDesignations)
+        {
+            CrewDesignationDto designationDto = new CrewDesignationDto
+            {
+                Id = designation.FilmRole.Id,
+                RoleName= designation.FilmRole.RoleName
+            };
+            crewDesignationDtos.Add(designationDto);
+        }
+
+        return crewDesignationDtos;
+    }
+
+
+    private List<CrewMovieDto> MapCrewMovies(List<MovieCrewRole> movieCrewRoles)
+    {
+        var crewMovieDtos = new List<CrewMovieDto>();
+        foreach (var crewMovie in movieCrewRoles)
+        {
+            CrewMovieDto movie = new CrewMovieDto
+            {
+                Id = crewMovie.Movie.Id,
+                Name = crewMovie.Movie.Name,
+                NepaliName = crewMovie.Movie.NepaliName,
+            };
+            crewMovieDtos.Add(movie);
+        }
+
+        return crewMovieDtos;
     }
 
     public async Task<ApiResponse<CrewRequestDto>> GetCrewByEmailAsync(string email)

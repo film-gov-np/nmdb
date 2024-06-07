@@ -9,7 +9,6 @@ namespace Application.Dtos.Crew
     public class CrewDesignationDto
     {
         public int Id { get; set; }
-        public int CrewId { get; set; }
-        public List<int> RoleIds { get; set; }
+        public string? RoleName { get; set; }
     }
 }

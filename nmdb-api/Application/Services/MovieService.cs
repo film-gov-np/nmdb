@@ -56,7 +56,7 @@ public class MovieService : IMovieService
                 {
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
-                    ReadableName = true
+                    ReadableName = false
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -267,296 +267,296 @@ public class MovieService : IMovieService
         }
         return string.Empty;
     }
-        public async Task<ApiResponse<MovieResponseDto>> GetByIdAsync(int movieId)
+    public async Task<ApiResponse<MovieResponseDto>> GetByIdAsync(int movieId)
+    {
+        var response = new ApiResponse<MovieResponseDto>();
+
+        try
         {
-            var response = new ApiResponse<MovieResponseDto>();
-
-            try
+            var movieEntity = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
+            if (movieEntity == null)
             {
-                var movieEntity = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
-                if (movieEntity == null)
-                {
-                    response.IsSuccess = false;
-                    response.Errors.Add($"Movie with id '{movieId}' could not be found.");
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-
-                var movieResponse = _mapper.Map<MovieResponseDto>(movieEntity);
-                movieResponse.Censor = _mapper.Map<MovieCensorDto>(movieEntity.Censor);
-                movieResponse.Genres = movieEntity.MovieGenres.Select(g => new GenreDto
-                {
-                    Id = g.GenreId,
-                    Name = g.Genre.Name
-                }).ToList();
-                movieResponse.Languages = movieEntity.MovieLanguages.Select(l => new LanguageDto
-                {
-                    Id = l.LanguageId,
-                    Name = l.Language.Name
-                }).ToList();
-                movieResponse.ProductionHouses = movieEntity.MovieProductionHouses.Select(mvp => new ProductionHouseDto { Id = mvp.ProductionHouseId, Name = mvp.ProductionHouse.Name }).ToList();
-                movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
-                movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
-
-
-                response.IsSuccess = true;
-                response.Data = movieResponse;
-                response.StatusCode = HttpStatusCode.OK;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while retrieving movie with id '{movieId}'.");
                 response.IsSuccess = false;
-                response.Errors.Add($"An error occurred while retrieving movie with id '{movieId}'.");
-                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Errors.Add($"Movie with id '{movieId}' could not be found.");
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
             }
 
-            return response;
-        }
-
-        private List<MovieTheatreDto> MapMovieTheatres(List<MovieTheatre> movieTheatres)
-        {
-            // Grouping the entities by ShowingDate
-            var groupedEntities = movieTheatres.GroupBy(e => e.ShowingDate).ToList();
-
-            var movieTheatreDtos = new List<MovieTheatreDto>();
-
-            foreach (var group in groupedEntities)
+            var movieResponse = _mapper.Map<MovieResponseDto>(movieEntity);
+            movieResponse.Censor = _mapper.Map<MovieCensorDto>(movieEntity.Censor);
+            movieResponse.Genres = movieEntity.MovieGenres.Select(g => new GenreDto
             {
-                var movieTheatreDto = new MovieTheatreDto
-                {
-                    ShowingDate = group.Key,
-                    MovieTheatreDetails = group.Select(e => new TheatreDetailsDto
-                    {
-                        Id = e.TheatreId,
-                        Name = e.Theatre.Name,
-                        Address = e.Theatre.Address
-                    }).ToList()
-                };
-
-                movieTheatreDtos.Add(movieTheatreDto);
-            }
-
-            return movieTheatreDtos;
-        }
-
-        private List<MovieCrewRoleDto> MapToMovieCrewRoleDto(List<MovieCrewRole> movieCrewRoles)
-        {
-            var crewRolesDtos = new List<MovieCrewRoleDto>();
-            var groupedByRole = movieCrewRoles
-                .GroupBy(mcr => new
-                {
-                    mcr.RoleId,
-                    mcr.FilmRole.RoleName,
-                })
-                .Select(group => new MovieCrewRoleDto
-                {
-                    RoleId = group.Key.RoleId,
-                    RoleName = group.Key.RoleName,
-                    Crews = group.Select(mcr => mcr.Crew)
-                                .Select(c => new CrewBasicDto
-                                {
-                                    Id = c.Id,
-                                    Name = c.Name,
-                                    NepaliName = c.NepaliName,
-                                    NickName = c.NickName,
-                                    Email = "",//when email is added to the crew load it here
-                                    ThumbnailPhoto = c.ThumbnailPhoto,
-                                    ProfilePhoto = c.ProfilePhoto,
-                                })
-                                .ToList()
-                })
-                .ToList();
-
-            return groupedByRole;
-        }
-
-        public async Task<ApiResponse<string>> UpdateAsync(int movieId, MovieRequestDto movieRequestDto)
-        {
-            var response = new ApiResponse<string>();
-
-            try
+                Id = g.GenreId,
+                Name = g.Genre.Name
+            }).ToList();
+            movieResponse.Languages = movieEntity.MovieLanguages.Select(l => new LanguageDto
             {
+                Id = l.LanguageId,
+                Name = l.Language.Name
+            }).ToList();
+            movieResponse.ProductionHouses = movieEntity.MovieProductionHouses.Select(mvp => new ProductionHouseDto { Id = mvp.ProductionHouseId, Name = mvp.ProductionHouse.Name }).ToList();
+            movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
+            movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
 
-                await _unitOfWork.BeginTransactionAsync();
-                //string includeProperties = "MovieGenres,MovieTheatres,MovieProductionHouses,MovieCrewRoles,MovieLanguages,Censor";
-                var existingMovie = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
 
-
-                if (existingMovie == null)
-                {
-                    return ApiResponse<string>.ErrorResponse($"Movie with '{movieId}' could not be found.", HttpStatusCode.NotFound);
-                }
-                string movieNameBeforeMapping = existingMovie.Name;
-
-                _mapper.Map(movieRequestDto, existingMovie);
-
-                // Image Upload
-                if (movieRequestDto.ThumbnailImageFile != null)
-                {
-                    FileDTO fileDto = new FileDTO
-                    {
-                        Files = movieRequestDto.ThumbnailImageFile,
-                        Thumbnail = false,
-                        ReadableName = true
-                    };
-                    var uploadResult = await _fileService.UploadFile(fileDto);
-                    if (uploadResult.IsSuccess && uploadResult.Data != null)
-                    {
-                        // Delete existing image
-                        if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
-                            _fileService.RemoveFile(existingMovie.ThumbnailImage);
-
-                        existingMovie.ThumbnailImage = uploadResult.Data.FilePath;
-                    }
-                }
-
-                if (movieRequestDto.Languages != null && movieRequestDto.Languages.Any())
-                {
-                    existingMovie.MovieLanguages.Clear();
-                    foreach (var languageDto in movieRequestDto.Languages)
-                    {
-                        var movieLanguageEntity = new MovieLanguage
-                        {
-                            Movie = existingMovie,
-                            LanguageId = languageDto.Id
-                        };
-                        existingMovie.MovieLanguages.Add(movieLanguageEntity);
-                    }
-                }
-
-                if (movieRequestDto.Genres != null && movieRequestDto.Genres.Any())
-                {
-                    existingMovie.MovieGenres.Clear();
-                    foreach (var genreDto in movieRequestDto.Genres)
-                    {
-                        var movieLanguageEntity = new MovieGenre
-                        {
-                            Movie = existingMovie,
-                            GenreId = genreDto.Id
-                        };
-                        existingMovie.MovieGenres.Add(movieLanguageEntity);
-                    }
-                }
-
-                if (movieRequestDto.ProductionHouses != null && movieRequestDto.ProductionHouses.Any())
-                {
-                    existingMovie.MovieProductionHouses.Clear();
-                    foreach (var productionHouseDto in movieRequestDto.ProductionHouses)
-                    {
-                        var movieProductionHouse = new MovieProductionHouse
-                        {
-                            Movie = existingMovie,
-                            ProductionHouseId = productionHouseDto.Id
-                        };
-                        existingMovie.MovieProductionHouses.Add(movieProductionHouse);
-                    }
-                }
-
-                if (movieRequestDto.Theatres != null && movieRequestDto.Theatres.Any())
-                {
-                    // Fetch existing MovieTheatres associated with the existingMovie
-                    var existingMovieTheatres = existingMovie.MovieTheatres.ToList();
-
-                    // Update or add new MovieTheatres
-                    foreach (var theatreDto in movieRequestDto.Theatres)
-                    {
-                        foreach (var theatreDetailDto in theatreDto.MovieTheatreDetails)
-                        {
-                            var existingMovieTheatre = existingMovieTheatres
-                                .FirstOrDefault(mt => mt.TheatreId == theatreDetailDto.Id);
-
-                            if (existingMovieTheatre != null)
-                            {
-                                // Update existing MovieTheatre if necessary
-                                existingMovieTheatre.ShowingDate = theatreDto.ShowingDate;
-                            }
-                            else
-                            {
-                                var newMovieTheatre = new MovieTheatre
-                                {
-                                    MovieId = existingMovie.Id,
-                                    TheatreId = theatreDetailDto.Id,
-                                    ShowingDate = theatreDto.ShowingDate,
-                                    Movie = existingMovie // Set the relationship
-                                };
-                                existingMovie.MovieTheatres.Add(newMovieTheatre);
-                            }
-                        }
-                    }
-
-                    // Remove any unnecessary MovieTheatres
-                    foreach (var existingMovieTheatre in existingMovieTheatres)
-                    {
-                        if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.Id == existingMovieTheatre.TheatreId)))
-                        {
-                            existingMovie.MovieTheatres.Remove(existingMovieTheatre);
-                        }
-                    }
-                }
-
-                if (movieRequestDto.CrewRoles != null && movieRequestDto.CrewRoles.Any())
-                {
-                    existingMovie.MovieCrewRoles.Clear();
-                    foreach (var crewRole in movieRequestDto.CrewRoles)
-                    {
-                        foreach (var crew in crewRole.Crews)
-                        {
-                            var crewRoleEntity = new MovieCrewRole
-                            {
-                                CrewId = crew.Id,
-                                RoleId = crewRole.RoleId
-                            };
-
-                            existingMovie.MovieCrewRoles.Add(crewRoleEntity);
-                        }
-                    }
-                }
-
-                if (movieRequestDto.Censor != null)
-                {
-                    var existingCensor = existingMovie.Censor;
-
-                    if (existingCensor == null)
-                    {
-                        var newCensor = _mapper.Map<MovieCensor>(movieRequestDto.Censor);
-                        newCensor.MovieId = existingMovie.Id;
-                        existingMovie.Censor = newCensor;
-                    }
-                    else
-                    {
-                        _mapper.Map(movieRequestDto.Censor, existingCensor);
-                    }
-                }
-
-                existingMovie.UpdatedBy = movieRequestDto.AuditedBy;
-
-                await _unitOfWork.MovieRepository.UpdateAsync(existingMovie);
-                await _unitOfWork.CommitAsync();
-
-                response = ApiResponse<string>.SuccessResponseWithoutData($"The movie '{movieNameBeforeMapping}' was updated successfully.", HttpStatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                _logger.LogError(ex, "An error occurred while updating the movie.");
-                response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
-            }
-
-            return response;
+            response.IsSuccess = true;
+            response.Data = movieResponse;
+            response.StatusCode = HttpStatusCode.OK;
         }
-
-        public async Task<ApiResponse<List<LanguageListResponseDto>>> GetAllLanguages()
+        catch (Exception ex)
         {
-            var languages = await _unitOfWork.MovieRepository.GetAllLanguages();
-            var languagesDto = _mapper.Map<List<LanguageListResponseDto>>(languages);
-            return ApiResponse<List<LanguageListResponseDto>>.SuccessResponse(languagesDto);
+            _logger.LogError(ex, $"An error occurred while retrieving movie with id '{movieId}'.");
+            response.IsSuccess = false;
+            response.Errors.Add($"An error occurred while retrieving movie with id '{movieId}'.");
+            response.StatusCode = HttpStatusCode.InternalServerError;
         }
 
-        public async Task<ApiResponse<List<GenresListResponseDto>>> GetAllGenres()
-        {
-            var genres = await _unitOfWork.MovieRepository.GetAllGenres();
-            var genresDto = _mapper.Map<List<GenresListResponseDto>>(genres);
-            return ApiResponse<List<GenresListResponseDto>>.SuccessResponse(genresDto);
-        }
+        return response;
     }
+
+    private List<MovieTheatreDto> MapMovieTheatres(List<MovieTheatre> movieTheatres)
+    {
+        // Grouping the entities by ShowingDate
+        var groupedEntities = movieTheatres.GroupBy(e => e.ShowingDate).ToList();
+
+        var movieTheatreDtos = new List<MovieTheatreDto>();
+
+        foreach (var group in groupedEntities)
+        {
+            var movieTheatreDto = new MovieTheatreDto
+            {
+                ShowingDate = group.Key,
+                MovieTheatreDetails = group.Select(e => new TheatreDetailsDto
+                {
+                    Id = e.TheatreId,
+                    Name = e.Theatre.Name,
+                    Address = e.Theatre.Address
+                }).ToList()
+            };
+
+            movieTheatreDtos.Add(movieTheatreDto);
+        }
+
+        return movieTheatreDtos;
+    }
+
+    private List<MovieCrewRoleDto> MapToMovieCrewRoleDto(List<MovieCrewRole> movieCrewRoles)
+    {
+        var crewRolesDtos = new List<MovieCrewRoleDto>();
+        var groupedByRole = movieCrewRoles
+            .GroupBy(mcr => new
+            {
+                mcr.RoleId,
+                mcr.FilmRole.RoleName,
+            })
+            .Select(group => new MovieCrewRoleDto
+            {
+                RoleId = group.Key.RoleId,
+                RoleName = group.Key.RoleName,
+                Crews = group.Select(mcr => mcr.Crew)
+                            .Select(c => new CrewBasicDto
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                NepaliName = c.NepaliName,
+                                NickName = c.NickName,
+                                Email = "",//when email is added to the crew load it here
+                                ThumbnailPhoto = c.ThumbnailPhoto,
+                                ProfilePhoto = c.ProfilePhoto,
+                            })
+                            .ToList()
+            })
+            .ToList();
+
+        return groupedByRole;
+    }
+
+    public async Task<ApiResponse<string>> UpdateAsync(int movieId, MovieRequestDto movieRequestDto)
+    {
+        var response = new ApiResponse<string>();
+
+        try
+        {
+
+            await _unitOfWork.BeginTransactionAsync();
+            //string includeProperties = "MovieGenres,MovieTheatres,MovieProductionHouses,MovieCrewRoles,MovieLanguages,Censor";
+            var existingMovie = await _unitOfWork.MovieRepository.GetMovieWithCrewDetails(movieId);
+
+
+            if (existingMovie == null)
+            {
+                return ApiResponse<string>.ErrorResponse($"Movie with '{movieId}' could not be found.", HttpStatusCode.NotFound);
+            }
+            string movieNameBeforeMapping = existingMovie.Name;
+
+            _mapper.Map(movieRequestDto, existingMovie);
+
+            // Image Upload
+            if (movieRequestDto.ThumbnailImageFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = movieRequestDto.ThumbnailImageFile,
+                    Thumbnail = false,
+                    ReadableName = true
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    // Delete existing image
+                    if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
+                        _fileService.RemoveFile(existingMovie.ThumbnailImage);
+
+                    existingMovie.ThumbnailImage = uploadResult.Data.FilePath;
+                }
+            }
+
+            if (movieRequestDto.Languages != null && movieRequestDto.Languages.Any())
+            {
+                existingMovie.MovieLanguages.Clear();
+                foreach (var languageDto in movieRequestDto.Languages)
+                {
+                    var movieLanguageEntity = new MovieLanguage
+                    {
+                        Movie = existingMovie,
+                        LanguageId = languageDto.Id
+                    };
+                    existingMovie.MovieLanguages.Add(movieLanguageEntity);
+                }
+            }
+
+            if (movieRequestDto.Genres != null && movieRequestDto.Genres.Any())
+            {
+                existingMovie.MovieGenres.Clear();
+                foreach (var genreDto in movieRequestDto.Genres)
+                {
+                    var movieLanguageEntity = new MovieGenre
+                    {
+                        Movie = existingMovie,
+                        GenreId = genreDto.Id
+                    };
+                    existingMovie.MovieGenres.Add(movieLanguageEntity);
+                }
+            }
+
+            if (movieRequestDto.ProductionHouses != null && movieRequestDto.ProductionHouses.Any())
+            {
+                existingMovie.MovieProductionHouses.Clear();
+                foreach (var productionHouseDto in movieRequestDto.ProductionHouses)
+                {
+                    var movieProductionHouse = new MovieProductionHouse
+                    {
+                        Movie = existingMovie,
+                        ProductionHouseId = productionHouseDto.Id
+                    };
+                    existingMovie.MovieProductionHouses.Add(movieProductionHouse);
+                }
+            }
+
+            if (movieRequestDto.Theatres != null && movieRequestDto.Theatres.Any())
+            {
+                // Fetch existing MovieTheatres associated with the existingMovie
+                var existingMovieTheatres = existingMovie.MovieTheatres.ToList();
+
+                // Update or add new MovieTheatres
+                foreach (var theatreDto in movieRequestDto.Theatres)
+                {
+                    foreach (var theatreDetailDto in theatreDto.MovieTheatreDetails)
+                    {
+                        var existingMovieTheatre = existingMovieTheatres
+                            .FirstOrDefault(mt => mt.TheatreId == theatreDetailDto.Id);
+
+                        if (existingMovieTheatre != null)
+                        {
+                            // Update existing MovieTheatre if necessary
+                            existingMovieTheatre.ShowingDate = theatreDto.ShowingDate;
+                        }
+                        else
+                        {
+                            var newMovieTheatre = new MovieTheatre
+                            {
+                                MovieId = existingMovie.Id,
+                                TheatreId = theatreDetailDto.Id,
+                                ShowingDate = theatreDto.ShowingDate,
+                                Movie = existingMovie // Set the relationship
+                            };
+                            existingMovie.MovieTheatres.Add(newMovieTheatre);
+                        }
+                    }
+                }
+
+                // Remove any unnecessary MovieTheatres
+                foreach (var existingMovieTheatre in existingMovieTheatres)
+                {
+                    if (!movieRequestDto.Theatres.Any(td => td.MovieTheatreDetails.Any(mtd => mtd.Id == existingMovieTheatre.TheatreId)))
+                    {
+                        existingMovie.MovieTheatres.Remove(existingMovieTheatre);
+                    }
+                }
+            }
+
+            if (movieRequestDto.CrewRoles != null && movieRequestDto.CrewRoles.Any())
+            {
+                existingMovie.MovieCrewRoles.Clear();
+                foreach (var crewRole in movieRequestDto.CrewRoles)
+                {
+                    foreach (var crew in crewRole.Crews)
+                    {
+                        var crewRoleEntity = new MovieCrewRole
+                        {
+                            CrewId = crew.Id,
+                            RoleId = crewRole.RoleId
+                        };
+
+                        existingMovie.MovieCrewRoles.Add(crewRoleEntity);
+                    }
+                }
+            }
+
+            if (movieRequestDto.Censor != null)
+            {
+                var existingCensor = existingMovie.Censor;
+
+                if (existingCensor == null)
+                {
+                    var newCensor = _mapper.Map<MovieCensor>(movieRequestDto.Censor);
+                    newCensor.MovieId = existingMovie.Id;
+                    existingMovie.Censor = newCensor;
+                }
+                else
+                {
+                    _mapper.Map(movieRequestDto.Censor, existingCensor);
+                }
+            }
+
+            existingMovie.UpdatedBy = movieRequestDto.AuditedBy;
+
+            await _unitOfWork.MovieRepository.UpdateAsync(existingMovie);
+            await _unitOfWork.CommitAsync();
+
+            response = ApiResponse<string>.SuccessResponseWithoutData($"The movie '{movieNameBeforeMapping}' was updated successfully.", HttpStatusCode.OK);
+        }
+        catch (Exception ex)
+        {
+            _unitOfWork.Rollback();
+            _logger.LogError(ex, "An error occurred while updating the movie.");
+            response = ApiResponse<string>.ErrorResponse(new List<string> { ex.Message }, HttpStatusCode.InternalServerError);
+        }
+
+        return response;
+    }
+
+    public async Task<ApiResponse<List<LanguageListResponseDto>>> GetAllLanguages()
+    {
+        var languages = await _unitOfWork.MovieRepository.GetAllLanguages();
+        var languagesDto = _mapper.Map<List<LanguageListResponseDto>>(languages);
+        return ApiResponse<List<LanguageListResponseDto>>.SuccessResponse(languagesDto);
+    }
+
+    public async Task<ApiResponse<List<GenresListResponseDto>>> GetAllGenres()
+    {
+        var genres = await _unitOfWork.MovieRepository.GetAllGenres();
+        var genresDto = _mapper.Map<List<GenresListResponseDto>>(genres);
+        return ApiResponse<List<GenresListResponseDto>>.SuccessResponse(genresDto);
+    }
+}

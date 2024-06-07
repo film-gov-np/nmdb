@@ -57,6 +57,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .IsUnique();
 
 
+        builder.Entity<Crew>()
+            .HasIndex(c=>c.Email)
+            .IsUnique();
+
         // Crew Role/Designation
         builder.Entity<CrewDesignation>()
             .HasKey(cr => new { cr.CrewId, cr.RoleId });

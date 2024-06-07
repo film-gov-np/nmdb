@@ -43,14 +43,14 @@ namespace Application.Services
             _crewService = crewService;
             _logger = logger;
         }
-        public async Task<ApiResponse<string>> RequestCardAsync(int crewId)
+        public async Task<ApiResponse<string>> RequestCardAsync(string email)
         {
             var response = new ApiResponse<string>();
 
             try
             {
-                _unitOfWork.BeginTransactionAsync();
-                var crewEntity = await _unitOfWork.CrewRepository.GetByIdAsync(crewId);
+                await _unitOfWork.BeginTransactionAsync();
+                var crewEntity = await _unitOfWork.CrewRepository.GetByEmailAsync(email);
 
                 if (crewEntity != null)
                 {
@@ -59,8 +59,8 @@ namespace Application.Services
                         return ApiResponse<string>.ErrorResponse("You have already requested a card.", HttpStatusCode.NotModified);
                     }
                     var request = new CardRequest
-                    {                        
-                        CrewId = crewId,
+                    {
+                        CrewId = crewEntity.Id,
                         CreatedAt = DateTime.UtcNow,
                         IsApproved = false
                     };
@@ -71,14 +71,20 @@ namespace Application.Services
                     await _unitOfWork.CommitAsync();
 
                     await _emailService.Send(
-                        "", // admin or info email
+                        "test@nmdb.com", // admin or info email
                         "Card Requested",
                         EmailTemplate.CardRequested.Replace("{{crew}}", crewEntity.Email)
                         );
+
+                    response.IsSuccess = true;
+                    response.Message = $"Card requested succesfully";                    
                 }
-                response.IsSuccess = false;
-                response.Message = $"Crew with id {crewId} does not exist.";
-                response.StatusCode = HttpStatusCode.NotFound;
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Crew with email '{email}' does not exist.";
+                    response.StatusCode = HttpStatusCode.NotFound;
+                }
             }
             catch (Exception ex)
             {

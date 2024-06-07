@@ -8,7 +8,7 @@ namespace Application.Interfaces.Services;
 
 public interface ICardRequestService
 {
-    Task<ApiResponse<string>> RequestCardAsync(int crewId);
+    Task<ApiResponse<string>> RequestCardAsync(string email);
     Task<ApiResponse<string>> ApproveCardRequestAsync(int cardId , CardRequestDto cardRequestDto);
     Task<ApiResponse<PaginationResponse<CardRequestDto>>> GetAllAsync(CardRequestFilterParameters filterParameters);
     Task<ApiResponse<CardRequestDto>> GetByIdAsync(int crewId);
