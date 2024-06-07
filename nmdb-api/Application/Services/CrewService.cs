@@ -115,6 +115,7 @@ public class CrewService : ICrewService
                 profilePhotoUrl = uploadResultApiResponse?.Data?.FilePath;
             }
 
+
             await _unitOfWork.BeginTransactionAsync();
             var crewEntity = _mapper.Map<Crew>(crewRequestDto);
 
@@ -165,7 +166,28 @@ public class CrewService : ICrewService
                     };
                     crewEntity.CrewDesignations.Add(crewDesignation);
                 }
-            }            
+            }
+
+            // Image Upload
+            if (crewRequestDto.ProfilePhoto != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = crewRequestDto.ProfilePhotoFile,
+                    Thumbnail = false,
+                    ReadableName = true
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    // Delete existing image
+                    if (!string.IsNullOrEmpty(crewEntity.ProfilePhoto))
+                        _fileService.RemoveFile(crewEntity.ProfilePhoto);
+
+                    crewEntity.ProfilePhoto = uploadResult.Data.FilePath;
+                }
+            }
+
             crewEntity.UpdatedBy = crewRequestDto.Authorship;
             await _unitOfWork.CrewRepository.UpdateAsync(crewEntity);
             await _unitOfWork.CommitAsync();
