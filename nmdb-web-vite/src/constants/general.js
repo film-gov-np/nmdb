@@ -1,3 +1,4 @@
+export const Date_Format = 'yyyy-MM-dd';
 export const Gender = [
   {
     value: "0",

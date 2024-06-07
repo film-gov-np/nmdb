@@ -27,19 +27,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { cn, sanitizeData } from "@/lib/utils";
+import { sanitizeData } from "@/lib/utils";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import DatePickerForForm from "@/components/common/formElements/DatePicker";
-import { Gender } from "@/constants/general";
-import { BaseAPIUrl, ServerPath } from "@/constants/authConstant";
+import { Date_Format, Gender } from "@/constants/general";
+import { ServerPath } from "@/constants/authConstant";
+import DateInput from "@/components/ui/custom/DateInput";
+import { format, isValid, parse } from "date-fns";
+import Image from "@/components/common/Image";
 
 const FileInput = ({ field, previews, setPreviews }) => {
   const handleUploadedFile = (event) => {
@@ -72,7 +68,7 @@ const FileInput = ({ field, previews, setPreviews }) => {
                 className="max-h-[320px] flex-grow basis-1/3"
                 key={"thumbnailMovie" + index}
               >
-                <img
+                <Image
                   className="h-full w-full rounded-md  object-cover"
                   src={preview}
                   alt={"Picture" + index}
@@ -149,6 +145,46 @@ const formSchema = z.object({
         message: "Death date must be in the past.",
       },
     ),
+  dateOfBirthInBS: z
+    .string()
+    .refine(
+      (dateStr) => {
+        // Parse the date string using date-fns
+        debugger;
+        const parsedDate = parse(dateStr, Date_Format, new Date());
+
+        // Check if the parsed date is valid and matches the input string
+        const isValidDate =
+          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+
+        return isValidDate;
+      },
+      {
+        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+      },
+    )
+    .optional()
+    .or(z.literal("")),
+  dateOfDeathInBS: z
+    .string()
+    .refine(
+      (dateStr) => {
+        // Parse the date string using date-fns
+        debugger;
+        const parsedDate = parse(dateStr, Date_Format, new Date());
+
+        // Check if the parsed date is valid and matches the input string
+        const isValidDate =
+          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+
+        return isValidDate;
+      },
+      {
+        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+      },
+    )
+    .optional()
+    .or(z.literal("")),
   birthPlace: z.string().optional().or(z.literal("")),
   height: z.string().optional().or(z.literal("")),
   starSign: z.string().optional().or(z.literal("")),
@@ -167,6 +203,7 @@ const formSchema = z.object({
     .transform((value) => value === "true")
     .optional(),
   profilePhotoFile: z.any(),
+  profilePhoto: z.any(),
 });
 
 const defaultValues = {
@@ -188,6 +225,7 @@ const defaultValues = {
   facebookID: "",
   twitterID: "",
   mobile: "",
+  profilePhoto: "",
   profilePhotoFile: "",
   biography: "",
   biographyInNepali: "",
@@ -195,6 +233,8 @@ const defaultValues = {
   trivia: "",
   tradeMark: "",
   isVerified: "false",
+  dateOfBirthInBS: "",
+  dateOfDeathInBS: "",
 };
 
 function CreateCrew() {
@@ -228,7 +268,7 @@ function CreateCrew() {
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
-    debugger
+    debugger;
     console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
@@ -331,11 +371,17 @@ const getCrewFlimRoles = async (apiPath) => {
   return apiResponse.data;
 };
 function CrewForm({ crew, renderMode, onSubmit }) {
-  const [previews, setPreviews] = useState(crew?.profilePhoto ? [ServerPath + crew?.profilePhoto] : []);
+  const [previews, setPreviews] = useState(
+    crew?.profilePhoto ? [ServerPath + crew?.profilePhoto] : [],
+  );
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: sanitizeData({...crew, isVerified: crew.isVerified.toString()}),
+    defaultValues: sanitizeData({
+      ...crew,
+      isVerified: crew.isVerified.toString(),
+    }),
   });
+  form.setValue("profilePhoto", crew.profilePhoto);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["FlimRolesforCrews"],
@@ -489,11 +535,34 @@ function CrewForm({ crew, renderMode, onSubmit }) {
 
             <FormField
               control={form.control}
+              name="dateOfBirthInBS"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Birth Date ( in B.S. )</FormLabel>
+                  <DateInput value={field.value} field={field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="dateOfBirthInAD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Birth Date</FormLabel>
+                  <FormLabel>Birth Date ( in A.D. )</FormLabel>
                   <DatePickerForForm field={field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dateOfDeathInBS"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date Of Death ( in B.S. )</FormLabel>
+                  <DateInput value={field.value} field={field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -503,7 +572,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
               name="dateOfDeathInAD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Death Date</FormLabel>
+                  <FormLabel>Date Of Death ( in A.D. )</FormLabel>
                   <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
