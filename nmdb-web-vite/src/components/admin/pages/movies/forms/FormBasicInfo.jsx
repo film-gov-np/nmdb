@@ -16,55 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-
-const FileInput = ({ field}) => {
-  const [previews, setPreviews] = useState([]);
-  // if(field.value){
-  //   setPreviews(field.value)
-  // }
-  const handleUploadedFile = (event) => {
-    const files = event.target.files;
-    const urlImages = [];
-    for (const key in files) {
-      if (typeof files[key] !== "object") continue;
-      urlImages.push(URL.createObjectURL(files[key]));
-    }
-    setPreviews(urlImages);
-  };
-
-  return (
-    <div>
-      <FormControl>
-        <Input
-          type="file"
-          {...field}
-          // value={field.value}
-          // multiple
-          onChange={(e) => {
-            // setValue(e.target.value);
-            field.onChange(e.target.files);
-            handleUploadedFile(e);
-          }}
-        />
-      </FormControl>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {previews?.map((preview, index) => (
-          <div
-            className="max-h-[320px] flex-grow basis-1/3"
-            key={"thumbnailMovie" + index}
-          >
-            <img
-              className="h-full w-full rounded-md  object-cover"
-              src={preview}
-              alt={"Picture" + index}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import { FileInput } from "@/components/common/formElements/FileInput";
 
 const FormBasicInfo = ({ form, previews, setPreviews }) => {
   return (
@@ -131,7 +83,6 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="thumbnailImageFile"
@@ -149,13 +100,15 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
         />
         <FormField
           control={form.control}
-          name="officialSiteUrl"
-          render={({ field }) => (
+          name="coverImageFile"
+          render={({field }) => (
             <FormItem className="lg:col-span-3">
-              <FormLabel>Official Site</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
+              <FormLabel>Cover Image</FormLabel>
+              <FileInput
+                field={field}
+                previews={previews}
+                setPreviews={setPreviews}
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -168,8 +121,8 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <FormLabel>Movie Category</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customCategory"
               >
                 <FormControl>
@@ -181,7 +134,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
                   {movieCategories.map((category, index) => (
                     <SelectItem
                       key={"movie-category-" + index}
-                      value={category.value}
+                      value={category.value.toString()}
                     >
                       {category.label}
                     </SelectItem>
@@ -200,8 +153,8 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <FormLabel>Movie Status</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customStatus"
               >
                 <FormControl>
@@ -213,7 +166,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
                   {movieStatuses.map((status, index) => (
                     <SelectItem
                       key={"movie-status-" + index}
-                      value={status.value}
+                      value={status.value.toString()}
                     >
                       {status.label}
                     </SelectItem>
@@ -232,8 +185,8 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
               <FormLabel>Movie Color</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customColor"
               >
                 <FormControl>
@@ -245,7 +198,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
                   {movieColors.map((color, index) => (
                     <SelectItem
                       key={"movie-color-" + index}
-                      value={color.value}
+                      value={color.value.toString()}
                     >
                       {color.label}
                     </SelectItem>
@@ -275,9 +228,11 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             </FormItem>
           )}
         />
+        <div className=" hidden lg:visible"></div>
+
         <FormField
           control={form.control}
-          name="flimingLocation"
+          name="filmingLocaion"
           render={({ field }) => (
             <FormItem className="lg:col-span-3">
               <FormLabel>Fliming Location</FormLabel>
@@ -288,7 +243,19 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
             </FormItem>
           )}
         />
-        <div className=" hidden lg:visible"></div>
+        <FormField
+          control={form.control}
+          name="officialSiteUrl"
+          render={({ field }) => (
+            <FormItem className="lg:col-span-3">
+              <FormLabel>Official Site</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="fullMovieLink"

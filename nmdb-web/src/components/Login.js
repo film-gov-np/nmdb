@@ -17,7 +17,6 @@ function Login() {
     axiosInstance
       .post("Accounts/authenticate", postData)
       .then((resp) => {
-        debugger;
         if (resp) {
           const {
             created,

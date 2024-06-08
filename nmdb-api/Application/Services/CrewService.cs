@@ -6,6 +6,7 @@ using Application.Dtos.Media;
 using Application.Dtos.Movie;
 using Application.Dtos.ProductionHouse;
 using Application.Dtos.Theatre;
+using Application.Helpers;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
@@ -16,9 +17,11 @@ using AutoMapper;
 using Azure;
 using Core;
 using Core.Entities;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Net;
@@ -32,18 +35,26 @@ public class CrewService : ICrewService
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;    
+    private readonly string _uploadFolderPath;
+    private readonly IWebHostEnvironment _environment;
 
 
     public CrewService(IUnitOfWork unitOfWork
         , IMapper mapper
         , IFileService fileService,
-        ILogger<CrewService> logger
+        ILogger<CrewService> logger,
+        IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration
         )
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _fileService = fileService;
         _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
+        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"],"/crews/");
+
     }
     public async Task<ApiResponse<PaginationResponse<CrewListDto>>> GetAllAsync(CrewFilterParameters filterParameters)
     {
@@ -57,7 +68,7 @@ public class CrewService : ICrewService
         {
             filter = query =>
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
-                || query.NickName.Contains(filterParameters.SearchKeyword)) &&(
+                || query.NickName.Contains(filterParameters.SearchKeyword)) && (
                     (filterParameters.IsVerified == null || filterParameters.IsVerified == query.IsVerified)
                 );
         }
@@ -79,6 +90,9 @@ public class CrewService : ICrewService
         }
 
         var (query, totalItems) = await _unitOfWork.CrewRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
+
+        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+
         var theatreResponse = await query.Select(
                                             tr => new CrewListDto
                                             {
@@ -88,7 +102,7 @@ public class CrewService : ICrewService
                                                 FatherName = tr.FatherName,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
-                                                ProfilePhoto = tr.ProfilePhoto
+                                                ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewListDto>
@@ -101,6 +115,7 @@ public class CrewService : ICrewService
 
         return ApiResponse<PaginationResponse<CrewListDto>>.SuccessResponse(response);
     }
+
     public async Task<ApiResponse<string>> CreateCrewAsync(CrewRequestDto crewRequestDto)
     {
         try
@@ -109,12 +124,12 @@ public class CrewService : ICrewService
 
             if (crewRequestDto.ProfilePhotoFile != null && crewRequestDto.ProfilePhotoFile.Length > 0)
             {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile, SubFolder="crews" });
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile, SubFolder = "crews" });
                 if (!uploadResultApiResponse.IsSuccess)
                 {
                     return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
                 }
-                profilePhotoUrl = uploadResultApiResponse?.Data?.FilePath;
+                profilePhotoUrl = uploadResultApiResponse?.Data?.FileName;
             }
 
 
@@ -178,16 +193,16 @@ public class CrewService : ICrewService
                     Files = crewRequestDto.ProfilePhotoFile,
                     Thumbnail = false,
                     ReadableName = false,
-                    SubFolder="crews"
+                    SubFolder = "crews"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(crewEntity.ProfilePhoto))
-                        _fileService.RemoveFile(crewEntity.ProfilePhoto,"crews");
+                        _fileService.RemoveFile(crewEntity.ProfilePhoto, "crews");
 
-                    crewEntity.ProfilePhoto = uploadResult.Data.FilePath;
+                    crewEntity.ProfilePhoto = uploadResult.Data.FileName;
                 }
             }
 
@@ -248,6 +263,14 @@ public class CrewService : ICrewService
 
             crewResponse.Designations = MapCrewDesignations(crew.CrewDesignations);
             crewResponse.Movies = MapCrewMovies(crew.MovieCrewRoles);
+
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+
+            string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
+                string.Concat(_uploadFolderPath,"movies/",crewResponse.ProfilePhoto):"";
+
+            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
+
 
             response.IsSuccess = true;
             response.Data = crewResponse;
@@ -316,6 +339,8 @@ public class CrewService : ICrewService
 
             var crewResponse = _mapper.Map<CrewResponseDto>(crew);
 
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
 
             response.IsSuccess = true;
             response.Data = crewResponse;

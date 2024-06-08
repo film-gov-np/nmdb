@@ -84,6 +84,7 @@ const FormRoleInfo = ({ form }) => {
                       apiPath="crews?RetrieveAll=true&SearchKeyword="
                       keyValue="id"
                       keyLabel="name"
+                      showAvatar = {true}
                       imgLabel="profilePhoto"
                       extraLabel="nepaliName"
                       placeholder="Begin typing to search crew member..."

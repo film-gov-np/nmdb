@@ -36,51 +36,7 @@ import { ServerPath } from "@/constants/authConstant";
 import DateInput from "@/components/ui/custom/DateInput";
 import { format, isValid, parse } from "date-fns";
 import Image from "@/components/common/Image";
-
-const FileInput = ({ field, previews, setPreviews }) => {
-  const handleUploadedFile = (event) => {
-    const files = event.target.files;
-    const urlImages = [];
-    for (const key in files) {
-      if (typeof files[key] !== "object") continue;
-      urlImages.push(URL.createObjectURL(files[key]));
-    }
-    setPreviews(urlImages);
-  };
-
-  return (
-    <div>
-      <Input
-        type="file"
-        onChange={(e) => {
-          field.onChange(e.target.files);
-          handleUploadedFile(e);
-        }}
-      />
-      {previews && previews.length > 0 && (
-        <>
-          {previews.map((preview, index) => (
-            <div
-              key={"image-preview-" + index}
-              className="mt-2 flex flex-wrap gap-2"
-            >
-              <div
-                className="max-h-[320px] flex-grow basis-1/3"
-                key={"thumbnailMovie" + index}
-              >
-                <Image
-                  className="h-full w-full rounded-md  object-cover"
-                  src={preview}
-                  alt={"Picture" + index}
-                />
-              </div>
-            </div>
-          ))}
-        </>
-      )}
-    </div>
-  );
-};
+import { FileInput } from "@/components/common/formElements/FileInput";
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -150,7 +106,6 @@ const formSchema = z.object({
     .refine(
       (dateStr) => {
         // Parse the date string using date-fns
-        debugger;
         const parsedDate = parse(dateStr, Date_Format, new Date());
 
         // Check if the parsed date is valid and matches the input string
@@ -170,7 +125,6 @@ const formSchema = z.object({
     .refine(
       (dateStr) => {
         // Parse the date string using date-fns
-        debugger;
         const parsedDate = parse(dateStr, Date_Format, new Date());
 
         // Check if the parsed date is valid and matches the input string
@@ -268,7 +222,6 @@ function CreateCrew() {
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
-    debugger;
     console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
@@ -279,7 +232,6 @@ function CreateCrew() {
   };
 
   const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
-    debugger;
     let apiPath = ApiPaths.Path_Crews;
     if (isEditMode) {
       apiPath += "/" + slug;
@@ -371,9 +323,11 @@ const getCrewFlimRoles = async (apiPath) => {
   return apiResponse.data;
 };
 function CrewForm({ crew, renderMode, onSubmit }) {
-  const [previews, setPreviews] = useState(
-    crew?.profilePhoto ? [ServerPath + crew?.profilePhoto] : [],
-  );
+  const [previews, setPreviews] = useState({
+    profilePhotoFile: crew?.profilePhoto
+      ? [ServerPath + crew?.profilePhoto]
+      : [],
+  });
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: sanitizeData({
