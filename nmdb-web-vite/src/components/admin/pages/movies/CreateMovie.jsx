@@ -43,7 +43,7 @@ const getMovie = async (id, renderMode) => {
   return data;
 };
 
-const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
+const createOrEditMovie = async ({ postData, isEditMode, slug, toast, setError }) => {
   let apiPath = ApiPaths.Path_Movies;
   if (isEditMode) {
     apiPath += "/" + slug;
@@ -66,7 +66,17 @@ const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
       });
       return response.data;
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      debugger;
+      const response = err.response?.data;
+      const errors = response?.errors;
+      if (errors) {
+        for (const [field, message] of Object.entries(errors)) {
+          setError(field.charAt(0).toLowerCase() + field.slice(1), { type: "server", message: message[0] });
+        }
+      }
+      console.error(err);
+    });
   return data;
 };
 
@@ -97,7 +107,15 @@ const AddMovie = () => {
     });
 
   const mutateMovie = useMutation({
-    mutationFn: createOrEditMovie,
+    mutationFn: async (data) => {
+      await createOrEditMovie({
+        postData: data.postData,
+        isEditMode: renderMode === renderModes.Render_Mode_Edit,
+        slug,
+        toast,
+        setError:  data.setError
+      });
+    },
     onSuccess: (data, variables, context) => {
       navigate(Paths.Route_Admin_Movie);
     },
@@ -108,6 +126,38 @@ const AddMovie = () => {
     onSettled: (data, error, variables, context) => {
       // queryClient.invalidateQueries("theatreDetail");
     },
+  });
+
+  return (
+    <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
+      <AddPageHeader label="movie" pathTo={Paths.Route_Admin_Movie} />
+      {isLoading || isFetching ? (
+        <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
+      ) : (
+        data && (
+          <MovieForm
+            movie={data}
+            renderMode={renderMode}
+            mutateMovie={mutateMovie}
+          />
+        )
+      )}
+    </main>
+  );
+};
+
+function MovieForm({ movie, renderMode, mutateMovie }) {
+  const form = useForm({
+    resolver,
+    defaultValues: sanitizeData(movie),
+  });
+  form.setValue("coverImage", movie.coverImage);
+  form.setValue("thumbnailImage", movie.thumbnailImage);
+  const [previews, setPreviews] = useState({
+    thumbnailImageFile: movie.thumbnailImage
+      ? [ServerPath + movie?.thumbnailImage]
+      : [],
+    coverImageFile: movie.coverImage ? [ServerPath + movie?.coverImage] : [],
   });
 
   const onSubmit = (data) => {
@@ -121,9 +171,7 @@ const AddMovie = () => {
     console.log("submitted", submitData);
     mutateMovie.mutate({
       postData: submitData,
-      isEditMode: renderMode === renderModes.Render_Mode_Edit,
-      slug,
-      toast,
+      setError: form.setError
     });
     // toast({
     //   title: "You submitted the following values:",
@@ -136,38 +184,6 @@ const AddMovie = () => {
     //   ),
     // });
   };
-
-  return (
-    <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="movie" pathTo={Paths.Route_Admin_Movie} />
-      {isLoading || isFetching ? (
-        <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
-      ) : (
-        data && (
-          <MovieForm movie={data} renderMode={renderMode} onSubmit={onSubmit} />
-        )
-      )}
-    </main>
-  );
-};
-
-function MovieForm({ movie, renderMode, onSubmit }) {
-  console.log("sanitizedmovie", sanitizeData(movie));
-  const form = useForm({
-    resolver,
-    defaultValues: sanitizeData({
-      ...movie,
-
-    }),
-  });
-  form.setValue("coverImage", movie.coverImage);
-  form.setValue("thumbnailImage", movie.thumbnailImage);
-  const [previews, setPreviews] = useState({
-    thumbnailImageFile: movie.thumbnailImage
-      ? [ServerPath + movie?.thumbnailImage]
-      : [],
-    coverImageFile: movie.coverImage ? [ServerPath + movie?.coverImage] : [],
-  });
 
   return (
     <Form {...form}>
@@ -187,7 +203,7 @@ function MovieForm({ movie, renderMode, onSubmit }) {
           <div className="mt-4 rounded-md border border-input">
             <ScrollArea
               className="py-2"
-              viewPortClass="max-h-[calc(100vh-80px)]"
+              // viewPortClass="max-h-[calc(100vh-80px)]"
             >
               <TabsContent value="basic_information" className="h-full ">
                 <FormBasicInfo
