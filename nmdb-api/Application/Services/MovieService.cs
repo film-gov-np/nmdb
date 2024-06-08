@@ -214,10 +214,14 @@ public class MovieService : IMovieService
 
 
         // Apply filtering
-        if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {
             filter = query =>
-                (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
+                (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword) 
+                )&&(
+                    (filterParameters.Category == null || filterParameters.Category == query.Category)
+                )&&(
+                    (filterParameters.Status == null || filterParameters.Status == query.Status)
                 );
         }
 

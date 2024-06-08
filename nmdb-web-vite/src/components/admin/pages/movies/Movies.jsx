@@ -2,6 +2,21 @@ import { columns } from "./dataColumns";
 import { Paths } from "@/constants/routePaths";
 import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { ApiPaths } from "@/constants/apiPaths";
+import { movieCategories, movieStatuses } from "./constants";
+
+
+export const facetedFilters = [{
+  name: "category",
+  title: "Category",
+  accessorKey:"Category",
+  filters: movieCategories,
+},
+{
+  name: "status",
+  title: "Status",
+  accessorKey:"Status",
+  filters: movieStatuses,
+}];
 
 const Movies = () => {
   return (
@@ -11,7 +26,7 @@ const Movies = () => {
         columns={columns}
         nameLabel="movies"
         queryKey="datatable-movies"
-        // facetedFilters={facetedFilters}
+        facetedFilters={facetedFilters}
         addNewPath={Paths.Route_Admin_Movie_Add}
       />
     </main>
