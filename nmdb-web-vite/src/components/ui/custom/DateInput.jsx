@@ -7,7 +7,6 @@ const DateInput = ({
   placeholder = "( YYYY - MM - DD )",
   ...props
 }) => {
-  debugger;
   const [date, setDate] = useState(value);
 
   const handleChange = (e) => {

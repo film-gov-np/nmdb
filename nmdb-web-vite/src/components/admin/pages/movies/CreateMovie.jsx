@@ -73,7 +73,6 @@ const createOrEditMovie = async ({
       return response.data;
     })
     .catch((err) => {
-      debugger;
       const response = err.response?.data;
       const errors = response?.errors;
       if (errors) {
@@ -129,7 +128,6 @@ const AddMovie = () => {
       navigate(Paths.Route_Admin_Movie);
     },
     onError: (error, variables, context) => {
-      debugger;
       toast({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {
@@ -175,7 +173,6 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
   });
 
   const onSubmit = (data) => {
-    debugger;
     const submitData = {
       ...data,
       thumbnailImageFile: data.thumbnailImageFile?.[0] || null,

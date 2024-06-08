@@ -106,7 +106,6 @@ const formSchema = z.object({
     .refine(
       (dateStr) => {
         // Parse the date string using date-fns
-        debugger;
         const parsedDate = parse(dateStr, Date_Format, new Date());
 
         // Check if the parsed date is valid and matches the input string
@@ -126,7 +125,6 @@ const formSchema = z.object({
     .refine(
       (dateStr) => {
         // Parse the date string using date-fns
-        debugger;
         const parsedDate = parse(dateStr, Date_Format, new Date());
 
         // Check if the parsed date is valid and matches the input string
@@ -224,7 +222,6 @@ function CreateCrew() {
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
-    debugger;
     console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
@@ -235,7 +232,6 @@ function CreateCrew() {
   };
 
   const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
-    debugger;
     let apiPath = ApiPaths.Path_Crews;
     if (isEditMode) {
       apiPath += "/" + slug;

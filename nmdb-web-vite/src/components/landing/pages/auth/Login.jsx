@@ -39,7 +39,6 @@ const Login = () => {
     axiosInstance
       .post(ApiPaths.Path_Auth + "/authenticate", postData)
       .then((resp) => {
-        debugger
         const response = resp.data;
         if (response?.isSuccess) {
           const {
@@ -63,7 +62,6 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        debugger
         console.log(error);
       });
   };

@@ -2,7 +2,6 @@ import { Navigate, Outlet } from "react-router-dom";
 import * as PropTypes from "prop-types";
 
 const ProtectedRoute = ({ isPublic, isAuthorized }) => {
-  debugger;
   return isPublic || isAuthorized ? <Outlet /> : <Navigate to="/login" />;
 };
 
