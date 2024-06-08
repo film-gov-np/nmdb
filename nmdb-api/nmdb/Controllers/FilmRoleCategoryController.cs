@@ -3,11 +3,12 @@ using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using nmdb.Common;
+using nmdb.Filters;
 
 namespace nmdb.Controllers;
 
 [ApiController]
-[AllowAnonymous]
+[RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/film/")]
 public class FilmRoleCategoryController : ControllerBase
 {
@@ -18,7 +19,7 @@ public class FilmRoleCategoryController : ControllerBase
         _filmRoleCategoryService = filmRoleCategoryService;
     }
 
-    [AllowAnonymous]
+    
     [HttpGet("role-categories")]
     public async Task<IActionResult> GetAll()
     {

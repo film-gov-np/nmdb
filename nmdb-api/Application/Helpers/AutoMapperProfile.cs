@@ -17,8 +17,9 @@ namespace Neptics.Application.Helpers
             // Film Role
             CreateMap<FilmRole, CreateFilmRoleCommand>().ReverseMap();
             CreateMap<FilmRoleCategory, FilmRoleCategoryDto>().ReverseMap();
-            CreateMap<FilmRole, FilmRoleResponse>().ReverseMap();
+            CreateMap<FilmRole, FilmRoleResponseDto>().ReverseMap();
             CreateMap<FilmRole, FilmRoleRequest>().ReverseMap();
+            CreateMap<FilmRole, FilmRoleBasicDto>();
 
             // Theatre
             CreateMap<Theatre, TheatreRequestDto>().ReverseMap();

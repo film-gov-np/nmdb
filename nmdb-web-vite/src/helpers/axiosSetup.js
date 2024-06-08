@@ -6,6 +6,7 @@ import axios from "axios";
 const refreshUrl = ApiPaths.Path_Auth + "/refresh";
 const axiosInstance = axios.create({
   baseURL: BaseAPIUrl,
+  withCredentials:true
 });
 const refreshInstance = axios.create({
   baseURL: BaseAPIUrl,
@@ -14,10 +15,10 @@ const refreshInstance = axios.create({
 //request interceptor
 axiosInstance.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem("token");
-    if (token && !config.url.includes(refreshUrl)) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // const token = localStorage.getItem("token");
+    // if (token && !config.url.includes(refreshUrl)) {
+    //   config.headers.Authorization = `Bearer ${token}`;
+    // }
     return config;
   },
   function (error) {

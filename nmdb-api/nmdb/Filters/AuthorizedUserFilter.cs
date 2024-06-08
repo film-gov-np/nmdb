@@ -17,6 +17,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 {
     private readonly IAuthService _usrAuth;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+
     public AuthorizedUserFilter(IAuthService usrAuth, IJwtTokenGenerator jwtTokenGenerator)
     {
         _usrAuth = usrAuth;
@@ -25,15 +26,26 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        //string accessToken = context.HttpContext.Request.Cookies["accessToken"];
-        // string refreshToken = context.HttpContext.Request.Cookies["refreshToken"];
+        var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
-        string accessToken = context.HttpContext.Request?.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+        if (controllerActionDescriptor != null)
+        {
+            var controllerAllowAnonymousAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowAnonymousAttribute>();
+            var actionAllowAnonymousAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowAnonymousAttribute>();
+
+            // Allow anonymous access, proceed with the request without further authorization checks
+            if (controllerAllowAnonymousAttribute != null || actionAllowAnonymousAttribute != null)
+            {
+                return;
+            }
+        }
+
+        string accessToken = context.HttpContext.Request.Cookies["accessToken"];
+
         if (string.IsNullOrEmpty(accessToken))
         {
             accessToken = !string.IsNullOrEmpty(accessToken) ? context.HttpContext.Request?.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "") : "";
         }
-
 
         if (!string.IsNullOrEmpty(accessToken))
         {
@@ -46,9 +58,6 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                     CurrentUser user = _usrAuth.GetUserFromClaims(claimsIdentity.Claims);
                     context.HttpContext.Items["CurrentUser"] = user;
 
-                    // Role base access control
-                    var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
-
                     if (controllerActionDescriptor != null)
                     {
                         // Check if the controller has the RequiredRoles attribute
@@ -57,15 +66,6 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 
                         // Check if the action method has the CustomAuthorize attribute
                         var actionAuthorizeAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<RequiredRolesAttribute>();
-
-                        var controllerAllowAnonymousAttribute = controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowAnonymousAttribute>();
-                        var actionAllowAnonymousAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowAnonymousAttribute>();
-
-                        // Allow anonymous access, proceed with the request without further authorization checks
-                        if (controllerAllowAnonymousAttribute != null || actionAllowAnonymousAttribute != null)
-                        {
-                            return;
-                        }
 
                         if (controllerAuthorizeAttribute != null || actionAuthorizeAttribute != null)
                         {
@@ -83,24 +83,26 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 
                             if (!hasRequiredRole)
                             {
-                                // User doesn't have the required role, return unauthorized response
+                                // If user doesn't have the required role, return unauthorized response
                                 context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Unauthorized access. User does not have the required role.", HttpStatusCode.Forbidden));
                                 return;
                             }
                         }
-
                     }
                 }
-                else
+                else 
                 {
                     context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Invalid Access Token.", HttpStatusCode.NotAcceptable));
                 }
             }
-            else
+            else // check for refresh token validity and refresh token if valid else remove the cookie
             {
-                context.Result = new UnauthorizedResult();
+                context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Expired Access Token.", HttpStatusCode.NotAcceptable));
             }
         }
-        return;
+        else
+        {
+            context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("No access token found. Try loggin in again.", HttpStatusCode.NotFound));
+        }
     }
 }
