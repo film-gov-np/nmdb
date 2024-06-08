@@ -13,6 +13,7 @@ namespace Application.Interfaces
         IProductionHouseRepository ProductionHouseRepository { get; }
         IMovieRepository MovieRepository { get; }
         ICardRequestRepository CardRequestRepository { get; }
+        IAwardsRepository AwardsRepository { get; }
         Task CommitAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync();
         void Rollback();

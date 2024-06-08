@@ -19,7 +19,7 @@ public static class DependencyInjection
             options.AddPolicy("AllowSpecificOrigin",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173")
+                    builder.WithOrigins("http://localhost:5173", "https://nmdb-phi.vercel.app")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
@@ -28,10 +28,10 @@ public static class DependencyInjection
         services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
         services.AddEndpointsApiExplorer();
-        
+
         services.AddLogging(loggingBuilder =>
         {
             loggingBuilder.AddConsole();

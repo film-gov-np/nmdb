@@ -39,7 +39,6 @@ const Login = () => {
     axiosInstance
       .post(ApiPaths.Path_Auth + "/authenticate", postData)
       .then((resp) => {
-        debugger
         const response = resp.data;
         if (response?.isSuccess) {
           const {
@@ -54,8 +53,8 @@ const Login = () => {
             refreshToken,
           } = response.data;
           //set token to cookie or localStorage
-          localStorage.setItem("token", jwtToken);
-          localStorage.setItem("refreshToken", refreshToken);
+          // localStorage.setItem("token", jwtToken);
+          // localStorage.setItem("refreshToken", refreshToken);
           setIsAuthorized(true);
           navigate("/admin/dashboard");
         } else {
@@ -63,7 +62,6 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        debugger
         console.log(error);
       });
   };

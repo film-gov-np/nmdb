@@ -144,6 +144,7 @@ namespace Infrastructure.Identity.Services
             var response = _mapper.Map<AuthenticateResponse>(applicationUser);
             response.JwtToken = jwtToken;
             response.RefreshToken = newRefreshToken.Token;
+            response.Authenticated = true;
             return response;
         }
 
@@ -187,7 +188,7 @@ namespace Infrastructure.Identity.Services
         }
         public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
-            
+
             var userToRegister = new ApplicationUser
             {
                 UserName = request.Email,
@@ -204,7 +205,7 @@ namespace Infrastructure.Identity.Services
             {
                 var created_user = await _userManager.FindByEmailAsync(request.Email);
                 await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
-                var account = _mapper.Map<ApplicationUser>(request);                
+                var account = _mapper.Map<ApplicationUser>(request);
                 created_user.VerificationToken = await generateVerificationToken();
                 await _userManager.UpdateAsync(created_user);
                 await sendVerificationEmail(created_user, request.Password);
@@ -217,7 +218,7 @@ namespace Infrastructure.Identity.Services
         public async Task<ApiResponse<string>> RegisterCrew(RegisterRequest request)
         {
             var crew = await _crewService.GetCrewByEmailAsync(request.Email);
-            if (!crew.IsSuccess &&  crew.Data == null)
+            if (!crew.IsSuccess && crew.Data == null)
             {
                 return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' not found.", HttpStatusCode.NotFound);
             }
@@ -255,7 +256,7 @@ namespace Infrastructure.Identity.Services
             account.EmailConfirmed = true;
             account.VerificationToken = null;
 
-            await _userManager.UpdateAsync(account);            
+            await _userManager.UpdateAsync(account);
         }
 
         public async Task ForgotPassword(ForgotPasswordRequest model)
@@ -383,26 +384,26 @@ namespace Infrastructure.Identity.Services
 
         private async Task<ApplicationUser> getAccount(string idx)
         {
-            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.Id == idx);
+            var account = await _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefaultAsync(u => u.Id == idx);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
         private async Task<ApplicationUser> getAccountById(string id)
         {
-            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.Id == id);
+            var account = await _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefaultAsync(u => u.Id == id);
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
         private async Task<ApplicationUser> getAccountByRefreshToken(string token)
         {
-            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            var account = await _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
             if (account == null) throw new AppException("Invalid token");
             return account;
         }
 
         private async Task<ApplicationUser> getAccountByResetToken(string token)
         {
-            var account = _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefault(x =>
+            var account = await _userManager.Users.Include(u => u.RefreshTokens).SingleOrDefaultAsync(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
             if (account == null) throw new AppException("Invalid token");
             return account;
@@ -444,8 +445,8 @@ namespace Infrastructure.Identity.Services
         private async Task removeOldRefreshTokens(ApplicationUser account)
         {
             account.RefreshTokens.RemoveAll(x =>
-                !x.IsActive &&
-                x.Created.AddDays(_appSettings.RefreshTokenExpirationInDays) <= DateTime.UtcNow);
+               !x.IsActive &&
+               x.Created.AddDays(_appSettings.RefreshTokenExpirationInDays) <= DateTime.UtcNow);
         }
 
         private async Task revokeDescendantRefreshTokens(RefreshToken refreshToken, ApplicationUser account, string ipAddress, string reason)

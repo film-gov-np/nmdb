@@ -1,6 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Models;
 using Core.Entities;
+using Core.Entities.Awards;
 using Core.Entities.Film;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +40,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<MovieType> MovieTypes { get; set; }
     public DbSet<MovieStatus> MovieStatus { get; set; }
     public DbSet<CardRequest> CardRequests { get; set; }
+    public DbSet<Awards> Awards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
