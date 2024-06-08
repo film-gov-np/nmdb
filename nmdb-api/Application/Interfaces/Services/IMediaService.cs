@@ -12,7 +12,7 @@ namespace Application.Interfaces.Services
     public interface IFileService
     {
         Task<ApiResponse<UploadResult>> UploadFile(FileDTO model);
-        bool RemoveFile(string filename);
+        bool RemoveFile(string filename, string? subFolder="");
 
         //public Task<ApiResponse<IList<MediaDTO>>> GetByFilter(FilterBase filter);
         //public Task<ApiResponse<MediaDTO>> GetById(int id);

@@ -173,54 +173,14 @@ export const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
-    cell: ({ row }) => {
-      const categories = facetedFilters.find(
-        (filter) => filter.name === "category",
-      );
-      const category = categories?.filters?.find(
-        (category) => category.value === row.getValue("category"),
-      );
-
-      if (!category) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {category.icon && (
-            <category.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{category.label}</span>
-        </div>
-      );
-    },
+    cell: ({ row }) => <div className="">{row.getValue("category")}</div>,
   },
   {
     accessorKey: "status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => {
-      const statuses = facetedFilters.find(
-        (filter) => filter.name === "status",
-      );
-      const status = statuses?.filters?.find(
-        (status) => status.value === row.getValue("status"),
-      );
-
-      if (!status) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
-        </div>
-      );
-    },
+    cell: ({ row }) => <div className="">{row.getValue("status")}</div>,
   },
 
   {

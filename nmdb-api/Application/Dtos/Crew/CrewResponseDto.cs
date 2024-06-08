@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos;
 
-public class CrewResponseDto : CrewDto
+public class CrewResponseDto : CrewRequestDto
 {
+    public int Id { get; set; }
 }

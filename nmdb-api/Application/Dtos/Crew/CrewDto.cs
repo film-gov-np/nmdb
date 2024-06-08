@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 namespace Application.Dtos;
 
 public class CrewDto : BaseDto
-{
-    public int Id { get; set; }
+{    
     public string Name { get; set; }
 
     public string? NepaliName { get; set; }

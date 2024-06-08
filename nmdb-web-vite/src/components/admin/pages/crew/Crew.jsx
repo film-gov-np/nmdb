@@ -12,6 +12,21 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 
 
+export const facetedFilters = [{
+  name: "isVerified",
+  title: "Is Verified",
+  accessorKey:"IsVerified",
+  filters: [
+    {
+      value: true,
+      label: "Yes",
+    },
+    {
+      value: false,
+      label: "No",
+    },
+  ],
+}];
 
 const Crew = () => {
 
@@ -20,6 +35,8 @@ const Crew = () => {
       <DataTableAdvancedServerControlled
         apiPath={ApiPaths.Path_Crews}
         columns={columns}
+        facetedFilters={facetedFilters}
+        queryKey="datatable-crew"
         nameLabel="crew"
         addNewPath={Paths.Route_Admin_Crew_Add}
         pageSizeOptions={[10, 25, 50, 75, 100]}

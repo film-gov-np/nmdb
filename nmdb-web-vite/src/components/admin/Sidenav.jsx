@@ -60,23 +60,23 @@ const adminRouteElement = [
     icon: Award,
     path: Paths.Route_Admin_ProductionHouse,
   },
-  {
-    title: "Scholarship",
-    icon: GraduationCap,
-    path: "",
-    submenus: [
-      {
-        title: "Bachelors",
-        icon: BookOpen,
-        path: Paths.Route_Admin_Scholarship_Bachelors,
-      },
-      {
-        title: "Masters",
-        icon: BookText,
-        path: Paths.Route_Admin_Scholarship_Masters,
-      },
-    ],
-  },
+  // {
+  //   title: "Scholarship",
+  //   icon: GraduationCap,
+  //   path: "",
+  //   submenus: [
+  //     {
+  //       title: "Bachelors",
+  //       icon: BookOpen,
+  //       path: Paths.Route_Admin_Scholarship_Bachelors,
+  //     },
+  //     {
+  //       title: "Masters",
+  //       icon: BookText,
+  //       path: Paths.Route_Admin_Scholarship_Masters,
+  //     },
+  //   ],
+  // },
 ];
 
 const NavLinkCustom = ({

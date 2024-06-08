@@ -44,13 +44,13 @@ export const movieStatuses = [
   },
   {
     value: 5,
-    label: "Coming Soon",
-    icon: StopwatchIcon,
+    label: "Unknown",
+    icon: ExclamationTriangleIcon,
   },
   {
     value: 6,
-    label: "Unknown",
-    icon: ExclamationTriangleIcon,
+    label: "Coming Soon",
+    icon: StopwatchIcon,
   },
 ];
 

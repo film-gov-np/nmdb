@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,8 @@ namespace Application.Dtos
     public class BaseDto
     {
         [JsonIgnore]
-        public string Authorship { get; set; } = "";
+        [BindNever]
+        public string? Authorship { get; set; } = "";
 
     }
 }
