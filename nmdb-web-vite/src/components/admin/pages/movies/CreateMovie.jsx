@@ -19,6 +19,7 @@ import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import FormCrewInfo from "./forms/FormCrewInfo";
 import axiosInstance from "@/helpers/axiosSetup";
 import { sanitizeData } from "@/lib/utils";
+import { ServerPath } from "@/constants/authConstant";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
@@ -98,7 +99,7 @@ const AddMovie = () => {
   const mutateMovie = useMutation({
     mutationFn: createOrEditMovie,
     onSuccess: (data, variables, context) => {
-      navigate(Paths.Route_Admin_Movies);
+      navigate(Paths.Route_Admin_Movie);
     },
     onError: (error, variables, context) => {
       debugger;
@@ -111,15 +112,11 @@ const AddMovie = () => {
 
   const onSubmit = (data) => {
     debugger;
-    console.log(data)
+    console.log(data);
     const submitData = {
       ...data,
-      thumbnailImageFile: data.thumbnailImageFile?.[0],
-      thumbnailImage: data.thumbnailImageFile?.[0].name,
-      // theatres:  data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
-      // genreIds: data.genreIds.every(element => typeof element === 'object') ? data.genreIds.map((item) => item.id.toString()) : data.genreIds,
-      // languageIds: data.languageIds.every(element => typeof element === 'object') ?data.languageIds.map((item) => item.id.toString()): data.languageIds,
-      // productionHouseIds: data.studio.map((item) => item.id.toString()),
+      thumbnailImageFile: data.thumbnailImageFile?.[0] || null,
+      coverImageFile: data.coverImageFile?.[0] || null,
     };
     console.log("submitted", submitData);
     mutateMovie.mutate({
@@ -128,16 +125,16 @@ const AddMovie = () => {
       slug,
       toast,
     });
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <ScrollArea className="h-96">
-          <pre className="mt-2 w-[440px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        </ScrollArea>
-      ),
-    });
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <ScrollArea className="h-96">
+    //       <pre className="mt-2 w-[440px] rounded-md bg-slate-950 p-4">
+    //         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //       </pre>
+    //     </ScrollArea>
+    //   ),
+    // });
   };
 
   return (
@@ -155,12 +152,22 @@ const AddMovie = () => {
 };
 
 function MovieForm({ movie, renderMode, onSubmit }) {
-  console.log("sanitizedmovie",sanitizeData(movie))
+  console.log("sanitizedmovie", sanitizeData(movie));
   const form = useForm({
     resolver,
-    defaultValues: sanitizeData(movie),
+    defaultValues: sanitizeData({
+      ...movie,
+
+    }),
   });
-  
+  form.setValue("coverImage", movie.coverImage);
+  form.setValue("thumbnailImage", movie.thumbnailImage);
+  const [previews, setPreviews] = useState({
+    thumbnailImageFile: movie.thumbnailImage
+      ? [ServerPath + movie?.thumbnailImage]
+      : [],
+    coverImageFile: movie.coverImage ? [ServerPath + movie?.coverImage] : [],
+  });
 
   return (
     <Form {...form}>
@@ -185,6 +192,8 @@ function MovieForm({ movie, renderMode, onSubmit }) {
               <TabsContent value="basic_information" className="h-full ">
                 <FormBasicInfo
                   form={form}
+                  previews={previews}
+                  setPreviews={setPreviews}
                 />
               </TabsContent>
               <TabsContent value="crew_information">

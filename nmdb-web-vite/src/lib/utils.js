@@ -9,6 +9,7 @@ export const sanitizeData = (data) => {
   if (data === null) return "";
   if (data instanceof Date) return data;
   if (Array.isArray(data)) return data.map(sanitizeData);
+  if (typeof data === "number" && data !== null) return data.toString();
   if (typeof data === "object" && data !== null) {
     return Object.fromEntries(
       Object.entries(data).map(([key, value]) => [key, sanitizeData(value)]),
@@ -24,5 +25,5 @@ export const extractInitials = (fullName) => {
   initials = (
     (initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")
   ).toUpperCase();
-  return initials
+  return initials;
 };

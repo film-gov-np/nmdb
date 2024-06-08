@@ -1,31 +1,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { movieCategories, movieColors, movieStatuses } from "../constants";
+import { movieCategories, movieCensorTypes, movieColors, movieStatuses, movieTypes, movieValidFor } from "../constants";
 
-console.log(movieCategories.map((c) => c.value))
+console.log(movieCategories.map((c) => c.value));
 export const formSchema = z.object({
   name: z.string().min(2).optional().or(z.literal("")),
   nepaliName: z.string().min(2).optional().or(z.literal("")),
-  shootingDate: z.string().optional().or(z.literal("")),
-  releaseDate: z.string().optional().or(z.literal("")),
+  shootingDate: z.date().or(z.string()).optional().or(z.literal("")),
+  releaseDate: z.date().or(z.string()).optional().or(z.literal("")),
   runtime: z.coerce.number().positive().or(z.literal("")),
   thumbnailImage: z.string().optional().or(z.literal("")),
   thumbnailImageFile: z.instanceof(FileList).optional().or(z.literal("")),
   coverImage: z.string().optional().or(z.literal("")),
   coverImageFile: z.instanceof(FileList).optional().or(z.literal("")),
-  category: z.union(movieCategories.map((c) => z.literal(c.value)))
+  category: z
+    .union(movieCategories.map((c) => z.literal(c.value.toString())))
     .optional()
     .or(z.literal("")),
-  status: z.union(movieStatuses.map((s) => z.literal(s.value)))
+  status: z
+    .union(movieStatuses.map((s) => z.literal(s.value.toString())))
     .optional()
     .or(z.literal("")),
   tagline: z.string().optional().or(z.literal("")),
   officialSiteUrl: z.string().optional().or(z.literal("")),
   budget: z.coerce.number().positive().or(z.literal("")),
-  flimingLocation: z.string().optional().or(z.literal("")),
-  color: z.union(movieColors.map((c) => z.literal(c.value)))
-  .optional()
-  .or(z.literal("")),
+  filmingLocaion: z.string().optional().or(z.literal("")),
+  color: z
+    .union(movieColors.map((c) => z.literal(c.value.toString())))
+    .optional()
+    .or(z.literal("")),
   oneLiner: z.string().optional().or(z.literal("")),
   fullMovieLink: z.string().optional().or(z.literal("")),
   trailerLink: z.string().optional().or(z.literal("")),
@@ -35,15 +38,24 @@ export const formSchema = z.object({
   productionHouses: z.array(z.any()),
 
   censor: z.object({
-    applicationDate: z.string().optional().or(z.literal("")),
+    applicationDate: z.date().or(z.string()).optional().or(z.literal("")),
     certificateNumber: z.string(),
-    censoredDate: z.date().optional().or(z.literal("")),
-    censorType: z.string(),
-    movieType: z.string(),
+    censoredDate: z.date().or(z.string()).optional().or(z.literal("")),
+    censorType: z
+    .union(movieCensorTypes.map((c) => z.literal(c.value.toString())))
+    .optional()
+    .or(z.literal("")),
+    movieType: z
+    .union(movieTypes.map((c) => z.literal(c.value.toString())))
+    .optional()
+    .or(z.literal("")),
     reelLength: z.string(),
     reelSize: z.string(),
     movieLength: z.string().optional().or(z.literal("")),
-    validForInYears: z.string(),
+    validForInYears: z
+    .union(movieValidFor.map((c) => z.literal(c.value.toString())))
+    .optional()
+    .or(z.literal("")),
     description: z.string(),
   }),
 
@@ -69,7 +81,7 @@ export const defaultValues = {
   tagline: "",
   officialSiteUrl: "",
   budget: "",
-  flimingLocation: "",
+  filmingLocaion: "",
   color: "",
   oneLiner: "",
   fullMovieLink: "",
@@ -77,15 +89,7 @@ export const defaultValues = {
 
   genres: [],
   languages: [],
-  productionHouses: [
-    {
-      id: 4,
-      name: "Royal Nepal Film Corporation",
-      nepaliName: null,
-      chairmanName: "NA",
-      isRunning: true,
-    },
-  ],
+  productionHouses: [],
 
   censor: {
     applicationDate: "",
@@ -97,7 +101,7 @@ export const defaultValues = {
     reelSize: "",
     movieLength: "",
     validForInYears: "",
-    description:""
+    description: "",
   },
 
   theatres: [{ movieTheatreDetails: [], showingDate: "" }],
