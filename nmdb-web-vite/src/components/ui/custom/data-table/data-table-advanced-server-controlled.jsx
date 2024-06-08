@@ -51,7 +51,7 @@ const generateQueryPath = ({
   if (debouncedGlobalFilter) {
     queryPath += `&SearchKeyword=${debouncedGlobalFilter}`;
   }
-  
+
   if (columnFilters?.length > 0) {
     columnFilters.forEach((filter) => {
       const columnKey = facetedFilters.find(
@@ -68,10 +68,8 @@ const getDataFromServer = async (apiPath, parameters) => {
   const data = await axiosInstance
     .get(apiPath + generateQueryPath(parameters))
     .then((response) => {
-      if(response.data.isSuccess)
-        return response.data?.data;
-      else
-        throw response.data.message
+      if (response.data.isSuccess) return response.data?.data;
+      else throw response.data.message;
     })
     .catch((error) => {
       console.log("error", error);
@@ -87,10 +85,11 @@ export function DataTableAdvancedServerControlled({
   apiPath,
   columns,
   facetedFilters,
-  queryKey="",
+  queryKey = "",
   queryParameters = defaultQueryParameters,
   nameLabel = "",
   addNewPath = "",
+  withHeader = true,
   pageSizeOptions,
 }) {
   const [rowSelection, setRowSelection] = useState({});
@@ -211,8 +210,7 @@ export function DataTableAdvancedServerControlled({
     );
   return (
     <div className="space-y-4">
-      
-      <ListPageHeader label={nameLabel} pathTo={addNewPath} />
+      {withHeader && <ListPageHeader label={nameLabel} pathTo={addNewPath} />}
       <DataTableToolbar table={table} facetedFilters={facetedFilters} />
 
       {isFetching || isLoading ? (
