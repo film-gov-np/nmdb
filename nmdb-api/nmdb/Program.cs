@@ -30,11 +30,11 @@ if (app.Environment.IsDevelopment())
     //app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
 app.UseFastEndpoints()
     .UseSwaggerGen();
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigin");
 
 app.UseRouting();

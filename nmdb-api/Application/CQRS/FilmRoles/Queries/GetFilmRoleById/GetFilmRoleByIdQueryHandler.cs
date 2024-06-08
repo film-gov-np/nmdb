@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Application.CQRS.FilmRoles.Queries.GetFilmRoleById
 {
     internal sealed class GetFilmRoleByIdQueryHandler
-        : IQueryHandler<GetFilmRoleByIdQuery, FilmRoleResponse>
+        : IQueryHandler<GetFilmRoleByIdQuery, FilmRoleResponseDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         public GetFilmRoleByIdQueryHandler(IUnitOfWork unitOfWork)
@@ -20,12 +20,12 @@ namespace Application.CQRS.FilmRoles.Queries.GetFilmRoleById
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResponse<FilmRoleResponse>> Handle(GetFilmRoleByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<FilmRoleResponseDto>> Handle(GetFilmRoleByIdQuery request, CancellationToken cancellationToken)
         {
             var filmRole = await _unitOfWork.FilmRoleRepository.GetByIdAsync(request.FilmRoleId);
             if (filmRole == null)
             {
-                return ApiResponse<FilmRoleResponse>.ErrorResponse($"The film role with Id {request.FilmRoleId} was not found.", HttpStatusCode.NotFound);
+                return ApiResponse<FilmRoleResponseDto>.ErrorResponse($"The film role with Id {request.FilmRoleId} was not found.", HttpStatusCode.NotFound);
                 //return Result.Failure<FilmRoleResponse>(new Error(
                 //    "FilmRole.NotFound",
                 //    $"The film role with Id {request.FilmRoleId} was not found."
@@ -33,8 +33,8 @@ namespace Application.CQRS.FilmRoles.Queries.GetFilmRoleById
             }
             // Get Include Properties Also in the generic
             var filmRoleCategory = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(filmRole.RoleCategoryId);
-            var response = new FilmRoleResponse(filmRole.Id, filmRole.RoleName, filmRoleCategory.Id, filmRoleCategory.CategoryName, filmRole.DisplayOrder);
-            return ApiResponse<FilmRoleResponse>.SuccessResponse(response);
+            var response = new FilmRoleResponseDto(filmRole.Id, filmRole.RoleName, filmRoleCategory.Id, filmRoleCategory.CategoryName, filmRole.DisplayOrder);
+            return ApiResponse<FilmRoleResponseDto>.SuccessResponse(response);
         }
     }
 }

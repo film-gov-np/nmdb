@@ -25,7 +25,7 @@ namespace nmdb.Configurations
                         return true;
                     }
                 ));
-            CreateMap<FilmRole, FilmRoleResponse>()
+            CreateMap<FilmRole, FilmRoleResponseDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.RoleCategory.CategoryName));
         }
     }

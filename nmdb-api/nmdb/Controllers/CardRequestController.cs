@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 namespace nmdb.Controllers;
 
 [ApiController]
-[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/cards")]
 public class CardRequestController : AuthorizedController

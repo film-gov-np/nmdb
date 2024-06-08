@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.FilmRoles.Queries
 {
-    public sealed record FilmRoleResponse
+    public sealed record FilmRoleResponseDto
     {
         public int Id { get; set; }
         public string RoleName { get; set; }
@@ -15,7 +15,7 @@ namespace Application.CQRS.FilmRoles.Queries
         public int? DisplayOrder { get; set; }
 
 
-        public FilmRoleResponse(int id, string roleName, int roleCategoryId, string categoryName, int? displayOrder)
+        public FilmRoleResponseDto(int id, string roleName, int roleCategoryId, string categoryName, int? displayOrder)
         {
             Id = id;
             RoleName = roleName;
@@ -24,7 +24,7 @@ namespace Application.CQRS.FilmRoles.Queries
             RoleCategoryId = roleCategoryId;
         }
 
-        public FilmRoleResponse() { }
+        public FilmRoleResponseDto() { }
     }
 
 }

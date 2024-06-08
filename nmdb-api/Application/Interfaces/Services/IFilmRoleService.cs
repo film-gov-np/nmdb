@@ -19,6 +19,6 @@ public interface IFilmRoleService
     Task<ApiResponse<string>> DeleteByIdAsync(int roleId);
 
 
-    Task<ApiResponse<FilmRoleResponse>> GetByIdAsync(int roleId);
-    Task<ApiResponse<PaginationResponse<FilmRoleResponse>>> GetAllAsync(FilmRoleFilterParameters filterParameters);
+    Task<ApiResponse<FilmRoleResponseDto>> GetByIdAsync(int roleId);
+    Task<ApiResponse<PaginationResponse<FilmRoleResponseDto>>> GetAllAsync(FilmRoleFilterParameters filterParameters);
 }

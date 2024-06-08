@@ -10,11 +10,14 @@ public class FrontController:ControllerBase
 {
     private readonly IMovieService _movieService;
     private readonly ICrewService _crewService;
+    
     public FrontController(IMovieService movieService, ICrewService crewService)
     {
         _crewService = crewService;
         _movieService = movieService;
     }
+
+
 
     // Write APIs to fetch
     // -- Trending Movies
