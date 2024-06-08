@@ -12,8 +12,8 @@ import {
 export const formSchema = z.object({
   name: z.string().min(2),
   nepaliName: z.string().min(2).optional().or(z.literal("")),
-  shootingDate: z.date().optional().or(z.literal("")),
-  releaseDate: z.date().optional().or(z.literal("")),
+  shootingDate: z.date().or(z.string()).optional().or(z.literal("")),
+  releaseDate: z.date().or(z.string()).optional().or(z.literal("")),
   runtime: z.coerce.number().positive().or(z.literal("")),
   thumbnailImage: z.string().optional().or(z.literal("")),
   thumbnailImageFile: z.instanceof(FileList).optional().or(z.literal("")),
@@ -35,9 +35,9 @@ export const formSchema = z.object({
   productionHouses: z.array(z.any()),
 
   censor: z.object({
-    applicationDate: z.date().optional().or(z.literal("")),
+    applicationDate: z.date().or(z.string()).optional().or(z.literal("")),
     certificateNumber: z.string(),
-    censoredDate: z.date().optional().or(z.literal("")),
+    censoredDate: z.date().or(z.string()).optional().or(z.literal("")),
     censorType: z
       .union(movieCensorTypes.map((c) => z.literal(c.value.toString())))
       .optional()
