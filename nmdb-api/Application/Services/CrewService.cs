@@ -53,11 +53,13 @@ public class CrewService : ICrewService
 
 
         // Apply filtering
-        if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if ((filterParameters.IsVerified != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {
             filter = query =>
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
-                || query.NickName.Contains(filterParameters.SearchKeyword));
+                || query.NickName.Contains(filterParameters.SearchKeyword)) &&(
+                    (filterParameters.IsVerified == null || filterParameters.IsVerified == query.IsVerified)
+                );
         }
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))

@@ -9,5 +9,6 @@ namespace Application.Dtos.FilterParameters
     public class CrewFilterParameters : BaseFilterParameters
     {
         public bool IsFeatured { get; set; } = false;
+        public bool IsVerified { get; set; } = false;
     }
 }
