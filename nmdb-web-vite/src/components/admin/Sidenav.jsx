@@ -58,7 +58,7 @@ const adminRouteElement = [
   {
     title: "Awards",
     icon: Award,
-    path: Paths.Route_Admin_ProductionHouse,
+    path: Paths.Route_Admin_Awards,
   },
   // {
   //   title: "Scholarship",

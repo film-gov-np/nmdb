@@ -43,7 +43,13 @@ const getMovie = async (id, renderMode) => {
   return data;
 };
 
-const createOrEditMovie = async ({ postData, isEditMode, slug, toast, setError }) => {
+const createOrEditMovie = async ({
+  postData,
+  isEditMode,
+  slug,
+  toast,
+  setError,
+}) => {
   let apiPath = ApiPaths.Path_Movies;
   if (isEditMode) {
     apiPath += "/" + slug;
@@ -72,7 +78,10 @@ const createOrEditMovie = async ({ postData, isEditMode, slug, toast, setError }
       const errors = response?.errors;
       if (errors) {
         for (const [field, message] of Object.entries(errors)) {
-          setError(field.charAt(0).toLowerCase() + field.slice(1), { type: "server", message: message[0] });
+          setError(field.charAt(0).toLowerCase() + field.slice(1), {
+            type: "server",
+            message: message[0],
+          });
         }
       }
       console.error(err);
@@ -113,7 +122,7 @@ const AddMovie = () => {
         isEditMode: renderMode === renderModes.Render_Mode_Edit,
         slug,
         toast,
-        setError:  data.setError
+        setError: data.setError,
       });
     },
     onSuccess: (data, variables, context) => {
@@ -149,10 +158,15 @@ const AddMovie = () => {
 function MovieForm({ movie, renderMode, mutateMovie }) {
   const form = useForm({
     resolver,
-    defaultValues: sanitizeData(movie),
+    defaultValues: sanitizeData({
+      ...movie,
+      category: movie.category?.toString(),
+      status: movie.status?.toString(),
+      color: movie.color?.toString(),
+    }),
   });
-  form.setValue("coverImage", movie.coverImage);
-  form.setValue("thumbnailImage", movie.thumbnailImage);
+  if(movie.coverImage) form.setValue("coverImage", movie.coverImage);
+  if(movie.thumbnailImage) form.setValue("thumbnailImage", movie.thumbnailImage);
   const [previews, setPreviews] = useState({
     thumbnailImageFile: movie.thumbnailImage
       ? [ServerPath + movie?.thumbnailImage]
@@ -162,7 +176,6 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
 
   const onSubmit = (data) => {
     debugger;
-    console.log(data);
     const submitData = {
       ...data,
       thumbnailImageFile: data.thumbnailImageFile?.[0] || null,
@@ -171,7 +184,7 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
     console.log("submitted", submitData);
     mutateMovie.mutate({
       postData: submitData,
-      setError: form.setError
+      setError: form.setError,
     });
     // toast({
     //   title: "You submitted the following values:",
