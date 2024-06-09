@@ -14,29 +14,30 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:5173", "https://nmdb-phi.vercel.app")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();
+                });
+        });
         services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
         services.AddEndpointsApiExplorer();
-        
+
         services.AddLogging(loggingBuilder =>
         {
             loggingBuilder.AddConsole();
         });
         services.Configure<AllowedUploadFiles>(configuration.GetSection(AllowedUploadFiles.Section));
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowSpecificOrigin",
-                builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyHeader()
-                           .AllowAnyMethod();
-                });
-        });
 
         services.AddFastEndpoints()
                         .SwaggerDocument(o =>

@@ -23,6 +23,7 @@ namespace Infrastructure.Repositories
         private IProductionHouseRepository _productionHouseRepository;
         private IMovieRepository _movieRepository;
         private ICardRequestRepository _cardRequestRepository;
+        private IAwardsRepository _awardsRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -36,8 +37,9 @@ namespace Infrastructure.Repositories
         public ITheatreRepository TheatreRepository => _theatreRepository ??= new TheatreRepository(_context);
         public IProductionHouseRepository ProductionHouseRepository => _productionHouseRepository ??= new ProductionHouseRepository(_context);
         public IMovieRepository MovieRepository => _movieRepository ??= new MovieRepository(_context);
-        public ICardRequestRepository CardRequestRepository => _cardRequestRepository ??= new CardRequestRepository(_context);
-        
+        public ICardRequestRepository CardRequestRepository => _cardRequestRepository ??= new CardRequestRepository(_context); 
+        public IAwardsRepository AwardsRepository => _awardsRepository ??= new AwardsRepository(_context);
+
         public async Task BeginTransactionAsync()
         {
             if (_transaction != null)

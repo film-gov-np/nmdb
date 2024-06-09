@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
+import CardRequest from "../cardRequest/CardRequest";
 
 const Dashboard = () => {
   return (
@@ -53,6 +54,12 @@ const Dashboard = () => {
             </p>
           </CardContent>
         </Card>
+      </div>
+      <div className=" space-y-4">
+        <h2 className="text-3xl font-bold capitalize tracking-tight">
+          Card Requests
+        </h2>
+        <CardRequest />
       </div>
     </main>
   );

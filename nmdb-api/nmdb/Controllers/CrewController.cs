@@ -13,8 +13,7 @@ using System.Net;
 
 namespace nmdb.Controllers
 {
-    [ApiController]
-    [Authorize]
+    [ApiController]    
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/crews")]
     public class CrewController : AuthorizedController
@@ -29,7 +28,6 @@ namespace nmdb.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
             try
@@ -45,7 +43,6 @@ namespace nmdb.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _crewService.GetCrewByIdAsync(id);

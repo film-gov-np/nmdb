@@ -158,7 +158,6 @@ const CreateProductionHouse = () => {
       navigate(Paths.Route_Admin_ProductionHouse);
     },
     onError: (error, variables, context) => {
-      debugger
       toast({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {

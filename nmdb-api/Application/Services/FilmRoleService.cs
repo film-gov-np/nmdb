@@ -142,7 +142,7 @@ public class FilmRoleService : IFilmRoleService
     }
 
 
-    public async Task<ApiResponse<PaginationResponse<FilmRoleResponse>>> GetAllAsync(FilmRoleFilterParameters filterParameters)
+    public async Task<ApiResponse<PaginationResponse<FilmRoleResponseDto>>> GetAllAsync(FilmRoleFilterParameters filterParameters)
     {
         Expression<Func<FilmRole, bool>> filter = null;
         Expression<Func<FilmRole, object>> orderByColumn = null;
@@ -176,14 +176,14 @@ public class FilmRoleService : IFilmRoleService
 
         var (query, totalItems) = await _unitOfWork.FilmRoleRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
         var filmRoleResponse = await query.Select(
-        fr => new FilmRoleResponse(
+        fr => new FilmRoleResponseDto(
                          fr.Id,
                          fr.RoleName,
                          fr.RoleCategory.Id,
                          fr.RoleCategory.CategoryName,
                          fr.DisplayOrder)).ToListAsync();
 
-        var response = new PaginationResponse<FilmRoleResponse>
+        var response = new PaginationResponse<FilmRoleResponseDto>
         {
             Items = filmRoleResponse,
             TotalItems = totalItems,
@@ -191,12 +191,12 @@ public class FilmRoleService : IFilmRoleService
             PageSize = filterParameters.PageSize
         };
 
-        return ApiResponse<PaginationResponse<FilmRoleResponse>>.SuccessResponse(response);
+        return ApiResponse<PaginationResponse<FilmRoleResponseDto>>.SuccessResponse(response);
     }
 
-    public async Task<ApiResponse<FilmRoleResponse>> GetByIdAsync(int roleId)
+    public async Task<ApiResponse<FilmRoleResponseDto>> GetByIdAsync(int roleId)
     {
-        var response = new ApiResponse<FilmRoleResponse>();
+        var response = new ApiResponse<FilmRoleResponseDto>();
 
         try
         {
@@ -215,7 +215,7 @@ public class FilmRoleService : IFilmRoleService
                 filmRole.RoleCategory = await _unitOfWork.FilmRoleCategoryRepository.GetByIdAsync(filmRole.RoleCategoryId);
             }
 
-            var filmRoleResponse = _mapper.Map<FilmRoleResponse>(filmRole);
+            var filmRoleResponse = _mapper.Map<FilmRoleResponseDto>(filmRole);
 
             filmRoleResponse.CategoryName = filmRole.RoleCategory?.CategoryName ?? string.Empty;
 

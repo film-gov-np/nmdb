@@ -14,5 +14,8 @@ export const ApiPaths = {
   // Movie
   Path_Movies: "/movies",
 
-  Path_Crews: "/crews"
+  Path_Crews: "/crews",
+
+  Path_CardRequest: "/cards",
+  Path_Awards: "/awards"
 };

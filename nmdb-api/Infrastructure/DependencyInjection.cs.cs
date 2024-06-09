@@ -6,10 +6,12 @@ using Application.Services;
 using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Identity;
+using Infrastructure.Identity.Security;
 using Infrastructure.Identity.Security.TokenGenerator;
 using Infrastructure.Identity.Security.TokenValidation;
 using Infrastructure.Identity.Services;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -62,8 +64,21 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<AppDbContext>();
         services
             .ConfigureOptions<JwtBearerTokenValidationConfiguration>()
-            .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer();
+            
+        // If default Authorization header is to be used
+    //    .AddAuthentication(options =>
+    //        {
+    //            options.DefaultAuthenticateScheme = "CustomTokenScheme";
+    //            options.DefaultChallengeScheme = "CustomTokenScheme";
+    //        })
+    //.AddScheme<AuthenticationSchemeOptions, CustomTokenAuthenticationHandler>("CustomTokenScheme", options => { }); ;
         return services;
     }
 }

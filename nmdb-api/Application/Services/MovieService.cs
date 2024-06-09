@@ -4,6 +4,7 @@ using Application.Dtos.Media;
 using Application.Dtos.Movie;
 using Application.Dtos.ProductionHouse;
 using Application.Dtos.Theatre;
+using Application.Helpers;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -11,7 +12,10 @@ using AutoMapper;
 using Core;
 using Core.Constants;
 using Core.Entities;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Extensions;
 using System.Linq.Expressions;
@@ -25,13 +29,22 @@ public class MovieService : IMovieService
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<MovieService> _logger;
     private readonly IFileService _fileService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly string _uploadFolderPath;
 
-    public MovieService(IMapper mapper, ILogger<MovieService> logger, IUnitOfWork unitOfWork, IFileService fileService)
+
+    public MovieService(IMapper mapper, ILogger<MovieService> logger,
+        IUnitOfWork unitOfWork,
+        IFileService fileService,
+        IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _logger = logger;
         _fileService = fileService;
+        _httpContextAccessor = httpContextAccessor;
+        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/movies/");
     }
 
     public async Task<ApiResponse<string>> CreateAsync(MovieRequestDto movieRequestDto)
@@ -56,12 +69,13 @@ public class MovieService : IMovieService
                 {
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
-                    ReadableName = false
+                    ReadableName = false,
+                    SubFolder = "movies"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
-                    movieEntity.ThumbnailImage = uploadResult.Data.FilePath;
+                    movieEntity.ThumbnailImage = uploadResult.Data.FileName;
                 }
             }
 
@@ -78,7 +92,7 @@ public class MovieService : IMovieService
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
-                    movieEntity.CoverImage = uploadResult.Data.FilePath;
+                    movieEntity.CoverImage = uploadResult.Data.FileName;
                 }
             }
 
@@ -217,10 +231,10 @@ public class MovieService : IMovieService
         if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
         {
             filter = query =>
-                (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword) 
-                )&&(
+                (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
+                ) && (
                     (filterParameters.Category == null || filterParameters.Category == query.Category)
-                )&&(
+                ) && (
                     (filterParameters.Status == null || filterParameters.Status == query.Status)
                 );
         }
@@ -238,6 +252,8 @@ public class MovieService : IMovieService
             }
         }
 
+        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+
         var (query, totalItems) = await _unitOfWork.MovieRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
         var movieResponse = await query.Select(
                                             mr => new MovieListResponseDto
@@ -248,8 +264,7 @@ public class MovieService : IMovieService
                                                 Category = mr.Category != null ? mr.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                                                 Status = mr.Status != null ? mr.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                                                 Color = mr.Color != null ? mr.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),
-                                                Image = mr.ThumbnailImage,
-
+                                                Image = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage)
                                             }).ToListAsync();
 
 
@@ -264,14 +279,6 @@ public class MovieService : IMovieService
         return ApiResponse<PaginationResponse<MovieListResponseDto>>.SuccessResponse(response);
     }
 
-    private string GetFullImageUrl(string imagePath)
-    {
-        if (!string.IsNullOrEmpty(imagePath))
-        {
-
-        }
-        return string.Empty;
-    }
     public async Task<ApiResponse<MovieResponseDto>> GetByIdAsync(int movieId)
     {
         var response = new ApiResponse<MovieResponseDto>();
@@ -289,6 +296,7 @@ public class MovieService : IMovieService
 
             var movieResponse = _mapper.Map<MovieResponseDto>(movieEntity);
             movieResponse.Censor = _mapper.Map<MovieCensorDto>(movieEntity.Censor);
+
             movieResponse.Genres = movieEntity.MovieGenres.Select(g => new GenreDto
             {
                 Id = g.GenreId,
@@ -299,10 +307,15 @@ public class MovieService : IMovieService
                 Id = l.LanguageId,
                 Name = l.Language.Name
             }).ToList();
+
             movieResponse.ProductionHouses = movieEntity.MovieProductionHouses.Select(mvp => new ProductionHouseDto { Id = mvp.ProductionHouseId, Name = mvp.ProductionHouse.Name }).ToList();
             movieResponse.CrewRoles = MapToMovieCrewRoleDto(movieEntity.MovieCrewRoles.ToList());
             movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
 
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+                        
+            movieResponse.ThumbnailImage = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.ThumbnailImage);
+            movieResponse.CoverImage = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.CoverImage);
 
             response.IsSuccess = true;
             response.Data = movieResponse;
@@ -396,7 +409,6 @@ public class MovieService : IMovieService
 
             _mapper.Map(movieRequestDto, existingMovie);
 
-            // Image Upload
             if (movieRequestDto.ThumbnailImageFile != null)
             {
                 FileDTO fileDto = new FileDTO
@@ -404,7 +416,7 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder="movies"
+                    SubFolder = "movies"
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -413,7 +425,26 @@ public class MovieService : IMovieService
                     if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
                         _fileService.RemoveFile(existingMovie.ThumbnailImage, "movies");
 
-                    existingMovie.ThumbnailImage = uploadResult.Data.FilePath;
+                    existingMovie.ThumbnailImage = uploadResult.Data.FileName;
+                }
+            }
+
+            if (movieRequestDto.CoverImageFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = movieRequestDto.CoverImageFile,
+                    Thumbnail = false,
+                    ReadableName = true,
+                    SubFolder = "movies"
+                };
+                var uploadResult = await _fileService.UploadFile(fileDto);
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    if (!string.IsNullOrEmpty(existingMovie.CoverImage))
+                        _fileService.RemoveFile(existingMovie.CoverImage, "movies");
+
+                    existingMovie.CoverImage = uploadResult.Data.FileName;
                 }
             }
 

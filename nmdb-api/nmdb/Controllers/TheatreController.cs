@@ -13,7 +13,6 @@ using System.Net;
 namespace nmdb.Controllers
 {
     [ApiController]
-    [Authorize]
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/theatres/")]
     public class TheatreController : AuthorizedController
@@ -29,16 +28,14 @@ namespace nmdb.Controllers
             _theatreService = theatreService;
         }
 
-
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] TheatreFilterParameters filterParameters)
         {
             var response = await _theatreService.GetAllAsync(filterParameters);
             return Ok(response);
         }
+
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _theatreService.GetByIdAsync(id);

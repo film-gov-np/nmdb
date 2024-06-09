@@ -23,6 +23,9 @@ public static class DependencyInjection
         services.AddScoped<IProductionHouseService, ProductionHouseService>();
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<ICardRequestService, CardRequestService>();
+        services.AddScoped<ICommonService, CommonService>();
+        services.AddScoped<IAwardsService, AwardsService>();
+
         services.AddFluentValidation(fv =>
         {
             fv.RegisterValidatorsFromAssemblyContaining<AssemblyReference>();            

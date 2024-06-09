@@ -13,7 +13,6 @@ using System.Net;
 namespace nmdb.Controllers;
 
 [ApiController]
-[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/production-house/")]
 public class ProductionHouseController : AuthorizedController
@@ -28,8 +27,7 @@ public class ProductionHouseController : AuthorizedController
         _contextAccessor = contextAccessor;
         _productionHouseService = productionHouseService;
     }
-
-    [AllowAnonymous]
+        
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] ProductionHouseFilterParameters filterParameters)
     {
@@ -37,7 +35,6 @@ public class ProductionHouseController : AuthorizedController
         return Ok(response);
     }
 
-    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {

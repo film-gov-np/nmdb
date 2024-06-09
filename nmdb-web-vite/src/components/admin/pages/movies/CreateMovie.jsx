@@ -19,6 +19,7 @@ import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import FormCrewInfo from "./forms/FormCrewInfo";
 import axiosInstance from "@/helpers/axiosSetup";
 import { sanitizeData } from "@/lib/utils";
+import { ServerPath } from "@/constants/authConstant";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
@@ -42,7 +43,13 @@ const getMovie = async (id, renderMode) => {
   return data;
 };
 
-const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
+const createOrEditMovie = async ({
+  postData,
+  isEditMode,
+  slug,
+  toast,
+  setError,
+}) => {
   let apiPath = ApiPaths.Path_Movies;
   if (isEditMode) {
     apiPath += "/" + slug;
@@ -65,7 +72,19 @@ const createOrEditMovie = async ({ postData, isEditMode, slug, toast }) => {
       });
       return response.data;
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      const response = err.response?.data;
+      const errors = response?.errors;
+      if (errors) {
+        for (const [field, message] of Object.entries(errors)) {
+          setError(field.charAt(0).toLowerCase() + field.slice(1), {
+            type: "server",
+            message: message[0],
+          });
+        }
+      }
+      console.error(err);
+    });
   return data;
 };
 
@@ -96,49 +115,25 @@ const AddMovie = () => {
     });
 
   const mutateMovie = useMutation({
-    mutationFn: createOrEditMovie,
+    mutationFn: async (data) => {
+      await createOrEditMovie({
+        postData: data.postData,
+        isEditMode: renderMode === renderModes.Render_Mode_Edit,
+        slug,
+        toast,
+        setError: data.setError,
+      });
+    },
     onSuccess: (data, variables, context) => {
-      navigate(Paths.Route_Admin_Movies);
+      navigate(Paths.Route_Admin_Movie);
     },
     onError: (error, variables, context) => {
-      debugger;
       toast({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {
       // queryClient.invalidateQueries("theatreDetail");
     },
   });
-
-  const onSubmit = (data) => {
-    debugger;
-    console.log(data)
-    const submitData = {
-      ...data,
-      thumbnailImageFile: data.thumbnailImageFile?.[0],
-      thumbnailImage: data.thumbnailImageFile?.[0].name,
-      // theatres:  data.theatres?.map(theatre => ({...theatre, theatreId: theatre.theatre[0]?.id})),
-      // genreIds: data.genreIds.every(element => typeof element === 'object') ? data.genreIds.map((item) => item.id.toString()) : data.genreIds,
-      // languageIds: data.languageIds.every(element => typeof element === 'object') ?data.languageIds.map((item) => item.id.toString()): data.languageIds,
-      // productionHouseIds: data.studio.map((item) => item.id.toString()),
-    };
-    console.log("submitted", submitData);
-    mutateMovie.mutate({
-      postData: submitData,
-      isEditMode: renderMode === renderModes.Render_Mode_Edit,
-      slug,
-      toast,
-    });
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <ScrollArea className="h-96">
-          <pre className="mt-2 w-[440px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        </ScrollArea>
-      ),
-    });
-  };
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
@@ -147,20 +142,58 @@ const AddMovie = () => {
         <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
       ) : (
         data && (
-          <MovieForm movie={data} renderMode={renderMode} onSubmit={onSubmit} />
+          <MovieForm
+            movie={data}
+            renderMode={renderMode}
+            mutateMovie={mutateMovie}
+          />
         )
       )}
     </main>
   );
 };
 
-function MovieForm({ movie, renderMode, onSubmit }) {
-  console.log("sanitizedmovie",sanitizeData(movie))
+function MovieForm({ movie, renderMode, mutateMovie }) {
   const form = useForm({
     resolver,
-    defaultValues: sanitizeData(movie),
+    defaultValues: sanitizeData({
+      ...movie,
+      category: movie.category?.toString(),
+      status: movie.status?.toString(),
+      color: movie.color?.toString(),
+    }),
   });
-  
+  if(movie.coverImage) form.setValue("coverImage", movie.coverImage);
+  if(movie.thumbnailImage) form.setValue("thumbnailImage", movie.thumbnailImage);
+  const [previews, setPreviews] = useState({
+    thumbnailImageFile: movie.thumbnailImage
+      ? [ServerPath + movie?.thumbnailImage]
+      : [],
+    coverImageFile: movie.coverImage ? [ServerPath + movie?.coverImage] : [],
+  });
+
+  const onSubmit = (data) => {
+    const submitData = {
+      ...data,
+      thumbnailImageFile: data.thumbnailImageFile?.[0] || null,
+      coverImageFile: data.coverImageFile?.[0] || null,
+    };
+    console.log("submitted", submitData);
+    mutateMovie.mutate({
+      postData: submitData,
+      setError: form.setError,
+    });
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <ScrollArea className="h-96">
+    //       <pre className="mt-2 w-[440px] rounded-md bg-slate-950 p-4">
+    //         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //       </pre>
+    //     </ScrollArea>
+    //   ),
+    // });
+  };
 
   return (
     <Form {...form}>
@@ -180,11 +213,13 @@ function MovieForm({ movie, renderMode, onSubmit }) {
           <div className="mt-4 rounded-md border border-input">
             <ScrollArea
               className="py-2"
-              viewPortClass="max-h-[calc(100vh-80px)]"
+              // viewPortClass="max-h-[calc(100vh-80px)]"
             >
               <TabsContent value="basic_information" className="h-full ">
                 <FormBasicInfo
                   form={form}
+                  previews={previews}
+                  setPreviews={setPreviews}
                 />
               </TabsContent>
               <TabsContent value="crew_information">

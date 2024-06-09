@@ -64,8 +64,8 @@ const FormCensorInfo = ({ form }) => {
               <FormLabel>Censor Type</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customCensorType"
               >
                 <FormControl>
@@ -77,7 +77,7 @@ const FormCensorInfo = ({ form }) => {
                   {movieCensorTypes.map((censor, index) => (
                     <SelectItem
                       key={"movie-censor-type-" + index}
-                      value={censor.value}
+                      value={censor.value.toString()}
                     >
                       {censor.label}
                     </SelectItem>
@@ -96,8 +96,8 @@ const FormCensorInfo = ({ form }) => {
               <FormLabel>Movie Type</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customMovieType"
               >
                 <FormControl>
@@ -109,7 +109,7 @@ const FormCensorInfo = ({ form }) => {
                   {movieTypes.map((movieType, index) => (
                     <SelectItem
                       key={"movie-type-" + index}
-                      value={movieType.value}
+                      value={movieType.value.toString()}
                     >
                       {movieType.label}
                     </SelectItem>
@@ -128,8 +128,8 @@ const FormCensorInfo = ({ form }) => {
               <FormLabel>Valid For ?</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.defaultValue}
-                value={field.value}
+                defaultValue={field.defaultValue?.toString()}
+                value={field.value?.toString()}
                 name="customvalidFor"
               >
                 <FormControl>
@@ -141,7 +141,7 @@ const FormCensorInfo = ({ form }) => {
                   {movieValidFor.map((validFor, index) => (
                     <SelectItem
                       key={"movie-valid-for-" + index}
-                      value={validFor.value}
+                      value={validFor.value.toString()}
                     >
                       {validFor.label}
                     </SelectItem>

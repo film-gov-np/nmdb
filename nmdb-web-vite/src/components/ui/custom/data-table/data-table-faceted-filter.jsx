@@ -98,7 +98,7 @@ export function DataTableFacetedFilter({
                       );
                     }}
                   >
-                    <div
+                    {isMultiSelector && (<div
                       className={cn(
                         "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         isSelected
@@ -107,7 +107,7 @@ export function DataTableFacetedFilter({
                       )}
                     >
                       <CheckIcon className={cn("h-4 w-4")} />
-                    </div>
+                    </div>)}
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
