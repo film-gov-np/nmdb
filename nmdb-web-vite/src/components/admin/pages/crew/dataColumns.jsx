@@ -116,7 +116,7 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
-    enableSorting: false,
+    enableSorting: true,
   },
   {
     accessorKey: "nickName",

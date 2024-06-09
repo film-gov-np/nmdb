@@ -83,6 +83,9 @@ public class CrewService : ICrewService
                 case "nickname":
                     orderByColumn = query => query.ContactNumber;
                     break;
+                case "email":
+                    orderByColumn = query => query.Email;
+                    break;
                 // Add more cases for other columns
                 default:
                     throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
