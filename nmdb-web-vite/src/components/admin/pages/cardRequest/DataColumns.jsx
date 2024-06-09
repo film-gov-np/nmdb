@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, extractInitials } from "@/lib/utils";
 import {
   Check,
   QrCode,
@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const labels = [];
 
@@ -63,7 +64,14 @@ function DataTableRowActions({ row }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Continue</AlertDialogAction>
+            <AlertDialogAction asChild>
+              <Button
+                onClick={() => setShowCelebCardDialog(true)}
+                variant="outline"
+              >
+                Continue
+              </Button>
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -90,7 +98,7 @@ function DataTableRowActions({ row }) {
             <TooltipTrigger asChild>
               <Button
                 className="text-destructive"
-                onClick={() => setShowCrewCardDialog(true)}
+                onClick={() => setShowDeleteTaskDialog(true)}
                 variant="outline"
                 size="icon"
               >
@@ -111,11 +119,18 @@ export const columns = [
     accessorKey: "crew",
     meta: "Crew",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Crew" />
+      <DataTableColumnHeader className="ps-12" column={column} title="Crew" />
     ),
     cell: ({ row }) => {
       const currentCrew = row.getValue("crew");
       return (
+        <div className="flex items-center justify-start space-x-4">
+        <Avatar className="flex h-8 w-8 text-center">
+          <AvatarImage src={currentCrew.profilePhotoUrl} alt="Avatar" />
+          <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
+            {extractInitials(currentCrew.name)}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex flex-col space-y-2">
           {currentCrew.name}
           {currentCrew.email && (
@@ -124,6 +139,7 @@ export const columns = [
             </span>
           )}
         </div>
+      </div>
       );
     },
   },

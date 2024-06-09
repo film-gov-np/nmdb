@@ -189,7 +189,7 @@ namespace Application.Services
                                                         Id = tr.Crew.Id,
                                                         Name = tr.Crew.Name,
                                                         Email = tr.Crew.Email,
-                                                        CurrentAddress = tr.Crew.CurrentAddress,
+                                                        Designations = tr.Crew.CrewDesignations.Select(cd => cd.FilmRole.RoleName).ToArray(),
                                                         ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.Crew.ProfilePhoto),
                                                     }
                                                 }).ToListAsync();

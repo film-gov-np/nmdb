@@ -13,7 +13,7 @@ namespace Application.Dtos.Crew
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Email { get; set; }
-        public string? CurrentAddress { get; set; }
+        public Array? Designations { get; set; }
         public string? ProfilePhotoUrl { get; set; } 
     }
 }

@@ -10,18 +10,16 @@ import {
 } from "@/components/ui/dialog";
 
 import QRCode from "react-qr-code";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
-import { QrCode } from "lucide-react";
-import { ApiPaths } from "@/constants/apiPaths";
-import axiosInstance from "@/helpers/axiosSetup";
-import { useQuery } from "@tanstack/react-query";
+import { Circle, QrCode } from "lucide-react";
 import { extractInitials } from "@/lib/utils";
 
-const QrCodeGenerator = ({ celebrity:{id, name, email, address, profilePhotoUrl }, showTrigger = true, ...props }) => {
-
-
+const QrCodeGenerator = ({
+  celebrity: { id, name, email, designations, profilePhotoUrl },
+  showTrigger = true,
+  ...props
+}) => {
   const qrBlockRef = useRef(null);
   const downloadQRCode = () => {
     toJpeg(qrBlockRef.current)
@@ -46,50 +44,53 @@ const QrCodeGenerator = ({ celebrity:{id, name, email, address, profilePhotoUrl 
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="justify-center sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>QR Code</DialogTitle>
+          <DialogTitle>Celebrity Card</DialogTitle>
         </DialogHeader>
-        <div className="my-2 overflow-hidden">
-          <div className=" border border-input p-6" ref={qrBlockRef}>
-            <div className="grid grid-flow-row items-center justify-center  gap-2 ">
-              {url && (
-                <div className="mx-auto max-h-[16rem] max-w-[16rem] rounded-lg bg-white p-6">
+        <div className="my-4 overflow-hidden">
+          <div
+            className="w-[22rem] h-[36rem] border border-input bg-gradient-to-b from-cyan-100 to-red-100 p-8 text-stone-800"
+            ref={qrBlockRef}
+          >
+            <div className="grid grid-flow-row h-full justify-evenly">
+              <div className="flex flex-col items-center justify-center">
+                <h4 className="text-center text-2xl font-semibold">
+                  Flim Development Board
+                </h4>
+                <span className="text-center text-sm">Nepal</span>
+              </div>
+              <div className="flex justify-center">
+                <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
                   <QRCode
                     value={url}
                     size={256}
-                    className="aspect-square h-auto w-full max-w-full"
+                    className="aspect-square h-auto w-full"
                     viewBox={`0 0 256 256`}
                   />
                 </div>
-              )}
-              <Separator className="my-8" />
-              <div className="flex  items-start gap-4">
-                <Avatar className="flex h-36 w-28 rounded-lg">
+              </div>
+              <div className="flex flex-col space-y-2 justify-center">
+                <h4 className="text-center font-mono text-3xl leading-none font-bold">
+                  {name}
+                </h4>
+                <div className="flex flex-row flex-wrap justify-center space-x-3 space-y-1 text-lg font-medium">
+                  {designations &&
+                    designations.length > 0 &&
+                    designations.map((designation) => (
+                      <div className="flex items-center justify-center space-x-0.5">
+                        <Circle className="h-2 w-2 fill-stone-400 text-stone-600" />
+                        <span className=" leading-none text-lg">{designation}</span>
+                      </div>
+                    ))}
+                </div>
+                <span className="text-center text-muted">{email}</span>
+              </div>
+              <div className="flex justify-center">
+                <Avatar className=" h-[10rem]  w-[10rem] border-8 border-cyan-100">
                   <AvatarImage src={profilePhotoUrl} alt="Avatar" />
                   <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
-                <div className="grid gap-4">
-                  <div className="grid gap-1">
-                    <p className="text-xl font-medium leading-none">
-                      {name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {/* {celebrity.known_for_department} */}
-                    </p>
-                    <p className="text-sm font-medium leading-none">
-                      {email}
-                    </p>
-                  </div>
-                  <div className="grid gap-1">
-                    {/* <span className="text-md font-medium leading-none">
-                      Address
-                    </span> */}
-                    {address && (<p className="text-sm text-muted-foreground">
-                      {address}
-                    </p>)}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
