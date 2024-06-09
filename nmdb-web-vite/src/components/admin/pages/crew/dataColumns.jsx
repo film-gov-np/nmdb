@@ -93,7 +93,7 @@ export const columns = [
     cell: ({ row }) => (
       <div className="flex space-x-4 justify-start items-center">
         <Avatar className="flex h-8 w-8 text-center">
-        <AvatarImage src={row.original.profilePhoto} alt="Avatar" />
+        <AvatarImage src={row.original.profilePhotoUrl} alt="Avatar" />
         <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
           {extractInitials(row.getValue("name"))}
         </AvatarFallback>

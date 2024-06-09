@@ -160,10 +160,10 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
   if(movie.coverImage) form.setValue("coverImage", movie.coverImage);
   if(movie.thumbnailImage) form.setValue("thumbnailImage", movie.thumbnailImage);
   const [previews, setPreviews] = useState({
-    thumbnailImageFile: movie.thumbnailImage
-      ? [movie?.thumbnailImage]
+    thumbnailImageFile: movie.thumbnailImageUrl
+      ? [movie.thumbnailImageUrl]
       : [],
-    coverImageFile: movie.coverImage ? [movie?.coverImage] : [],
+    coverImageFile: movie.coverImageUrl ? [movie?.coverImageUrl] : [],
   });
 
   const onSubmit = (data) => {

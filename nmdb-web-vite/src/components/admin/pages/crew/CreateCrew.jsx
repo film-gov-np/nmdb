@@ -325,7 +325,7 @@ const getCrewFlimRoles = async (apiPath) => {
 };
 function CrewForm({ crew, renderMode, onSubmit }) {
   const [previews, setPreviews] = useState({
-    profilePhotoFile: crew?.profilePhoto ? [crew?.profilePhoto] : [],
+    profilePhotoFile: crew?.profilePhotoUrl ? [crew?.profilePhotoUrl] : [],
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -334,7 +334,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
       isVerified: crew.isVerified.toString(),
     }),
   });
-  form.setValue("profilePhoto", crew.profilePhoto);
+  if(crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["FlimRolesforCrews"],
