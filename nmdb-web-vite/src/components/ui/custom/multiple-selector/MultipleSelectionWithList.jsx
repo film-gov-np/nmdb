@@ -20,7 +20,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import axiosInstance from "@/helpers/axiosSetup";
-import { ServerPath } from "@/constants/authConstant";
 
 function transToGroupOption(options, groupBy) {
   if (options.length === 0) {
@@ -273,7 +272,7 @@ const MultipleSelectorWithList = React.forwardRef(
                       <div className="flex items-center gap-2 rounded-md border border-input bg-muted/40 px-2 py-1.5">
                         {showAvatar && (
                           <Avatar className="flex h-7 w-7 text-center">
-                            <AvatarImage src={ServerPath+ option[imgLabel]} alt="Avatar" />
+                            <AvatarImage src={option[imgLabel]} alt="Avatar" />
                             <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
                               {extractInitials(option[keyLabel])}
                             </AvatarFallback>
@@ -398,9 +397,9 @@ const MultipleSelectorWithList = React.forwardRef(
                                       {option[keyValue]}
                                     </div>
                                     {showAvatar && (
-                                      <Avatar className="flex h-7 w-7 mr-2 text-center">
+                                      <Avatar className="mr-2 flex h-7 w-7 text-center">
                                         <AvatarImage
-                                          src={ServerPath+option[imgLabel]}
+                                          src={option[imgLabel]}
                                           alt="Avatar"
                                         />
                                         <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
