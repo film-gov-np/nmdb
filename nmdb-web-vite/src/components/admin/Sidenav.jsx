@@ -129,7 +129,7 @@ const NavLinkDropdown = ({
           "group w-full",
           (isMobileSidebar &&
             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground") ||
-            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
+          " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
         )}
       >
         {<rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />}

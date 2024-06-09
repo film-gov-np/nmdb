@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces.Repositories;
 
-public interface ICardRequestRepository:IEfRepository<CardRequest>
+public interface ICardRequestRepository : IEfRepository<CardRequest>
 {
-    
+
 }

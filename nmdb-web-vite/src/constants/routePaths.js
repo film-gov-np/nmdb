@@ -21,10 +21,11 @@ export const Paths = {
   Route_Admin_Role_Add: "/admin/role/create",
   Route_Admin_ProductionHouse: "/admin/production-house",
   Route_Admin_ProductionHouse_Add: "/admin/production-house/create",
-  Route_Admin_Awards: "/admin/awards",
   Route_Admin_Scholarship: "/admin/scholarship",
   Route_Admin_Scholarship_Bachelors: "/admin/scholarship/bachelors",
   Route_Admin_Scholarship_Masters: "/admin/scholarship/masters",
   Route_Admin_Theatre: "/admin/theatre",
-  Route_Admin_Theatre_Add:"/admin/theatre/create",
+  Route_Admin_Theatre_Add: "/admin/theatre/create",
+  Route_Admin_Awards: "/admin/awards",
+  Route_Admin_Awards_Add: "/admin/awards/create",
 };

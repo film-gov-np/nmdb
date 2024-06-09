@@ -58,7 +58,7 @@ namespace Application.Services
                     data: new UploadResult()
                     {
                         FileName = fileName,
-                        FilePath =string.IsNullOrEmpty(model.SubFolder)?string.Concat('/', savePath.Replace('\\', '/'), '/', fileName): string.Concat('/', savePath.Replace('\\', '/'), '/',model.SubFolder,'/', fileName),
+                        FilePath = string.IsNullOrEmpty(model.SubFolder)?string.Concat('/', savePath.Replace('\\', '/'), '/', fileName): string.Concat('/', savePath.Replace('\\', '/'), '/',model.SubFolder,'/', fileName),
                         FileExtension = Path.GetExtension(model.Files.FileName),
                         FileSize = model.Files.Length.ToString()
                     },

@@ -53,8 +53,8 @@ const Login = () => {
             refreshToken,
           } = response.data;
           //set token to cookie or localStorage
-          localStorage.setItem("token", jwtToken);
-          localStorage.setItem("refreshToken", refreshToken);
+          // localStorage.setItem("token", jwtToken);
+          // localStorage.setItem("refreshToken", refreshToken);
           setIsAuthorized(true);
           navigate("/admin/dashboard");
         } else {
