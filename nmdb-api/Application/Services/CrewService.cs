@@ -99,7 +99,7 @@ public class CrewService : ICrewService
                                                 Id = tr.Id,
                                                 Name = tr.Name,
                                                 NickName = tr.NickName,
-                                                FatherName = tr.FatherName,
+                                                Email = tr.Email,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
                                                 ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),

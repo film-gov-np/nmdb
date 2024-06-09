@@ -13,7 +13,7 @@ namespace Application.Dtos.Crew
         public string NepaliName { get; set; }
         public bool IsVerified { get; set; }
         public string? ProfilePhoto { get; set; }
-        public string FatherName { get; set; }
+        public string Email { get; set; }
         public string NickName { get; set; }
     }
 }
