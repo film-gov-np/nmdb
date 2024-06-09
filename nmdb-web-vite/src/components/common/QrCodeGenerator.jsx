@@ -50,15 +50,12 @@ const QrCodeGenerator = ({
         </DialogHeader>
         <div className="my-4 overflow-hidden">
           <div
-            className="w-[22rem] h-[36rem] border border-input bg-gradient-to-b from-cyan-100 to-red-100 p-8 text-stone-800"
+            className="w-[22rem] h-[36.5rem] border border-input bg-gradient-to-b from-cyan-100 to-red-100 p-6 text-stone-800"
             ref={qrBlockRef}
           >
-            <div className="grid grid-flow-row h-full justify-evenly">
+            <div className="grid grid-flow-row h-full justify-center content-between">
               <div className="flex flex-col items-center justify-center">
-                <h4 className="text-center text-2xl font-semibold">
-                  Flim Development Board
-                </h4>
-                <span className="text-center text-sm">Nepal</span>
+                <img src="/nmdb-logo.png" className="w-[90%] h-auto" alt="" />
               </div>
               <div className="flex justify-center">
                 <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
@@ -74,14 +71,11 @@ const QrCodeGenerator = ({
                 <h4 className="text-center font-mono text-3xl leading-none font-bold">
                   {name}
                 </h4>
-                <div className="flex flex-row flex-wrap justify-center space-x-3 space-y-1 text-lg font-medium">
+                <div className="flex flex-row flex-wrap justify-center space-x-3 font-medium">
                   {designations &&
                     designations.length > 0 &&
                     designations.map((designation) => (
-                      <div className="flex items-center justify-center space-x-0.5">
-                        <Circle className="h-2 w-2 fill-stone-400 text-stone-600" />
-                        <span className=" leading-none text-lg">{designation}</span>
-                      </div>
+                        <span className="">{designation}</span>
                     ))}
                 </div>
                 <span className="text-center text-muted">{email}</span>
