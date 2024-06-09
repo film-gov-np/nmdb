@@ -32,7 +32,6 @@ import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/M
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import DatePickerForForm from "@/components/common/formElements/DatePicker";
 import { Date_Format, Gender } from "@/constants/general";
-import { ServerPath } from "@/constants/authConstant";
 import DateInput from "@/components/ui/custom/DateInput";
 import { format, isValid, parse } from "date-fns";
 import Image from "@/components/common/Image";
@@ -158,6 +157,7 @@ const formSchema = z.object({
     .optional(),
   profilePhotoFile: z.any(),
   profilePhoto: z.any(),
+  email: z.string().email().optional().or(z.literal("")),
 });
 
 const defaultValues = {
@@ -189,6 +189,7 @@ const defaultValues = {
   isVerified: "false",
   dateOfBirthInBS: "",
   dateOfDeathInBS: "",
+  email: "",
 };
 
 function CreateCrew() {
@@ -324,9 +325,7 @@ const getCrewFlimRoles = async (apiPath) => {
 };
 function CrewForm({ crew, renderMode, onSubmit }) {
   const [previews, setPreviews] = useState({
-    profilePhotoFile: crew?.profilePhoto
-      ? [ServerPath + crew?.profilePhoto]
-      : [],
+    profilePhotoFile: crew?.profilePhotoUrl ? [crew?.profilePhotoUrl] : [],
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -335,7 +334,7 @@ function CrewForm({ crew, renderMode, onSubmit }) {
       isVerified: crew.isVerified.toString(),
     }),
   });
-  form.setValue("profilePhoto", crew.profilePhoto);
+  if(crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["FlimRolesforCrews"],
@@ -482,6 +481,20 @@ function CrewForm({ crew, renderMode, onSubmit }) {
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

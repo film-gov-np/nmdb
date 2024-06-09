@@ -19,7 +19,6 @@ import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import FormCrewInfo from "./forms/FormCrewInfo";
 import axiosInstance from "@/helpers/axiosSetup";
 import { sanitizeData } from "@/lib/utils";
-import { ServerPath } from "@/constants/authConstant";
 
 const getMovie = async (id, renderMode) => {
   if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
@@ -156,20 +155,15 @@ const AddMovie = () => {
 function MovieForm({ movie, renderMode, mutateMovie }) {
   const form = useForm({
     resolver,
-    defaultValues: sanitizeData({
-      ...movie,
-      category: movie.category?.toString(),
-      status: movie.status?.toString(),
-      color: movie.color?.toString(),
-    }),
+    defaultValues: sanitizeData(movie),
   });
   if(movie.coverImage) form.setValue("coverImage", movie.coverImage);
   if(movie.thumbnailImage) form.setValue("thumbnailImage", movie.thumbnailImage);
   const [previews, setPreviews] = useState({
-    thumbnailImageFile: movie.thumbnailImage
-      ? [ServerPath + movie?.thumbnailImage]
+    thumbnailImageFile: movie.thumbnailImageUrl
+      ? [movie.thumbnailImageUrl]
       : [],
-    coverImageFile: movie.coverImage ? [ServerPath + movie?.coverImage] : [],
+    coverImageFile: movie.coverImageUrl ? [movie?.coverImageUrl] : [],
   });
 
   const onSubmit = (data) => {

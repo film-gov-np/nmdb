@@ -9,4 +9,5 @@ namespace Application.Dtos;
 public class CrewResponseDto : CrewRequestDto
 {
     public int Id { get; set; }
+    public string? ProfilePhotoUrl { get; set; }
 }

@@ -14,37 +14,47 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
 import { QrCode } from "lucide-react";
+import { ApiPaths } from "@/constants/apiPaths";
+import axiosInstance from "@/helpers/axiosSetup";
+import { useQuery } from "@tanstack/react-query";
+import { extractInitials } from "@/lib/utils";
 
-const QrCodeGenerator = ({ url, details }) => {
+const QrCodeGenerator = ({ celebrity:{id, name, email, address, profilePhotoUrl }, showTrigger = true, ...props }) => {
+
+
   const qrBlockRef = useRef(null);
   const downloadQRCode = () => {
     toJpeg(qrBlockRef.current)
       .then(function (dataUrl) {
         const link = document.createElement("a");
         link.href = dataUrl;
-        link.download = details.name + ".jpeg";
+        link.download = name + ".jpeg";
         link.click();
       })
       .catch(function (error) {
         console.error("Error generating QR code:", error);
       });
   };
+
+  const url = "http://localhost:5173/celebrities/" + id;
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="p-2">
-          <QrCode className="h-6 w-6 rounded-lg" />
-        </Button>
-      </DialogTrigger>
+    <Dialog {...props}>
+      {showTrigger && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="p-2">
+            <QrCode className="h-6 w-6 rounded-lg" />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>QR Code</DialogTitle>
         </DialogHeader>
-        <div className="my-2 overflow-hidden" >
+        <div className="my-2 overflow-hidden">
           <div className=" border border-input p-6" ref={qrBlockRef}>
             <div className="grid grid-flow-row items-center justify-center  gap-2 ">
               {url && (
-                <div className="mx-auto max-h-[18rem] max-w-[18rem] rounded-lg bg-white p-6">
+                <div className="mx-auto max-h-[16rem] max-w-[16rem] rounded-lg bg-white p-6">
                   <QRCode
                     value={url}
                     size={256}
@@ -56,31 +66,28 @@ const QrCodeGenerator = ({ url, details }) => {
               <Separator className="my-8" />
               <div className="flex  items-start gap-4">
                 <Avatar className="flex h-36 w-28 rounded-lg">
-                  <AvatarImage
-                    src={
-                      "https://image.tmdb.org/t/p/original/" +
-                      details.profile_path
-                    }
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>RH</AvatarFallback>
+                  <AvatarImage src={profilePhotoUrl} alt="Avatar" />
+                  <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-4">
                   <div className="grid gap-1">
                     <p className="text-xl font-medium leading-none">
-                      {details.name}
+                      {name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {details.known_for_department}
+                      {/* {celebrity.known_for_department} */}
+                    </p>
+                    <p className="text-sm font-medium leading-none">
+                      {email}
                     </p>
                   </div>
                   <div className="grid gap-1">
-                    <span className="text-md font-medium leading-none">
+                    {/* <span className="text-md font-medium leading-none">
                       Address
-                    </span>
-                    <p className="text-sm text-muted-foreground">
-                      {details.place_of_birth}
-                    </p>
+                    </span> */}
+                    {address && (<p className="text-sm text-muted-foreground">
+                      {address}
+                    </p>)}
                   </div>
                 </div>
               </div>

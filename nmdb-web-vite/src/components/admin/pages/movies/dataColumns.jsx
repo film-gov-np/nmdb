@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
 import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
@@ -9,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Paths } from "@/constants/routePaths";
-import { cn } from "@/lib/utils";
+import { cn, extractInitials } from "@/lib/utils";
 import {
   CheckIcon,
   ExclamationTriangleIcon,
@@ -153,17 +154,25 @@ export const columns = [
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader className="ps-16" column={column} title="Name" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex flex-col space-y-2">
-          {row.getValue("name")}
-          {row.original.nepaliName && (
-            <span className="text-xs text-muted-foreground">
-              {row.original.nepaliName}
-            </span>
-          )}
+        <div className="flex items-center justify-start space-x-4">
+          <Avatar className="flex h-12 w-12 rounded-md text-center">
+            <AvatarImage src={row.original.thumbnailImageUrl} alt="Avatar" />
+            <AvatarFallback className="rounded-md bg-muted-foreground/90 text-xs font-semibold text-input">
+              {extractInitials(row.getValue("name"))}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col space-y-2">
+            {row.getValue("name")}
+            {row.original.nepaliName && (
+              <span className="text-sm text-muted-foreground">
+                {row.original.nepaliName}
+              </span>
+            )}
+          </div>
         </div>
       );
     },

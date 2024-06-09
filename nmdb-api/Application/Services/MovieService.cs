@@ -264,7 +264,7 @@ public class MovieService : IMovieService
                                                 Category = mr.Category != null ? mr.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                                                 Status = mr.Status != null ? mr.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                                                 Color = mr.Color != null ? mr.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),
-                                                Image = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage)
+                                                ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage)
                                             }).ToListAsync();
 
 
@@ -314,8 +314,8 @@ public class MovieService : IMovieService
 
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
                         
-            movieResponse.ThumbnailImage = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.ThumbnailImage);
-            movieResponse.CoverImage = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.CoverImage);
+            movieResponse.ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.ThumbnailImage);
+            movieResponse.CoverImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.CoverImage);
 
             response.IsSuccess = true;
             response.Data = movieResponse;

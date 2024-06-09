@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, extractInitials } from "@/lib/utils";
 // import { DataTableRowActions } from "@/components/ui/custom/data-table-row-actions";
 import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +16,7 @@ import { NavLink } from "react-router-dom";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function DataTableRowActions({ row }) {
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
@@ -84,43 +85,38 @@ function DataTableRowActions({ row }) {
 
 export const columns = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "name",
     meta: "Name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader className="ps-12" column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="flex flex-col space-y-2">
-      {row.getValue("name")}
-      {row.original.nepaliName && (
-        <span className="text-xs text-muted-foreground">
-          {row.original.nepaliName}
-        </span>
-      )}
-    </div>,
+    cell: ({ row }) => (
+      <div className="flex space-x-4 justify-start items-center">
+        <Avatar className="flex h-8 w-8 text-center">
+        <AvatarImage src={row.original.profilePhotoUrl} alt="Avatar" />
+        <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
+          {extractInitials(row.getValue("name"))}
+        </AvatarFallback>
+      </Avatar>
+        <div className="flex flex-col space-y-2">
+          {row.getValue("name")}
+          {row.original.nepaliName && (
+            <span className="text-xs text-muted-foreground">
+              {row.original.nepaliName}
+            </span>
+          )}
+        </div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "email",
+    meta: "Email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+    cell: ({ row }) => <div className="">{row.getValue("email")}</div>,
+    enableSorting: true,
   },
   {
     accessorKey: "nickName",
@@ -129,15 +125,6 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Nick Name" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("nickName")}</div>,
-  },
-  {
-    accessorKey: "fatherName",
-    meta: "Father Name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Father Name" />
-    ),
-    cell: ({ row }) => <div className="">{row.getValue("fatherName")}</div>,
-    enableSorting: false,
   },
   {
     accessorKey: "isVerified",

@@ -203,7 +203,7 @@ export function DataTableAdvancedServerControlled({
   if (isError)
     return (
       <>
-        <ListPageHeader label={nameLabel} pathTo={addNewPath} />
+        {withHeader && <ListPageHeader label={nameLabel} pathTo={addNewPath} />}
 
         <ErrorBanner />
       </>

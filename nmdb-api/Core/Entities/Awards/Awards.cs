@@ -15,6 +15,8 @@ namespace Core.Entities.Awards
         public DateTime? AwardedDate { get; set; }
         public string Remarks { get; set; }
         public int? CrewID { get; set; }
+        public Crew? Crew { get; set; }
         public int? MovieID { get; set; }
+        public Movie? Movie { get; set; }
     }
 }

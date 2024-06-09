@@ -83,6 +83,9 @@ public class CrewService : ICrewService
                 case "nickname":
                     orderByColumn = query => query.ContactNumber;
                     break;
+                case "email":
+                    orderByColumn = query => query.Email;
+                    break;
                 // Add more cases for other columns
                 default:
                     throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
@@ -99,10 +102,10 @@ public class CrewService : ICrewService
                                                 Id = tr.Id,
                                                 Name = tr.Name,
                                                 NickName = tr.NickName,
-                                                FatherName = tr.FatherName,
+                                                Email = tr.Email,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
-                                                ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
+                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewListDto>
@@ -269,7 +272,7 @@ public class CrewService : ICrewService
             string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
                 string.Concat(_uploadFolderPath,"movies/",crewResponse.ProfilePhoto):"";
 
-            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
+            crewResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
 
 
             response.IsSuccess = true;
