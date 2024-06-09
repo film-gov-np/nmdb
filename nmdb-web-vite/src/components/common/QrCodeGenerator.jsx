@@ -17,8 +17,9 @@ import { QrCode } from "lucide-react";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import { useQuery } from "@tanstack/react-query";
+import { extractInitials } from "@/lib/utils";
 
-const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
+const QrCodeGenerator = ({ celebrity:{id, name, email, address, profilePhotoUrl }, showTrigger = true, ...props }) => {
 
 
   const qrBlockRef = useRef(null);
@@ -27,7 +28,7 @@ const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
       .then(function (dataUrl) {
         const link = document.createElement("a");
         link.href = dataUrl;
-        link.download = details.name + ".jpeg";
+        link.download = name + ".jpeg";
         link.click();
       })
       .catch(function (error) {
@@ -35,7 +36,7 @@ const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
       });
   };
 
-  const url = "http://localhost:5173/celebrities/" + celebrity.id;
+  const url = "http://localhost:5173/celebrities/" + id;
   return (
     <Dialog {...props}>
       {showTrigger && (
@@ -53,7 +54,7 @@ const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
           <div className=" border border-input p-6" ref={qrBlockRef}>
             <div className="grid grid-flow-row items-center justify-center  gap-2 ">
               {url && (
-                <div className="mx-auto max-h-[18rem] max-w-[18rem] rounded-lg bg-white p-6">
+                <div className="mx-auto max-h-[16rem] max-w-[16rem] rounded-lg bg-white p-6">
                   <QRCode
                     value={url}
                     size={256}
@@ -65,25 +66,28 @@ const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
               <Separator className="my-8" />
               <div className="flex  items-start gap-4">
                 <Avatar className="flex h-36 w-28 rounded-lg">
-                  <AvatarImage src={celebrity.profileImageUrl} alt="Avatar" />
-                  <AvatarFallback>RH</AvatarFallback>
+                  <AvatarImage src={profilePhotoUrl} alt="Avatar" />
+                  <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-4">
                   <div className="grid gap-1">
                     <p className="text-xl font-medium leading-none">
-                      {celebrity.name}
+                      {name}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {/* {celebrity.known_for_department} */}
                     </p>
+                    <p className="text-sm font-medium leading-none">
+                      {email}
+                    </p>
                   </div>
                   <div className="grid gap-1">
-                    <span className="text-md font-medium leading-none">
+                    {/* <span className="text-md font-medium leading-none">
                       Address
-                    </span>
-                    <p className="text-sm text-muted-foreground">
-                      {celebrity.address}
-                    </p>
+                    </span> */}
+                    {address && (<p className="text-sm text-muted-foreground">
+                      {address}
+                    </p>)}
                   </div>
                 </div>
               </div>
