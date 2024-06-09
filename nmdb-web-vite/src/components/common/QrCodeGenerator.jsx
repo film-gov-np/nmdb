@@ -50,7 +50,7 @@ const QrCodeGenerator = ({
         </DialogHeader>
         <div className="my-4 overflow-hidden">
           <div
-            className="w-[22rem] h-[36.5rem] border border-input bg-gradient-to-b from-cyan-100 to-red-100 p-6 text-stone-800"
+            className="w-[22rem] h-[36.5rem] border border-input bg-gradient-to-b from-cyan-100 to-red-200 p-6 text-stone-900"
             ref={qrBlockRef}
           >
             <div className="grid grid-flow-row h-full justify-center content-between">
@@ -78,10 +78,10 @@ const QrCodeGenerator = ({
                         <span className="">{designation}</span>
                     ))}
                 </div>
-                <span className="text-center text-muted">{email}</span>
+                <span className="text-center font-medium text-muted">{email}</span>
               </div>
               <div className="flex justify-center">
-                <Avatar className=" h-[10rem]  w-[10rem] border-8 border-cyan-100">
+                <Avatar className="h-[10rem] w-[10rem] ring-8 ring-cyan-200">
                   <AvatarImage src={profilePhotoUrl} alt="Avatar" />
                   <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
