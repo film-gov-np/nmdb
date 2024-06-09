@@ -3,6 +3,7 @@ using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos;
 using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
+using Application.Helpers;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
@@ -13,7 +14,9 @@ using Azure.Core;
 using Core;
 using Core.Constants;
 using Core.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,16 +34,23 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
         private readonly ICrewService _crewService;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;    
+    private readonly string _uploadFolderPath;
         private readonly ILogger<CardRequestService> _logger;
         public CardRequestService(
             IUnitOfWork unitOfWork,
             IEmailService emailService,
             ICrewService crewService,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration,
             ILogger<CardRequestService> logger)
         {
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _crewService = crewService;
+            _httpContextAccessor = httpContextAccessor;
+            _uploadFolderPath = string.Concat(configuration["UploadFolderPath"],"/crews/");
             _logger = logger;
         }
         public async Task<ApiResponse<string>> RequestCardAsync(string email)
@@ -164,6 +174,8 @@ namespace Application.Services
                 }
             }
 
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+
             var (query, totalItems) = await _unitOfWork.CardRequestRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
             var cardRequestResponse = await query.Select(
                                                 tr => new CardRequestDto
@@ -176,7 +188,9 @@ namespace Application.Services
                                                     {
                                                         Id = tr.Crew.Id,
                                                         Name = tr.Crew.Name,
-                                                        Email = tr.Crew.Email
+                                                        Email = tr.Crew.Email,
+                                                        CurrentAddress = tr.Crew.CurrentAddress,
+                                                        ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.Crew.ProfilePhoto),
                                                     }
                                                 }).ToListAsync();
 

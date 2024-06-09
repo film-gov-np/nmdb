@@ -14,8 +14,13 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
 import { QrCode } from "lucide-react";
+import { ApiPaths } from "@/constants/apiPaths";
+import axiosInstance from "@/helpers/axiosSetup";
+import { useQuery } from "@tanstack/react-query";
 
-const QrCodeGenerator = ({ url, details }) => {
+const QrCodeGenerator = ({ celebrity, showTrigger = true, ...props }) => {
+
+
   const qrBlockRef = useRef(null);
   const downloadQRCode = () => {
     toJpeg(qrBlockRef.current)
@@ -29,18 +34,22 @@ const QrCodeGenerator = ({ url, details }) => {
         console.error("Error generating QR code:", error);
       });
   };
+
+  const url = "http://localhost:5173/celebrities/" + celebrity.id;
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="p-2">
-          <QrCode className="h-6 w-6 rounded-lg" />
-        </Button>
-      </DialogTrigger>
+    <Dialog {...props}>
+      {showTrigger && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="p-2">
+            <QrCode className="h-6 w-6 rounded-lg" />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>QR Code</DialogTitle>
         </DialogHeader>
-        <div className="my-2 overflow-hidden" >
+        <div className="my-2 overflow-hidden">
           <div className=" border border-input p-6" ref={qrBlockRef}>
             <div className="grid grid-flow-row items-center justify-center  gap-2 ">
               {url && (
@@ -56,22 +65,16 @@ const QrCodeGenerator = ({ url, details }) => {
               <Separator className="my-8" />
               <div className="flex  items-start gap-4">
                 <Avatar className="flex h-36 w-28 rounded-lg">
-                  <AvatarImage
-                    src={
-                      "https://image.tmdb.org/t/p/original/" +
-                      details.profile_path
-                    }
-                    alt="Avatar"
-                  />
+                  <AvatarImage src={celebrity.profileImageUrl} alt="Avatar" />
                   <AvatarFallback>RH</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-4">
                   <div className="grid gap-1">
                     <p className="text-xl font-medium leading-none">
-                      {details.name}
+                      {celebrity.name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {details.known_for_department}
+                      {/* {celebrity.known_for_department} */}
                     </p>
                   </div>
                   <div className="grid gap-1">
@@ -79,7 +82,7 @@ const QrCodeGenerator = ({ url, details }) => {
                       Address
                     </span>
                     <p className="text-sm text-muted-foreground">
-                      {details.place_of_birth}
+                      {celebrity.address}
                     </p>
                   </div>
                 </div>

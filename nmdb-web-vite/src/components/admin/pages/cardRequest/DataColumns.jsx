@@ -9,11 +9,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { SquarePen, Trash, View } from "lucide-react";
+import {
+  Check,
+  QrCode,
+  SquarePen,
+  TicketIcon,
+  Trash,
+  View,
+} from "lucide-react";
 import { useState } from "react";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import QrCodeGenerator from "@/components/common/QrCodeGenerator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const labels = [];
 
@@ -22,8 +41,10 @@ export const facetedFilters = [];
 function DataTableRowActions({ row }) {
   // const movie = row.original;
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
+  const [showApproveAlert, setShowApproveAlert] = useState(false);
+  const [showCelebCardDialog, setShowCelebCardDialog] = useState(false);
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center gap-2">
       <DeleteItemsDialog
         open={showDeleteTaskDialog}
         onOpenChange={setShowDeleteTaskDialog}
@@ -32,13 +53,44 @@ function DataTableRowActions({ row }) {
         apiBasePath={ApiPaths.Path_CardRequest}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
+      <AlertDialog open={showApproveAlert} onOpenChange={setShowApproveAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will approve the card request.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <QrCodeGenerator
+        celebrity={row.original.crew}
+        open={showCelebCardDialog}
+        onOpenChange={setShowCelebCardDialog}
+        showTrigger={false}
+      />
+      {row.original.isApproved ? (
+        <Button onClick={() => setShowCelebCardDialog(true)} variant="outline">
+          <QrCode className="mr-2 h-4 w-4" />
+          <span>Show Card</span>
+        </Button>
+      ) : (
+        <Button onClick={() => setShowApproveAlert(true)} variant="outline">
+          <Check className="mr-2 h-4 w-4" />
+          <span>Approve</span>
+        </Button>
+      )}
       <TooltipProvider>
         <div className="flex gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 className="text-destructive"
-                onClick={() => setShowDeleteTaskDialog(true)}
+                onClick={() => setShowCrewCardDialog(true)}
                 variant="outline"
                 size="icon"
               >
@@ -62,7 +114,7 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Crew" />
     ),
     cell: ({ row }) => {
-        const currentCrew= row.getValue("crew")
+      const currentCrew = row.getValue("crew");
       return (
         <div className="flex flex-col space-y-2">
           {currentCrew.name}
@@ -81,7 +133,12 @@ export const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Approved Date" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("approvedDate") && (format(row.getValue("approvedDate"), "PPP p"))}</div>,
+    cell: ({ row }) => (
+      <div className="">
+        {row.getValue("approvedDate") &&
+          format(row.getValue("approvedDate"), "PPP p")}
+      </div>
+    ),
     // enableGlobalFilter: true,
   },
   {
