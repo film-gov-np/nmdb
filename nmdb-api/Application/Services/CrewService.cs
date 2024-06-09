@@ -102,7 +102,7 @@ public class CrewService : ICrewService
                                                 Email = tr.Email,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
-                                                ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
+                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewListDto>
@@ -269,7 +269,7 @@ public class CrewService : ICrewService
             string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
                 string.Concat(_uploadFolderPath,"movies/",crewResponse.ProfilePhoto):"";
 
-            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
+            crewResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
 
 
             response.IsSuccess = true;
