@@ -91,13 +91,13 @@ export const columns = [
       <DataTableColumnHeader className="ps-12" column={column} title="Name" />
     ),
     cell: ({ row }) => (
-      <div className="flex space-x-4 justify-start items-center">
+      <div className="flex items-center justify-start space-x-4">
         <Avatar className="flex h-8 w-8 text-center">
-        <AvatarImage src={row.original.profilePhotoUrl} alt="Avatar" />
-        <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
-          {extractInitials(row.getValue("name"))}
-        </AvatarFallback>
-      </Avatar>
+          <AvatarImage src={row.original.profilePhotoUrl} alt="Avatar" />
+          <AvatarFallback className="bg-muted-foreground/90 text-xs font-semibold text-input">
+            {extractInitials(row.getValue("name"))}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex flex-col space-y-2">
           {row.getValue("name")}
           {row.original.nepaliName && (

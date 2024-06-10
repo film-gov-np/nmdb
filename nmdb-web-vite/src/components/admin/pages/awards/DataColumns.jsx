@@ -125,12 +125,12 @@ export const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "roleName",
-    meta: "Role",
+    accessorKey: "awardTitle",
+    meta: "Title",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role" />
+      <DataTableColumnHeader column={column} title="Title" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("roleName")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("awardTitle")}</div>,
   },
   {
     accessorKey: "categoryName",

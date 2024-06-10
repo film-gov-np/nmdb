@@ -44,6 +44,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.HasDefaultSchema("dbo");
         // To bypass default Table names assign by .NET Identity
         base.OnModelCreating(builder);
         builder.Entity<ApplicationUser>().ToTable("Users");
@@ -156,5 +157,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasOne(mt => mt.Theatre)
             .WithMany(mt => mt.MovieTheatres)
             .HasForeignKey(mt => mt.TheatreId);
+
+
     }
 }

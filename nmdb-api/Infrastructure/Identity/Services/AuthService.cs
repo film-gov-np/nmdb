@@ -114,16 +114,16 @@ namespace Infrastructure.Identity.Services
             var applicationUser = await getAccountByRefreshToken(token);
             var refreshToken = applicationUser.RefreshTokens.Single(x => x.Token == token);
 
-            if (refreshToken.IsRevoked)
-            {
-                // revoke all descendant tokens in case this token has been compromised
-                await revokeDescendantRefreshTokens(refreshToken, applicationUser, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
-                _context.Update(applicationUser);
-                await _context.SaveChangesAsync();
-            }
+            //if (refreshToken.IsRevoked)
+            //{
+            //    // revoke all descendant tokens in case this token has been compromised
+            //    await revokeDescendantRefreshTokens(refreshToken, applicationUser, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
+            //    _context.Update(applicationUser);
+            //    await _context.SaveChangesAsync();
+            //}
 
-            if (!refreshToken.IsActive)
-                throw new AppException("Invalid token");
+            //if (!refreshToken.IsActive)
+            //    throw new AppException("Invalid token");
 
             // replace old refresh token with a new one (rotate token)
             var newRefreshToken = await rotateRefreshToken(refreshToken, ipAddress);

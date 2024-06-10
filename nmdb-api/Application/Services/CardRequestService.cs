@@ -108,7 +108,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<ApiResponse<string>> ApproveCardRequestAsync(int cardId, CardRequestDto cardRequestDto)
+        public async Task<ApiResponse<string>> ApproveCardRequestAsync(int cardId, string email)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Application.Services
                 cardRequest.ApprovedDate = DateTime.UtcNow;
                 cardRequest.ReadyDate = cardRequest.ApprovedDate.Value.AddDays(14); // Set ready date 2 weeks after the approved date
                 cardRequest.UpdatedAt = DateTime.UtcNow;
-                cardRequest.UpdatedBy = cardRequestDto.Authorship;
+                cardRequest.UpdatedBy = email;
 
                 await _unitOfWork.CardRequestRepository.UpdateAsync(cardRequest);
                 await _unitOfWork.CommitAsync();
@@ -189,7 +189,7 @@ namespace Application.Services
                                                         Id = tr.Crew.Id,
                                                         Name = tr.Crew.Name,
                                                         Email = tr.Crew.Email,
-                                                        CurrentAddress = tr.Crew.CurrentAddress,
+                                                        Designations = tr.Crew.CrewDesignations.Select(cd => cd.FilmRole.RoleName).ToArray(),
                                                         ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.Crew.ProfilePhoto),
                                                     }
                                                 }).ToListAsync();

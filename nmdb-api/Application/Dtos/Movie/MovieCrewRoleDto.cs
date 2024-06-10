@@ -15,5 +15,6 @@ public class CrewBasicDto
     public string? NickName { get; set; }
     public string? ThumbnailPhoto { get; set; }
     public string? ProfilePhoto { get; set; }
+    public string? ProfilePhotoUrl { get; set; }
     public string? Email { get; set; }
 }

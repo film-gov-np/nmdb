@@ -17,5 +17,12 @@ export const ApiPaths = {
   Path_Crews: "/crews",
 
   Path_CardRequest: "/cards",
-  Path_Awards: "/awards"
+  Path_Awards: "/awards",
+
+  Path_Dashboard_Counts : "/common/counts",
+
+  // Front
+  Path_Front: "/front",
+  Path_Front_Movies: "/front/movies",
+  Path_Front_Celebrities: "/front/crews",
 };
