@@ -17,5 +17,7 @@ export const ApiPaths = {
   Path_Crews: "/crews",
 
   Path_CardRequest: "/cards",
-  Path_Awards: "/awards"
+  Path_Awards: "/awards",
+
+  Path_Dashboard_Counts : "/common/counts"
 };
