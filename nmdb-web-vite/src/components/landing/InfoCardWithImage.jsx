@@ -14,17 +14,12 @@ const InfoCardWithImage = ({
   className,
   ...props
 }) => {
-
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
         <NavLink to={navigateTo}>
           <Image
-            src={
-              imgPath
-                ? "https://image.tmdb.org/t/p/w500/" + imgPath
-                : "/placeholder.svg"
-            }
+            src={imgPath}
             alt={title || data.name}
             width={width}
             height={height}

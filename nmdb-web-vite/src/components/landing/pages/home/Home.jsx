@@ -18,23 +18,21 @@ import { CalendarDays, Drama, Film, HomeIcon, Theater } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import InfoCardWithImage from "../../InfoCardWithImage";
+import { ApiPaths } from "@/constants/apiPaths";
+import axiosInstance from "@/helpers/axiosSetup";
+import Image from "@/components/common/Image";
 
 const getMovies = async (apiPath) => {
-  const response = await axios
-    .get(apiPath, {
-      headers: {
-        accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZWQzN2IzZTg2NjNlOTU4ZTEwMDc1OGM2NTI4ODFhNyIsInN1YiI6IjY2MjYzNzMzN2E5N2FiMDE2MzhkNWQ1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5GUH1UisCLdYilrhHLQPDWyPLyifw6GWhcloNhzEptM",
-      },
-    })
+  debugger;
+  const response = await axiosInstance
+    .get(apiPath)
     .then((response) => {
       console.log(response.data);
-      return response.data;
+      return response.data.data;
     })
     .catch((err) => console.error(err));
-  const totalData = response.total_results;
-  const data = response.results;
+  const totalData = response.totalItems;
+  const data = response.items;
   console.log(totalData, data);
   return {
     movies: data,
@@ -62,34 +60,22 @@ const Home = () => {
     queries: [
       {
         queryKey: ["nowPlayingMovies"],
-        queryFn: () =>
-          getMovies(
-            `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1`,
-          ),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
         keepPreviousData: true,
       },
       {
         queryKey: ["trendingMovies"],
-        queryFn: () =>
-          getMovies(
-            `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1`,
-          ),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
         keepPreviousData: true,
       },
       {
         queryKey: ["topRatedMovies"],
-        queryFn: () =>
-          getMovies(
-            `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1`,
-          ),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
         keepPreviousData: true,
       },
       {
         queryKey: ["popularArtists"],
-        queryFn: () =>
-          getMovies(
-            `https://api.themoviedb.org/3/person/popular?language=en-US&page=1`,
-          ),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Celebrities),
         keepPreviousData: true,
       },
     ],
@@ -161,35 +147,29 @@ const Home = () => {
             <CarouselContent className="">
               {nowPlayingMovies.data.movies.map((movie, index) => (
                 <CarouselItem
-                  key={index}
+                  key={"now-playing-movie-" + index}
                   className="pl-4 sm:flex-[0_0_50%] md:flex-[0_0_35%] lg:flex-[0_0_25%] xl:flex-[0_0_25%]"
                 >
                   <div className="">
                     <Card>
                       <CardContent className="group relative flex aspect-[7/9] items-center justify-center p-0">
-                        <img
-                          src={
-                            movie.poster_path
-                              ? "https://image.tmdb.org/t/p/w500/" +
-                                movie.poster_path
-                              : "/placeholder.svg"
-                          }
-                          alt={movie.title || movie.name}
+                        <Image
+                          src={movie.thumbnailImageUrl}
+                          alt={movie.name}
                           width={500}
                           height={400}
                           className={cn(
                             "dark:brightness-80 aspect-[7/9] h-auto w-full rounded-lg object-fill transition-all",
                           )}
-                          // onError={handleImageLoadError}
                         />
                         <div className="invisible absolute flex h-full w-full flex-col items-center justify-center space-y-2 rounded-lg bg-black/45 p-8 text-stone-200 group-hover:visible">
                           <NavLink to={Paths.Route_Movies + "/" + movie.id}>
                             <h3 className="text-center text-xl font-bold leading-none">
-                              {movie.title}
+                              {movie.name}
                             </h3>
                           </NavLink>
                           <p className="text-sm font-bold text-stone-400">
-                            {movie.release_date}
+                            {movie.status}
                           </p>
                         </div>
                       </CardContent>
@@ -211,16 +191,16 @@ const Home = () => {
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularMovies.data.movies.map((cast) => (
+                  {popularMovies.data.movies.map((movie, index) => (
                     <InfoCardWithImage
-                      key={"cast" + (cast.title || cast.name)}
-                      title={cast.title || cast.name}
-                      imgPath={cast.poster_path}
+                      key={"movie-of-the-week-" + index}
+                      title={movie.name}
+                      imgPath={movie.thumbnailImageUrl}
                       className="w-[150px]"
                       aspectRatio="portrait"
                       width={150}
                       height={210}
-                      navigateTo={Paths.Route_Movies + "/" + cast.id}
+                      navigateTo={Paths.Route_Movies + "/" + movie.id}
                     />
                   ))}
                 </div>
@@ -235,11 +215,11 @@ const Home = () => {
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularArtists.data.movies.map((cast) => (
+                  {popularArtists.data.movies.map((cast, index) => (
                     <InfoCardWithImage
-                      key={"cast" + (cast.title || cast.name)}
-                      title={cast.title || cast.name}
-                      imgPath={cast.profile_path}
+                      key={"top-artist-" + index}
+                      title={cast.name}
+                      imgPath={cast.profilePhotoUrl}
                       className="w-[150px]"
                       aspectRatio="portrait"
                       width={150}
@@ -265,16 +245,14 @@ const Home = () => {
           >
             <CarouselContent className="-mt-1 h-[560px]">
               {upcomingMovies.data.movies.map((movie, index) => (
-                <CarouselItem key={index} className="basis-1/5 pt-1">
+                <CarouselItem
+                  key={"trending-movies-" + index}
+                  className="basis-1/5 pt-1"
+                >
                   <div className="flex space-x-6 p-1">
-                    <img
-                      src={
-                        movie.poster_path
-                          ? "https://image.tmdb.org/t/p/w500/" +
-                            movie.poster_path
-                          : "/placeholder.svg"
-                      }
-                      alt={movie.title || movie.name}
+                    <Image
+                      src={movie.thumbnailImageUrl}
+                      alt={movie.name}
                       width={80}
                       height={100}
                       className={cn(
@@ -284,12 +262,12 @@ const Home = () => {
                     <div className="space-y-2 ">
                       <NavLink to={Paths.Route_Movies + "/" + movie.id}>
                         <h3 className="text-lg font-semibold leading-none tracking-tight hover:underline">
-                          {movie.title || movie.name}
+                          {movie.name}
                         </h3>
                       </NavLink>
 
                       <p className="text-sm text-muted-foreground">
-                        {movie.release_date}
+                        {movie.status}
                       </p>
                     </div>
                   </div>
