@@ -34,16 +34,46 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "@/helpers/axiosSetup";
 
 export const labels = [];
 
 export const facetedFilters = [];
+
+const approveCardRequest = async (id) => {
+  const apiPath = `/cards/${id}/approve`
+  const { data } = await axiosInstance({
+    method: "patch",
+    url: apiPath,
+  })
+    .then((response) => {
+      console.log("api-response-categories", response);
+      return response.data;
+    })
+    .catch((err) => console.error(err));
+  return data;
+}
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   const [showApproveAlert, setShowApproveAlert] = useState(false);
   const [showCelebCardDialog, setShowCelebCardDialog] = useState(false);
+
+  const mutateTheatre = useMutation({
+    mutationFn: approveCardRequest,
+    onSuccess: (data, variables, context) => {
+      navigate(Paths.Route_Admin_Theatre);
+    },
+    onError: (error, variables, context) => {
+      toast({ description: "Something went wrong.Please try again." });
+    },
+    onSettled: (data, error, variables, context) => {
+      // queryClient.invalidateQueries("theatreDetail");
+    },
+  });
+
   return (
     <div className="flex justify-center gap-2">
       <DeleteItemsDialog
@@ -66,7 +96,9 @@ function DataTableRowActions({ row }) {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
-                onClick={() => setShowCelebCardDialog(true)}
+                onClick={() => {
+                  mutateTheatre.mutate(row.original.id)
+                  setShowCelebCardDialog(true)}}
                 variant="outline"
               >
                 Continue

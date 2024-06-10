@@ -113,18 +113,14 @@ public class CardRequestController : AuthorizedController
         }
     }
 
-    [HttpPut("{id}/approve")]
-    public async Task<IActionResult> ApproveCardRequest(int id, [FromBody] CardRequestDto cardRequestDto)
+    [HttpPatch("{id}/approve")]
+    public async Task<IActionResult> ApproveCardRequest(int id)
     {
         try
         {
 
-            if (cardRequestDto == null)
-            {
-                return BadRequest(ApiResponse<string>.ErrorResponse("Invalid crew data.", HttpStatusCode.BadRequest));
-            }
-            cardRequestDto.Authorship = GetUserEmail;
-            var result = await _cardRequestService.ApproveCardRequestAsync(id, cardRequestDto);
+            
+            var result = await _cardRequestService.ApproveCardRequestAsync(id, GetUserEmail);
 
             if (result.IsSuccess)
             {
