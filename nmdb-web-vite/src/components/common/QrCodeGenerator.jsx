@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
 import { Circle, QrCode } from "lucide-react";
 import { extractInitials } from "@/lib/utils";
+import { ServerPath } from "@/constants/authConstant";
 
 const QrCodeGenerator = ({
   celebrity: { id, name, email, designations, profilePhotoUrl },
@@ -34,7 +35,7 @@ const QrCodeGenerator = ({
       });
   };
 
-  const url = "https://localhost:5173/celebrities/" + id;
+  const url = ServerPath + "/celebrities/" + id;
   return (
     <Dialog {...props}>
       {showTrigger && (
