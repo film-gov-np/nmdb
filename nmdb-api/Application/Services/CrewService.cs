@@ -37,6 +37,7 @@ public class CrewService : ICrewService
     private readonly ILogger<CrewService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;    
     private readonly string _uploadFolderPath;
+    private readonly string _uploadFolderPathMovie;
     private readonly IWebHostEnvironment _environment;
 
 
@@ -54,6 +55,7 @@ public class CrewService : ICrewService
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
         _uploadFolderPath = string.Concat(configuration["UploadFolderPath"],"/crews/");
+        _uploadFolderPathMovie = string.Concat(configuration["UploadFolderPath"],"/movies/");
 
     }
     public async Task<ApiResponse<PaginationResponse<CrewListDto>>> GetAllAsync(CrewFilterParameters filterParameters)
@@ -309,6 +311,7 @@ public class CrewService : ICrewService
 
     private List<CrewMovieDto> MapCrewMovies(List<MovieCrewRole> movieCrewRoles)
     {
+        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
         var crewMovieDtos = new List<CrewMovieDto>();
         foreach (var crewMovie in movieCrewRoles)
         {
@@ -317,6 +320,8 @@ public class CrewService : ICrewService
                 Id = crewMovie.Movie.Id,
                 Name = crewMovie.Movie.Name,
                 NepaliName = crewMovie.Movie.NepaliName,
+                ReleaseDateBS = crewMovie.Movie.ReleaseDateBS,
+                ThumbnailImagePath = ImageUrlHelper.GetFullImageUrl(hostUrl,  _uploadFolderPathMovie, crewMovie.Movie.ThumbnailImage),
             };
             crewMovieDtos.Add(movie);
         }

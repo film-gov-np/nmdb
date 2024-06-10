@@ -11,5 +11,7 @@ namespace Application.Dtos.Crew
         public int? Id { get; set; }
         public string? Name { get; set; }
         public string? NepaliName { get; set; }
+        public string? ReleaseDateBS { get; set; }
+        public string? ThumbnailImagePath { get; set; }
     }
 }

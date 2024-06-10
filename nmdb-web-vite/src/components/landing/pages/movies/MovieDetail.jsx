@@ -222,7 +222,7 @@ console.log(topCast)
                       >
                         <CircleIcon className="h-1.5 w-1.5 fill-foreground " />
                         <div className="">
-                          <NavLink to={Paths.Route_Movies + "/" + crew.id}>
+                          <NavLink to={Paths.Route_Celebrities + "/" + crew.id}>
                             <h3 className="text-md font-bold ">{crew.name}</h3>
                           </NavLink>
                           <p className="text-xs text-muted-foreground">
