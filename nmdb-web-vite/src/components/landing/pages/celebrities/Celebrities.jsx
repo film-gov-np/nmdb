@@ -10,24 +10,24 @@ import { useDebouncedState } from "@/hooks/useDebouncedState";
 import SimplePagination from "@/components/common/SimplePagination";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-const ITEM_PER_PAGE = 20;
+import { ApiPaths } from "@/constants/apiPaths";
+import axiosInstance from "@/helpers/axiosSetup";
+const ITEM_PER_PAGE = 25;
 
 const getCelebList = async (page, debouncedSearchTerm) => {
-  let apiPath = `https://api.themoviedb.org/3/person/popular?language=en-US&page=${page}&limit=${ITEM_PER_PAGE}`;
+  let apiPath = `${ApiPaths.Path_Front_Celebrities}?PageNumber=${page}&PageSize=${ITEM_PER_PAGE}`;
   if (debouncedSearchTerm) {
-    apiPath = `https://api.themoviedb.org/3/search/person?query=${debouncedSearchTerm}&include_adult=true&language=en-US&page=${page}`;
+    apiPath += `&SearchKeyword=${debouncedSearchTerm}`;
   }
-  const response = await axios
-    .get(apiPath, {
-      headers: {
-        accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZWQzN2IzZTg2NjNlOTU4ZTEwMDc1OGM2NTI4ODFhNyIsInN1YiI6IjY2MjYzNzMzN2E5N2FiMDE2MzhkNWQ1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5GUH1UisCLdYilrhHLQPDWyPLyifw6GWhcloNhzEptM",
-      },
+  const response = await axiosInstance
+    .get(apiPath)
+    .then((response) => {
+      console.log(response.data);
+      return response.data.data;
     })
     .catch((err) => console.error(err));
-  const totalData = response.data.total_results;
-  const data = response.data.results;
+  const totalData = response.totalItems;
+  const data = response.items;
   return {
     celebs: data,
     totalData,
@@ -95,10 +95,10 @@ const Celebrities = () => {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">
               {data?.celebs.map((celeb) => (
                 <InfoCardWithImage
-                  key={"Info" + celeb.id}
+                  key={"celebrity-" + celeb.id}
                   title={celeb.name}
-                  description={celeb.known_for_department}
-                  imgPath={celeb.profile_path}
+                  // description={celeb.known_for_department}
+                  imgPath={celeb.profilePhotoUrl}
                   className=""
                   aspectRatio="portrait"
                   width={220}
