@@ -83,7 +83,7 @@
   }
 }
 
-nav.sidebar-nav a.active{
+nav.sidebar-nav a.active, .nav-container a.active{
   @apply bg-muted;
 }
 
