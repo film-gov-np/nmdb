@@ -1,4 +1,6 @@
-﻿using Core.Constants;
+﻿using Application.Dtos.Crew;
+using Core.Constants;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,67 +9,12 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos;
 
-public class AwardsDto: BaseDto
-{    
-    public string Name { get; set; }
-
-    public string? NepaliName { get; set; }
-
-    public string? BirthName { get; set; }
-
-    public string? FatherName { get; set; }
-
-    public string? MotherName { get; set; }
-
-    public string? NickName { get; set; }
-
-    public string? Gender { get; set; }
-
-    //public DateTime? DateOfBirthInAD { get; set; }
-
-    public string? DateOfBirthInBS { get; set; }
-
-    //public DateTime? DateOfDeathInAD { get; set; }
-
-    public string? DateOfDeathInBS { get; set; }
-
-    public string? BirthPlace { get; set; }
-
-    public string? Height { get; set; }
-
-    public string? StarSign { get; set; }
-
-    public string? CurrentAddress { get; set; }
-
-    public string? Biography { get; set; }
-
-    public string? BiographyInNepali { get; set; }
-
-    public string? TradeMark { get; set; }
-
-    public string? Trivia { get; set; }
-
-    public string? Activities { get; set; }
-
-    public string? ProfilePhoto { get; set; }
-
-    public string? ThumbnailPhoto { get; set; }
-
-    public string? OfficialSite { get; set; }
-
-    public string? FacebookID { get; set; }
-
-    public string? TwitterID { get; set; }
-
-    public string? ContactNumber { get; set; }
-
-    public string? MobileNumber { get; set; }
-
-    public int? ViewCount { get; set; }
-
-    public bool IsVerified { get; set; }
-
-    public bool IsActive { get; set; }
-    public bool? HasRequestedCard { get; set; } = false;
-    public string? Email { get; set; }
+public class AwardsDto : BaseDto
+{
+    public string CategoryName { get; set; }
+    public string AwardTitle { get; set; }
+    public string? AwardedIn { get; set; }
+    public string? AwardStatus { get; set; }
+    public string? AwardedDate { get; set; }
+    public string? Remarks { get; set; }
 }

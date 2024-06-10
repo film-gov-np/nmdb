@@ -62,7 +62,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] AwardsRequestDto model)
+        public async Task<IActionResult> Create([FromBody] AwardsRequestDto model)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] AwardsRequestDto crewRequestDto)
+        public async Task<IActionResult> Update(int id, [FromBody] AwardsRequestDto crewRequestDto)
         {
             if (crewRequestDto == null)
             {

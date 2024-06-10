@@ -9,11 +9,13 @@ namespace Application.Dtos.Awards
     public class AwardsListDto : BaseDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string NepaliName { get; set; }
-        public bool IsVerified { get; set; }
-        public string? ProfilePhoto { get; set; }
-        public string FatherName { get; set; }
-        public string NickName { get; set; }
+        public string CategoryName { get; set; }
+        public string AwardTitle { get; set; }
+        public string AwardedIn { get; set; }
+        public string AwardStatus { get; set; }
+        public DateTime? AwardedDate { get; set; }
+        public string Remarks { get; set; }
+        public int? CrewID { get; set; }
+        public int? MovieID { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using AutoMapper;
 using Core.Entities;
 using Application.Dtos.Movie;
 using Application.Dtos;
+using Core.Entities.Awards;
 
 namespace Neptics.Application.Helpers
 {
@@ -95,6 +96,9 @@ namespace Neptics.Application.Helpers
             CreateMap<Language, LanguageListResponseDto>().ReverseMap();
             CreateMap<Genre, GenresListResponseDto>().ReverseMap();
 
+            // Awards
+            CreateMap<Awards, AwardsRequestDto>().ReverseMap();
+            CreateMap<Awards, AwardsResponseDto>().ReverseMap();
         }
     }
 }
