@@ -58,7 +58,7 @@ const QrCodeGenerator = ({
                 <img src="/nmdb-logo.png" className="h-auto w-[90%]" alt="" />
               </div>
               <div className="flex justify-center">
-                <Avatar className="h-[9.25rem] w-[8.5rem] ring-4 ring-cyan-100">
+                <Avatar className="h-[9.25rem] w-[8.5rem] ring-4 ring-cyan-200">
                   <AvatarImage className="object-cover object-top"
                     src={profilePhotoUrl}
                     alt="Avatar"
@@ -80,7 +80,6 @@ const QrCodeGenerator = ({
                       </span>
                     ))}
                 </div>
-                <span className="text-center font-medium">{email}</span>
               </div>
               <div className="flex justify-center">
                 <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
@@ -92,6 +91,7 @@ const QrCodeGenerator = ({
                   />
                 </div>
               </div>
+              <span className="text-center text-sm font-medium">{email}</span>
             </div>
           </div>
         </div>

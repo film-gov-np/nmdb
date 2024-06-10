@@ -29,7 +29,7 @@ const Dashboard = () => {
     });
 
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-12 lg:p-6">
       {isLoading || isFetching ? (
         <CardSkeleton count={4} />
       ) : (
