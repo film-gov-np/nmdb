@@ -34,7 +34,7 @@ const QrCodeGenerator = ({
       });
   };
 
-  const url = "http://localhost:5173/celebrities/" + id;
+  const url = "https://localhost:5173/celebrities/" + id;
   return (
     <Dialog {...props}>
       {showTrigger && (
@@ -58,14 +58,11 @@ const QrCodeGenerator = ({
                 <img src="/nmdb-logo.png" className="w-[90%] h-auto" alt="" />
               </div>
               <div className="flex justify-center">
-                <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
-                  <QRCode
-                    value={url}
-                    size={256}
-                    className="aspect-square h-auto w-full"
-                    viewBox={`0 0 256 256`}
-                  />
-                </div>
+              <Avatar className="h-[8rem] w-[8rem] ring-4 ring-cyan-100">
+                  <AvatarImage src={profilePhotoUrl} alt="Avatar" crossOrigin="anonymous" />
+                  <AvatarFallback>{extractInitials(name)}</AvatarFallback>
+                </Avatar>
+                
               </div>
               <div className="flex flex-col space-y-2 justify-center">
                 <h4 className="text-center font-mono text-3xl leading-none font-bold">
@@ -78,13 +75,17 @@ const QrCodeGenerator = ({
                         <span className="">{designation}</span>
                     ))}
                 </div>
-                <span className="text-center font-medium text-muted">{email}</span>
+                <span className="text-center font-medium">{email}</span>
               </div>
               <div className="flex justify-center">
-                <Avatar className="h-[10rem] w-[10rem] ring-8 ring-cyan-200">
-                  <AvatarImage src={profilePhotoUrl} alt="Avatar" />
-                  <AvatarFallback>{extractInitials(name)}</AvatarFallback>
-                </Avatar>
+              <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
+                  <QRCode
+                    value={url}
+                    size={256}
+                    className="aspect-square h-auto w-full"
+                    viewBox={`0 0 256 256`}
+                  />
+                </div>
               </div>
             </div>
           </div>
