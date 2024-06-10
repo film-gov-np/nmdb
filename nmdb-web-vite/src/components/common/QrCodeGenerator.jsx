@@ -50,35 +50,40 @@ const QrCodeGenerator = ({
         </DialogHeader>
         <div className="my-4 overflow-hidden">
           <div
-            className="w-[22rem] h-[36.5rem] border border-input bg-gradient-to-b from-cyan-100 to-red-200 p-6 text-stone-900"
+            className="h-[36.5rem] w-[22rem] border border-input bg-gradient-to-b from-cyan-100 to-red-200 p-6 text-stone-900"
             ref={qrBlockRef}
           >
-            <div className="grid grid-flow-row h-full justify-center content-between">
+            <div className="grid h-full grid-flow-row content-between justify-center">
               <div className="flex flex-col items-center justify-center">
-                <img src="/nmdb-logo.png" className="w-[90%] h-auto" alt="" />
+                <img src="/nmdb-logo.png" className="h-auto w-[90%]" alt="" />
               </div>
               <div className="flex justify-center">
-              <Avatar className="h-[8rem] w-[8rem] ring-4 ring-cyan-100">
-                  <AvatarImage src={profilePhotoUrl} alt="Avatar" crossOrigin="anonymous" />
+                <Avatar className="h-[9.25rem] w-[8.5rem] ring-4 ring-cyan-100">
+                  <AvatarImage className="object-cover object-top"
+                    src={profilePhotoUrl}
+                    alt="Avatar"
+                    crossOrigin="anonymous"
+                  />
                   <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
-                
               </div>
-              <div className="flex flex-col space-y-2 justify-center">
-                <h4 className="text-center font-mono text-3xl leading-none font-bold">
+              <div className="flex flex-col justify-center space-y-2">
+                <h4 className="text-center font-mono text-3xl font-bold leading-none">
                   {name}
                 </h4>
                 <div className="flex flex-row flex-wrap justify-center space-x-3 font-medium">
                   {designations &&
                     designations.length > 0 &&
-                    designations.map((designation) => (
-                        <span className="">{designation}</span>
+                    designations.map((designation, index) => (
+                      <span className="" key={"celebrity-designation" + index}>
+                        {designation}
+                      </span>
                     ))}
                 </div>
                 <span className="text-center font-medium">{email}</span>
               </div>
               <div className="flex justify-center">
-              <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
+                <div className="h-[8rem] max-w-[8rem]  rounded-lg bg-white p-2">
                   <QRCode
                     value={url}
                     size={256}

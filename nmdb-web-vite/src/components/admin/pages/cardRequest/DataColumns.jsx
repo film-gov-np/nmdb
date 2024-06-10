@@ -1,21 +1,11 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
+import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn, extractInitials } from "@/lib/utils";
 import {
   Check,
+  Loader2,
+  LoaderCircle,
   QrCode,
-  SquarePen,
-  TicketIcon,
-  Trash,
-  View,
 } from "lucide-react";
 import { useState } from "react";
 import { ApiPaths } from "@/constants/apiPaths";
@@ -31,59 +21,58 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 
 export const labels = [];
 
 export const facetedFilters = [];
 
-const approveCardRequest = async (id) => {
-  const apiPath = `/cards/${id}/approve`
-  const { data } = await axiosInstance({
-    method: "patch",
-    url: apiPath,
-  })
-    .then((response) => {
-      console.log("api-response-categories", response);
-      return response.data;
-    })
-    .catch((err) => console.error(err));
-  return data;
-}
+
 
 function DataTableRowActions({ row }) {
-  // const movie = row.original;
-  const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
   const [showApproveAlert, setShowApproveAlert] = useState(false);
   const [showCelebCardDialog, setShowCelebCardDialog] = useState(false);
+  const [invalidateCardReuest, setInvalidateCardReuest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
-  const mutateTheatre = useMutation({
+  const queryClient = useQueryClient();
+
+  const approveCardRequest = async (id) => {
+    setIsLoading(true)
+    const apiPath = `${ApiPaths.Path_CardRequest}/${id}/approve`
+    const { data } = await axiosInstance({
+      method: "patch",
+      url: apiPath,
+    })
+      .then((response) => {
+        console.log("api-response-categories", response);
+        return response.data;
+      })
+      .catch((err) => console.error(err));
+    return data;
+  }
+
+  const mutateCardRequest = useMutation({
     mutationFn: approveCardRequest,
-    onSuccess: (data, variables, context) => {
-      navigate(Paths.Route_Admin_Theatre);
+    onSuccess: async (data, variables, context) => {
+      console.log("success")
+      setInvalidateCardReuest(true)
+      setShowCelebCardDialog(true)
     },
     onError: (error, variables, context) => {
-      toast({ description: "Something went wrong.Please try again." });
+      console.log({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {
-      // queryClient.invalidateQueries("theatreDetail");
+      setIsLoading(false)
+      // queryClient.invalidateQueries("datatable-card-request");
     },
   });
 
   return (
     <div className="flex justify-center gap-2">
-      <DeleteItemsDialog
-        open={showDeleteTaskDialog}
-        onOpenChange={setShowDeleteTaskDialog}
-        selectedData={[row]}
-        showTrigger={false}
-        apiBasePath={ApiPaths.Path_CardRequest}
-        onSuccess={() => setShowDeleteTaskDialog(false)}
-      />
       <AlertDialog open={showApproveAlert} onOpenChange={setShowApproveAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -97,8 +86,8 @@ function DataTableRowActions({ row }) {
             <AlertDialogAction asChild>
               <Button
                 onClick={() => {
-                  mutateTheatre.mutate(row.original.id)
-                  setShowCelebCardDialog(true)}}
+                  mutateCardRequest.mutate(row.original.id)
+                  }}
                 variant="outline"
               >
                 Continue
@@ -110,7 +99,10 @@ function DataTableRowActions({ row }) {
       <QrCodeGenerator
         celebrity={row.original.crew}
         open={showCelebCardDialog}
-        onOpenChange={setShowCelebCardDialog}
+        onOpenChange={(open) => {
+          setShowCelebCardDialog(open)
+          if(invalidateCardReuest) queryClient.invalidateQueries(['datatable-card-request'])
+        } }
         showTrigger={false}
       />
       {row.original.isApproved ? (
@@ -119,29 +111,11 @@ function DataTableRowActions({ row }) {
           <span>Show Card</span>
         </Button>
       ) : (
-        <Button onClick={() => setShowApproveAlert(true)} variant="outline">
-          <Check className="mr-2 h-4 w-4" />
+        <Button disabled={isLoading} onClick={() => setShowApproveAlert(true)} variant="outline">
+          {isLoading ? (<LoaderCircle className="mr-2 h-4 w-4 animate-spin" />): (<Check className="mr-2 h-4 w-4" />)}
           <span>Approve</span>
         </Button>
       )}
-      <TooltipProvider>
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                className="text-destructive"
-                onClick={() => setShowDeleteTaskDialog(true)}
-                variant="outline"
-                size="icon"
-              >
-                <Trash className="h-4 w-4" />
-                <span className="sr-only">Delete</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      </TooltipProvider>
     </div>
   );
 }
