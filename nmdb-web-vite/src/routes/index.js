@@ -31,6 +31,7 @@ import { default as MoviesHome } from "@/components/landing/pages/movies/Movies"
 import CreateRole from "@/components/admin/pages/role/CreateRole";
 import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
+import CreateAward from "@/components/admin/pages/awards/CreateAward";
 
 export const routes = [
   {
@@ -75,7 +76,7 @@ export const routes = [
                 name: "movieDetail",
                 title: "Movies Detail page",
                 component: AddMovie,
-                path: Paths.Route_Admin_Movie +  "/:slug",
+                path: Paths.Route_Admin_Movie + "/:slug",
                 isPublic: false,
               },
             ],
@@ -98,14 +99,14 @@ export const routes = [
                 name: "CrewEdit",
                 title: "Crew Edit page",
                 component: CreateCrew,
-                path: Paths.Route_Admin_Crew+ "/:slug/edit",
+                path: Paths.Route_Admin_Crew + "/:slug/edit",
                 isPublic: false,
               },
               {
                 name: "CrewDetail",
                 title: "Crew Detail page",
                 component: CreateCrew,
-                path: Paths.Route_Admin_Crew+ "/:slug",
+                path: Paths.Route_Admin_Crew + "/:slug",
                 isPublic: false,
               },
             ],
@@ -128,14 +129,14 @@ export const routes = [
                 name: "RoleEdit",
                 title: "Role Edit page",
                 component: CreateRole,
-                path: Paths.Route_Admin_Role+ "/:slug/edit",
+                path: Paths.Route_Admin_Role + "/:slug/edit",
                 isPublic: false,
               },
               {
                 name: "RoleDetail",
                 title: "Role Detail page",
                 component: CreateRole,
-                path: Paths.Route_Admin_Role+ "/:slug",
+                path: Paths.Route_Admin_Role + "/:slug",
                 isPublic: false,
               },
             ],
@@ -176,7 +177,7 @@ export const routes = [
             component: Theatre,
             path: Paths.Route_Admin_Theatre,
             isPublic: false,
-            routes:[
+            routes: [
               {
                 name: "TheatreAdd",
                 title: "Theatre Add page",
@@ -188,14 +189,14 @@ export const routes = [
                 name: "TheatreEdit",
                 title: "Theatre Edit page",
                 component: CreateTheatre,
-                path: Paths.Route_Admin_Theatre+ "/:slug/edit",
+                path: Paths.Route_Admin_Theatre + "/:slug/edit",
                 isPublic: false,
               },
               {
                 name: "TheatreDetail",
                 title: "Theatre Detail page",
                 component: CreateTheatre,
-                path: Paths.Route_Admin_Theatre+ "/:slug",
+                path: Paths.Route_Admin_Theatre + "/:slug",
                 isPublic: false,
               },
             ]
@@ -206,7 +207,31 @@ export const routes = [
             component: Awards,
             path: Paths.Route_Admin_Awards,
             isPublic: false,
+            routes: [
+              {
+                name: "AwardsAdd",
+                title: "Awards Add page",
+                component: CreateAward,
+                path: Paths.Route_Admin_Awards_Add,
+                isPublic: false,
+              },
+              {
+                name: "AwardsEdit",
+                title: "Awards Edit page",
+                component: CreateAward,
+                path: Paths.Route_Admin_Awards + "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "AwardsDetail",
+                title: "Awards Detail page",
+                component: CreateAward,
+                path: Paths.Route_Admin_Awards + "/:slug",
+                isPublic: false,
+              },
+            ]
           },
+
           // {
           //   name: "Scholarship",
           //   title: "Scholarship",

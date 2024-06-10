@@ -46,7 +46,12 @@ namespace Application.Services
                                                 tr => new AwardsListDto
                                                 {
                                                     Id = tr.Id,
-                                                    Name = tr.AwardTitle,
+                                                    AwardTitle = tr.AwardTitle,
+                                                    CategoryName = tr.CategoryName,
+                                                    AwardStatus = tr.AwardStatus,
+                                                    AwardedIn = tr.AwardedIn,
+                                                    AwardedDate = tr.AwardedDate,
+                                                    Remarks = tr.Remarks,
                                                 }).ToListAsync();
 
             var response = new PaginationResponse<AwardsListDto>
@@ -64,8 +69,8 @@ namespace Application.Services
         {
             try
             {
-                var filmRole = _mapper.Map<Awards>(crewRequestDto);
-                await _unitOfWork.AwardsRepository.AddAsync(filmRole);
+                var award = _mapper.Map<Awards>(crewRequestDto);
+                await _unitOfWork.AwardsRepository.AddAsync(award);
                 await _unitOfWork.CommitAsync();
                 return ApiResponse<string>.SuccessResponseWithoutData("Award created successfully.", HttpStatusCode.Created);
             }
@@ -159,7 +164,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving a award.");
+                _logger.LogError(ex, "An error occurred while retrieving award.");
                 response.IsSuccess = false;
                 response.Errors.Add("An error occurred while processing the request.");
                 response.StatusCode = HttpStatusCode.InternalServerError;
