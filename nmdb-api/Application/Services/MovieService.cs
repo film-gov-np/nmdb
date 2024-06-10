@@ -382,7 +382,7 @@ public class MovieService : IMovieService
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
                                 ProfilePhoto = c.ProfilePhoto,
-                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,c.ThumbnailPhoto),
+                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl,   "/upload/img/crews/",c.ProfilePhoto),
                             })
                             .ToList()
             })
