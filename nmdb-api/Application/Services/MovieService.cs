@@ -360,6 +360,7 @@ public class MovieService : IMovieService
 
     private List<MovieCrewRoleDto> MapToMovieCrewRoleDto(List<MovieCrewRole> movieCrewRoles)
     {
+        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
         var crewRolesDtos = new List<MovieCrewRoleDto>();
         var groupedByRole = movieCrewRoles
             .GroupBy(mcr => new
@@ -381,6 +382,7 @@ public class MovieService : IMovieService
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
                                 ProfilePhoto = c.ProfilePhoto,
+                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,c.ThumbnailPhoto),
                             })
                             .ToList()
             })

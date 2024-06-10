@@ -30,7 +30,6 @@ const getMovie = async (movieId) => {
 const MovieDetail = () => {
   const { slug } = useParams();
   const queryClient = useQueryClient();
-  const [queryId, setQueryId] = useState("1");
 
   const getFromCache = (key) => {
     return queryClient.getQueryData([key]);
@@ -49,35 +48,58 @@ const MovieDetail = () => {
       keepPreviousData: true,
     });
 
-  const topCastData = useQuery({
-    queryKey: [`topCast`],
-    queryFn: async () => {
-      const response = await axios
-        .get(
-          `https://api.themoviedb.org/3/movie/${slug}/credits?sort_by=order.desc&language=en-US`,
-          {
-            headers: {
-              accept: "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZWQzN2IzZTg2NjNlOTU4ZTEwMDc1OGM2NTI4ODFhNyIsInN1YiI6IjY2MjYzNzMzN2E5N2FiMDE2MzhkNWQ1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5GUH1UisCLdYilrhHLQPDWyPLyifw6GWhcloNhzEptM",
-            },
-          },
-        )
-        .catch((err) => console.error(err));
-      const data = response.data.cast;
-      return {
-        topCast: data,
-        crew: response.data.crew,
-      };
-    },
-    keepPreviousData: true,
-  });
+  // const topCastData = useQuery({
+  //   queryKey: [`topCast`],
+  //   queryFn: async () => {
+  //     const response = await axios
+  //       .get(
+  //         `https://api.themoviedb.org/3/movie/${slug}/credits?sort_by=order.desc&language=en-US`,
+  //         {
+  //           headers: {
+  //             accept: "application/json",
+  //             Authorization:
+  //               "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZWQzN2IzZTg2NjNlOTU4ZTEwMDc1OGM2NTI4ODFhNyIsInN1YiI6IjY2MjYzNzMzN2E5N2FiMDE2MzhkNWQ1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5GUH1UisCLdYilrhHLQPDWyPLyifw6GWhcloNhzEptM",
+  //           },
+  //         },
+  //       )
+  //       .catch((err) => console.error(err));
+  //     const data = response.data.cast;
+  //     return {
+  //       topCast: data,
+  //       crew: response.data.crew,
+  //     };
+  //   },
+  //   keepPreviousData: true,
+  // });
 
-  if (isLoading || topCastData.isLoading) return "Loading...";
-  if (isError || topCastData.isError) return `Error: ${error}`;
+  if (isLoading) return "Loading...";
+  if (isError) return `Error: ${error}`;
+  // if (isLoading || topCastData.isLoading) return "Loading...";
+  // if (isError || topCastData.isError) return `Error: ${error}`;
   const movie = data.movie;
-  const topCast = topCastData.data.topCast;
-  console.log(topCastData);
+  const topCastRaw = movie.crewRoles.filter(role => role.roleName === "Actress" || role.roleName === "Actor");
+  const topCast = topCastRaw.flatMap(role => {
+    return role.crews.map(crew => {
+        return {
+            id: crew.id,
+            name: crew.name,
+            roleName: role.roleName,
+            profilePhotoUrl: crew.profilePhotoUrl
+        };
+    });
+});
+  const allCrewRaw = movie.crewRoles;
+  const allCrew = allCrewRaw.flatMap(role => {
+    return role.crews.map(crew => {
+        return {
+            id: crew.id,
+            name: crew.name,
+            roleName: role.roleName,
+        };
+    });
+});
+console.log(topCast)
+  // const topCast = topCastData.data.topCast;
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background md:gap-8">
       {movie && (
@@ -171,11 +193,11 @@ const MovieDetail = () => {
               <div className="relative ">
                 <ScrollArea>
                   <div className="flex space-x-4 pb-4">
-                    {topCast?.map((cast) => (
+                    {topCast?.map((cast, index) => (
                       <InfoCardWithImage
-                        key={"movieCast" + (cast.title || cast.name)}
-                        title={cast.title || cast.name}
-                        imgPath={cast.profile_path}
+                        key={"movie-top-cast-" + index}
+                        title={cast.name}
+                        imgPath={cast.profilePhotoUrl}
                         className="w-[150px]"
                         aspectRatio="portrait"
                         width={150}
@@ -193,7 +215,7 @@ const MovieDetail = () => {
               <div className="rounded-lg border border-input p-1">
                 <ScrollArea viewPortClass="max-h-[680px]">
                   <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">
-                    {topCastData.data.crew.map((crew, i) => (
+                    {allCrew.map((crew, i) => (
                       <div
                         key={"crews" + crew.name + i}
                         className="flex flex-row items-center space-x-3 "
@@ -204,7 +226,7 @@ const MovieDetail = () => {
                             <h3 className="text-md font-bold ">{crew.name}</h3>
                           </NavLink>
                           <p className="text-xs text-muted-foreground">
-                            {crew.known_for_department}
+                            {crew.roleName}
                           </p>
                         </div>
                       </div>
