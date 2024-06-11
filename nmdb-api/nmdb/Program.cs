@@ -26,6 +26,7 @@ app.Configuration.GetSection("AllowedUploadFiles").Get<AllowedUploadFiles>();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseCors("AllowSpecificOrigin");
     //app.UseSwagger();
     //app.UseSwaggerUI();
 }
