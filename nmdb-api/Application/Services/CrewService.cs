@@ -265,10 +265,6 @@ public class CrewService : ICrewService
             }
 
             var crewResponse = _mapper.Map<CrewResponseDto>(crew);
-
-            crewResponse.Designations = MapCrewDesignations(crew.CrewDesignations);
-            crewResponse.Movies = MapCrewMovies(crew.MovieCrewRoles);
-
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
             string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
