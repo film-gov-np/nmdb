@@ -8,6 +8,7 @@ using Core.Entities;
 using Application.Dtos.Movie;
 using Application.Dtos;
 using Core.Entities.Awards;
+using Application.Dtos.Crew;
 
 namespace Neptics.Application.Helpers
 {
@@ -89,12 +90,36 @@ namespace Neptics.Application.Helpers
             //CreateMap<List<MovieProductionHouse>, List<MovieProductionHouseDto>>().ReverseMap();
             CreateMap<MovieCensor, MovieCensorDto>().ReverseMap();
 
-            // Crew
+            #region Crew
             CreateMap<Crew, CrewRequestDto>().ReverseMap();
-            CreateMap<Crew, CrewResponseDto>().ReverseMap();
+            CreateMap<Crew, CrewResponseDto>()
+                        .ForMember(dest => dest.Designations, opt => opt.MapFrom(src => src.CrewDesignations.Select(cd => new CrewDesignationDto
+                        {
+                            Id = cd.FilmRole.Id,
+                            RoleName = cd.FilmRole.RoleName
+                        }).Distinct()
+                        ))
+            .ForMember(dest => dest.Movies, opt => opt.MapFrom(src => src.MovieCrewRoles.Select(mcr => new CrewMovieDto
+            {
+                Id = mcr.Movie.Id,
+                Name = mcr.Movie.Name,
+                NepaliName = mcr.Movie.NepaliName,
+                ReleaseDateBS = mcr.Movie.ReleaseDateBS,
+                ThumbnailImagePath = mcr.Movie.ThumbnailImage
+            }).Distinct()
+            ));
+
+            CreateMap<CrewDesignation, CrewDesignationDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FilmRole.Id))
+            .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.FilmRole.RoleName));
+
+            CreateMap<MovieCrewRole, CrewMovieDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Movie.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Movie.Name));
 
             CreateMap<Language, LanguageListResponseDto>().ReverseMap();
             CreateMap<Genre, GenresListResponseDto>().ReverseMap();
+            #endregion
 
             // Awards
             CreateMap<Awards, AwardsRequestDto>().ReverseMap();

@@ -45,6 +45,8 @@ public class CrewRepository : EfRepository<Crew>, ICrewRepository
                             .Include(mcr => mcr.MovieCrewRoles)
                                 .ThenInclude(m => m.Movie)
                             .FirstOrDefaultAsync(c => c.Id == crewId);
+                            
+            crew.MovieCrewRoles = crew.MovieCrewRoles.GroupBy(mcr => mcr.MovieId).Select(g => g.First()).ToList();
 
             return crew;
         }
@@ -53,6 +55,36 @@ public class CrewRepository : EfRepository<Crew>, ICrewRepository
             return null;
         }
     }
+
+    // public async Task<Crew> GetCrewByIdWithAllIncludedProperties(int crewId)
+    // {
+    //     try
+    //     {
+    //         var crew = await _context.Crews
+    //                         .AsNoTracking()
+    //                         .Include(cd => cd.CrewDesignations)
+    //                             .ThenInclude(fr => fr.FilmRole)
+    //                         .FirstOrDefaultAsync(c => c.Id == crewId);
+
+    //         if (crew != null)
+    //         {
+    //             var crewMovies = await _context.MovieCrewRoles
+    //                                     .Where(mcr => mcr.CrewId == crewId)
+    //                                     .Include(mcr => mcr.Movie)
+    //                                     .Select(mcr => mcr.Movie)
+    //                                     .Distinct()
+    //                                     .ToListAsync();
+
+    //             crew.MovieCrewRoles = crewMovies.Select(movie => new MovieCrewRole { Movie = movie }).ToList();
+    //         }
+
+    //         return crew;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return null;
+    //     }
+    // }
 }
 
 
