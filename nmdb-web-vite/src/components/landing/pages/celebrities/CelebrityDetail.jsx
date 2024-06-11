@@ -1,9 +1,7 @@
-import QrCodeGenerator from "@/components/common/QrCodeGenerator";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useTruncatedElement } from "@/hooks/useTruncatedElement";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 import { CircleIcon, Facebook, Globe, Instagram, Twitter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -15,6 +13,7 @@ import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
 import { TwitterLogoIcon } from "@radix-ui/react-icons";
+import CelebQrCard from "../../CelebQrCard";
 
 const gender = {
   0: "Female",
@@ -38,6 +37,7 @@ const getCelebrityDetail = async (movieId) => {
 
 const CelebritiesDetails = () => {
   const { slug } = useParams();
+  const { pathname } = useLocation();
   const [celebDetails, setCelebsDetails] = useState({});
   const ref = useRef(null);
   const { isTruncated, isShowingMore, toggleIsShowingMore } =
@@ -103,11 +103,10 @@ const CelebritiesDetails = () => {
                 </ul>
               </div>
             </div>
-            <span>abc</span>
-            {/* <QrCodeGenerator
+            <CelebQrCard
               url={window.location.origin + pathname}
               details={celebDetails}
-            /> */}
+            />
           </div>
           <Separator className="my-4" />
           <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-[3fr,minmax(0,10fr)]">

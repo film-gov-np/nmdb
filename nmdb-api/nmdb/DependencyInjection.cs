@@ -19,6 +19,7 @@ public static class DependencyInjection
             options.AddPolicy("AllowSpecificOrigin",
                 builder =>
                 {
+                    // Cors
                     builder.WithOrigins("http://localhost:5173", "https://nmdb-phi.vercel.app", "https://nmdb.azurewebsites.net")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
