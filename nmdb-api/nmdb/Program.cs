@@ -31,12 +31,12 @@ if (app.Environment.IsDevelopment())
     //app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseStaticFiles();
 app.UseFastEndpoints()
     .UseSwaggerGen();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowSpecificOrigin");
 
 app.UseRouting();
 app.UseAuthentication();
