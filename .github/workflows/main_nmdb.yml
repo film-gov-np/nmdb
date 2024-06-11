@@ -1,0 +1,72 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+# This YAML configuration defines a GitHub Actions workflow named "Build and deploy ASP.Net Core app to Azure Web App - nmdb"
+name: Build and deploy ASP.Net Core app to Azure Web App - nmdb
+
+# The workflow is triggered on push events to the 'main' branch and can also be manually triggered using the 'workflow_dispatch' event.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# The workflow contains two jobs: 'build' and 'deploy'.
+jobs:
+  build:
+    # The 'build' job runs on the latest Windows runner available.
+    runs-on: windows-latest
+
+    # Steps define a sequence of tasks that will be executed as part of the 'build' job.
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE, so the workflow can access it.
+      - uses: actions/checkout@v4
+
+      # Sets up a .NET Core environment by specifying the .NET version, which in this case allows pre-releases of version 8.x.
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+          include-prerelease: true
+
+      # Builds the .NET Core application in Release configuration.
+      - name: Build with dotnet
+        run: dotnet build nmdb-api/nmdb.sln --configuration Release
+
+      # Publishes the application to a directory defined by the environment variable DOTNET_ROOT.
+      - name: dotnet publish
+        run: dotnet publish nmdb-api/nmdb.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      # Uploads the build output as an artifact named '.net-app' which can be used by subsequent jobs.
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    # The 'deploy' job also runs on the latest Windows runner and depends on the successful completion of the 'build' job.
+    runs-on: windows-latest
+    needs: build
+    # Defines the environment as 'Production' and retrieves the deployment URL from the output of the 'deploy-to-webapp' step.
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    # Steps define a sequence of tasks that will be executed as part of the 'deploy' job.
+    steps:
+      # Downloads the artifact named '.net-app' which was uploaded in the 'build' job.
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+
+      # Deploys the application to an Azure Web App named 'nmdb' in the 'Production' slot using the specified publish profile.
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'nmdb'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_138339575EC7463AB740C244F40CAA64 }}
+          package: .
