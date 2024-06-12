@@ -22,7 +22,8 @@ public static class DependencyInjection
                     builder.WithOrigins("http://localhost:5173", "https://nmdb-phi.vercel.app", "https://nmdb.azurewebsites.net")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
-                           .AllowCredentials();
+                           .AllowCredentials()
+                           .SetIsOriginAllowedToAllowWildcardSubdomains();
                 });
         });
         services.AddControllers()
