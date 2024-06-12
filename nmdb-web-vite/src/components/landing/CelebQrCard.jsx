@@ -13,8 +13,6 @@ import QRCode from "react-qr-code";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
-import { QrCode } from "lucide-react";
-import { CircleIcon } from "@radix-ui/react-icons";
 
 const CelebQrCard = ({ url, details }) => {
   const qrBlockRef = useRef(null);
@@ -33,15 +31,20 @@ const CelebQrCard = ({ url, details }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="p-2">
-          <QrCode className="h-6 w-6 rounded-lg" />
-        </Button>
+        <div className="max-h-[14rem] w-[7.5rem] rounded-lg bg-white p-1.5">
+          <QRCode
+            value={url}
+            size={128}
+            className="aspect-square h-auto w-full max-w-full"
+            viewBox={`0 0 256 256`}
+          />
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>QR Code</DialogTitle>
         </DialogHeader>
-        <div className="my-2 overflow-hidden" >
+        <div className="my-2 overflow-hidden">
           <div className=" border border-input p-6" ref={qrBlockRef}>
             <div className="grid grid-flow-row items-center justify-center  gap-2 ">
               {url && (
@@ -57,13 +60,7 @@ const CelebQrCard = ({ url, details }) => {
               <Separator className="my-8" />
               <div className="flex  items-start gap-4">
                 <Avatar className="flex h-36 w-28 rounded-lg">
-                  <AvatarImage
-                    src={
-                      
-                      details.profilePhotoUrl
-                    }
-                    alt="Avatar"
-                  />
+                  <AvatarImage src={details.profilePhotoUrl} alt="Avatar" />
                   <AvatarFallback>RH</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-4">
@@ -72,15 +69,15 @@ const CelebQrCard = ({ url, details }) => {
                       {details.name}
                     </p>
                     {details.designations?.map((genre, index) => (
-                    <li
-                      key={"celeb-designations-" + index}
-                      className="flex flex-row items-center space-x-2"
-                    >
-                      <p className="text-sm text-muted-foreground">
-                        {genre.roleName}
-                      </p>
-                    </li>
-                  ))}
+                      <li
+                        key={"celeb-designations-" + index}
+                        className="flex flex-row items-center space-x-2"
+                      >
+                        <p className="text-sm text-muted-foreground">
+                          {genre.roleName}
+                        </p>
+                      </li>
+                    ))}
                   </div>
                   <div className="grid gap-1">
                     <p className="text-sm text-muted-foreground">

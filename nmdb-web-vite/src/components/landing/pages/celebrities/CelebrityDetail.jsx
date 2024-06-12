@@ -103,6 +103,7 @@ const CelebritiesDetails = () => {
                 </ul>
               </div>
             </div>
+            
             <CelebQrCard
               url={window.location.origin + pathname}
               details={celebDetails}
