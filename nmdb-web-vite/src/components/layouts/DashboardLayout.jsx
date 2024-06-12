@@ -23,10 +23,20 @@ import { Paths } from "@/constants/routePaths";
 import MobileSideBar from "../common/MobileSideBar";
 import { useAuthContext } from "../admin/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "@/helpers/axiosSetup";
+import { ApiPaths } from "@/constants/apiPaths";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const { setIsAuthorized } = useAuthContext();
+  const logOutFromServer = () => {
+    axiosInstance
+      .post(ApiPaths.Path_Session)
+      .then((resp) => {
+        setIsAuthorized(false);
+        navigate(Paths.Route_Home);
+      });
+  }
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="theme-zinc h-full w-full">
@@ -106,9 +116,7 @@ const DashboardLayout = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    localStorage.clear();
-                    setIsAuthorized(false);
-                    navigate(Paths.Route_Home);
+                    logOutFromServer();
                   }}
                 >
                   Logout

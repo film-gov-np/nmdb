@@ -48,18 +48,16 @@ public class Authenticate
 
     private void setTokenCookie(string accessToken, string refreshToken = "")
     {
-       var cookieOptions = new CookieOptions
-       {
-           HttpOnly = true,
-           Expires = DateTime.UtcNow.AddDays(7),
-           SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
-           Secure = true,
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(7),
+            SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+            Secure = true,
 
-       };
+        };
         _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.RefreshToken, refreshToken, cookieOptions);
 
-
-        cookieOptions.Expires = DateTime.UtcNow.AddDays(2);
         _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.AccessToken, accessToken, cookieOptions);
 
     }

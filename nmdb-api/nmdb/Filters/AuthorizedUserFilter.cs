@@ -11,6 +11,8 @@ using Core.Constants;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
+using Application.Dtos.Auth;
+using Azure;
 
 namespace nmdb.Filters;
 public class AuthorizedUserFilter : IAsyncAuthorizationFilter
@@ -97,15 +99,32 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
             else // check for refresh token validity and refresh token if valid else remove the cookie
             {
                 bool sessionExpired = true;
+                AuthenticateResponse refreshResp = new();
                 if (!string.IsNullOrWhiteSpace(refreshToken))
                 {
-                    var resp = await _usrAuth.RefreshToken(refreshToken, string.Empty);
-                    sessionExpired = !(resp?.Authenticated ?? true);
+                    refreshResp = await _usrAuth.RefreshToken(refreshToken, string.Empty);
+                    sessionExpired = !(refreshResp?.Authenticated ?? true);
                 }
                 if (sessionExpired)
                 {
+                    context.HttpContext.Response.Cookies.Delete(TokenConstants.AccessToken);
+                    context.HttpContext.Response.Cookies.Delete(TokenConstants.RefreshToken);
                     context.Result = new UnauthorizedObjectResult(ApiResponse<string>.ErrorResponse("Expired Access Token.", HttpStatusCode.Unauthorized));
                     return;
+                }
+                else
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Expires = DateTime.UtcNow.AddDays(7),
+                        SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+                        Secure = true,
+
+                    };
+                    context.HttpContext.Response.Cookies.Append(TokenConstants.AccessToken, refreshResp.JwtToken, cookieOptions);
+
+                    context.HttpContext.Response.Cookies.Append(TokenConstants.RefreshToken, refreshResp.RefreshToken, cookieOptions);
                 }
             }
         }
