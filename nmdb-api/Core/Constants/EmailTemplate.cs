@@ -35,4 +35,50 @@ public static class EmailTemplate
             </body>
             </html>";
 
+    private static string getEmailStyle()
+    {
+        string cssStyles = @"
+                            <style>
+                            .email-container {
+                                max-width: 600px;
+                                margin: 0 auto;
+                                background: #fff;
+                                padding: 20px;
+                                text-align: center;
+                                border: 1px solid #dedede;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }
+                            .button {
+                                display: inline-block;
+                                padding: 10px 20px;
+                                margin-top: 20px;
+                                background-color: #007bff;
+                                color: #ffffff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                font-weight: bold;
+                                border: none;
+                                cursor: pointer;
+                            }
+                            .button:hover {
+                                background-color: #0056b3;
+                            }
+                            </style>";
+        return cssStyles;
+    }
+
+    public static string GetVerificationEmailContent(string verificationLink, string username = "")
+    {
+        var emailTemplate = $@"
+            ${getEmailStyle}
+            <div class='email-container'>
+            <h2>Welcome to nmdb!</h2>
+            <p>Thank you for registering ${username}. Please click the button below to verify your email address and complete your registration.</p>
+            <a href='${verificationLink}' class='button'>Verify Email Address</a>
+            <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
+            <p>${verificationLink}</p>
+            </div>";
+        return emailTemplate;
+    }
+
 }

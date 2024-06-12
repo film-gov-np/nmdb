@@ -475,12 +475,12 @@ namespace Infrastructure.Identity.Services
             string hostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}"; // make it global later
             string verificationLink = $"{hostUrl}/api/{account.VerificationToken}/verify-email";
 
-            string emailContent = GetVerificationEmailContent(verificationLink, account.FirstName);
+            //string emailContent = GetVerificationEmailContent(verificationLink, account.FirstName);
 
             await _emailService.Send(
                  to: account.Email,
                  subject: "Verify Email",
-                 html: emailContent
+                 html: EmailTemplate.GetVerificationEmailContent(verificationLink, account.FirstName)
              );
         }
 
@@ -560,7 +560,7 @@ namespace Infrastructure.Identity.Services
 
         private async Task sendAlreadyRegisteredEmail(string email, string username = "", string loginLink = "")
         {
-            string message = $@"<div class='email-container'>
+            string message = $@"${getEmailStyle}<div class='email-container'>
                                 <p>Hello ${username},</p>
                                 <p>Our records show that you are already registered with us. Here's a quick way to access your account:</p>
                                 <a href='${loginLink}' class='button'>Login to Your Account</a>
@@ -589,13 +589,13 @@ namespace Infrastructure.Identity.Services
             //                 <p><code>{account.ResetToken}</code></p>";
 
             string message = $@"${getEmailStyle}<div class='email-container'>
-                            <h2>Password Reset Request</h2>
-                            <p>Dear ${account.UserName},</p>
-                            <p>You have requested to reset your password. Please click the button below to set a new password:</p>
-                            <a href='{account.ResetToken}' class='button'>Reset Password</a>
-                            <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
-                            <p>{account.ResetToken}</p>
-                            <p>If you did not request a password reset, please ignore this email or contact support.</p>
+                                <h2>Password Reset Request</h2>
+                                <p>Dear ${account.UserName},</p>
+                                <p>You have requested to reset your password. Please click the button below to set a new password:</p>
+                                    <a href='{account.ResetToken}' class='button'>Reset Password</a>
+                                <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
+                                <p>{account.ResetToken}</p>
+                                <p>If you did not request a password reset, please ignore this email or contact support.</p>
                             </div>";
 
 
