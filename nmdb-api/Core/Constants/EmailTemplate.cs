@@ -80,5 +80,17 @@ public static class EmailTemplate
             </div>";
         return emailTemplate;
     }
+    public static string CardRequestedMail(string requestedBy, string cardDetails = "")
+    {
+        var emailTemplate = $@"
+            ${getEmailStyle}
+            <div class='email-container'>
+            <p>Dear Admin,</p>
+                    <p>A card has been requested by ${requestedBy}. Details: {cardDetails}</p>
+                    <a href='LINK_TO_VERIFICATION_PAGE' class='button'>Verify Request</a>
+                    <p>Thank you!</p>
+            </div>";
+        return emailTemplate;
+    }
 
 }
