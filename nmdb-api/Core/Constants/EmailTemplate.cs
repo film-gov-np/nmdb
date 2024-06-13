@@ -1,40 +1,7 @@
-﻿namespace Core.Constants;
+namespace Core.Constants;
 
 public static class EmailTemplate
 {
-    public const string CardRequested = @"
-            <!DOCTYPE html>
-            <html lang=""en"">
-            <head>
-                <meta charset=""UTF-8"">
-                <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-                <title>Email Verification</title>
-            </head>
-            <body>
-                <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
-                    <h2 style=""color: #333;"">Card Requested</h2>
-                    <p>A card has been requested by {{crew}}.</p>                    
-                </div>
-            </body>
-            </html>";
-
-    public const string CardApproved = @"
-            <!DOCTYPE html>
-            <html lang=""""en"""">
-            <head>
-                <meta charset=""""UTF-8"""">
-                <meta name=""""viewport"""" content=""""width=device-width, initial-scale=1.0"""">
-                <title>Card Request Approved</title>
-            </head>
-            <body>
-                <div style=""""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"""">
-                    <h2 style=""""color: #333;"""">Card Request Approved</h2>
-                    <p>Your card request has been approved. It will be ready by {{ready-date}}.</p>
-                    <p>You can collect it after the mentioned date.</p>
-                </div>
-            </body>
-            </html>";
-
     private static string getEmailStyle()
     {
         string cssStyles = @"
@@ -83,11 +50,12 @@ public static class EmailTemplate
                         <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
                         <p>{verificationLink}</p>
                     </div>
+                    <div>${getCompanySignature()}</div>
                 </body>
             </html>";
         return emailTemplate;
     }
-    public static string CardRequestedMail(string requestedBy, string cardDetails = "")
+    public static string CardRequestedMail(string crewEmail)
     {
         var emailTemplate = $@"
         <!DOCTYPE html>
@@ -98,17 +66,16 @@ public static class EmailTemplate
                 <body>
                    <div class='email-container'>
                         <h2>Card Request Recieved.</h2>
-                        <p>A card has been requested by ${requestedBy}.</p>
-                        <p>Details: {cardDetails}</p>
+                        <p>A card has been requested by {crewEmail}.</p>
                         <a href='LINK_TO_VERIFICATION_PAGE' class='button'>Verify Request</a>
-
                         <p>Thank you!</p>
                     </div>
+                    <div>${getCompanySignature()}</div>
                 </body>
             </html>";
         return emailTemplate;
     }
-    public static string CardApprovedEmail(string requestedBy, string cardDetails = "")
+    public static string CardApprovedEmail(string cardReadyDate)
     {
         var emailTemplate = $@"
         <!DOCTYPE html>
@@ -119,10 +86,11 @@ public static class EmailTemplate
                 <body>
                    <div class='email-container'>
                        <h2>Card Request Approved.</h2>
-                       <p>Dear {requestedBy}, your card request has been approved.</p>
-                       <p>You can collect it after the mentioned date.</p>
+                       <p>Your card request has been approved.</p>
+                       <p>You can collect it after the mentioned date: {cardReadyDate}.</p>
                        <p>Thank you!</p>
                     </div>
+                    <div>${getCompanySignature()}</div>
                 </body>
             </html>";
         return emailTemplate;
