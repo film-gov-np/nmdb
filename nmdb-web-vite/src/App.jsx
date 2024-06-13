@@ -13,13 +13,14 @@ const queryClient = new QueryClient()
 const App = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
+
   useEffect(() => {
     axiosInstance.get(ApiPaths.Path_Session).then((resp) => {
-      if (resp && resp.data) {
-        const { isActive } = resp.data;
-        if (isActive) {
-          setIsAuthorized(true);
-        }
+      if (resp && resp.data && resp.data.isSuccess) {
+        const { data } = resp.data;
+        setIsAuthorized(true);
+        setUserInfo(data);
       }
       setIsLoading(false);
 
@@ -31,7 +32,7 @@ const App = () => {
   return (<>
     {!isLoading &&
       <ThemeProvider>
-        <AuthContext.Provider value={{ isAuthorized, setIsAuthorized }}>
+        <AuthContext.Provider value={{ isAuthorized, userInfo, setUserInfo, setIsAuthorized }}>
           <QueryClientProvider client={queryClient}>
             <Routes isAuthorized={isAuthorized} />
           </QueryClientProvider>

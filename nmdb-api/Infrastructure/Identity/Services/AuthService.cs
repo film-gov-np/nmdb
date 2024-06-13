@@ -617,5 +617,13 @@ namespace Infrastructure.Identity.Services
                 html: message
             );
         }
+
+        public async Task<AuthenticateResponse> GetCurrentSessionUser(string userID)
+        {
+            var currentUser = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userID);
+            var response = _mapper.Map<AuthenticateResponse>(currentUser);
+            response.Authenticated=true;
+            return response;
+        }
     }
 }

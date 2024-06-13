@@ -38,6 +38,7 @@ public class Authenticate
         {
             var authenticateResponse = await _authService.Authenticate(request, "");
             setTokenCookie(authenticateResponse.JwtToken, authenticateResponse.RefreshToken);
+
             Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
         }
         catch (Exception ex)

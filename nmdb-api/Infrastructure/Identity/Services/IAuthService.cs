@@ -24,5 +24,6 @@ namespace Infrastructure.Identity.Services
         Task<AccountResponse> Update(string idx, Application.Models.UpdateUserDTO model);
         CurrentUser GetUserFromClaims(IEnumerable<Claim> claims);
         Task Delete(string idx);
+        Task<AuthenticateResponse> GetCurrentSessionUser(string userID);
     }
 }

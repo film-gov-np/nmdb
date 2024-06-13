@@ -36,7 +36,7 @@ public class SessionController : ControllerBase
 
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
         {
-            return Ok(new { Message = "Session inactive", IsActive = false });
+            return BadRequest(ApiResponse<string>.ErrorResponse("Inactive session.", HttpStatusCode.BadRequest));
         }
 
 
@@ -44,7 +44,15 @@ public class SessionController : ControllerBase
         {
             if (!_jwtTokenGenerator.IsTokenExpired(accessToken))
             {
-                return Ok(new { Message = "Session is active", IsActive = true });
+                ClaimsPrincipal claimPrincipal = _jwtTokenGenerator.GetClaimsPrincipalFromToken(accessToken);
+                if (claimPrincipal == null)
+                {
+                    return BadRequest(ApiResponse<string>.ErrorResponse("Inactive session.", HttpStatusCode.BadRequest));
+                }
+                ClaimsIdentity claimsIdentity = claimPrincipal.Claims.FirstOrDefault().Subject;
+                CurrentUser user = _usrAuth.GetUserFromClaims(claimsIdentity.Claims);
+                var resp = await _usrAuth.GetCurrentSessionUser(user.ID);
+                return Ok(ApiResponse<AuthenticateResponse>.SuccessResponse(resp, "Active Session."));
             }
             else // check for refresh token validity and refresh token if valid else remove the cookie
             {
@@ -59,7 +67,7 @@ public class SessionController : ControllerBase
                 {
                     Response.Cookies.Delete(TokenConstants.AccessToken);
                     Response.Cookies.Delete(TokenConstants.RefreshToken);
-                    return Ok(new { Message = "Session is active", IsActive = false });
+                    return BadRequest(ApiResponse<string>.ErrorResponse("Inactive session.", HttpStatusCode.BadRequest));
                 }
                 else
                 {
@@ -74,11 +82,13 @@ public class SessionController : ControllerBase
                     Response.Cookies.Append(TokenConstants.AccessToken, refreshResp.JwtToken, cookieOptions);
 
                     Response.Cookies.Append(TokenConstants.RefreshToken, refreshResp.RefreshToken, cookieOptions);
-                    return Ok(new { Message = "Session is active", IsActive = true });
+                    return Ok(ApiResponse<AuthenticateResponse>.SuccessResponse(refreshResp, "Active Session."));
+
                 }
             }
         }
-        return Ok(new { Message = "Session inactive", IsActive = false });
+        return BadRequest(ApiResponse<string>.ErrorResponse("Inactive session.", HttpStatusCode.BadRequest));
+
     }
 
     [HttpPost]
