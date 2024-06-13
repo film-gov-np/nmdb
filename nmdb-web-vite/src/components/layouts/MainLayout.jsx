@@ -24,8 +24,11 @@ import { ModeToggle } from "../mode-toggle";
 import Footer from "../landing/Footer";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/constants/routePaths";
+import { useAuthContext } from "../admin/context/AuthContext";
 
 const MainLayout = () => {
+  const { isAuthorized } = useAuthContext();
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className=" theme-zinc h-full w-full">
@@ -119,10 +122,13 @@ const MainLayout = () => {
                   />
                 </div>
               </form>
-              <NavLink to="login">
-                <Button variant={"outline"}>Sign In</Button>
-              </NavLink>
-              <DropdownMenu>
+              {!isAuthorized &&
+                <NavLink to="login">
+                  <Button variant={"outline"}>Sign In</Button>
+                </NavLink>
+              }
+
+              {isAuthorized && <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="secondary"
@@ -139,12 +145,13 @@ const MainLayout = () => {
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuItem>Support</DropdownMenuItem>
                   <DropdownMenuItem className="flex gap-2">
-                  Theme<ModeToggle></ModeToggle>
-                </DropdownMenuItem>
+                    Theme<ModeToggle></ModeToggle>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              }
             </div>
           </header>
           <Outlet />
