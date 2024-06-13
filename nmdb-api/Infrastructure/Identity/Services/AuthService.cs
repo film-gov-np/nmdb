@@ -64,33 +64,45 @@ namespace Infrastructure.Identity.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, string ipAddress)
         {
-            var requestedUser = await _userManager.Users.Include(u => u.RefreshTokens)
-                                   .SingleOrDefaultAsync(u => u.Email == request.Email);
-            if (requestedUser == null)
+            try
             {
+
+                var requestedUser = await _userManager.Users.Include(u => u.RefreshTokens)
+                                       .SingleOrDefaultAsync(u => u.Email == request.Email);
+                if (requestedUser != null)
+                {
+                    var result = await _signInManager.CheckPasswordSignInAsync(requestedUser, request.Password, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        var roles = await _userManager.GetRolesAsync(requestedUser);
+                        var jwtToken = _jwtTokenGenerator.GenerateJwtToken(requestedUser, roles);
+                        var refreshToken = await _jwtTokenGenerator.GenerateRefreshToken(ipAddress);
+                        requestedUser.RefreshTokens.Add(refreshToken);
+
+                        // remove old refresh tokens from accountSSSSS
+                        await removeOldRefreshTokens(requestedUser);
+
+                        // save changes to db
+                        _context.Update(requestedUser);
+                        await _context.SaveChangesAsync();
+
+                        var response = _mapper.Map<AuthenticateResponse>(requestedUser);
+                        response.JwtToken = jwtToken;
+                        response.RefreshToken = refreshToken.Token;
+
+                        if (roles.Contains(AuthorizationConstants.CrewRole))
+                            response.IsCrew = true;
+
+                        return response;
+                    }
+                }
                 throw new UnauthorizedAccessException("Invalid login attempt.");
             }
-            var result = await _signInManager.CheckPasswordSignInAsync(requestedUser, request.Password, lockoutOnFailure: false);
-            if (result.Succeeded)
+            catch (Exception ex)
             {
-                var roles = await _userManager.GetRolesAsync(requestedUser);
-                var jwtToken = _jwtTokenGenerator.GenerateJwtToken(requestedUser, roles);
-                var refreshToken = await _jwtTokenGenerator.GenerateRefreshToken(ipAddress);
-                requestedUser.RefreshTokens.Add(refreshToken);
+                throw ex;
 
-                // remove old refresh tokens from accountSSSSS
-                await removeOldRefreshTokens(requestedUser);
-
-                // save changes to db
-                _context.Update(requestedUser);
-                await _context.SaveChangesAsync();
-
-                var response = _mapper.Map<AuthenticateResponse>(requestedUser);
-                response.JwtToken = jwtToken;
-                response.RefreshToken = refreshToken.Token;
-                return response;
             }
-            throw new UnauthorizedAccessException("Invalid login attempt.");
         }
         //public string ValidateToken(string token)
         //{
