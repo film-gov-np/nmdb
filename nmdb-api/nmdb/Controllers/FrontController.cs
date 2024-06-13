@@ -12,7 +12,7 @@ public class FrontController : ControllerBase
 {
     private readonly IMovieService _movieService;
     private readonly ICrewService _crewService;
-
+    private readonly ICommonService _commonService;
     public FrontController(IMovieService movieService, ICrewService crewService)
     {
         _crewService = crewService;
@@ -77,5 +77,24 @@ public class FrontController : ControllerBase
             return BadRequest(ex.Message);
         }
 
+    }
+
+    [HttpGet("global-search")]
+    public async Task<IActionResult> GlobalSearch([FromQuery] BaseFilterParameters filterParameters)
+    {
+        try
+        {
+
+            var response = await _commonService.GetGlobalSearchResults(filterParameters);
+            if (response.IsSuccess)
+                return Ok(response);
+            return BadRequest(response);
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+
+        }
     }
 }

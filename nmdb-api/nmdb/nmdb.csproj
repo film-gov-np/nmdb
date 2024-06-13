@@ -11,12 +11,16 @@
   <ItemGroup>
     <Compile Remove="Endpoints\Films\**" />
     <Compile Remove="Endpoints\Movies\**" />
+    <Compile Remove="Endpoints\Users\**" />
     <Content Remove="Endpoints\Films\**" />
     <Content Remove="Endpoints\Movies\**" />
+    <Content Remove="Endpoints\Users\**" />
     <EmbeddedResource Remove="Endpoints\Films\**" />
     <EmbeddedResource Remove="Endpoints\Movies\**" />
+    <EmbeddedResource Remove="Endpoints\Users\**" />
     <None Remove="Endpoints\Films\**" />
     <None Remove="Endpoints\Movies\**" />
+    <None Remove="Endpoints\Users\**" />
   </ItemGroup>
 
   <ItemGroup>

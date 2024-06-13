@@ -21,7 +21,9 @@ import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsAuthorized } = useAuthContext();
+
+  const { setIsAuthorized, setUserInfo } = useAuthContext();
+
   const [errorState, setErrorState] = useState("");
   const form = useForm({
     resolver: loginSchemaResolver,
@@ -41,21 +43,8 @@ const Login = () => {
       .then((resp) => {
         const response = resp.data;
         if (response?.isSuccess) {
-          const {
-            created,
-            email,
-            firstName,
-            idx,
-            isVerified,
-            jwtToken,
-            lastName,
-            updated,
-            refreshToken,
-          } = response.data;
-          //set token to cookie or localStorage
-          // localStorage.setItem("token", jwtToken);
-          // localStorage.setItem("refreshToken", refreshToken);
           setIsAuthorized(true);
+          setUserInfo(response.data);
           navigate("/admin/dashboard");
         } else {
           setErrorState(response.message);

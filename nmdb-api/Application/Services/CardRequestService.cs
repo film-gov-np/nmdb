@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+using Application.Abstractions;
 using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos;
 using Application.Dtos.Crew;
@@ -35,8 +35,8 @@ namespace Application.Services
         private readonly IEmailService _emailService;
         private readonly ICrewService _crewService;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;    
-    private readonly string _uploadFolderPath;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string _uploadFolderPath;
         private readonly ILogger<CardRequestService> _logger;
         public CardRequestService(
             IUnitOfWork unitOfWork,
@@ -50,7 +50,7 @@ namespace Application.Services
             _emailService = emailService;
             _crewService = crewService;
             _httpContextAccessor = httpContextAccessor;
-            _uploadFolderPath = string.Concat(configuration["UploadFolderPath"],"/crews/");
+            _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/crews/");
             _logger = logger;
         }
         public async Task<ApiResponse<string>> RequestCardAsync(string email)
@@ -83,11 +83,11 @@ namespace Application.Services
                     await _emailService.Send(
                         "test@nmdb.com", // admin or info email
                         "Card Requested",
-                        EmailTemplate.CardRequested.Replace("{{crew}}", crewEntity.Email)
+                        EmailTemplate.CardRequestedMail(crewEntity.Email)
                         );
 
                     response.IsSuccess = true;
-                    response.Message = $"Card requested succesfully";                    
+                    response.Message = $"Card requested succesfully";
                 }
                 else
                 {
@@ -132,7 +132,7 @@ namespace Application.Services
                 if (!crew.IsSuccess)
                     return ApiResponse<string>.ErrorResponse(crew.Message);
 
-                await _emailService.Send(crew.Data.Email, "Card Approved", EmailTemplate.CardApproved.Replace("{{ready-date}}", cardRequest.ReadyDate.Value.Date.ToString()));
+                await _emailService.Send(crew.Data.Email, "Card Approved", EmailTemplate.CardApprovedEmail(cardRequest.ReadyDate.Value.Date.ToString()));
                 return ApiResponse<string>.SuccessResponseWithoutData("Card approved succesfully.");
             }
             catch (Exception ex)
@@ -190,7 +190,7 @@ namespace Application.Services
                                                         Name = tr.Crew.Name,
                                                         Email = tr.Crew.Email,
                                                         Designations = tr.Crew.CrewDesignations.Select(cd => cd.FilmRole.RoleName).ToArray(),
-                                                        ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.Crew.ProfilePhoto),
+                                                        ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, tr.Crew.ProfilePhoto),
                                                     }
                                                 }).ToListAsync();
 

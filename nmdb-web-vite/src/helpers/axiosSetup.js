@@ -1,13 +1,16 @@
 import { ApiPaths } from "@/constants/apiPaths";
 import { BaseAPIUrl } from "@/constants/authConstant";
+import { Paths } from "@/constants/routePaths";
 import axios from "axios";
 
 
 const refreshUrl = ApiPaths.Path_Auth + "/refresh";
+
 const axiosInstance = axios.create({
   baseURL: BaseAPIUrl,
-  withCredentials:true
+  withCredentials: true
 });
+
 const refreshInstance = axios.create({
   baseURL: BaseAPIUrl,
 });
@@ -51,43 +54,44 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
 
-      if (isRefreshing) {
-        return new Promise(function (resolve, reject) {
-          failedQueue.push({ resolve, reject });
-        }).then(token => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return axiosInstance(originalRequest);
-        }).catch(err => {
-          return Promise.reject(err);
-        });
-      }
-      originalRequest._retry = true;
-      isRefreshing = true;
+      location.href = Paths.Route_Home;
+      // if (isRefreshing) {
+      //   return new Promise(function (resolve, reject) {
+      //     failedQueue.push({ resolve, reject });
+      //   }).then(token => {
+      //     originalRequest.headers['Authorization'] = 'Bearer ' + token;
+      //     return axiosInstance(originalRequest);
+      //   }).catch(err => {
+      //     return Promise.reject(err);
+      //   });
+      // }
+      // originalRequest._retry = true;
+      // isRefreshing = true;
 
-      const refreshToken = localStorage.getItem('refreshToken');
+      // const refreshToken = localStorage.getItem('refreshToken');
 
-      return new Promise(function (resolve, reject) {
-        const postData = { refreshToken: refreshToken };
-        refreshInstance.post(refreshUrl, postData)
-          .then(({ data }) => {
-            const {
-              jwtToken,
-              refreshToken
-            } = data.data;
-            const newToken = jwtToken;
-            localStorage.setItem('token', newToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            processQueue(null, newToken);
-            resolve(axiosInstance(originalRequest));
-          })
-          .catch((err) => {
-            processQueue(err, null);
-            reject(err);
-          })
-          .finally(() => {
-            isRefreshing = false;
-          });
-      });
+      // return new Promise(function (resolve, reject) {
+      //   const postData = { refreshToken: refreshToken };
+      //   refreshInstance.post(refreshUrl, postData)
+      //     .then(({ data }) => {
+      //       const {
+      //         jwtToken,
+      //         refreshToken
+      //       } = data.data;
+      //       const newToken = jwtToken;
+      //       localStorage.setItem('token', newToken);
+      //       localStorage.setItem('refreshToken', refreshToken);
+      //       processQueue(null, newToken);
+      //       resolve(axiosInstance(originalRequest));
+      //     })
+      //     .catch((err) => {
+      //       processQueue(err, null);
+      //       reject(err);
+      //     })
+      //     .finally(() => {
+      //       isRefreshing = false;
+      //     });
+      // });
     }
     return Promise.reject(error);
   }
