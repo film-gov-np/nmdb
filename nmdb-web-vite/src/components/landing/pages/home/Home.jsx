@@ -23,7 +23,6 @@ import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
 
 const getMovies = async (apiPath) => {
-  debugger;
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
@@ -92,7 +91,7 @@ const Home = () => {
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
       <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6">
-      {/*  md:grid-cols-[2fr_2px_minmax(0,9fr)] */}
+        {/*  md:grid-cols-[2fr_2px_minmax(0,9fr)] */}
         {/* <aside className="hidden gap-4 py-4 md:grid">
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
             Menu
@@ -130,7 +129,7 @@ const Home = () => {
             </NavLink>
           </div>
         </aside> */}
-        
+
         <div className="space-y-4">
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
             Now Playing
@@ -146,7 +145,7 @@ const Home = () => {
             ]}
           >
             <CarouselContent className="">
-              {nowPlayingMovies.data.movies.map((movie, index) => (
+              {nowPlayingMovies?.data?.movies.map((movie, index) => (
                 <CarouselItem
                   key={"now-playing-movie-" + index}
                   className="pl-4 sm:flex-[0_0_50%] md:flex-[0_0_35%] lg:flex-[0_0_25%] xl:flex-[0_0_18.5%]"
@@ -192,7 +191,7 @@ const Home = () => {
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularMovies.data.movies.map((movie, index) => (
+                  {popularMovies?.data?.movies.map((movie, index) => (
                     <InfoCardWithImage
                       key={"movie-of-the-week-" + index}
                       title={movie.name}
@@ -216,7 +215,7 @@ const Home = () => {
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularArtists.data.movies.map((cast, index) => (
+                  {popularArtists?.data?.movies.map((cast, index) => (
                     <InfoCardWithImage
                       key={"top-artist-" + index}
                       title={cast.name}

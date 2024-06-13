@@ -12,5 +12,5 @@ public interface IAwardsService
     Task<ApiResponse<string>> CreateAwardsAsync(AwardsRequestDto crewRequestDto);
     Task<ApiResponse<string>> UpdateAwardsAsync(int crewId, AwardsRequestDto crewRequestDto);
     Task<ApiResponse<AwardsResponseDto>> GetAwardsByIdAsync(int crewId);
-    Task<ApiResponse<string>> DeleteAwardsAsync(int crewId);
+    Task<ApiResponse<string>> DeleteAwardsAsync(int crewId, string deletedBy);
 }

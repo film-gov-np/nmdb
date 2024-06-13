@@ -44,7 +44,7 @@ function DataTableRowActions({ row }) {
         onOpenChange={setShowDeleteTaskDialog}
         selectedData={[row]}
         showTrigger={false}
-        apiBasePath={ApiPaths.Path_FlimRoles_Delete}
+        apiBasePath={ApiPaths.Path_Awards}
         onSuccess={() => setShowDeleteTaskDialog(false)}
       />
       <TooltipProvider>
@@ -139,6 +139,14 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("categoryName")}</div>,
+  },
+  {
+    accessorKey: "awardStatus",
+    meta: "Status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => <div className="">{row.getValue("awardStatus")}</div>,
   },
   {
     id: "actions",

@@ -37,6 +37,7 @@ import { ApiPaths } from "@/constants/apiPaths";
 import { useState } from "react";
 import DateInput from "@/components/ui/custom/DateInput";
 import { Textarea } from "@/components/ui/textarea";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 
 const formSchema = z.object({
   awardTitle: z.string().min(2, {
@@ -49,6 +50,7 @@ const formSchema = z.object({
   awardedIn: z.string().optional().or(z.literal("")),
   awardedDate: z.string().optional().or(z.literal("")),
   remarks: z.string().optional().or(z.literal("")),
+  movieID: z.array(z.any()),
 });
 
 const renderModes = {
@@ -63,7 +65,8 @@ const defaultValues = {
   awardStatus: '',
   awardedIn: '',
   awardedDate: '',
-  remarks: ''
+  remarks: '',
+  movieID: []
 };
 
 const getAward = async (id, renderMode) => {
@@ -89,6 +92,12 @@ const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
   if (isEditMode) {
     apiPath += "/" + slug;
     postData.id = slug;
+  }
+  postData = {
+    ...postData,
+    movieID: postData.movieID && postData.movieID.length > 0 ?
+      postData.movieID[0].id :
+      null
   }
   const { data } = await axiosInstance({
     method: isEditMode ? "put" : "post",
@@ -197,6 +206,8 @@ function AwardForm({ award, renderMode, onSubmit }) {
       awardStatus: award.awardStatus,
       awardedIn: award.awardedIn,
       awardedDate: award.awardedDate,
+      remarks: award.remarks,
+      movieID: award.movie ? [award.movie] : [],
     },
   });
   return (
@@ -274,6 +285,33 @@ function AwardForm({ award, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="movieID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Movie</FormLabel>
+                  <FormControl>
+                    <MultipleSelectorWithList
+                      value={field.value}
+                      onChange={field.onChange}
+                      triggerOnSearch={true}
+                      minSearchTrigger={3}
+                      apiPath={ApiPaths.Path_Movies + "?SearchKeyword="}
+                      keyValue="id"
+                      keyLabel="name"
+                      placeholder="Begin typing to search for movie..."
+                      maxSelected={1}
+                      replaceOnMaxSelected={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+
             <FormField
               control={form.control}
               name="remarks"

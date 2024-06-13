@@ -116,7 +116,8 @@ namespace nmdb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _awardsService.DeleteAwardsAsync(id);
+            string Authorship = GetUserEmail;
+            var result = await _awardsService.DeleteAwardsAsync(id, Authorship);
 
             if (result.IsSuccess)
             {

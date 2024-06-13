@@ -170,4 +170,8 @@ public class UserService : IUserService
         }
     }
 
+    public Task<ApiResponse<string>> AssignRoleAsync(string userId, string roleId)
+    {
+        throw new NotImplementedException();
+    }
 }

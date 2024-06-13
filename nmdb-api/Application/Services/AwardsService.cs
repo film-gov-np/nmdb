@@ -3,16 +3,20 @@ using Application.Dtos;
 using Application.Dtos.Awards;
 using Application.Dtos.Crew;
 using Application.Dtos.FilterParameters;
+using Application.Dtos.Movie;
+using Application.Helpers;
 using Application.Helpers.Response;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using Application.Models;
 using AutoMapper;
 using Core;
+using Core.Constants;
 using Core.Entities;
 using Core.Entities.Awards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +46,7 @@ namespace Application.Services
 
 
             var (query, totalItems) = await _unitOfWork.AwardsRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
-            var theatreResponse = await query.Select(
+            var awardResponse = await query.Where(q => !q.IsDeleted).Select(
                                                 tr => new AwardsListDto
                                                 {
                                                     Id = tr.Id,
@@ -56,7 +60,7 @@ namespace Application.Services
 
             var response = new PaginationResponse<AwardsListDto>
             {
-                Items = theatreResponse,
+                Items = awardResponse,
                 TotalItems = totalItems,
                 PageNumber = filterParameters.PageNumber,
                 PageSize = filterParameters.PageSize
@@ -65,11 +69,11 @@ namespace Application.Services
             return ApiResponse<PaginationResponse<AwardsListDto>>.SuccessResponse(response);
         }
 
-        public async Task<ApiResponse<string>> CreateAwardsAsync(AwardsRequestDto crewRequestDto)
+        public async Task<ApiResponse<string>> CreateAwardsAsync(AwardsRequestDto requestDto)
         {
             try
             {
-                var award = _mapper.Map<Awards>(crewRequestDto);
+                var award = _mapper.Map<Awards>(requestDto);
                 await _unitOfWork.AwardsRepository.AddAsync(award);
                 await _unitOfWork.CommitAsync();
                 return ApiResponse<string>.SuccessResponseWithoutData("Award created successfully.", HttpStatusCode.Created);
@@ -85,7 +89,7 @@ namespace Application.Services
             }
         }
 
-        public async Task<ApiResponse<string>> UpdateAwardsAsync(int awardId, AwardsRequestDto crewRequestDto)
+        public async Task<ApiResponse<string>> UpdateAwardsAsync(int awardId, AwardsRequestDto requestDto)
         {
             var response = new ApiResponse<string>();
 
@@ -98,7 +102,7 @@ namespace Application.Services
                     return ApiResponse<string>.ErrorResponse("Award not found.", HttpStatusCode.NotFound);
                 }
 
-                _mapper.Map(crewRequestDto, award);
+                _mapper.Map(requestDto, award);
                 award.Id = awardId;
                 await _unitOfWork.AwardsRepository.UpdateAsync(award);
                 await _unitOfWork.CommitAsync();
@@ -115,18 +119,21 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<ApiResponse<string>> DeleteAwardsAsync(int awardId)
+        public async Task<ApiResponse<string>> DeleteAwardsAsync(int awardId, string deletedBy)
         {
             var response = new ApiResponse<string>();
             try
             {
-                var deleteResult = await _unitOfWork.AwardsRepository.DeleteAsync(awardId);
+                var award = await _unitOfWork.AwardsRepository.GetByIdAsync(awardId);
 
-                if (!deleteResult)
+                if (award == null)
                 {
                     return ApiResponse<string>.ErrorResponse("Award not found.", HttpStatusCode.NotFound);
                 }
-
+                award.IsDeleted = true;
+                award.UpdatedBy = deletedBy;
+                award.UpdatedAt = DateTime.Now;
+                await _unitOfWork.AwardsRepository.UpdateAsync(award);
                 await _unitOfWork.CommitAsync();
 
                 response = ApiResponse<string>.SuccessResponseWithoutData("Award deleted successfully.", HttpStatusCode.NoContent);
@@ -146,7 +153,26 @@ namespace Application.Services
 
             try
             {
-                var award = await _unitOfWork.AwardsRepository.GetByIdAsync(awardId);
+                var award = await _unitOfWork.AwardsRepository.Get(a => a.Id == awardId)
+                                    .Select(a => new AwardsResponseDto
+                                    {
+                                        Id = a.Id,
+                                        CategoryName = a.CategoryName,
+                                        AwardTitle = a.AwardTitle,
+                                        AwardedDate = a.AwardedDate,
+                                        AwardedIn = a.AwardedIn,
+                                        AwardStatus = a.AwardStatus,
+                                        Remarks = a.Remarks,
+                                        Movie = a.Movie != null ? new MovieListResponseDto
+                                        {
+                                            Id = a.Movie.Id,
+                                            Name = a.Movie.Name,
+                                            NepaliName = a.Movie.NepaliName,
+                                            Category = a.Movie.Category != null ? a.Movie.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
+                                            Status = a.Movie.Status != null ? a.Movie.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
+                                            Color = a.Movie.Color != null ? a.Movie.Color.GetDisplayName() : eMovieColor.None.GetDisplayName()
+                                        } : null
+                                    }).FirstOrDefaultAsync();
 
                 if (award == null)
                 {
