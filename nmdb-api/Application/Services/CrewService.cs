@@ -36,7 +36,7 @@ public class CrewService : ICrewService
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;    
-    private readonly string _uploadFolderPath;
+    private readonly string _uploadFolderPathCrew;
     private readonly string _uploadFolderPathMovie;
     private readonly IWebHostEnvironment _environment;
 
@@ -54,7 +54,7 @@ public class CrewService : ICrewService
         _fileService = fileService;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
-        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"],"/crews/");
+        _uploadFolderPathCrew = string.Concat(configuration["UploadFolderPath"],"/crews/");
         _uploadFolderPathMovie = string.Concat(configuration["UploadFolderPath"],"/movies/");
 
     }
@@ -107,7 +107,7 @@ public class CrewService : ICrewService
                                                 Email = tr.Email,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
-                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath,tr.ProfilePhoto),
+                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew,tr.ProfilePhoto),
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewListDto>
@@ -268,9 +268,9 @@ public class CrewService : ICrewService
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
             string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
-                string.Concat(_uploadFolderPath,"movies/",crewResponse.ProfilePhoto):"";
+                string.Concat(_uploadFolderPathCrew,"movies/",crewResponse.ProfilePhoto):"";
 
-            crewResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
+            crewResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew, crewResponse.ProfilePhoto);
 
 
             response.IsSuccess = true;
@@ -344,7 +344,7 @@ public class CrewService : ICrewService
             var crewResponse = _mapper.Map<CrewResponseDto>(crew);
 
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
-            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, crewResponse.ProfilePhoto);
+            crewResponse.ProfilePhoto = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew, crewResponse.ProfilePhoto);
 
             response.IsSuccess = true;
             response.Data = crewResponse;
