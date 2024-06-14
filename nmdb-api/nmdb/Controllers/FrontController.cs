@@ -1,8 +1,6 @@
-﻿using Application.BaseManager;
-using Application.Dtos.FilterParameters;
+﻿using Application.Dtos.FilterParameters;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace nmdb.Controllers;
 
