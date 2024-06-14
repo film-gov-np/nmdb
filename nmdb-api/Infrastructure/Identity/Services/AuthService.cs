@@ -202,31 +202,39 @@ namespace Infrastructure.Identity.Services
         }
         public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
-
-            var userToRegister = new ApplicationUser
+            try
             {
-                UserName = request.Email,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                CreatedBy = request.Email
-            };
 
-            var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
 
-            if (registrationResult.Succeeded)
-            {
-                var created_user = await _userManager.FindByEmailAsync(request.Email);
-                await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
-                var account = _mapper.Map<ApplicationUser>(request);
-                created_user.VerificationToken = await generateVerificationToken();
-                await _userManager.UpdateAsync(created_user);
-                await sendVerificationEmail(created_user, request.Password);
-                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+                var userToRegister = new ApplicationUser
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    CreatedBy = request.Email
+                };
+
+                var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
+
+                if (registrationResult.Succeeded)
+                {
+                    var created_user = await _userManager.FindByEmailAsync(request.Email);
+                    await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
+                    var account = _mapper.Map<ApplicationUser>(request);
+                    created_user.VerificationToken = await generateVerificationToken();
+                    await _userManager.UpdateAsync(created_user);
+                    await sendVerificationEmail(created_user, request.Password);
+                    return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+                }
+                var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
+                return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
             }
-            var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
-            return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
+            catch (Exception ex)
+            {
+                return ApiResponse<string>.ErrorResponse("Registration failed: " + ex.Message);
+            }
         }
 
         public async Task<ApiResponse<string>> RegisterCrew(RegisterRequest request)
@@ -486,7 +494,9 @@ namespace Infrastructure.Identity.Services
 
         private async Task sendVerificationEmail(ApplicationUser account, string password = "")
         {
-            string verificationLink = $"{GetHostUrl}/api/{account.VerificationToken}/verify-email";
+            var request = _httpContextAccessor.HttpContext.Request;
+            var hostUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            string verificationLink = $"{hostUrl}/api/{account.VerificationToken}/verify-email";
             await _emailService.Send(
                  to: account.Email,
                  subject: "Verify Email",

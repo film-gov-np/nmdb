@@ -26,9 +26,4 @@ public class ApplicationUser : IdentityUser, IBaseEntity<string>
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
     public string? ProfilePhoto { get; set; }
-    public virtual ICollection<ApplicationRole> UserRoles { get; } = new List<ApplicationRole>();
-    public ApplicationUser()
-    {
-        ProfilePhoto = string.Empty;
-    }
 }
