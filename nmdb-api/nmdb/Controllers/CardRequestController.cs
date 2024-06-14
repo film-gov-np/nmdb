@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 namespace nmdb.Controllers;
 
 [ApiController]
-// [Authorize]
+//[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/cards")]
 public class CardRequestController : AuthorizedController
@@ -50,7 +50,7 @@ public class CardRequestController : AuthorizedController
         }
     }
 
-    [HttpGet("{id}")]    
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -84,10 +84,9 @@ public class CardRequestController : AuthorizedController
     {
         try
         {
-            if (!string.IsNullOrEmpty(GetUserId))
+            if (!string.IsNullOrEmpty(CurrentUser.ID))
             {
-
-                var currentUserEmail = GetUserEmail;                
+                var currentUserEmail = CurrentUser.Email;
                 if (string.IsNullOrEmpty(currentUserEmail))
                 {
                     return BadRequest(ApiResponse<string>.ErrorResponse("Invalid card data.", HttpStatusCode.BadRequest));
@@ -104,7 +103,7 @@ public class CardRequestController : AuthorizedController
                     return BadRequest(result);
                 }
             }
-            return NotFound(ApiResponse<string>.ErrorResponse("Something went wrong while requesting for the card."));
+            return NotFound(ApiResponse<string>.ErrorResponse("The crew cannot be found in the session.", HttpStatusCode.NotFound));
         }
         catch (Exception ex)
         {
@@ -119,7 +118,7 @@ public class CardRequestController : AuthorizedController
         try
         {
 
-            
+
             var result = await _cardRequestService.ApproveCardRequestAsync(id, GetUserEmail);
 
             if (result.IsSuccess)
