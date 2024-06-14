@@ -255,7 +255,7 @@ namespace Infrastructure.Identity.Services
             {
                 UserName = request.Email,
                 Email = request.Email,
-                CreatedBy = "superuser@nmdb.com",                
+                CreatedBy = "superuser@nmdb.com",
             };
 
             var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
@@ -531,7 +531,20 @@ namespace Infrastructure.Identity.Services
         public async Task<AuthenticateResponse> GetCurrentSessionUser(string userID)
         {
             var currentUser = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userID);
+            var roles = await _userManager.GetRolesAsync(currentUser);
             var response = _mapper.Map<AuthenticateResponse>(currentUser);
+            if (roles.Contains(AuthorizationConstants.CrewRole))
+                response.IsCrew = true;
+
+            if (response.IsCrew)
+            {
+                var crew = await _crewService.GetCrewByEmailAsync(currentUser.Email);
+                if (crew != null && crew.IsSuccess)
+                {
+                    response.CrewId = crew.Data?.Id;
+                }
+            }
+            response.Role = string.Join(",", roles);
             response.Authenticated = true;
             return response;
         }

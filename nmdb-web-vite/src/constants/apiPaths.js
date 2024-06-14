@@ -26,4 +26,6 @@ export const ApiPaths = {
   Path_Front_Movies: "/front/movies",
   Path_Front_Celebrities: "/front/crews",
   Path_Session: "/session",
+
+  Path_RequestCard: "/cards/request"
 };

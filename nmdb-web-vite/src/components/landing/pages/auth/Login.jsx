@@ -50,7 +50,7 @@ const Login = () => {
           const userInfo = response.data;
           setIsAuthorized(true);
           setUserInfo(userInfo);
-          if (userInfo.isCrew) navigate(Paths.Route_Celebrities + "/" + 513);
+          if (userInfo.isCrew) navigate(Paths.Route_Celebrities + "/" + userInfo.crewId);
           else navigate(Paths.Route_Admin_Dashboard);
         } else {
           setErrorState(response.message);

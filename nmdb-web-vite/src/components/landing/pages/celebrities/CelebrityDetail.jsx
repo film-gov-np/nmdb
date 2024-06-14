@@ -2,18 +2,27 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useTruncatedElement } from "@/hooks/useTruncatedElement";
 import { cn } from "@/lib/utils";
-import { CircleIcon, Facebook, Globe, Instagram, Twitter } from "lucide-react";
+import {
+  CircleIcon,
+  Facebook,
+  Globe,
+  Instagram,
+  LoaderCircle,
+  Twitter,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Paths } from "@/constants/routePaths";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
 import { TwitterLogoIcon } from "@radix-ui/react-icons";
 import CelebQrCard from "../../CelebQrCard";
+import { useAuthContext } from "@/components/admin/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const gender = {
   0: "Female",
@@ -39,6 +48,9 @@ const CelebritiesDetails = () => {
   const { slug } = useParams();
   const { pathname } = useLocation();
   const [celebDetails, setCelebsDetails] = useState({});
+  const { isAuthorized, userInfo } = useAuthContext();
+  const [isCardRequestInProgress, setIsCardRequestInProgress] = useState(false);
+  const {toast} = useToast()
   const ref = useRef(null);
   const { isTruncated, isShowingMore, toggleIsShowingMore } =
     useTruncatedElement({
@@ -46,9 +58,37 @@ const CelebritiesDetails = () => {
       params: celebDetails,
     });
   const queryClient = useQueryClient();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const sendCardRequest = async () => {
+    setIsCardRequestInProgress(true);
+    let apiPath = ApiPaths.Path_RequestCard;
+    const response = await axiosInstance
+      .post(apiPath)
+      .then((response) => {
+        setIsCardRequestInProgress(false);
+        console.log(response.data);
+        return response.data.data;
+      })
+      .catch((err) => {
+        setIsCardRequestInProgress(false);
+        throw err
+      });
+    return response;
+  };
+
+  const mutateCardRequest = useMutation({
+    mutationFn: sendCardRequest,
+    onSuccess: (data, variables, context) => {},
+    onError: (error, variables, context) => {
+      toast({ description: "Something went wrong.Please try again." });
+    },
+    onSettled: (data, error, variables, context) => {},
+  });
+
   const getFromCache = (key) => {
     return queryClient.getQueryData([key]);
   };
@@ -59,12 +99,12 @@ const CelebritiesDetails = () => {
         const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
         if (cache) {
           console.log("cached", cache);
-          setCelebsDetails(cache.celebrity)
+          setCelebsDetails(cache.celebrity);
           return cache;
         } // use the data if in the cache
         const dat = await getCelebrityDetail(slug);
-        setCelebsDetails(dat.celebrity)
-        return dat
+        setCelebsDetails(dat.celebrity);
+        return dat;
       },
       keepPreviousData: true,
     });
@@ -82,7 +122,7 @@ const CelebritiesDetails = () => {
                 <h2 className="text-5xl font-semibold tracking-tight">
                   {celebDetails.name}
                 </h2>
-                <h2 className="text-2xl font-semibold text-muted-foreground tracking-tight">
+                <h2 className="text-2xl font-semibold tracking-tight text-muted-foreground">
                   {celebDetails.nepaliName}
                 </h2>
               </div>
@@ -103,11 +143,23 @@ const CelebritiesDetails = () => {
                 </ul>
               </div>
             </div>
-            
-            <CelebQrCard
-              url={window.location.origin + pathname}
-              details={celebDetails}
-            />
+            <div className="flex items-center gap-4">
+              {isAuthorized && (
+                <Button
+                  disabled={isCardRequestInProgress}
+                  onClick={mutateCardRequest.mutate}
+                >
+                  {isCardRequestInProgress && (
+                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Request Your Card
+                </Button>
+              )}
+              <CelebQrCard
+                url={window.location.origin + pathname}
+                details={celebDetails}
+              />
+            </div>
           </div>
           <Separator className="my-4" />
           <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-[3fr,minmax(0,10fr)]">
