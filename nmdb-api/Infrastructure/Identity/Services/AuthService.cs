@@ -68,7 +68,6 @@ namespace Infrastructure.Identity.Services
         {
             try
             {
-
                 var requestedUser = await _userManager.Users.Include(u => u.RefreshTokens)
                                        .SingleOrDefaultAsync(u => u.Email == request.Email);
                 if (requestedUser != null)
@@ -94,7 +93,16 @@ namespace Infrastructure.Identity.Services
 
                         if (roles.Contains(AuthorizationConstants.CrewRole))
                             response.IsCrew = true;
-                        response.Role = string.Join( ",", roles);
+
+                        if (response.IsCrew)
+                        {
+                            var crew = await _crewService.GetCrewByEmailAsync(request.Email);
+                            if (crew != null && crew.IsSuccess)
+                            {
+                                response.CrewId = crew.Data?.Id;
+                            }
+                        }
+                        response.Role = string.Join(",", roles);
                         response.Authenticated = true;
                         return response;
                     }
@@ -204,8 +212,6 @@ namespace Infrastructure.Identity.Services
         {
             try
             {
-
-
                 var userToRegister = new ApplicationUser
                 {
                     UserName = request.Email,
@@ -249,7 +255,7 @@ namespace Infrastructure.Identity.Services
             {
                 UserName = request.Email,
                 Email = request.Email,
-                CreatedBy = "superuser@nmdb.com"
+                CreatedBy = "superuser@nmdb.com",                
             };
 
             var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);

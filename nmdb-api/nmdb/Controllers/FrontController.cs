@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.FilterParameters;
 using Application.Interfaces.Services;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace nmdb.Controllers;
@@ -11,10 +12,11 @@ public class FrontController : ControllerBase
     private readonly IMovieService _movieService;
     private readonly ICrewService _crewService;
     private readonly ICommonService _commonService;
-    public FrontController(IMovieService movieService, ICrewService crewService)
+    public FrontController(IMovieService movieService, ICrewService crewService, ICommonService commonService)
     {
         _crewService = crewService;
         _movieService = movieService;
+        _commonService = commonService;
     }
 
     [HttpGet("movies")]
@@ -82,7 +84,6 @@ public class FrontController : ControllerBase
     {
         try
         {
-
             var response = await _commonService.GetGlobalSearchResults(filterParameters);
             if (response.IsSuccess)
                 return Ok(response);

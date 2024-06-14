@@ -33,6 +33,7 @@ public class UserService : IUserService
         {
             var user = _mapper.Map<ApplicationUser>(userRequest);
             user.CreatedBy = userRequest.Authorship;
+            user.UserName = userRequest.Email;
 
             if (string.IsNullOrEmpty(userRequest.Role))
                 userRequest.Role = AuthorizationConstants.UserRole;
@@ -41,16 +42,23 @@ public class UserService : IUserService
 
             if (roleToBeAssigned == null)
             {
-                return ApiResponse<string>.ErrorResponse($"Role '{roleToBeAssigned.Name}'  does not exist in the database.");
+                return ApiResponse<string>.ErrorResponse($"Role '{roleToBeAssigned?.Name}'  does not exist in the database.");
             }
-            var userCreated = await _userManager.CreateAsync(user, userRequest.Password);
-            await _userManager.AddToRoleAsync(user, userRequest.Role);
-
-            if (userCreated.Succeeded)
+            var userCreateResult = await _userManager.CreateAsync(user, userRequest.Password);
+            var errorMessage = "";
+            if (userCreateResult.Succeeded)
             {
-                return ApiResponse<string>.SuccessResponse("User created successfully.");
+                var assignRoleResult = await _userManager.AddToRoleAsync(user, userRequest.Role);
+                if (assignRoleResult.Succeeded)
+                {
+                    return ApiResponse<string>.SuccessResponse("User created successfully.");
+                }
+                errorMessage = string.Join(", ", assignRoleResult.Errors.First().Description);
             }
-            return ApiResponse<string>.ErrorResponse("Something went wrong while creating user.");
+            else
+                errorMessage = string.Join(", ", userCreateResult.Errors.First().Description);
+
+            return ApiResponse<string>.ErrorResponse(errorMessage);
         }
         catch (Exception ex)
         {
@@ -168,10 +176,5 @@ public class UserService : IUserService
         {
             return ApiResponse<string>.ErrorResponse(ex.Message);
         }
-    }
-
-    public Task<ApiResponse<string>> AssignRoleAsync(string userId, string roleId)
-    {
-        throw new NotImplementedException();
     }
 }
