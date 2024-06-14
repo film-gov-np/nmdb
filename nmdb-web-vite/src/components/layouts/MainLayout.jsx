@@ -25,9 +25,11 @@ import Footer from "../landing/Footer";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/constants/routePaths";
 import { useAuthContext } from "../admin/context/AuthContext";
+import { useState } from "react";
 
 const MainLayout = () => {
   const { isAuthorized } = useAuthContext();
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -44,7 +46,7 @@ const MainLayout = () => {
                 <span className="sr-only">NMDB</span>
               </NavLink>
             </nav>
-            <Sheet>
+            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
@@ -58,23 +60,52 @@ const MainLayout = () => {
               <SheetContent side="left">
                 <nav className="grid gap-6 text-lg font-medium">
                   <NavLink
-                    to="#"
+                    to={Paths.Route_Home}
+                    onClick={() => setOpen(false)}
                     className="flex items-center gap-2 text-lg font-semibold"
                   >
                     <Package2 className="h-6 w-6" />
                     <span className="sr-only">Acme Inc</span>
                   </NavLink>
                   <NavLink
-                    to="#"
-                    className="text-muted-foreground hover:text-foreground"
+                    to={Paths.Route_Home}
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground flex items-center"
                   >
-                    Dashboard
+                    <HomeIcon className="mr-2 h-4 w-4" />
+                    Home
                   </NavLink>
                   <NavLink
-                    to="#"
-                    className="text-muted-foreground hover:text-foreground"
+                    to={Paths.Route_Movies}
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground flex items-center"
                   >
-                    Orders
+                    <Film className="mr-2 h-4 w-4" />
+                    Movies
+                  </NavLink>
+                  <NavLink
+                    to={Paths.Route_Celebrities}
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground flex items-center"
+                  >
+                    <Drama className="mr-2 h-4 w-4" />
+                    Celebrities
+                  </NavLink>
+                  <NavLink
+                    to={""}
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground flex items-center"
+                  >
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    Movie Calendar
+                  </NavLink>
+                  <NavLink
+                    to={""}
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground flex items-center"
+                  >
+                     <Theater className="mr-2 h-4 w-4" />
+                     Cinema Hall
                   </NavLink>
                 </nav>
               </SheetContent>
