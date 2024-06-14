@@ -13,22 +13,21 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { registerSchemaResolver } from "./authSchema";
+import { registerCrewSchemaResolver } from "./authSchema";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const Register = () => {
+const RegisterCrew = () => {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { toast } = useToast();
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
+  const [errorState, setErrorState] = useState("");
   const form = useForm({
-    resolver: registerSchemaResolver,
+    resolver: registerCrewSchemaResolver,
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
-      phoneNumber: "",
       password: "",
       confirmPassword: "",
       acceptTerms: true,
@@ -36,21 +35,18 @@ const Register = () => {
   });
 
   const onSubmit = ({
-    firstName,
-    lastName,
     email,
     password,
     confirmPassword,
     acceptTerms,
   }) => {
     const postData = {
-      firstName,
-      lastName,
       email,
       password,
       confirmPassword,
       acceptTerms,
     };
+    console.log(postData)
     setIsRequestInProgress(true);
     axiosInstance
       .post("auth/register-crew", postData)
@@ -62,6 +58,7 @@ const Register = () => {
             //set token to cookie or localStorage
             navigate(Paths.Route_Verify_Email);
           }else{
+            setErrorState(responseData.message);
             toast({
               description: "Something went wrong. Please try again later.",
               duration: 5000,
@@ -88,40 +85,18 @@ const Register = () => {
         <div className="grid gap-2 text-center">
           <h1 className="text-3xl font-bold">NMDB</h1>
           <p className="text-balance text-muted-foreground">
-            Enter your details below to register
+            Enter your details below to register as a crew.
           </p>
+          {errorState && (
+            <Alert variant="destructive">
+              <AlertTitle>Registration Error</AlertTitle>
+              <AlertDescription>{errorState}</AlertDescription>
+            </Alert>
+          )}
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-4">
-              <div className="grid gap-2 lg:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
@@ -131,21 +106,6 @@ const Register = () => {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input placeholder="m@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="xxx xxx xxxx" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -234,4 +194,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterCrew;

@@ -6,6 +6,7 @@ export const Paths = {
   Route_Movie_Detail: "/movies/:slug",
   Route_Login: "/login",
   Route_Register: "/register",
+  Route_Register_Crew: "/register-crew",
   Route_Aboutus: "/aboutus",
   Route_Forogot_Password: "/forgotpassword",
   Route_Verify_Email: "/verifyemail",

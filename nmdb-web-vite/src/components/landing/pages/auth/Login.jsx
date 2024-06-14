@@ -16,13 +16,15 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { loginSchemaResolver } from "./authSchema";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { LoaderCircle } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const { toast } = useToast();
   const { setIsAuthorized, setUserInfo } = useAuthContext();
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
   const [errorState, setErrorState] = useState("");
   const form = useForm({
@@ -34,6 +36,7 @@ const Login = () => {
   });
 
   const onSubmit = ({ email, password }) => {
+    setIsRequestInProgress(true);
     const postData = {
       email: email,
       password: password,
@@ -41,17 +44,24 @@ const Login = () => {
     axiosInstance
       .post(ApiPaths.Path_Auth + "/authenticate", postData)
       .then((resp) => {
+        setIsRequestInProgress(false);
         const response = resp.data;
         if (response?.isSuccess) {
+          const userInfo = response.data;
           setIsAuthorized(true);
-          setUserInfo(response.data);
-          navigate("/admin/dashboard");
+          setUserInfo(userInfo);
+          if (userInfo.isCrew) navigate(Paths.Route_Celebrities + "/" + 513);
+          else navigate(Paths.Route_Admin_Dashboard);
         } else {
           setErrorState(response.message);
         }
       })
       .catch((error) => {
-        console.log(error);
+        setIsRequestInProgress(false);
+        toast({
+          description: "Something went wrong. Please try again later.",
+          duration: 5000,
+        });
       });
   };
 
@@ -111,7 +121,14 @@ const Login = () => {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                disabled={isRequestInProgress}
+                type="submit"
+                className="w-full"
+              >
+                {isRequestInProgress && (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Login
               </Button>
             </div>
@@ -119,7 +136,7 @@ const Login = () => {
         </Form>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <NavLink to={Paths.Route_Register} className="underline">
+          <NavLink to={Paths.Route_Register_Crew} className="underline">
             Sign up
           </NavLink>
         </div>
