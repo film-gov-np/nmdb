@@ -204,6 +204,9 @@ namespace Infrastructure.Identity.Services
                     case ClaimTypes.Role:
                         user.Roles = c.Value;
                         break;
+                    case ClaimTypes.Email:
+                        user.Email=c.Value;
+                        break;
                 }
             }
             return user;
