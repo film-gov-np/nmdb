@@ -19,11 +19,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-
+using Application;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Identity.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService : BaseAPIController, IAuthService
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -35,18 +36,19 @@ namespace Infrastructure.Identity.Services
         private readonly IEmailService _emailService;
         private readonly ICrewService _crewService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
         public AuthService(
+           ApiResponse apiResponse,
+            ILogger<AuthService> logger,
+            IHttpContextAccessor httpContextAccessor,
             AppDbContext context,
             IJwtTokenGenerator jwtUtils,
             IMapper mapper,
             IOptions<JwtSettings> appSettings,
             IEmailService emailService,
             ICrewService crewService,
-            IHttpContextAccessor httpContextAccessor,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager)
+            RoleManager<ApplicationRole> roleManager) : base(apiResponse, logger, httpContextAccessor)
         {
             _context = context;
             _jwtTokenGenerator = jwtUtils;
@@ -484,11 +486,7 @@ namespace Infrastructure.Identity.Services
 
         private async Task sendVerificationEmail(ApplicationUser account, string password = "")
         {
-            string hostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}"; // make it global later
-            string verificationLink = $"{hostUrl}/api/{account.VerificationToken}/verify-email";
-
-            //string emailContent = GetVerificationEmailContent(verificationLink, account.FirstName);
-
+            string verificationLink = $"{GetHostUrl}/api/{account.VerificationToken}/verify-email";
             await _emailService.Send(
                  to: account.Email,
                  subject: "Verify Email",
@@ -496,125 +494,21 @@ namespace Infrastructure.Identity.Services
              );
         }
 
-        private string GetVerificationEmailContent(string verificationLink, string username = "")
-        {
-            // var emailTemplate = @"
-            // <!DOCTYPE html>
-            // <html lang=""en"">
-            // <head>
-            //     <meta charset=""UTF-8"">
-            //     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-            //     <title>Email Verification</title>
-            // </head>
-            // <body>
-            //     <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
-            //         <h2 style=""color: #333;"">Verify Your Email Address</h2>
-            //         <p>Thank you for registering! Please click the button below to verify your email address:</p>
-            //         <a href=""{{verificationLink}}"" style=""display: inline-block; background-color: #007bff; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;"">Verify Email</a>
-            //         <p>If you did not create an account, you can safely ignore this email.</p>
-            //         <p>Thank you,<br>YourApp Team</p>
-            //     </div>
-            // </body>
-            // </html>";
-
-
-
-            // Replace placeholder with actual verification link
-            //return emailTemplate.Replace("{{verificationLink}}", verificationLink);
-
-
-            var emailTemplate = $@"
-            ${getEmailStyle}
-            <div class='email-container'>
-            <h2>Welcome to nmdb!</h2>
-            <p>Thank you for registering ${username}. Please click the button below to verify your email address and complete your registration.</p>
-            <a href='${verificationLink}' class='button'>Verify Email Address</a>
-            <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
-            <p>${verificationLink}</p>
-            </div>";
-            return emailTemplate;
-
-        }
-
-        private string getEmailStyle()
-        {
-            string cssStyles = @"
-                            <style>
-                            .email-container {
-                                max-width: 600px;
-                                margin: 0 auto;
-                                background: #fff;
-                                padding: 20px;
-                                text-align: center;
-                                border: 1px solid #dedede;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                            }
-                            .button {
-                                display: inline-block;
-                                padding: 10px 20px;
-                                margin-top: 20px;
-                                background-color: #007bff;
-                                color: #ffffff;
-                                text-decoration: none;
-                                border-radius: 5px;
-                                font-weight: bold;
-                                border: none;
-                                cursor: pointer;
-                            }
-                            .button:hover {
-                                background-color: #0056b3;
-                            }
-                            </style>";
-            return cssStyles;
-
-        }
-
-
         private async Task sendAlreadyRegisteredEmail(string email, string username = "", string loginLink = "")
         {
-            string message = $@"${getEmailStyle}<div class='email-container'>
-                                <p>Hello ${username},</p>
-                                <p>Our records show that you are already registered with us. Here's a quick way to access your account:</p>
-                                <a href='${loginLink}' class='button'>Login to Your Account</a>
-                                <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
-                                <p>Thank you for being a part of our community!</p>
-                                <p>${getCompanySignature}</p>
-                                </div>";
-
             await _emailService.Send(
                 to: email,
                 subject: "Email Already Registered",
-                html: $@"<h4>Email Already Registered</h4>
-                        <p>Your email <strong>{email}</strong> is already registered.</p>
-                        {message}"
+                html: EmailTemplate.sendAlreadyRegisteredEmail(email, username, loginLink)
             );
-        }
-        private string getCompanySignature()
-        {
-            string companySignature = $@"<p>Thank you,<br>YourApp Team</p>";
-            return companySignature;
         }
 
         private async Task sendPasswordResetEmail(ApplicationUser account)
         {
-            // string message = $@"<p>Please use the below token to reset your password with the <code>/Users/reset-password</code> api route:</p>
-            //                 <p><code>{account.ResetToken}</code></p>";
-
-            string message = $@"${getEmailStyle}<div class='email-container'>
-                                <h2>Password Reset Request</h2>
-                                <p>Dear ${account.UserName},</p>
-                                <p>You have requested to reset your password. Please click the button below to set a new password:</p>
-                                    <a href='{account.ResetToken}' class='button'>Reset Password</a>
-                                <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
-                                <p>{account.ResetToken}</p>
-                                <p>If you did not request a password reset, please ignore this email or contact support.</p>
-                            </div>";
-
-
             await _emailService.Send(
                 to: account.Email,
                 subject: "Reset Password",
-                html: message
+                html: EmailTemplate.PasswordResetEmail(account.UserName, account.ResetToken)
             );
         }
 
@@ -622,7 +516,7 @@ namespace Infrastructure.Identity.Services
         {
             var currentUser = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userID);
             var response = _mapper.Map<AuthenticateResponse>(currentUser);
-            response.Authenticated=true;
+            response.Authenticated = true;
             return response;
         }
     }
