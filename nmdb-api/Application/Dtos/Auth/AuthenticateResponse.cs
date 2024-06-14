@@ -19,4 +19,5 @@ public class AuthBaseResponse
     public bool IsCrew { get; set; } = false;
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Role { get; set; }
 }

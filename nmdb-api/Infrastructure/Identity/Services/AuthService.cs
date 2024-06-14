@@ -94,7 +94,8 @@ namespace Infrastructure.Identity.Services
 
                         if (roles.Contains(AuthorizationConstants.CrewRole))
                             response.IsCrew = true;
-
+                        response.Role = string.Join( ",", roles);
+                        response.Authenticated = true;
                         return response;
                     }
                 }
@@ -120,7 +121,6 @@ namespace Infrastructure.Identity.Services
         //    //    ValidateAudience = false
         //    //}, out SecurityToken validatedToken);
         //}
-
 
 
         public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)

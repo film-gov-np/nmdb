@@ -94,8 +94,17 @@ public class SessionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
-        Response.Cookies.Delete(TokenConstants.AccessToken);
-        Response.Cookies.Delete(TokenConstants.RefreshToken);
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(7),
+            SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+            Secure = true,
+
+        };
+
+        Response.Cookies.Delete(TokenConstants.AccessToken, cookieOptions);
+        Response.Cookies.Delete(TokenConstants.RefreshToken, cookieOptions);
         return Ok(new { Message = "Logged out", IsActive = true });
     }
 }
