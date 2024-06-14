@@ -1,6 +1,8 @@
 import {
   CalendarDays,
   CircleUser,
+  Cross,
+  CrossIcon,
   Drama,
   Film,
   Menu,
@@ -8,7 +10,7 @@ import {
   Search,
   Theater,
 } from "lucide-react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,18 +27,41 @@ import Footer from "../landing/Footer";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/constants/routePaths";
 import { useAuthContext } from "../admin/context/AuthContext";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import GlobalList from "../landing/pages/home/GlobalList";
+import { useDebouncedState } from "@/hooks/useDebouncedState";
+
+const useNavigationListener = (onNavigateAway) => {
+  const location = useLocation();
+  const prevLocation = useRef(location);
+
+  useEffect(() => {
+    if (prevLocation.current.pathname !== location.pathname) {
+      // Navigation has occurred
+      onNavigateAway();
+    }
+
+    // Update previous location to the current location
+    prevLocation.current = location;
+  }, [location, onNavigateAway]);
+};
 
 const MainLayout = () => {
-  const { isAuthorized } = useAuthContext();
-  const [open, setOpen] = useState(false)
+  const { isAuthorized, userInfo } = useAuthContext();
+  const [open, setOpen] = useState(false);
+
+  const [searchGlobal, setSearchGlobal] = useState("");
+  const debouncedGlobalSearchTerm = useDebouncedState(searchGlobal, 500);
+  useNavigationListener(() => {
+    setSearchGlobal("");
+  });
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className=" theme-zinc h-full w-full">
         <div className="flex min-h-screen w-full flex-col">
-          <header className="sticky top-0 z-10 grid grid-flow-col h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-            <nav className="hidden flex-col gap-6 text-lg font-medium lg:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+          <header className="sticky top-0 z-10 grid h-16 grid-flow-col items-center gap-4 border-b bg-background px-4 md:px-6">
+            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6">
               <NavLink
                 to="/"
                 className="flex items-center gap-2 text-lg font-semibold md:text-base"
@@ -70,7 +95,7 @@ const MainLayout = () => {
                   <NavLink
                     to={Paths.Route_Home}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground flex items-center"
+                    className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <HomeIcon className="mr-2 h-4 w-4" />
                     Home
@@ -78,7 +103,7 @@ const MainLayout = () => {
                   <NavLink
                     to={Paths.Route_Movies}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground flex items-center"
+                    className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <Film className="mr-2 h-4 w-4" />
                     Movies
@@ -86,7 +111,7 @@ const MainLayout = () => {
                   <NavLink
                     to={Paths.Route_Celebrities}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground flex items-center"
+                    className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <Drama className="mr-2 h-4 w-4" />
                     Celebrities
@@ -94,7 +119,7 @@ const MainLayout = () => {
                   <NavLink
                     to={""}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground flex items-center"
+                    className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <CalendarDays className="mr-2 h-4 w-4" />
                     Movie Calendar
@@ -102,17 +127,17 @@ const MainLayout = () => {
                   <NavLink
                     to={""}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground flex items-center"
+                    className="flex items-center text-muted-foreground hover:text-foreground"
                   >
-                     <Theater className="mr-2 h-4 w-4" />
-                     Cinema Hall
+                    <Theater className="mr-2 h-4 w-4" />
+                    Cinema Hall
                   </NavLink>
                 </nav>
               </SheetContent>
             </Sheet>
-            <div className="hidden lg:grid grid-flow-col nav-container">
+            <div className="nav-container hidden grid-flow-col lg:grid">
               <NavLink to={Paths.Route_Home} className="w-fit rounded-md">
-                <Button variant="ghost" >
+                <Button variant="ghost">
                   <HomeIcon className="mr-2 h-4 w-4" />
                   Home
                 </Button>
@@ -123,7 +148,10 @@ const MainLayout = () => {
                   Movies
                 </Button>
               </NavLink>
-              <NavLink to={Paths.Route_Celebrities} className="w-fit rounded-md">
+              <NavLink
+                to={Paths.Route_Celebrities}
+                className="w-fit rounded-md"
+              >
                 <Button variant="ghost">
                   <Drama className="mr-2 h-4 w-4" />
                   Celebrities
@@ -148,44 +176,69 @@ const MainLayout = () => {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
+                    value={searchGlobal}
+                    onChange={(e) => {
+                      setSearchGlobal(e.target.value);
+                      // setCurrentPage(1);
+                    }}
                     placeholder="Search ..."
                     className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px]"
                   />
                 </div>
               </form>
-              {!isAuthorized &&
+              {!isAuthorized && (
                 <NavLink to="login">
                   <Button variant={"outline"}>Sign In</Button>
                 </NavLink>
-              }
+              )}
 
-              {isAuthorized && <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                  >
-                    <CircleUser className="h-5 w-5" />
-                    <span className="sr-only">Toggle user menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Support</DropdownMenuItem>
-                  <DropdownMenuItem className="flex gap-2">
-                    Theme<ModeToggle></ModeToggle>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              }
+              {isAuthorized && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="rounded-full"
+                    >
+                      <CircleUser className="h-5 w-5" />
+                      <span className="sr-only">Toggle user menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col justify-center items-center ">
+                        <p className=" text-muted-foreground">{userInfo.firstName + " " + userInfo.lastName}</p>
+                        <p className=" text-muted-foreground">
+                          {userInfo.email}
+                        </p>
+                      </div>
+                      <DropdownMenuSeparator />
+                      {userInfo.isCrew && (
+                        <NavLink
+                          to={Paths.Route_Celebrities + "/" + userInfo.crewId}
+                        >
+                          My Page
+                        </NavLink>
+                      )}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>Settings</DropdownMenuItem>
+                    <DropdownMenuItem>Support</DropdownMenuItem>
+                    <DropdownMenuItem className="flex justify-between gap-2">
+                      Theme<ModeToggle></ModeToggle>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </header>
-          <Outlet />
+          {debouncedGlobalSearchTerm ? (
+            <GlobalList search={debouncedGlobalSearchTerm} />
+          ) : (
+            <Outlet />
+          )}
         </div>
         <Footer />
       </div>

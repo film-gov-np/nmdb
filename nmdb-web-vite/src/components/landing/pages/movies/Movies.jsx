@@ -1,6 +1,5 @@
 import { Paths } from "@/constants/routePaths";
-import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, Search } from "lucide-react";
@@ -12,10 +11,11 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
+import { cn } from "@/lib/utils";
 const ITEM_PER_PAGE = 25;
 
-const getCelebList = async (page, debouncedSearchTerm) => {
-  let apiPath = `${ApiPaths.Path_Front_Movies}?PageNumber=${page}&PageSize=${ITEM_PER_PAGE}`;
+const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
+  let apiPath = `${ApiPaths.Path_Front_Movies}?PageNumber=${page}&PageSize=${itemsPerPage}`;
   if (debouncedSearchTerm) {
     apiPath += `&SearchKeyword=${debouncedSearchTerm}`;
   }
@@ -34,34 +34,53 @@ const getCelebList = async (page, debouncedSearchTerm) => {
   };
 };
 
-const Movies = () => {
-  const [searchMovies, setSearchMovies] = useState("");
+const Movies = ({
+  search,
+  showFilters = true,
+  showBackButton = true,
+  itemsPerPage = 25,
+  className
+}) => {
+  const [searchMovies, setSearchMovies] = useState(search || "");
   const debouncedSearchTerm = useDebouncedState(searchMovies, 500);
   const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    setSearchMovies(search);
+  }, [search]);
+
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["movies" + currentPage, "searchMovies" + debouncedSearchTerm],
-      queryFn: () => getCelebList(currentPage, debouncedSearchTerm),
+      queryFn: () =>
+        getCelebList(currentPage, debouncedSearchTerm, itemsPerPage),
       keepPreviousData: true,
     });
-
   return (
-    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
+    <main className={cn("flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10", className)}>
       <div className="relative ">
-        <div className="flex items-center gap-2 justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center justify-start gap-6">
-            <NavLink to={Paths.Route_Home}>
-              <Button variant="outline" size="icon" className="h-8 w-8">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Back</span>
-              </Button>
-            </NavLink>
+            {showBackButton && (
+              <NavLink to={Paths.Route_Home}>
+                <Button variant="outline" size="icon" className="h-8 w-8">
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="sr-only">Back</span>
+                </Button>
+              </NavLink>
+            )}
+
             <div className="space-y-1">
-              <h2 className="text-xl md:text-5xl font-semibold tracking-tight">Movies</h2>
+              <h2 className="text-xl font-semibold tracking-tight md:text-5xl">
+                Movies
+              </h2>
             </div>
           </div>
-
-          <form className="ml-auto flex-1 sm:flex-initial">
+          <form
+            className={cn(
+              "ml-auto flex-1 sm:flex-initial",
+              showFilters ? "visible" : "hidden",
+            )}
+          >
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -90,7 +109,7 @@ const Movies = () => {
               {data?.movies.map((movie) => (
                 <InfoCardWithImage
                   key={"movie-list-" + movie.id}
-                  title={ movie.name}
+                  title={movie.name}
                   description={movie.status}
                   imgPath={movie.thumbnailImageUrl}
                   className=""
@@ -105,7 +124,7 @@ const Movies = () => {
               <SimplePagination
                 currentPage={currentPage}
                 totalItems={data.totalData}
-                itemsPerPage={ITEM_PER_PAGE}
+                itemsPerPage={itemsPerPage}
                 onPageChange={(page) => setCurrentPage(page)}
                 isPreviousData={isPreviousData}
               />

@@ -144,7 +144,7 @@ const CelebritiesDetails = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              {isAuthorized && (
+              {isAuthorized && userInfo.isCrew && userInfo.crewId == slug && (
                 <Button
                   disabled={isCardRequestInProgress}
                   onClick={mutateCardRequest.mutate}
