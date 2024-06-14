@@ -1,4 +1,5 @@
-﻿using Application.Dtos.User;
+﻿using Application.Dtos.FilterParameters;
+using Application.Dtos.User;
 using Core;
 using Core.Constants;
 using Infrastructure.Identity;
@@ -23,7 +24,7 @@ namespace nmdb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] UserRequestDto userRequest)
+        public async Task<IActionResult> CreateUser([FromForm] UserRequestDto userRequest)
         {
             if (userRequest == null)
             {
@@ -40,8 +41,40 @@ namespace nmdb.Controllers
             return BadRequest(response);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUsers([FromQuery] BaseFilterParameters filterParameters)
+        {
+            var result = await _userService.GetUsers(filterParameters);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+                return BadRequest(result);
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var result = await _userService.GetUserById(id);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            else
+                return BadRequest(result);
+
+        }
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserRequestDto userRequest)
+        public async Task<IActionResult> UpdateUser(string id, [FromForm] UserUpdateRequestDto userRequest)
         {
             if (userRequest == null)
             {
@@ -76,10 +109,10 @@ namespace nmdb.Controllers
 
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateUserRole(string id, [FromBody] string roleId)
+        [HttpPatch("{id}/assign-role")]
+        public async Task<IActionResult> UpdateUserRole(string id, string roleName)
         {
-            var result = await _userService.UpdateUserRoleAsync(id, roleId);
+            var result = await _userService.UpdateUserRoleAsync(id, roleName);
 
             if (result.IsSuccess)
             {

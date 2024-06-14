@@ -425,7 +425,7 @@ public class MovieService : IMovieService
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
-                        _fileService.RemoveFile(existingMovie.ThumbnailImage, "movies");
+                        _fileService.RemoveFile(existingMovie.ThumbnailImage, fileDto.SubFolder);
 
                     existingMovie.ThumbnailImage = uploadResult.Data.FileName;
                 }
@@ -444,7 +444,7 @@ public class MovieService : IMovieService
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     if (!string.IsNullOrEmpty(existingMovie.CoverImage))
-                        _fileService.RemoveFile(existingMovie.CoverImage, "movies");
+                        _fileService.RemoveFile(existingMovie.CoverImage, fileDto.SubFolder);
 
                     existingMovie.CoverImage = uploadResult.Data.FileName;
                 }
