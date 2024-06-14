@@ -4,8 +4,7 @@ public static class EmailTemplate
 {
     private static string getEmailStyle()
     {
-        string cssStyles = @"
-                            <style>
+        string cssStyles = @"<style>
                             .email-container {
                                 max-width: 600px;
                                 margin: 0 auto;
