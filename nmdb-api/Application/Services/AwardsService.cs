@@ -44,7 +44,13 @@ namespace Application.Services
             Expression<Func<Awards, object>> orderByColumn = null;
             Func<IQueryable<Awards>, IOrderedQueryable<Awards>> orderBy = null;
 
-
+            if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
+            {
+                filter = query =>
+                    (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.AwardTitle.Contains(filterParameters.SearchKeyword)
+                    || query.CategoryName.Contains(filterParameters.SearchKeyword) || query.AwardedIn.Contains(filterParameters.SearchKeyword)
+                    );
+            }
             var (query, totalItems) = await _unitOfWork.AwardsRepository.GetWithFilter(filterParameters, filterExpression: filter, orderByColumnExpression: orderByColumn);
             var awardResponse = await query.Where(q => !q.IsDeleted).Select(
                                                 tr => new AwardsListDto
@@ -171,6 +177,15 @@ namespace Application.Services
                                             Category = a.Movie.Category != null ? a.Movie.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                                             Status = a.Movie.Status != null ? a.Movie.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                                             Color = a.Movie.Color != null ? a.Movie.Color.GetDisplayName() : eMovieColor.None.GetDisplayName()
+                                        } : null,
+                                        Crew = a.Crew != null ? new CrewListDto
+                                        {
+                                            Id = a.Crew.Id,
+                                            Name = a.Crew.Name,
+                                            NickName = a.Crew.NickName,
+                                            Email = a.Crew.Email,
+                                            IsVerified = a.Crew.IsVerified,
+                                            NepaliName = a.Crew.NepaliName,
                                         } : null
                                     }).FirstOrDefaultAsync();
 

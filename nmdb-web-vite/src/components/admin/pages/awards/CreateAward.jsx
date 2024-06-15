@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -38,6 +38,8 @@ import { useState } from "react";
 import DateInput from "@/components/ui/custom/DateInput";
 import { Textarea } from "@/components/ui/textarea";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 const formSchema = z.object({
   awardTitle: z.string().min(2, {
@@ -48,9 +50,17 @@ const formSchema = z.object({
   }),
   awardStatus: z.string().optional().or(z.literal("")),
   awardedIn: z.string().optional().or(z.literal("")),
-  awardedDate: z.string().optional().or(z.literal("")),
+  awardedDate: z.date().refine(
+    (date) => {
+      return date < new Date();
+    },
+    {
+      message: "Established date must be in the past.",
+    },
+  ),
   remarks: z.string().optional().or(z.literal("")),
   movieID: z.array(z.any()),
+  crewID: z.array(z.any()),
 });
 
 const renderModes = {
@@ -66,7 +76,9 @@ const defaultValues = {
   awardedIn: '',
   awardedDate: '',
   remarks: '',
-  movieID: []
+  movieID: [],
+  crewID: []
+
 };
 
 const getAward = async (id, renderMode) => {
@@ -97,6 +109,9 @@ const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
     ...postData,
     movieID: postData.movieID && postData.movieID.length > 0 ?
       postData.movieID[0].id :
+      null,
+    crewID: postData.crewID && postData.crewID.length > 0 ?
+      postData.crewID[0].id :
       null
   }
   const { data } = await axiosInstance({
@@ -208,6 +223,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
       awardedDate: award.awardedDate,
       remarks: award.remarks,
       movieID: award.movie ? [award.movie] : [],
+      crewID: award.crew ? [award.crew] : [],
     },
   });
   return (
@@ -265,7 +281,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
               name="awardedIn"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Award Category</FormLabel>
+                  <FormLabel>Awarded In</FormLabel>
                   <FormControl>
                     <Input placeholder="Award Category" {...field} />
                   </FormControl>
@@ -274,7 +290,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="awardedDate"
               render={({ field }) => (
@@ -284,7 +300,52 @@ function AwardForm({ award, renderMode, onSubmit }) {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+
+            <FormField
+              control={form.control}
+              name="awardedDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Awarded date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        showOutsideDays={true}
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+
             <FormField
               control={form.control}
               name="movieID"
@@ -301,6 +362,31 @@ function AwardForm({ award, renderMode, onSubmit }) {
                       keyValue="id"
                       keyLabel="name"
                       placeholder="Begin typing to search for movie..."
+                      maxSelected={1}
+                      replaceOnMaxSelected={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="crewID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Crew</FormLabel>
+                  <FormControl>
+                    <MultipleSelectorWithList
+                      value={field.value}
+                      onChange={field.onChange}
+                      triggerOnSearch={true}
+                      minSearchTrigger={3}
+                      apiPath={ApiPaths.Path_Crews + "?SearchKeyword="}
+                      keyValue="id"
+                      keyLabel="name"
+                      placeholder="Begin typing to search for crew..."
                       maxSelected={1}
                       replaceOnMaxSelected={true}
                     />
