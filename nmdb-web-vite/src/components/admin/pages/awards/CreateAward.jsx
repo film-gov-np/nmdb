@@ -28,7 +28,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeData } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
@@ -40,6 +40,7 @@ import { Textarea } from "@/components/ui/textarea";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
 const formSchema = z.object({
   awardTitle: z.string().min(2, {
@@ -48,16 +49,35 @@ const formSchema = z.object({
   categoryName: z.string().min(2, {
     message: "Category must be at least 2 characters.",
   }),
-  awardStatus: z.string().optional().or(z.literal("")),
-  awardedIn: z.string().optional().or(z.literal("")),
-  awardedDate: z.date().refine(
-    (date) => {
-      return date < new Date();
-    },
-    {
-      message: "Established date must be in the past.",
-    },
-  ),
+  awardStatus: z.string().min(2, {
+    message: "Status must be at least 2 characters.",
+  }),
+  awardedIn: z.string().min(2, {
+    message: "Awarded In must be at least 2 characters.",
+  }),
+  awardedDate: z
+    .date()
+    .optional()
+    .refine(
+      (dateString) => {
+        if (!dateString) return true; // Allow empty or undefined values
+        const date = new Date(dateString);
+        return !isNaN(date.getTime());
+      },
+      {
+        message: "Invalid date format",
+      },
+    )
+    .refine(
+      (dateString) => {
+        if (!dateString) return true; // Allow empty or undefined values
+        const date = new Date(dateString);
+        return date <= new Date(); // Check if the date is in the future
+      },
+      {
+        message: "Death date must be in the past.",
+      },
+    ),
   remarks: z.string().optional().or(z.literal("")),
   movieID: z.array(z.any()),
   crewID: z.array(z.any()),
@@ -74,7 +94,7 @@ const defaultValues = {
   categoryName: '',
   awardStatus: '',
   awardedIn: '',
-  awardedDate: '',
+  awardedDate: null,
   remarks: '',
   movieID: [],
   crewID: []
@@ -112,7 +132,8 @@ const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
       null,
     crewID: postData.crewID && postData.crewID.length > 0 ?
       postData.crewID[0].id :
-      null
+      null,
+    awardedDate: postData.awardedDate ? postData.awardedDate : null
   }
   const { data } = await axiosInstance({
     method: isEditMode ? "put" : "post",
@@ -215,16 +236,11 @@ function AwardForm({ award, renderMode, onSubmit }) {
   // const [openCategorySelection, setOpenCategorySelection] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      awardTitle: award.awardTitle,
-      categoryName: award.categoryName,
-      awardStatus: award.awardStatus,
-      awardedIn: award.awardedIn,
-      awardedDate: award.awardedDate,
-      remarks: award.remarks,
+    defaultValues: sanitizeData({
+      ...award,
       movieID: award.movie ? [award.movie] : [],
-      crewID: award.crew ? [award.crew] : [],
-    },
+      crewID: award.crew ? [award.crew] : []
+    }),
   });
   return (
     <Form {...form}>
@@ -308,39 +324,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Awarded date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        showOutsideDays={true}
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
               )}
