@@ -22,10 +22,13 @@ const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
-      return response.data.data;
+      let responseData = response.data;
+      if (responseData.isSuccess) return response.data.data;
+      else throw new Error("Something went wrong");
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      throw new Error("Something went wrong");
+    });
   const totalData = response.totalItems;
   const data = response.items;
   return {
@@ -113,7 +116,7 @@ const Celebrities = ({
         ) : isError ? (
           <CommonAlertBanner type="Error" />
         ) : isFetching ? (
-          <CommonAlertBanner type="Loader" label="Fetching data"/>
+          <CommonAlertBanner type="Loader" label="Fetching data" />
         ) : (
           <div className="">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -11,9 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
-import { CalendarDays, Drama, Film, HomeIcon, Theater } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -27,10 +24,13 @@ const getMovies = async (apiPath) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
-      return response.data.data;
+      let responseData = response.data;
+      if (responseData.isSuccess) return response.data.data;
+      else throw new Error("Something went wrong");
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      throw new Error("Something went wrong");
+    });
   const totalData = response.totalItems;
   const data = response.items;
   console.log(totalData, data);
