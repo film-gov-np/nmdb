@@ -40,7 +40,7 @@ const CinemaHall = ({
   search = "",
   showFilters = true,
   showBackButton = true,
-  itemsPerPage = 25,
+  itemsPerPage = 38,
   className,
 }) => {
   const [searchCinemaHalls, setSearchCinemaHalls] = useState(search);

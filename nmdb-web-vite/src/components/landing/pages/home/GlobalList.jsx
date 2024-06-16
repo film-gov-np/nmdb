@@ -22,7 +22,7 @@ const GlobalList = ({ search }) => {
       <CinemaHall
         search={search}
         showFilters={false}
-        itemsPerPage={14}
+        itemsPerPage={18}
         className={"min-h-60 -mt-8"}
         showBackButton={false}
       />

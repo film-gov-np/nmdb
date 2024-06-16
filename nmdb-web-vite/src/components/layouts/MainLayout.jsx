@@ -131,7 +131,7 @@ const MainLayout = () => {
                     Celebrities
                   </NavLink>
                   <NavLink
-                    to={""}
+                    to={Paths.Route_MovieCalendar}
                     onClick={() => {
                       resetGlobalSearch();
                       setOpen(false);
@@ -187,7 +187,7 @@ const MainLayout = () => {
                 </Button>
               </NavLink>
               <NavLink
-                to="#"
+                to={Paths.Route_MovieCalendar}
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >

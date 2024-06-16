@@ -238,6 +238,17 @@ public class MovieService : IMovieService
                     (filterParameters.Status == null || filterParameters.Status == query.Status)
                 );
         }
+        if (filterParameters.Year.HasValue && filterParameters.Month.HasValue)
+        {
+            filter = query => query.ReleaseDate.Value.Year == filterParameters.Year.Value &&
+                                     (int)query.ReleaseDate.Value.Month == (int)filterParameters.Month.Value;
+        }
+        else if (filterParameters.Year.HasValue)
+        {
+            filter = query =>
+                query.ReleaseDate.Value.Year == filterParameters.Year.Value;
+                
+        }
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))
         {
@@ -264,7 +275,8 @@ public class MovieService : IMovieService
                                                 Category = mr.Category != null ? mr.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                                                 Status = mr.Status != null ? mr.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                                                 Color = mr.Color != null ? mr.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),
-                                                ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage)
+                                                ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage),
+                                                ReleaseDate = mr.ReleaseDate
                                             }).ToListAsync();
 
 

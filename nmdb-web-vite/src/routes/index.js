@@ -31,6 +31,7 @@ import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 import CreateAward from "@/components/admin/pages/awards/CreateAward";
 import CinemaHall from "@/components/landing/pages/home/CinemaHall";
+import MovieCalendar from "@/components/landing/pages/home/MovieCalendar";
 
 export const routes = [
   {
@@ -306,7 +307,14 @@ export const routes = [
         component: CinemaHall,
         path: Paths.Route_CinemaHalls,
         isPublic: true,
-      }
+      },
+      {
+        name: "MovieCalendar",
+        title: "Movie Calendar",
+        component: MovieCalendar,
+        path: Paths.Route_MovieCalendar,
+        isPublic: true,
+      },
     ],
   },
   {

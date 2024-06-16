@@ -5,6 +5,7 @@ export const Paths = {
   Route_Movies: "/movies",
   Route_Movie_Detail: "/movies/:slug",
   Route_CinemaHalls: "/theatres",
+  Route_MovieCalendar: "/movie-calendar",
   Route_Login: "/login",
   Route_Register: "/register",
   Route_Register_Crew: "/register-crew",
