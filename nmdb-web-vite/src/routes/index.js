@@ -30,6 +30,7 @@ import CreateRole from "@/components/admin/pages/role/CreateRole";
 import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 import CreateAward from "@/components/admin/pages/awards/CreateAward";
+import CinemaHall from "@/components/landing/pages/home/CinemaHall";
 
 export const routes = [
   {
@@ -299,6 +300,13 @@ export const routes = [
           },
         ],
       },
+      {
+        name: "CinemaHall",
+        title: "Cinema Hall",
+        component: CinemaHall,
+        path: Paths.Route_CinemaHalls,
+        isPublic: true,
+      }
     ],
   },
   {

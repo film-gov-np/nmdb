@@ -99,7 +99,7 @@ public class FrontController : ControllerBase
         }
     }
 
-    [HttpGet("theatre")]
+    [HttpGet("theatres")]
     public async Task<IActionResult> GetTheatres([FromQuery] TheatreFilterParameters? filterParameters)
     {
         try

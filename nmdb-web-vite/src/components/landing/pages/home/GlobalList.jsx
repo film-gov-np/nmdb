@@ -1,5 +1,6 @@
 import Celebrities from "../celebrities/Celebrities";
 import Movies from "../movies/Movies";
+import CinemaHall from "./CinemaHall";
 
 const GlobalList = ({ search }) => {
   return (
@@ -12,6 +13,13 @@ const GlobalList = ({ search }) => {
         showBackButton={false}
       />
       <Celebrities
+        search={search}
+        showFilters={false}
+        itemsPerPage={14}
+        className={"min-h-60 -mt-8"}
+        showBackButton={false}
+      />
+      <CinemaHall
         search={search}
         showFilters={false}
         itemsPerPage={14}
