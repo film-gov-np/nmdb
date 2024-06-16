@@ -3,8 +3,6 @@ using Application.Dtos;
 using Application.Dtos.Auth;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Azure.Core;
-using BCrypt.Net;
 using Core;
 using Core.Constants;
 using Infrastructure.Data;
@@ -13,14 +11,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using Application;
 using Microsoft.Extensions.Logging;
+using Application.Dtos.User;
+using static Dapper.SqlMapper;
 
 namespace Infrastructure.Identity.Services
 {
@@ -205,7 +202,7 @@ namespace Infrastructure.Identity.Services
                         user.Roles = c.Value;
                         break;
                     case ClaimTypes.Email:
-                        user.Email=c.Value;
+                        user.Email = c.Value;
                         break;
                 }
             }
@@ -550,6 +547,30 @@ namespace Infrastructure.Identity.Services
             response.Role = string.Join(",", roles);
             response.Authenticated = true;
             return response;
+        }
+
+        public async Task<ApiResponse<string>> ChangePassword(ChangePasswordRequestDto changePassword)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(changePassword.Email);
+                if (user != null)
+                {
+                    var changePasswordResult = await _userManager.ChangePasswordAsync(user, changePassword.CurrentPassword, changePassword.NewPassword);
+                    if (!changePasswordResult.Succeeded)
+                    {
+                        var errors = changePasswordResult.Errors.Select(cr => cr.Description).ToList();
+                        return ApiResponse<string>.ErrorResponse(errors, HttpStatusCode.InternalServerError);
+                    }
+                    return ApiResponse<string>.SuccessResponseWithoutData("Your password has been changed.");
+                }
+                return ApiResponse<string>.ErrorResponse($"The user '{changePassword.Email}' could not be found", HttpStatusCode.NotFound);
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<string>.ErrorResponse("Something went wrong while changing password.", HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

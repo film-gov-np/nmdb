@@ -1,28 +1,18 @@
-using Application.CQRS.FilmRoles.Queries;
-using Application.Dtos;
 using Application.Dtos.Film;
 using Application.Dtos.FilterParameters;
-using Application.Helpers.Response;
-using Application.Interfaces;
 using Application.Interfaces.Services;
-using Azure.Core;
 using Core;
 using Core.Constants;
-using Core.Entities;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using nmdb.Common;
 using nmdb.Filters;
-using System.Linq.Expressions;
 using System.Net;
-using System.Security.Claims;
-using static Dapper.SqlMapper;
 
 namespace nmdb.Controllers;
 
 [ApiController]
+[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/film-roles/")]
 public class FilmRoleController : AuthorizedController

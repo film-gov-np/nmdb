@@ -1,5 +1,4 @@
 ﻿using Application.Dtos.FilterParameters;
-using Application.Dtos.Theatre;
 using Application.Interfaces.Services;
 using Core.Constants;
 using Core;
@@ -13,6 +12,7 @@ using Application.Dtos.Movie;
 namespace nmdb.Controllers
 {
     [ApiController]
+    [Authorize]
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/movies/")]
     public class MovieController : AuthorizedController

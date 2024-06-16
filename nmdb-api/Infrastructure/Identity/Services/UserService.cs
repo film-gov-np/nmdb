@@ -5,19 +5,12 @@ using Application.Dtos.User;
 using Application.Helpers;
 using Application.Helpers.Response;
 using Application.Interfaces.Services;
-using Application.Models;
 using AutoMapper;
 using Core;
 using Core.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace Infrastructure.Identity.Services;
 

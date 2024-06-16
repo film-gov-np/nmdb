@@ -2,9 +2,8 @@
 using Application.Dtos.User;
 using Core;
 using Core.Constants;
-using Infrastructure.Identity;
 using Infrastructure.Identity.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using nmdb.Common;
 using nmdb.Filters;
@@ -13,6 +12,7 @@ using System.Net;
 namespace nmdb.Controllers
 {
     [ApiController]
+    [Authorize]
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/users")]
     public class UsersController : AuthorizedController
