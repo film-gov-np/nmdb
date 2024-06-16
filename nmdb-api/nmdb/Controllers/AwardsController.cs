@@ -1,8 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Dtos.FilterParameters;
-using Application.Dtos.Theatre;
 using Application.Interfaces.Services;
-using Application.Services;
 using Core;
 using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +11,8 @@ using System.Net;
 
 namespace nmdb.Controllers
 {
-    [ApiController]    
+    [ApiController]
+    [Authorize]
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/awards")]
     public class AwardsController : AuthorizedController

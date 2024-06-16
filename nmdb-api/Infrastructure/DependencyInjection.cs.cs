@@ -1,28 +1,18 @@
 ﻿using Application.Abstractions;
 using Application.Helpers;
 using Application.Interfaces;
-using Application.Interfaces.Services;
-using Application.Services;
 using Core;
 using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Identity;
-using Infrastructure.Identity.Security;
 using Infrastructure.Identity.Security.TokenGenerator;
 using Infrastructure.Identity.Security.TokenValidation;
 using Infrastructure.Identity.Services;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure;
 
@@ -73,7 +63,24 @@ public static class DependencyInjection
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer();
+            .AddJwtBearer(options =>
+            {
+                // Options to tell the app to read jwt from the cookie
+                // by default it will look into the authorization header
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        // Read the token from the cookie
+                        var token = context.Request.Cookies["accessToken"];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
             
         // If default Authorization header is to be used
     //    .AddAuthentication(options =>

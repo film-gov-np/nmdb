@@ -58,6 +58,14 @@ public class SessionController : ControllerBase
             {
                 bool sessionExpired = true;
                 AuthenticateResponse refreshResp = new();
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+                    Secure = true,
+
+                };
                 if (!string.IsNullOrWhiteSpace(refreshToken))
                 {
                     refreshResp = await _usrAuth.RefreshToken(refreshToken, string.Empty);
@@ -65,20 +73,12 @@ public class SessionController : ControllerBase
                 }
                 if (sessionExpired)
                 {
-                    Response.Cookies.Delete(TokenConstants.AccessToken);
-                    Response.Cookies.Delete(TokenConstants.RefreshToken);
+                    Response.Cookies.Delete(TokenConstants.AccessToken, cookieOptions);
+                    Response.Cookies.Delete(TokenConstants.RefreshToken,cookieOptions);
                     return BadRequest(ApiResponse<string>.ErrorResponse("Inactive session.", HttpStatusCode.BadRequest));
                 }
                 else
                 {
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Expires = DateTime.UtcNow.AddDays(7),
-                        SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
-                        Secure = true,
-
-                    };
                     Response.Cookies.Append(TokenConstants.AccessToken, refreshResp.JwtToken, cookieOptions);
 
                     Response.Cookies.Append(TokenConstants.RefreshToken, refreshResp.RefreshToken, cookieOptions);
