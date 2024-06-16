@@ -56,7 +56,7 @@ const RegisterCrew = () => {
           const responseData = response.data;
           if (responseData.isSuccess) {
             //set token to cookie or localStorage
-            navigate(Paths.Route_Verify_Email);
+            navigate(Paths.Route_Login);
           }else{
             setErrorState(responseData.message);
             toast({
