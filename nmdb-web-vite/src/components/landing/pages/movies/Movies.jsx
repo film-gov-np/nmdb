@@ -110,7 +110,9 @@ const Movies = ({
         ) : isError ? (
           <CommonAlertBanner type="Error" />
         ) : isFetching ? (
-          <CommonAlertBanner type="Loader" label="Fetching data"/>
+          <CommonAlertBanner type="Loader" label="Fetching data" />
+        ) : data.movies?.length === 0 ? (
+          <CommonAlertBanner type="NoData" message="No movies found." />
         ) : (
           <div className="">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">

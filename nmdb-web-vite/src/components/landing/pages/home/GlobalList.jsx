@@ -1,13 +1,25 @@
-import Celebrities from "../celebrities/Celebrities"
-import Movies from "../movies/Movies"
+import Celebrities from "../celebrities/Celebrities";
+import Movies from "../movies/Movies";
 
-const GlobalList = ({search}) => {
+const GlobalList = ({ search }) => {
   return (
     <div className="">
-      <Movies search={search} showFilters={false} itemsPerPage={14} className={"min-h-60"}/>
-      <Celebrities search={search} showFilters={false} itemsPerPage={14} className={"min-h-60"}/>
+      <Movies
+        search={search}
+        showFilters={false}
+        itemsPerPage={14}
+        className={"min-h-60"}
+        showBackButton={false}
+      />
+      <Celebrities
+        search={search}
+        showFilters={false}
+        itemsPerPage={14}
+        className={"min-h-60"}
+        showBackButton={false}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default GlobalList
+export default GlobalList;
