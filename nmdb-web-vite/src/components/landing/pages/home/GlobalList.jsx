@@ -15,7 +15,7 @@ const GlobalList = ({ search }) => {
         search={search}
         showFilters={false}
         itemsPerPage={14}
-        className={"min-h-60"}
+        className={"min-h-60 -mt-8"}
         showBackButton={false}
       />
     </div>
