@@ -12,11 +12,13 @@ public class FrontController : ControllerBase
     private readonly IMovieService _movieService;
     private readonly ICrewService _crewService;
     private readonly ICommonService _commonService;
-    public FrontController(IMovieService movieService, ICrewService crewService, ICommonService commonService)
+    private readonly ITheatreService _theatreService;
+    public FrontController(IMovieService movieService, ICrewService crewService, ICommonService commonService, ITheatreService theatreService)
     {
         _crewService = crewService;
         _movieService = movieService;
         _commonService = commonService;
+        _theatreService = theatreService;
     }
 
     [HttpGet("movies")]
@@ -96,4 +98,20 @@ public class FrontController : ControllerBase
 
         }
     }
+
+    [HttpGet("theatre")]
+    public async Task<IActionResult> GetTheatres([FromQuery] TheatreFilterParameters? filterParameters)
+    {
+        try
+        {
+            var movies = await _theatreService.GetAllAsync(filterParameters);
+            return Ok(movies);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
 }
+

@@ -134,7 +134,7 @@ const Home = () => {
 
         <div className="space-y-4">
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
-            Now Playing
+            Latest Movies
           </h3>
           <Carousel
             setApi={setApi}
@@ -241,7 +241,7 @@ const Home = () => {
             Trending
           </h3>
           <Carousel
-            opts={{ align: "start", dragFree: true, loop: true }}
+            opts={{ align: "start", dragFree: true, loop: false }}
             orientation="vertical"
             className="w-full "
           >
