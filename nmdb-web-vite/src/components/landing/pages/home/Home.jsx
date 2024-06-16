@@ -21,6 +21,7 @@ import InfoCardWithImage from "../../InfoCardWithImage";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
+import CommonAlertBanner from "../../CommonAlertBanner";
 
 const getMovies = async (apiPath) => {
   const response = await axiosInstance
@@ -79,10 +80,11 @@ const Home = () => {
       },
     ],
   });
+
   const isLoading = results.some((query) => query.isLoading);
   const isError = results.some((query) => query.isLoading);
-  if (isLoading) return "Loading...";
-  if (isError) return `Error: ${error.message}`;
+  if (isLoading) return <CommonAlertBanner type="Loader" />;
+  if (isError) return <CommonAlertBanner type="Error" />;
   const nowPlayingMovies = results[0];
   const upcomingMovies = results[1];
   const popularMovies = results[2];

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
 import { cn } from "@/lib/utils";
-const ITEM_PER_PAGE = 25;
+import CommonAlertBanner from "../../CommonAlertBanner";
 
 const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
   let apiPath = `${ApiPaths.Path_Front_Movies}?PageNumber=${page}&PageSize=${itemsPerPage}`;
@@ -22,10 +22,13 @@ const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
-      return response.data.data;
+      let responseData = response.data;
+      if (responseData.isSuccess) return response.data.data;
+      else throw new Error("Something went wrong");
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      throw new Error(err);
+    });
   const totalData = response.totalItems;
   const data = response.items;
   return {
@@ -35,13 +38,13 @@ const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
 };
 
 const Movies = ({
-  search,
+  search = "",
   showFilters = true,
   showBackButton = true,
   itemsPerPage = 25,
-  className
+  className,
 }) => {
-  const [searchMovies, setSearchMovies] = useState(search || "");
+  const [searchMovies, setSearchMovies] = useState(search);
   const debouncedSearchTerm = useDebouncedState(searchMovies, 500);
   const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
@@ -56,7 +59,12 @@ const Movies = ({
       keepPreviousData: true,
     });
   return (
-    <main className={cn("flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10", className)}>
+    <main
+      className={cn(
+        "flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10",
+        className,
+      )}
+    >
       <div className="relative ">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center justify-start gap-6">
@@ -98,11 +106,11 @@ const Movies = ({
         </div>
         <Separator className="my-4" />
         {isLoading ? (
-          "Loading..."
+          <CommonAlertBanner type="Loader" />
         ) : isError ? (
-          `Error: ${error.message}`
+          <CommonAlertBanner type="Error" />
         ) : isFetching ? (
-          "Fetching data..."
+          <CommonAlertBanner type="Loader" label="Fetching data"/>
         ) : (
           <div className="">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">

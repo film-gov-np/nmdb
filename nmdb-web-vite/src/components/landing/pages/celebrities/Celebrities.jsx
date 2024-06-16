@@ -1,5 +1,4 @@
 import { Paths } from "@/constants/routePaths";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import { cn } from "@/lib/utils";
-const ITEM_PER_PAGE = 25;
+import CommonAlertBanner from "../../CommonAlertBanner";
 
 const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
   let apiPath = `${ApiPaths.Path_Front_Celebrities}?PageNumber=${page}&PageSize=${itemsPerPage}`;
@@ -35,15 +34,14 @@ const getCelebList = async (page, debouncedSearchTerm, itemsPerPage) => {
   };
 };
 
-const Celebrities = (
-  {search,
+const Celebrities = ({
+  search = "",
   showFilters = true,
   showBackButton = true,
   itemsPerPage = 25,
-  className
-}
-) => {
-  const [searchCelebs, setSearchCelebs] = useState(search || "");
+  className,
+}) => {
+  const [searchCelebs, setSearchCelebs] = useState(search);
   const debouncedSearchTerm = useDebouncedState(searchCelebs, 500);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -59,12 +57,18 @@ const Celebrities = (
         "searchCelebs",
         debouncedSearchTerm,
       ],
-      queryFn: () => getCelebList(currentPage, debouncedSearchTerm, itemsPerPage),
+      queryFn: () =>
+        getCelebList(currentPage, debouncedSearchTerm, itemsPerPage),
       keepPreviousData: true,
     });
 
   return (
-    <main className={cn("flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10", className)}>
+    <main
+      className={cn(
+        "flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10",
+        className,
+      )}
+    >
       <div className="relative ">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start gap-6">
@@ -105,11 +109,11 @@ const Celebrities = (
         </div>
         <Separator className="my-4" />
         {isLoading ? (
-          "Loading..."
+          <CommonAlertBanner type="Loader" />
         ) : isError ? (
-          `Error: ${error.message}`
+          <CommonAlertBanner type="Error" />
         ) : isFetching ? (
-          "Fetching data..."
+          <CommonAlertBanner type="Loader" label="Fetching data"/>
         ) : (
           <div className="">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">

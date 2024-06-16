@@ -1,8 +1,6 @@
 import {
   CalendarDays,
   CircleUser,
-  Cross,
-  CrossIcon,
   Drama,
   Film,
   Menu,
@@ -10,7 +8,7 @@ import {
   Search,
   Theater,
 } from "lucide-react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,24 +25,24 @@ import Footer from "../landing/Footer";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/constants/routePaths";
 import { useAuthContext } from "../admin/context/AuthContext";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import GlobalList from "../landing/pages/home/GlobalList";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 
-const useNavigationListener = (onNavigateAway) => {
-  const location = useLocation();
-  const prevLocation = useRef(location);
+// const useNavigationListener = (onNavigateAway) => {
+//   const location = useLocation();
+//   const prevLocation = useRef(location);
 
-  useEffect(() => {
-    if (prevLocation.current.pathname !== location.pathname) {
-      // Navigation has occurred
-      onNavigateAway();
-    }
+//   useEffect(() => {
+//     if (prevLocation.current.pathname !== location.pathname) {
+//       // Navigation has occurred
+//       onNavigateAway();
+//     }
 
-    // Update previous location to the current location
-    prevLocation.current = location;
-  }, [location, onNavigateAway]);
-};
+//     // Update previous location to the current location
+//     prevLocation.current = location;
+//   }, [location, onNavigateAway]);
+// };
 
 const MainLayout = () => {
   const { isAuthorized, userInfo } = useAuthContext();
@@ -52,9 +50,12 @@ const MainLayout = () => {
 
   const [searchGlobal, setSearchGlobal] = useState("");
   const debouncedGlobalSearchTerm = useDebouncedState(searchGlobal, 500);
-  useNavigationListener(() => {
+  // useNavigationListener(() => {
+  //   setSearchGlobal("");
+  // });
+  const resetGlobalSearch = () => {
     setSearchGlobal("");
-  });
+  };
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -64,6 +65,7 @@ const MainLayout = () => {
             <nav className="hidden flex-col gap-6 text-lg font-medium md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6">
               <NavLink
                 to="/"
+                onClick={resetGlobalSearch}
                 className="flex items-center gap-2 text-lg font-semibold md:text-base"
               >
                 <Package2 className="h-6 w-6" />
@@ -86,7 +88,10 @@ const MainLayout = () => {
                 <nav className="grid gap-6 text-lg font-medium">
                   <NavLink
                     to={Paths.Route_Home}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center gap-2 text-lg font-semibold"
                   >
                     <Package2 className="h-6 w-6" />
@@ -94,7 +99,10 @@ const MainLayout = () => {
                   </NavLink>
                   <NavLink
                     to={Paths.Route_Home}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <HomeIcon className="mr-2 h-4 w-4" />
@@ -102,7 +110,10 @@ const MainLayout = () => {
                   </NavLink>
                   <NavLink
                     to={Paths.Route_Movies}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <Film className="mr-2 h-4 w-4" />
@@ -110,7 +121,10 @@ const MainLayout = () => {
                   </NavLink>
                   <NavLink
                     to={Paths.Route_Celebrities}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <Drama className="mr-2 h-4 w-4" />
@@ -118,7 +132,10 @@ const MainLayout = () => {
                   </NavLink>
                   <NavLink
                     to={""}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <CalendarDays className="mr-2 h-4 w-4" />
@@ -126,7 +143,10 @@ const MainLayout = () => {
                   </NavLink>
                   <NavLink
                     to={""}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      resetGlobalSearch();
+                      setOpen(false);
+                    }}
                     className="flex items-center text-muted-foreground hover:text-foreground"
                   >
                     <Theater className="mr-2 h-4 w-4" />
@@ -136,13 +156,21 @@ const MainLayout = () => {
               </SheetContent>
             </Sheet>
             <div className="nav-container hidden grid-flow-col lg:grid">
-              <NavLink to={Paths.Route_Home} className="w-fit rounded-md">
+              <NavLink
+                to={Paths.Route_Home}
+                onClick={resetGlobalSearch}
+                className="w-fit rounded-md"
+              >
                 <Button variant="ghost">
                   <HomeIcon className="mr-2 h-4 w-4" />
                   Home
                 </Button>
               </NavLink>
-              <NavLink to={Paths.Route_Movies} className="w-fit rounded-md">
+              <NavLink
+                to={Paths.Route_Movies}
+                onClick={resetGlobalSearch}
+                className="w-fit rounded-md"
+              >
                 <Button variant="ghost">
                   <Film className="mr-2 h-4 w-4" />
                   Movies
@@ -150,6 +178,7 @@ const MainLayout = () => {
               </NavLink>
               <NavLink
                 to={Paths.Route_Celebrities}
+                onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
                 <Button variant="ghost">
@@ -157,13 +186,21 @@ const MainLayout = () => {
                   Celebrities
                 </Button>
               </NavLink>
-              <NavLink to="#" className="w-fit rounded-md">
+              <NavLink
+                to="#"
+                onClick={resetGlobalSearch}
+                className="w-fit rounded-md"
+              >
                 <Button variant="ghost">
                   <CalendarDays className="mr-2 h-4 w-4" />
                   Movie Calendar
                 </Button>
               </NavLink>
-              <NavLink to="#" className="w-fit rounded-md">
+              <NavLink
+                to="#"
+                onClick={resetGlobalSearch}
+                className="w-fit rounded-md"
+              >
                 <Button variant="ghost">
                   <Theater className="mr-2 h-4 w-4" />
                   Cinema Hall
@@ -206,8 +243,10 @@ const MainLayout = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>
-                      <div className="flex flex-col justify-center items-center ">
-                        <p className=" text-muted-foreground">{userInfo.firstName + " " + userInfo.lastName}</p>
+                      <div className="flex flex-col items-center justify-center ">
+                        <p className=" text-muted-foreground">
+                          {userInfo.firstName + " " + userInfo.lastName}
+                        </p>
                         <p className=" text-muted-foreground">
                           {userInfo.email}
                         </p>
