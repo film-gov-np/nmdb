@@ -2,6 +2,7 @@
 using Application.CQRS.FilmRoles.Queries;
 using Application.Dtos.Auth;
 using Application.Dtos.User;
+using Application.Models;
 using AutoMapper;
 using Core.Entities;
 using Infrastructure.Identity;
@@ -14,6 +15,7 @@ namespace nmdb.Configurations
         {
             //CreateMap<CreateFilmRoleRequest, CreateFilmRoleCommand>().ReverseMap();
             CreateMap<ApplicationUser, AuthenticateResponse>();
+            CreateMap<UserUpdateRequestDto, ApplicationUser>();
             CreateMap<RegisterRequest, ApplicationUser>();
             CreateMap<CreateRequest, ApplicationUser>();
             

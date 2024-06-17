@@ -11,6 +11,7 @@ using Core.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Identity.Services;
 
@@ -21,19 +22,24 @@ public class UserService : IUserService
     private readonly IFileService _fileService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
-    private const string userSubDirectory = "/upload/img/users/";
+    private const string userSubDirectory = "users";
+    private readonly string _uploadFolderPath;
 
     public UserService(UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         IHttpContextAccessor httpContextAccessor,
         IFileService fileService,
-        IMapper mapper)
+        IMapper mapper,
+        IConfiguration configuration)
+
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
         _fileService=fileService;
         _httpContextAccessor = httpContextAccessor;
+        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/users/");
+
     }
 
     public async Task<ApiResponse<string>> CreateUserAsync(UserRequestDto userRequest)
@@ -235,7 +241,7 @@ public class UserService : IUserService
             if (!string.IsNullOrEmpty(user.ProfilePhoto))
             {
                 var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
-                userResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, userSubDirectory, user.ProfilePhoto);
+                userResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
             }
             return ApiResponse<UserResponseDto>.SuccessResponse(userResponse);
         }
@@ -268,9 +274,10 @@ public class UserService : IUserService
                     Id = u.Id,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
+                    Name=u.Name,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
-                    ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, userSubDirectory, u.ProfilePhoto)
+                    ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, u.ProfilePhoto)
                 })
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)

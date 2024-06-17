@@ -21,8 +21,7 @@ namespace nmdb.Endpoints.Auth
             _contextAccessor = contextAccessor;
         }
         public override void Configure()
-        {
-            
+        {            
             Post("api/auth/change-password");
         }
 
@@ -31,11 +30,14 @@ namespace nmdb.Endpoints.Auth
         {
             try
             {
-                if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                var current_user = _contextAccessor.HttpContext.User.Identity;
+
+                if (!current_user.IsAuthenticated)
                 {
                     Response = ApiResponse<string>.ErrorResponse("Unauthorized Access.", HttpStatusCode.Unauthorized);
                     return;
                 }
+                request.Email = current_user.Name;
                 var changePasswordResponse = await _authService.ChangePassword(request);
                 Response = changePasswordResponse;
             }

@@ -240,13 +240,13 @@ public class MovieService : IMovieService
         }
         if (filterParameters.Year.HasValue && filterParameters.Month.HasValue)
         {
-            filter = query => query.ReleaseDate.Value.Year == filterParameters.Year.Value &&
+            filter = query => query.ReleaseDate.HasValue && query.ReleaseDate.Value.Year == filterParameters.Year.Value &&
                                      (int)query.ReleaseDate.Value.Month == (int)filterParameters.Month.Value;
         }
         else if (filterParameters.Year.HasValue)
         {
             filter = query =>
-                query.ReleaseDate.Value.Year == filterParameters.Year.Value;
+                 query.ReleaseDate.HasValue && query.ReleaseDate.Value.Year == filterParameters.Year.Value;
                 
         }
 
