@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Calendar, Views, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomToolbar from "./CustomToolbar";
+import { MovieDrawer } from "./MovieDrawer";
 
 const locales = {
   "en-US": enUS,
@@ -39,8 +40,10 @@ function Event({ event }) {
 }
 
 const MovieCalendar = () => {
+  const [open, setOpen] = useState(false)
   const [event, setEvent] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentMovie, setCurrentMovie] = useState({});
   const { components, defaultDate, views } = useMemo(
     () => ({
       components: {
@@ -70,11 +73,13 @@ const MovieCalendar = () => {
     setEvent(response.items);
   }, []);
 
-  const handleRangeChange = (range) => {
+  const handleOnNavigate = (range) => {
     setCurrentDate(range);
   };
-  const onSelectEvent = (arg) => {
-    console.log(arg);
+  const onSelectEvent = (movie) => {
+    console.log(movie);
+    setCurrentMovie(movie)
+    setOpen(true)
   };
 
   useEffect(() => {
@@ -83,6 +88,7 @@ const MovieCalendar = () => {
 
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
+      <MovieDrawer open={open} onOpenChange={setOpen} movie={currentMovie}/>
       <div className="h-[calc(100vh-4rem)]">
         <Calendar
           components={components}
@@ -93,7 +99,7 @@ const MovieCalendar = () => {
           titleAccessor={(event) => <span>{event.name}</span>}
           endAccessor={(event) => new Date(event.releaseDate)}
           views={views}
-          onNavigate={handleRangeChange}
+          onNavigate={handleOnNavigate}
           onSelectEvent={onSelectEvent}
           popup
         />

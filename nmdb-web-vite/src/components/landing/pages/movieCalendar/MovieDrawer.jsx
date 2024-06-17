@@ -1,6 +1,5 @@
 
 import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,43 +21,40 @@ import {
 } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
+import Image from "@/components/common/Image"
+import { format } from "date-fns"
 
-export function DrawerDialogDemo({open, setOpen}) {
+export function MovieDrawer({open, onOpenChange, movie}) {
 //   const [open, setOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>{movie.name}</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+            {movie.nepaliName}
             </DialogDescription>
           </DialogHeader>
-          <ProfileForm />
+          <MovieDetails  details = {movie}/>
         </DialogContent>
       </Dialog>
     )
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DrawerTrigger>
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
+          <DrawerTitle>{movie.name}</DrawerTitle>
           <DrawerDescription>
-            Make changes to your profile here. Click save when you're done.
+          {movie.nepaliName}
           </DrawerDescription>
         </DrawerHeader>
-        <ProfileForm className="px-4" />
+        <MovieDetails className="px-4" details = {movie}/>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -69,18 +65,18 @@ export function DrawerDialogDemo({open, setOpen}) {
   )
 }
 
-function ProfileForm({ className }) {
+function MovieDetails({ className, details }) {
   return (
-    <form className={cn("grid items-start gap-4", className)}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" id="email" defaultValue="shadcn@example.com" />
+    <div className={cn("grid items-start gap-4", className)}>
+      <div className="grid grid-cols-6 gap-4">
+        <div className="col-span-3">
+            <Image src={details.thumbnailPhotoUrl} className={"rounded-md"}/>
+        </div>
+        <div className="col-span-3 flex flex-col ">
+            <div className=""><Label>Status</Label> {details.status}</div>
+            <div className=""><Label>Release Date</Label> {format(details.releaseDate, "PPP")}</div>
+        </div>
       </div>
-      <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" defaultValue="@shadcn" />
-      </div>
-      <Button type="submit">Save changes</Button>
-    </form>
+    </div>
   )
 }
