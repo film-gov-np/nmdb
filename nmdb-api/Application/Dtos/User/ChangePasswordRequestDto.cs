@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Application.Dtos.User;
 
 public class ChangePasswordRequestDto
 {
-    public string Email { get; set; }
+    [JsonIgnore]
+    [BindNever]
+    public string? Email { get; set; }
     public string CurrentPassword { get; set; }    
 
     [Required]    
