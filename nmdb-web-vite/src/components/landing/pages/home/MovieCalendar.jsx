@@ -61,7 +61,7 @@ const MovieCalendar = () => {
       .get(apiPath)
       .then((response) => {
         let responseData = response.data;
-        if (responseData.isSuccess) return response.data.data;
+        if (responseData?.isSuccess) return response.data.data;
         else throw new Error("Something went wrong");
       })
       .catch((err) => {

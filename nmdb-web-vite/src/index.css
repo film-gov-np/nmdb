@@ -106,3 +106,19 @@ nav.sidebar-nav a.active, .nav-container a.active{
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-zinc-400/40;
 }
+
+.rbc-calendar{
+  @apply dark:text-white;
+}
+.rbc-calendar .rbc-today{
+  @apply dark:bg-stone-900;
+}
+.rbc-calendar .rbc-btn-group button{
+  @apply dark:text-white;
+}
+.rbc-calendar .rbc-btn-group button:focus{
+  @apply dark:bg-muted;
+}
+.rbc-calendar .rbc-off-range-bg{
+  @apply dark:bg-muted;
+}
