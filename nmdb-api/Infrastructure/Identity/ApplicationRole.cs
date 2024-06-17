@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Identity;
 
-public class ApplicationRole : IdentityRole, IBaseEntity<string>
+public class ApplicationRole : IdentityRole //, IBaseEntity<string>
 {
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
