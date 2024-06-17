@@ -18,9 +18,11 @@ namespace nmdb.Controllers
     public class UsersController : AuthorizedController
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService)
+        private readonly IRoleService _roleService;
+        public UsersController(IUserService userService, IRoleService roleService)
         {
             _userService = userService;
+            _roleService = roleService; 
         }
 
         [HttpPost]
@@ -30,7 +32,7 @@ namespace nmdb.Controllers
             {
                 return BadRequest(ApiResponse<string>.ErrorResponse("Invalid user request."));
             }
-
+            userRequest.Authorship = GetUserId;
             var response = await _userService.CreateUserAsync(userRequest);
 
             if (response.IsSuccess)
@@ -42,7 +44,7 @@ namespace nmdb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery] BaseFilterParameters filterParameters)
+        public async Task<IActionResult> GetUsers([FromQuery] UserFilterParameters filterParameters)
         {
             var result = await _userService.GetUsers(filterParameters);
 
@@ -81,6 +83,7 @@ namespace nmdb.Controllers
                 return BadRequest(ApiResponse<string>.ErrorResponse("Invalid user request."));
             }
             userRequest.Id = id;
+            userRequest.Authorship = GetUserId;
             var response = await _userService.UpdateUserAsync(userRequest);
 
             if (response.IsSuccess)

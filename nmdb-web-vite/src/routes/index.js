@@ -32,6 +32,8 @@ import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 import CreateAward from "@/components/admin/pages/awards/CreateAward";
 import CinemaHall from "@/components/landing/pages/home/CinemaHall";
 import MovieCalendar from "@/components/landing/pages/movieCalendar/MovieCalendar";
+import User from "@/components/admin/pages/user/User";
+import CreateUser from "@/components/admin/pages/user/CreateUser";
 
 export const routes = [
   {
@@ -231,7 +233,36 @@ export const routes = [
               },
             ]
           },
-
+          {
+            name: "user",
+            title: "User Page",
+            component: User,
+            path: Paths.Route_Admin_User,
+            isPublic: false,
+            routes: [
+              {
+                name: "UserAdd",
+                title: "Awards Add page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User_Add,
+                isPublic: false,
+              },
+              {
+                name: "UserEdit",
+                title: "Users Edit page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User + "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "UserDetail",
+                title: "User Detail page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User + "/:slug",
+                isPublic: false,
+              },
+            ]
+          },
           // {
           //   name: "Scholarship",
           //   title: "Scholarship",

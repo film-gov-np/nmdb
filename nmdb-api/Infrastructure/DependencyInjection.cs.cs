@@ -35,6 +35,8 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<ApiResponse>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
@@ -81,14 +83,14 @@ public static class DependencyInjection
                     }
                 };
             });
-            
+
         // If default Authorization header is to be used
-    //    .AddAuthentication(options =>
-    //        {
-    //            options.DefaultAuthenticateScheme = "CustomTokenScheme";
-    //            options.DefaultChallengeScheme = "CustomTokenScheme";
-    //        })
-    //.AddScheme<AuthenticationSchemeOptions, CustomTokenAuthenticationHandler>("CustomTokenScheme", options => { }); ;
+        //    .AddAuthentication(options =>
+        //        {
+        //            options.DefaultAuthenticateScheme = "CustomTokenScheme";
+        //            options.DefaultChallengeScheme = "CustomTokenScheme";
+        //        })
+        //.AddScheme<AuthenticationSchemeOptions, CustomTokenAuthenticationHandler>("CustomTokenScheme", options => { }); ;
         return services;
     }
 }

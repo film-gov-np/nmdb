@@ -28,5 +28,8 @@ export const ApiPaths = {
   Path_Front_CinemaHalls: "/front/theatres",
   Path_Session: "/session",
 
-  Path_RequestCard: "/cards/request"
+  Path_RequestCard: "/cards/request",
+
+  // Users
+  Path_Users:"/users"
 };

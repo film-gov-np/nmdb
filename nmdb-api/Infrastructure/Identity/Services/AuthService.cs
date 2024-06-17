@@ -17,7 +17,6 @@ using System.Security.Cryptography;
 using Application;
 using Microsoft.Extensions.Logging;
 using Application.Dtos.User;
-using static Dapper.SqlMapper;
 
 namespace Infrastructure.Identity.Services
 {
@@ -248,14 +247,15 @@ namespace Infrastructure.Identity.Services
             var crew = await _crewService.GetCrewByEmailAsync(request.Email);
             if (!crew.IsSuccess && crew.Data == null)
             {
-                return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' not found.", HttpStatusCode.NotFound);
+                return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' does not exist.", HttpStatusCode.NotFound);
             }
 
             var userToRegister = new ApplicationUser
             {
                 UserName = request.Email,
                 Email = request.Email,
-                CreatedBy = "superuser@nmdb.com",
+                CreatedBy = request.Email,
+                Name=crew.Data.Name
             };
 
             var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
@@ -267,7 +267,7 @@ namespace Infrastructure.Identity.Services
                 var account = _mapper.Map<ApplicationUser>(request);
                 account.VerificationToken = await generateVerificationToken();
                 await sendVerificationEmail(account, request.Password);
-                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+                return ApiResponse<string>.SuccessResponse("Registration Successful.");// Please check your email for verification instructions.");
             }
             var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
             return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
