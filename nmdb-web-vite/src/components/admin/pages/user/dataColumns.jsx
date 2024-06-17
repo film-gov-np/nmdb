@@ -113,6 +113,15 @@ export const columns = [
     enableSorting: true,
   },
   {
+    accessorKey: "role",
+    meta: "Role",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Role" />
+    ),
+    cell: ({ row }) => <div className="">{row.getValue("role")}</div>,
+    enableSorting: true,
+  },
+  {
     accessorKey: "phoneNumber",
     meta: "Contact Number",
     header: ({ column }) => (

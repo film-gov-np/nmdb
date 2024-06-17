@@ -319,24 +319,21 @@ public class UserService : IUserService
             var totalCount = await query.CountAsync();
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
-            // fetch only certain columns with pagination
             var users = await query
-                .Select(u => new UserResponseDto
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Name = u.Name,
-                    Email = u.Email,
-                    PhoneNumber = u.PhoneNumber,
-                    EmailConfirmed = u.EmailConfirmed,
-                    ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, u.ProfilePhoto)
-                })
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)
                 .ToListAsync();
 
-            var userResponseDtos = users.Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
+            var userResponseDtos = new List<UserResponseDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var userDto = _mapper.Map<UserResponseDto>(user);
+                userDto.Role = string.Join(",", roles);
+                userDto.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
+                userResponseDtos.Add(userDto);
+            }           
 
             var pagedResult = new PaginationResponse<UserResponseDto>
             {

@@ -15,5 +15,6 @@ namespace Application.Dtos.User
         public string? Role { get; set; }
         public string Email { get; set; }
         public string? ProfilePhoto { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }

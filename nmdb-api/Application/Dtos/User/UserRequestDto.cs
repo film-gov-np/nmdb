@@ -17,6 +17,7 @@ namespace Application.Dtos.User
         public string? ProfilePhoto { get; set; }
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
+        public string? PhoneNumber { get; set; }
         public IFormFile? ProfilePhotoFile { get; set; }
     }  
     public class UserUpdateRequestDto: UserBasicDto

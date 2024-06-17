@@ -43,7 +43,9 @@ const formSchema = z.object({
   profilePhotoFile: z.any(),
   profilePhoto: z.any(),
   email: z.string().email().optional().or(z.literal("")),
-  
+  role:z.string().optional().or(z.literal("")),
+  phoneNumber: z.string().optional().or(z.literal("")),
+
   password: z.string().min(8, {
     message: "Password must be at least 8 characters long.",
   }).optional(),
