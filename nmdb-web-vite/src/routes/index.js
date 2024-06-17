@@ -31,7 +31,7 @@ import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 import CreateAward from "@/components/admin/pages/awards/CreateAward";
 import CinemaHall from "@/components/landing/pages/home/CinemaHall";
-import MovieCalendar from "@/components/landing/pages/home/MovieCalendar";
+import MovieCalendar from "@/components/landing/pages/movieCalendar/MovieCalendar";
 
 export const routes = [
   {

@@ -1,12 +1,21 @@
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
-import { useQuery } from "@tanstack/react-query";
-import { format, getDay, parse, startOfWeek } from "date-fns";
+import {
+  eachYearOfInterval,
+  format,
+  getDay,
+  getMonth,
+  getYear,
+  parse,
+  setMonth,
+  setYear,
+  startOfWeek,
+} from "date-fns";
 import enUS from "date-fns/locale/en-US";
-import { forEach } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Calendar, Views, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import CustomToolbar from "./CustomToolbar";
 
 const locales = {
   "en-US": enUS,
@@ -20,42 +29,32 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// const events = [
-//   {
-//     id: 1,
-//     title: "Long Event",
-//     start: new Date(),
-//     end: new Date(),
-//   },
-// ];
-
 function Event({ event }) {
   return (
     <span>
-      <strong>{event.title}</strong>
+      <strong>{event.name}</strong>
       {event.desc && ":  " + event.desc}
     </span>
   );
 }
 
-
-
 const MovieCalendar = () => {
-    const [event, setEvent] = useState([])
-    const [currentDate, setCurrentDate] = useState(new Date());
+  const [event, setEvent] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const { components, defaultDate, views } = useMemo(
     () => ({
-    //   components: {
-    //     event: Event,
-    //   },
+      components: {
+        event: Event,
+        toolbar: CustomToolbar,
+      },
       views: ["month"],
-      toolbar: false,
-    //   defaultDate: new Date(),
+
+      //   defaultDate: new Date(),
     }),
     [],
   );
-  const fetchEvents =useCallback( async (year, month) => {
-    debugger
+  const fetchEvents = useCallback(async (year, month) => {
+    debugger;
     let apiPath = `${ApiPaths.Path_Front_Movies}?Year=${year}&Month=${month}`;
     const response = await axiosInstance
       .get(apiPath)
@@ -68,18 +67,18 @@ const MovieCalendar = () => {
         throw new Error("Something went wrong");
       });
 
-      setEvent(response.items);;
-  },[]);
+    setEvent(response.items);
+  }, []);
 
   const handleRangeChange = (range) => {
-      setCurrentDate(range);
+    setCurrentDate(range);
   };
   const onSelectEvent = (arg) => {
-    console.log(arg)
-  }
+    console.log(arg);
+  };
 
   useEffect(() => {
-    fetchEvents(currentDate.getFullYear(), currentDate.getMonth()+1);
+    fetchEvents(getYear(currentDate), getMonth(currentDate) + 1);
   }, [fetchEvents, currentDate]);
 
   return (
@@ -90,12 +89,13 @@ const MovieCalendar = () => {
           localizer={localizer}
           defaultView={Views.MONTH}
           events={event}
-          startAccessor= {event => new Date(event.releaseDate)}
-          titleAccessor={event => <span>{event.name}</span>}
-          endAccessor={event => new Date(event.releaseDate)}
+          startAccessor={(event) => new Date(event.releaseDate)}
+          titleAccessor={(event) => <span>{event.name}</span>}
+          endAccessor={(event) => new Date(event.releaseDate)}
           views={views}
           onNavigate={handleRangeChange}
           onSelectEvent={onSelectEvent}
+          popup
         />
       </div>
     </main>
