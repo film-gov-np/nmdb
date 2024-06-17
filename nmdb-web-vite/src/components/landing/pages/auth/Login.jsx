@@ -51,7 +51,8 @@ const Login = () => {
           setIsAuthorized(true);
           setUserInfo(userInfo);
           if (userInfo.isCrew) navigate(Paths.Route_Celebrities + "/" + userInfo.crewId);
-          else navigate(Paths.Route_Admin_Dashboard);
+          else if(userInfo.role === "Admin" || userInfo.role === "Superuser") navigate(Paths.Route_Admin_Dashboard);
+          else navigate(Paths.Route_Home)
         } else {
           setErrorState(response.message);
         }

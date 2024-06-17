@@ -50,7 +50,7 @@ const CelebritiesDetails = () => {
   const [celebDetails, setCelebsDetails] = useState({});
   const { isAuthorized, userInfo } = useAuthContext();
   const [isCardRequestInProgress, setIsCardRequestInProgress] = useState(false);
-  const {toast} = useToast()
+  const { toast } = useToast();
   const ref = useRef(null);
   const { isTruncated, isShowingMore, toggleIsShowingMore } =
     useTruncatedElement({
@@ -75,7 +75,7 @@ const CelebritiesDetails = () => {
       })
       .catch((err) => {
         setIsCardRequestInProgress(false);
-        throw err
+        throw err;
       });
     return response;
   };
@@ -144,17 +144,20 @@ const CelebritiesDetails = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              {isAuthorized && userInfo.isCrew && userInfo.crewId == slug && (
-                <Button
-                  disabled={isCardRequestInProgress}
-                  onClick={mutateCardRequest.mutate}
-                >
-                  {isCardRequestInProgress && (
-                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Request Your Card
-                </Button>
-              )}
+              {isAuthorized &&
+                userInfo.isCrew &&
+                userInfo.crewId == slug &&
+                !celebDetails.hasRequestedCard && (
+                  <Button
+                    disabled={isCardRequestInProgress}
+                    onClick={mutateCardRequest.mutate}
+                  >
+                    {isCardRequestInProgress && (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Request Your Card
+                  </Button>
+                )}
               <CelebQrCard
                 url={window.location.origin + pathname}
                 details={celebDetails}
