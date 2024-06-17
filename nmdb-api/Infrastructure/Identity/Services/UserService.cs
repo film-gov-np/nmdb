@@ -323,6 +323,9 @@ public class UserService : IUserService
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)
                 .ToListAsync();
+            
+            // Remove superuser from the list
+            users = users.Where(u => !IsSuperuser(u)).ToList();
 
             var userResponseDtos = new List<UserResponseDto>();
 
@@ -350,5 +353,9 @@ public class UserService : IUserService
             return ApiResponse<PaginationResponse<UserResponseDto>>.ErrorResponse(ex.Message);
         }
     }
-
+    private bool IsSuperuser(ApplicationUser user)
+    {
+        // Check if the user has the 'Superuser' role
+        return _userManager.IsInRoleAsync(user, AuthorizationConstants.SuperUserRole).Result;
+    }
 }
