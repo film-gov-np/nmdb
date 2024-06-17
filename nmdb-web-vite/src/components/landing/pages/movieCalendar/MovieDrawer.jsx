@@ -1,14 +1,14 @@
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -18,16 +18,18 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useMediaQuery } from "@/hooks/useMediaQuery"
-import Image from "@/components/common/Image"
-import { format } from "date-fns"
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import Image from "@/components/common/Image";
+import { format } from "date-fns";
+import { Paths } from "@/constants/routePaths";
+import { NavLink } from "react-router-dom";
 
-export function MovieDrawer({open, onOpenChange, movie}) {
-//   const [open, setOpen] = useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+export function MovieDrawer({ open, onOpenChange, movie }) {
+  //   const [open, setOpen] = useState(false)
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
     return (
@@ -35,14 +37,17 @@ export function MovieDrawer({open, onOpenChange, movie}) {
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>{movie.name}</DialogTitle>
-            <DialogDescription>
-            {movie.nepaliName}
-            </DialogDescription>
+            <DialogDescription>{movie.nepaliName}</DialogDescription>
           </DialogHeader>
-          <MovieDetails  details = {movie}/>
+          <MovieDetails details={movie} />
+          <DialogFooter>
+            <NavLink to={Paths.Route_Movies + "/" + movie.id} asChild>
+              <Button type="button">View Movie</Button>
+            </NavLink>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
-    )
+    );
   }
 
   return (
@@ -50,19 +55,20 @@ export function MovieDrawer({open, onOpenChange, movie}) {
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>{movie.name}</DrawerTitle>
-          <DrawerDescription>
-          {movie.nepaliName}
-          </DrawerDescription>
+          <DrawerDescription>{movie.nepaliName}</DrawerDescription>
         </DrawerHeader>
-        <MovieDetails className="px-4" details = {movie}/>
-        <DrawerFooter className="pt-2">
+        <MovieDetails className="px-4" details={movie} />
+        <DrawerFooter className="flex flex-row justify-evenly pt-2">
+            <NavLink to={Paths.Route_Movies + "/" + movie.id} asChild>
+              <Button type="button">View Movie</Button>
+            </NavLink>
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 function MovieDetails({ className, details }) {
@@ -70,13 +76,17 @@ function MovieDetails({ className, details }) {
     <div className={cn("grid items-start gap-4", className)}>
       <div className="grid grid-cols-6 gap-4">
         <div className="col-span-3">
-            <Image src={details.thumbnailPhotoUrl} className={"rounded-md"}/>
+          <Image src={details.thumbnailPhotoUrl} className={"rounded-md"} />
         </div>
         <div className="col-span-3 flex flex-col ">
-            <div className=""><Label>Status</Label> {details.status}</div>
-            <div className=""><Label>Release Date</Label> {format(details.releaseDate, "PPP")}</div>
+          <div className="">
+            <Label>Status</Label> {details.status}
+          </div>
+          <div className="">
+            <Label>Release Date</Label> {format(details.releaseDate, "PPP")}
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
