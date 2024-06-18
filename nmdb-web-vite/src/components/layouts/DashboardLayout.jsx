@@ -79,7 +79,7 @@ const DashboardLayout = () => {
           </aside>
           <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
             <MobileSideBar />
-            <div className="w-full flex-1">
+            {/* <div className="w-full flex-1">
               <form>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -90,7 +90,8 @@ const DashboardLayout = () => {
                   />
                 </div>
               </form>
-            </div>
+            </div> */}
+            <div className="w-full flex-1"></div>
 
             {isAuthorized && (<DropdownMenu>
               <DropdownMenuTrigger asChild>
