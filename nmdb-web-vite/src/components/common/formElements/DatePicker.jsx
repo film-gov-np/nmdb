@@ -29,7 +29,7 @@ const DatePickerForForm = ({
               !field.value && "text-muted-foreground",
             )}
           >
-            {(field.value && !isNaN(field.value.getTime())) ? (
+            {field.value ? (
               format(field.value, "PPP")
             ) : (
               <span>Pick a date</span>

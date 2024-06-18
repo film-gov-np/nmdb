@@ -45,17 +45,15 @@ const formSchema = z.object({
   contactNumber: z.string().min(6, {
     message: "Contact number must be at least 6 characters.",
   }),
-  establishedDate: z
-    .date()
-    .or(z.string())
-    .refine(
-      (date) => {
-        return date < new Date();
-      },
-      {
-        message: "Established date must be in the past.",
-      },
-    ),
+  establishedDate: z.date().or(z.string()),
+    // .refine(
+    //   (date) => {
+    //     return date < new Date();
+    //   },
+    //   {
+    //     message: "Established date must be in the past.",
+    //   },
+    // ),
   seatCapacity: z.coerce.number().positive(),
   numberOfScreen: z.coerce.number().positive(),
   websiteUrl: z.string().url(),
@@ -97,12 +95,12 @@ const getTheatre = async (id, renderMode) => {
     })
     .catch((err) => console.error(err));
 
-  if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
-    // conversion is required as establishedDate response is of type string
-    // it is stored in BS
-    apiResponse.data.establishedDate = new Date(
-      apiResponse.data.establishedDate,
-    );
+  // if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
+  //   // conversion is required as establishedDate response is of type string
+  //   // it is stored in BS
+  //   apiResponse.data.establishedDate = new Date(
+  //     apiResponse.data.establishedDate,
+  //   );
   data = apiResponse.data;
   return data;
 };
