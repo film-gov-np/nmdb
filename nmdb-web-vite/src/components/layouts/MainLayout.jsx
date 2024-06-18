@@ -30,6 +30,7 @@ import GlobalList from "../landing/pages/home/GlobalList";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 // const useNavigationListener = (onNavigateAway) => {
 //   const location = useLocation();
@@ -247,29 +248,45 @@ const MainLayout = () => {
                       size="icon"
                       className="rounded-full"
                     >
-                      <CircleUser className="h-5 w-5" />
+                      <Avatar className="flex h-8 w-8 text-center">
+                        <AvatarImage
+                          src={userInfo.profilePhotoUrl}
+                          alt="Avatar"
+                        />
+                        <AvatarFallback>
+                          <CircleUser className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
                       <span className="sr-only">Toggle user menu</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>
-                      <div className="flex flex-col items-center justify-center ">
-                        <p className=" text-muted-foreground">
-                          {userInfo.firstName + " " + userInfo.lastName}
-                        </p>
-                        <p className=" text-muted-foreground">
-                          {userInfo.email}
-                        </p>
-                      </div>
-                      <DropdownMenuSeparator />
-                      {userInfo.isCrew && (
+                      <NavLink
+                        className={"hover:underline"}
+                        to={
+                          Paths.Route_Admin_User + "/" + userInfo.id + "/edit"
+                        }
+                      >
+                        <div className="flex flex-col items-center justify-center ">
+                          <p className=" text-muted-foreground">
+                            {userInfo.firstName + " " + userInfo.lastName}
+                          </p>
+                          <p className=" text-muted-foreground">
+                            {userInfo.email}
+                          </p>
+                        </div>
+                      </NavLink>
+                    </DropdownMenuLabel>
+                    {userInfo.isCrew && (
+                      <DropdownMenuItem asChild>
                         <NavLink
                           to={Paths.Route_Celebrities + "/" + userInfo.crewId}
                         >
-                          My Page
+                          My Celebrity Page
                         </NavLink>
-                      )}
-                    </DropdownMenuLabel>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     {(userInfo.role === "Admin" ||
                       userInfo.role === "Superadmin") && (
@@ -285,7 +302,9 @@ const MainLayout = () => {
                       Theme<ModeToggle></ModeToggle>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logOutFromServer}>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onClick={logOutFromServer}>
+                      Logout
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}

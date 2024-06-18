@@ -25,10 +25,11 @@ import { useAuthContext } from "../admin/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-  const { setIsAuthorized } = useAuthContext();
+  const { userInfo, setIsAuthorized } = useAuthContext();
   const logOutFromServer = () => {
     axiosInstance.post(ApiPaths.Path_Session).then((resp) => {
       setIsAuthorized(false);
@@ -98,12 +99,34 @@ const DashboardLayout = () => {
                   size="icon"
                   className="rounded-full"
                 >
-                  <CircleUser className="h-5 w-5" />
+                  {
+                    <Avatar className="flex h-8 w-8 text-center">
+                      <AvatarImage
+                        src={userInfo.profilePhotoUrl}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback>
+                        <CircleUser className="h-5 w-5" />
+                      </AvatarFallback>
+                    </Avatar>
+                  }
                   <span className="sr-only">Toggle user menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <NavLink
+                    className={"hover:underline"}
+                    to={Paths.Route_Admin_User + "/" + userInfo.id + "/edit"}
+                  >
+                    <div className="flex flex-col items-center justify-center ">
+                      <p className=" text-muted-foreground">
+                        {userInfo.firstName + " " + userInfo.lastName}
+                      </p>
+                      <p className=" text-muted-foreground">{userInfo.email}</p>
+                    </div>
+                  </NavLink>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <NavLink to={Paths.Route_Home}>Visit Website</NavLink>

@@ -17,6 +17,8 @@ using System.Security.Cryptography;
 using Application;
 using Microsoft.Extensions.Logging;
 using Application.Dtos.User;
+using Application.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Identity.Services
 {
@@ -32,6 +34,7 @@ namespace Infrastructure.Identity.Services
         private readonly IEmailService _emailService;
         private readonly ICrewService _crewService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string _uploadFolderPath;
         public AuthService(
            ApiResponse apiResponse,
             ILogger<AuthService> logger,
@@ -44,7 +47,8 @@ namespace Infrastructure.Identity.Services
             ICrewService crewService,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager) : base(apiResponse, logger, httpContextAccessor)
+            RoleManager<ApplicationRole> roleManager, 
+            IConfiguration configuration ) : base(apiResponse, logger, httpContextAccessor)
         {
             _context = context;
             _jwtTokenGenerator = jwtUtils;
@@ -56,6 +60,7 @@ namespace Infrastructure.Identity.Services
             _roleManager = roleManager;
             _crewService = crewService;
             _httpContextAccessor = httpContextAccessor;
+             _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/users/");
         }
 
 
@@ -82,10 +87,12 @@ namespace Infrastructure.Identity.Services
                         // save changes to db
                         _context.Update(requestedUser);
                         await _context.SaveChangesAsync();
-
+                        
                         var response = _mapper.Map<AuthenticateResponse>(requestedUser);
                         response.JwtToken = jwtToken;
                         response.RefreshToken = refreshToken.Token;
+                        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+                        response.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, requestedUser.ProfilePhoto);
 
                         if (roles.Contains(AuthorizationConstants.CrewRole))
                             response.IsCrew = true;
@@ -546,6 +553,8 @@ namespace Infrastructure.Identity.Services
             }
             response.Role = string.Join(",", roles);
             response.Authenticated = true;
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+             response.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, currentUser.ProfilePhoto);
             return response;
         }
 
