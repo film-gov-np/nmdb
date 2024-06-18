@@ -25,7 +25,7 @@ public static class EmailTemplate
             <head>           
             </head>
                 <body>
-                   <div class='{getTemplateStyle()}'>
+                   <div class='email-container' {getTemplateStyle()}>
                         <h2>Welcome to nmdb!</h2>
                         <p {getTextStyle()}>Thank you for registering {username}. Please click the button below to verify your email address and complete your registration.</p>
                         <a href='{verificationLink}' {getButtonStyle()}>Verify Email Address</a>
@@ -43,7 +43,7 @@ public static class EmailTemplate
             
             </head>
                 <body>
-                   <div class='email-container {getTemplateStyle()}'>
+                   <div class='email-container' {getTemplateStyle()}>
                         <h2>Card Request Recieved.</h2>
                         <p {getTextStyle()}>A card has been requested by {crewEmail}.</p>
                         <a {getButtonStyle()} href='LINK_TO_VERIFICATION_PAGE' class='button'>Verify Request</a>
