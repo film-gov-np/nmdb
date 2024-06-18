@@ -33,4 +33,5 @@ export const Paths = {
   Route_Admin_Awards_Add: "/admin/awards/create",
   Route_Admin_User: "/admin/user",
   Route_Admin_User_Add: "/admin/user/create",
+  Route_Admin_Card_Request: "/admin/card-request",
 };

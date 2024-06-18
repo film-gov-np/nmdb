@@ -24,6 +24,7 @@ import {
 import useCheckActiveNav from "@/hooks/useCheckActiveNav";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "./context/AuthContext";
+import { CardStackIcon } from "@radix-ui/react-icons";
 
 const adminRouteElement = [
   {
@@ -67,6 +68,11 @@ const adminRouteElement = [
     icon: User,
     path: Paths.Route_Admin_User,
     roles: ["Admin", "Superadmin"],
+  },
+  {
+    title: "Card Request",
+    icon: CardStackIcon,
+    path: Paths.Route_Admin_Card_Request,
   },
   // {
   //   title: "Scholarship",

@@ -91,7 +91,7 @@ const Dashboard = () => {
         <h2 className="text-3xl font-bold capitalize tracking-tight">
           Card Requests
         </h2>
-        <CardRequest />
+        <CardRequest className="p-0 lg:p-0"/>
       </div>
     </main>
   );

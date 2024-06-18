@@ -34,6 +34,7 @@ import CinemaHall from "@/components/landing/pages/home/CinemaHall";
 import MovieCalendar from "@/components/landing/pages/movieCalendar/MovieCalendar";
 import User from "@/components/admin/pages/user/User";
 import CreateUser from "@/components/admin/pages/user/CreateUser";
+import CardRequest from "@/components/admin/pages/cardRequest/CardRequest";
 
 export const routes = [
   {
@@ -262,6 +263,13 @@ export const routes = [
                 isPublic: false,
               },
             ]
+          },
+          {
+            name: "Card Request",
+            title: "User Page",
+            component: CardRequest,
+            path: Paths.Route_Admin_Card_Request,
+            isPublic: false,
           },
           // {
           //   name: "Scholarship",
