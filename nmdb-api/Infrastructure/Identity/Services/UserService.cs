@@ -99,7 +99,7 @@ public class UserService : IUserService
                 }
             }
 
-            return ApiResponse<string>.SuccessResponse("User created successfully.");
+            return ApiResponse<string>.SuccessResponseWithoutData($"User '{userRequest.Email}' created successfully.");
         }
         catch (Exception ex)
         {
@@ -122,6 +122,7 @@ public class UserService : IUserService
             existingUser.UpdatedBy = userRequest.Authorship;
 
             // Role update logic
+            // Allow to update role in separate api call
             if (!string.IsNullOrEmpty(userRequest.Role))
             {
                 var roleToBeAssigned = await _roleManager.FindByNameAsync(userRequest.Role);
@@ -184,7 +185,10 @@ public class UserService : IUserService
                     if (!photoUpdateResult.Succeeded)
                     {
                         var errorMessage = string.Join(", ", photoUpdateResult.Errors.Select(e => e.Description));
-                        return ApiResponse<string>.ErrorResponse(errorMessage);
+                        return ApiResponse<string>.ErrorResponse(new List<string>{
+                            "User is updated successfully with errors while updating profile photo.",
+                            errorMessage });
+
                     }
                 }
                 else
@@ -195,7 +199,7 @@ public class UserService : IUserService
                 }
             }
 
-            return ApiResponse<string>.SuccessResponse("User updated successfully.");
+            return ApiResponse<string>.SuccessResponseWithoutData("User updated successfully.");
         }
         catch (Exception ex)
         {
@@ -323,7 +327,7 @@ public class UserService : IUserService
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)
                 .ToListAsync();
-            
+
             // Remove superuser from the list
             users = users.Where(u => !IsSuperuser(u)).ToList();
 
@@ -336,7 +340,7 @@ public class UserService : IUserService
                 userDto.Role = string.Join(",", roles);
                 userDto.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
                 userResponseDtos.Add(userDto);
-            }           
+            }
 
             var pagedResult = new PaginationResponse<UserResponseDto>
             {

@@ -29,8 +29,17 @@ import { useState } from "react";
 import { sanitizeData } from "@/lib/utils";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { FileInput } from "@/components/common/formElements/FileInput";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@radix-ui/react-checkbox";
+import { useAuthContext } from "@/components/admin/context/AuthContext";
+
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -38,26 +47,34 @@ const renderModes = {
   Render_Mode_Details: "details",
 };
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "User name must be at least 2 characters.",
-  }),
-  profilePhotoFile: z.any(),
-  profilePhoto: z.any(),
-  email: z.string().email().optional().or(z.literal("")),
-  role:z.string().optional().or(z.literal("")),
-  phoneNumber: z.string().optional().or(z.literal("")),
+const formSchema = z
+  .object({
+    name: z.string().min(2, {
+      message: "User name must be at least 2 characters.",
+    }),
+    profilePhotoFile: z.any(),
+    profilePhoto: z.any(),
+    email: z.string().email().optional().or(z.literal("")),
+    role: z.string().optional().or(z.literal("")),
+    phoneNumber: z.string().optional().or(z.literal("")),
 
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters long.",
-  }).optional(),
-  confirmPassword: z.string().min(8, {
-    message: "Confirm password must be at least 8 characters long.",
-  }).optional(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+    password: z
+      .string()
+      .min(8, {
+        message: "Password must be at least 8 characters long.",
+      })
+      .optional(),
+    confirmPassword: z
+      .string()
+      .min(8, {
+        message: "Confirm password must be at least 8 characters long.",
+      })
+      .optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const defaultValues = {
   name: "",
@@ -66,8 +83,8 @@ const defaultValues = {
   profilePhotoFile: "",
   role: "",
   email: "",
-  password:"",
-  confirmPassword:""
+  password: "",
+  confirmPassword: "",
 };
 
 function CreateUser() {
@@ -175,9 +192,9 @@ function CreateUser() {
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="user" pathTo={Paths.Route_Admin_User} />
       <div className="mx-auto grid w-full max-w-6xl gap-2">
-          <h1 className="text-3xl font-semibold">Settings</h1>
-        </div>
-        {/* <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+        <h1 className="text-3xl font-semibold">Settings</h1>
+      </div>
+      {/* <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
           <nav
             className="grid gap-4 text-sm text-muted-foreground" x-chunk="dashboard-04-chunk-0"
           >
@@ -259,6 +276,9 @@ const getUserRoles = async (apiPath) => {
 };
 
 function UserForm({ user, renderMode, onSubmit }) {
+  const { slug } = useParams();
+  const { isAuthorized, userInfo } = useAuthContext();
+  
   const [previews, setPreviews] = useState({
     profilePhotoFile: user?.profilePhotoUrl ? [user?.profilePhotoUrl] : [],
   });
@@ -347,7 +367,7 @@ function UserForm({ user, renderMode, onSubmit }) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={renderMode === renderModes.Render_Mode_Edit}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -385,42 +405,45 @@ function UserForm({ user, renderMode, onSubmit }) {
               )}
             />
           </fieldset>
-          <fieldset
-            disabled={renderMode === renderModes.Render_Mode_Details}
-            className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
-          >
-            <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
-              Role
-            </legend>
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Assign a Role</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.defaultValue}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a Role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {roles.map((item) => (
-                        <SelectItem key={item.id} value={item.name}>
-                          {item.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
+          {
+            slug != String(userInfo.id) &&
+            <fieldset
+              disabled={renderMode === renderModes.Render_Mode_Details}
+              className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
+            >
+              <legend className="-ml-1 px-1 text-lg font-medium text-muted-foreground">
+                Role
+              </legend>
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assign a Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.defaultValue}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roles.map((item) => (
+                          <SelectItem key={item.id} value={item.name}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </fieldset>
+          }
           {renderMode === renderModes.Render_Mode_Create && (
             <fieldset
               disabled={renderMode === renderModes.Render_Mode_Details}
