@@ -49,7 +49,7 @@ public static class EmailTemplate
                         <a {getButtonStyle()} href='LINK_TO_VERIFICATION_PAGE' class='button'>Verify Request</a>
                         <p {getTextStyle()}>Thank you!</p>
                     </div>
-                    <div>${getCompanySignature()}</div>
+                    <div>{getCompanySignature()}</div>
                 </body>";
         return emailTemplate;
     }
@@ -66,7 +66,7 @@ public static class EmailTemplate
                        <p {getTextStyle()}>You can collect it after the mentioned date: {cardReadyDate}.</p>
                        <p {getTextStyle()}>Thank you!</p>
                     </div>
-                    <div>${getCompanySignature()}</div>
+                    <div>{getCompanySignature()}</div>
                 </body>";
         return emailTemplate;
     }
@@ -85,7 +85,7 @@ public static class EmailTemplate
                                 <p {getTextStyle()}>Thank you for being a part of our community!</p>                               
                                 <p {getTextStyle()}>Thank you!</p>
                         </div>
-                    <div>${getCompanySignature()}</div>
+                    <div>{getCompanySignature()}</div>
                 </body>";
         return emailTemplate;
     }
@@ -105,7 +105,7 @@ public static class EmailTemplate
                                 <p {getTextStyle()}>{resetToken}</p>
                                 <p {getTextStyle()}>If you did not request a password reset, please ignore this email or contact support.</p>
                         </div>
-                    <div>${getCompanySignature()}</div>
+                    <div>{getCompanySignature()}</div>
                 </body>";
         return emailTemplate;
 
