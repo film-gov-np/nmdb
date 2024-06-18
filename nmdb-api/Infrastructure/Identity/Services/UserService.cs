@@ -9,10 +9,12 @@ using Application.Interfaces.Services;
 using AutoMapper;
 using Core;
 using Core.Constants;
+using Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Identity.Services;
 
@@ -175,7 +177,7 @@ public class UserService : IUserService
                     // Remove old profile photo
                     if (!string.IsNullOrEmpty(existingUser.ProfilePhoto))
                     {
-                        _fileService.RemoveFile(existingUser.ProfilePhoto, fileDto.SubFolder);
+                        _fileService.RemoveFile(existingUser.ProfilePhoto, userSubDirectory);
                     }
 
                     existingUser.ProfilePhoto = uploadResult.Data.FileName;
@@ -306,6 +308,9 @@ public class UserService : IUserService
     {
         try
         {
+            Expression<Func<ApplicationUser, object>> orderByColumn = null;
+            Func<IQueryable<ApplicationUser>, IOrderedQueryable<ApplicationUser>> orderBy = null;
+
             var query = _userManager.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
@@ -315,9 +320,42 @@ public class UserService : IUserService
                 u.LastName.Contains(filterParameters.SearchKeyword));
             }
 
-            if (filterParameters.EmailConfirmed.HasValue)
+            //if (filterParameters.EmailConfirmed.HasValue)
+            //{
+            //    query = query.Where(u => u.EmailConfirmed == filterParameters.EmailConfirmed);
+            //}
+
+            if (!string.IsNullOrEmpty(filterParameters.SortColumn))
             {
-                query = query.Where(u => u.EmailConfirmed == filterParameters.EmailConfirmed);
+                switch (filterParameters.SortColumn.ToLower())
+                {
+                    case "name":
+                        orderByColumn = u => u.Name; // Assuming Name is stored in FirstName
+                        break;
+                    case "email":
+                        orderByColumn = u => u.Email;
+                        break;
+                    case "phonenumber":
+                        orderByColumn = u => u.PhoneNumber;
+                        break;                    
+                    default:
+                        throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
+                }
+
+                if (orderByColumn != null)
+                {
+                    orderBy = queryable =>
+                    {
+                        return filterParameters.Descending
+                            ? queryable.OrderByDescending(orderByColumn)
+                            : queryable.OrderBy(orderByColumn);
+                    };
+                }
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
             }
 
             var totalCount = await query.CountAsync();

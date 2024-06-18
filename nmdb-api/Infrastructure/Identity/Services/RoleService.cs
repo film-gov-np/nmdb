@@ -21,7 +21,7 @@ namespace Infrastructure.Identity.Services
                 {
                     Id = r.Id,
                     Name = r.Name!
-                }).Where(r => r.Name != AuthorizationConstants.SuperUserRole).ToListAsync();
+                }).Where(r => r.Name != AuthorizationConstants.SuperUserRole && r.Name != AuthorizationConstants.CrewRole).ToListAsync();
                 return ApiResponse<List<RoleDto>>.SuccessResponse(roles);
             }
             catch (Exception ex)
