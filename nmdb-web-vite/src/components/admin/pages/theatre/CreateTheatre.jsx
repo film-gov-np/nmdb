@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -44,14 +45,17 @@ const formSchema = z.object({
   contactNumber: z.string().min(6, {
     message: "Contact number must be at least 6 characters.",
   }),
-  establishedDate: z.date().refine(
-    (date) => {
-      return date < new Date();
-    },
-    {
-      message: "Established date must be in the past.",
-    },
-  ),
+  establishedDate: z
+    .date()
+    .or(z.string())
+    .refine(
+      (date) => {
+        return date < new Date();
+      },
+      {
+        message: "Established date must be in the past.",
+      },
+    ),
   seatCapacity: z.coerce.number().positive(),
   numberOfScreen: z.coerce.number().positive(),
   websiteUrl: z.string().url(),
@@ -189,7 +193,10 @@ const CreateTheatre = () => {
 function TheatreForm({ theatre, renderMode, onSubmit }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: sanitizeData({ ...theatre, isRunning: theatre.isRunning.toString() }),
+    defaultValues: sanitizeData({
+      ...theatre,
+      isRunning: theatre.isRunning.toString(),
+    }),
   });
   return (
     <Form {...form}>
@@ -227,7 +234,7 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                       type="number"
                       placeholder="Seat Capacity"
                       min={0}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                       {...field}
                     />
                   </FormControl>
@@ -263,7 +270,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Address" value={field.value ?? ''} {...field} />
+                    <Input
+                      placeholder="Address"
+                      value={field.value ?? ""}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -277,7 +288,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Name" value={field.value ?? ''} {...field} />
+                    <Input
+                      placeholder="Contact Person Name"
+                      value={field.value ?? ""}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -291,7 +306,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Email" value={field.value ?? ''} {...field} />
+                    <Input
+                      placeholder="Contact Person Email"
+                      value={field.value ?? ""}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -305,7 +324,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Contact Person Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person Numbers" value={field.value ?? ''} {...field} />
+                    <Input
+                      placeholder="Contact Person Numbers"
+                      value={field.value ?? ""}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -316,37 +339,9 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
               control={form.control}
               name="establishedDate"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Established Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value || undefined}
-                        onSelect={field.onChange}
-                        disabled={(date) => date > new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -359,7 +354,11 @@ function TheatreForm({ theatre, renderMode, onSubmit }) {
                 <FormItem className="flex flex-col">
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Website URL" value={field.value || ''} {...field} />
+                    <Input
+                      placeholder="Website URL"
+                      value={field.value || ""}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

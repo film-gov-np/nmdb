@@ -18,9 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  CalendarIcon,
-} from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -30,13 +28,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn, sanitizeData } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-import {useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
 import { ApiPaths } from "@/constants/apiPaths";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import axiosInstance from "@/helpers/axiosSetup";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -50,10 +49,16 @@ const formSchema = z.object({
   contactPerson: z.string().min(2, {
     message: "Contact person name must be at least 2 characters.",
   }),
-  contactNumber: z.string().min(6, {
-    message: "Contact number must be at least 6 characters.",
-  }),
-  establishedDate: z.date().refine(
+  contactNumber: z
+    .string()
+    .regex(/^\+?[0-9\- ]+$/, "Invalid phone number format")
+    .min(6, {
+      message: "Contact number must be at least 6 characters.",
+    })
+    .max(15, {
+      message: "Contact number must not exceed 15 characters.",
+    }),
+  establishedDate: z.date().or(z.string()).refine(
     (date) => {
       return date < new Date();
     },
@@ -101,6 +106,7 @@ const createOrEditProductionHouse = async ({
   isEditMode,
   slug,
   toast,
+  setError,
 }) => {
   let apiPath = ApiPaths.Path_ProductionHouse;
   if (isEditMode) {
@@ -120,7 +126,19 @@ const createOrEditProductionHouse = async ({
       });
       return response.data;
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      const response = err.response?.data;
+      const errors = response?.errors;
+      if (errors) {
+        for (const [field, message] of Object.entries(errors)) {
+          setError(field.charAt(0).toLowerCase() + field.slice(1), {
+            type: "server",
+            message: message[0],
+          });
+        }
+      }
+      console.error(err);
+    });
   return data;
 };
 
@@ -151,26 +169,25 @@ const CreateProductionHouse = () => {
     });
 
   const mutateProductionHouse = useMutation({
-    mutationFn: createOrEditProductionHouse,
+    mutationFn: async (data) => {
+      await createOrEditProductionHouse({
+        postData: data.postData,
+        isEditMode: renderMode === renderModes.Render_Mode_Edit,
+        slug,
+        toast,
+        setError: data.setError,
+      });
+    },
     onSuccess: (data, variables, context) => {
       navigate(Paths.Route_Admin_ProductionHouse);
     },
     onError: (error, variables, context) => {
-      toast({ description: "Something went wrong.Please try again." });
+      toast({ description: "Something went wrong.Please check your form and try again." });
     },
     onSettled: (data, error, variables, context) => {
       // queryClient.invalidateQueries("theatreDetail");
     },
   });
-
-  const onSubmit = (data) => {
-    mutateProductionHouse.mutate({
-      postData: data,
-      isEditMode: renderMode === renderModes.Render_Mode_Edit,
-      slug,
-      toast,
-    });
-  };
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
@@ -185,7 +202,7 @@ const CreateProductionHouse = () => {
           <ProductionHouseForm
             productionHouse={data}
             renderMode={renderMode}
-            onSubmit={onSubmit}
+            mutateProductionHouse={mutateProductionHouse}
           />
         )
       )}
@@ -193,11 +210,24 @@ const CreateProductionHouse = () => {
   );
 };
 
-function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
+function ProductionHouseForm({
+  productionHouse,
+  renderMode,
+  mutateProductionHouse,
+}) {
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: sanitizeData({...productionHouse, isRunning: productionHouse.isRunning.toString()}),
+    defaultValues: sanitizeData({
+      ...productionHouse,
+      isRunning: productionHouse.isRunning.toString(),
+    }),
   });
+  const onSubmit = (data) => {
+    mutateProductionHouse.mutate({
+      postData: data,
+      setError: form.setError,
+    });
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -289,40 +319,8 @@ function ProductionHouseForm({ productionHouse, renderMode, onSubmit }) {
               name="establishedDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Establishment date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        showOutsideDays={true}
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        captionLayout="dropdown-buttons" fromYear={1900} toYear={new Date().getFullYear()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <FormLabel>Established Date</FormLabel>
+                  <DatePickerForForm field={field} />
                   <FormMessage />
                 </FormItem>
               )}
