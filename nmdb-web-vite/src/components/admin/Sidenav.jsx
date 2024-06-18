@@ -192,24 +192,14 @@ const Sidenav = ({ className, isMobileSidebar, setOpen }) => {
               isMobileSidebar={isMobileSidebar}
               setOpen={setOpen}
             />
-          )) ||
-          (!route?.roles ? (
+          )) || (
             <NavLinkCustom
               key={route.title + index}
               {...route}
               isMobileSidebar={isMobileSidebar}
               setOpen={setOpen}
             />
-          ) : route?.roles && route.roles.includes(userInfo.role) ? (
-            <NavLinkCustom
-              key={route.title + index}
-              {...route}
-              isMobileSidebar={isMobileSidebar}
-              setOpen={setOpen}
-            />
-          ) : (
-            ""
-          )),
+          ),
       )}
     </nav>
   );
