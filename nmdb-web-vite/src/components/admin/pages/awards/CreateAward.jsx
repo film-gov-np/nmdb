@@ -57,6 +57,7 @@ const formSchema = z.object({
   }),
   awardedDate: z
     .date()
+    .or(z.string())
     .optional()
     .refine(
       (dateString) => {
