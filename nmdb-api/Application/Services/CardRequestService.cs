@@ -75,7 +75,7 @@ namespace Application.Services
                         IsApproved = false
                     };
                     await _unitOfWork.CardRequestRepository.AddAsync(request);
-                    crewEntity.HasRequestedCard = true;
+                    crewEntity.HasRequestedCard = true;                    
                     await _unitOfWork.CrewRepository.UpdateAsync(crewEntity);
 
                     await _unitOfWork.CommitAsync();
@@ -83,7 +83,7 @@ namespace Application.Services
                     await _emailService.Send(
                         "test@nmdb.com", // admin or info email
                         "Card Requested",
-                        EmailTemplate.CardRequestedMail(crewEntity.Email)
+                        EmailTemplate.CardRequestedMail(crewEntity?.Email)
                         );
 
                     response.IsSuccess = true;

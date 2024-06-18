@@ -11,6 +11,6 @@ public interface IUserService
     Task<ApiResponse<string>> UpdateUserAsync(UserUpdateRequestDto userRequest);
     Task<ApiResponse<string>> DeleteUserAsync(string userId);
     Task<ApiResponse<UserResponseDto>> GetUserById(string userId);
-    Task<ApiResponse<PaginationResponse<UserResponseDto>>> GetUsers(BaseFilterParameters filterParameters);
     Task<ApiResponse<string>> UpdateUserRoleAsync(string userId, string roleId);
+    Task<ApiResponse<PaginationResponse<UserResponseDto>>> GetUsers(UserFilterParameters filterParameters);
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
 using Application.Dtos.Movie;
+using Application.Dtos.Role;
 using Application.Dtos.User;
 using Application.Helpers;
 using Application.Helpers.Response;
@@ -36,7 +37,7 @@ public class UserService : IUserService
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
-        _fileService=fileService;
+        _fileService = fileService;
         _httpContextAccessor = httpContextAccessor;
         _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/users/");
 
@@ -46,11 +47,41 @@ public class UserService : IUserService
     {
         try
         {
+            // Map the UserRequestDto to ApplicationUser
             var user = _mapper.Map<ApplicationUser>(userRequest);
             user.CreatedBy = userRequest.Authorship;
             user.UserName = userRequest.Email;
 
+            // Set the default role if not provided
+            if (string.IsNullOrEmpty(userRequest.Role))
+            {
+                userRequest.Role = AuthorizationConstants.UserRole;
+            }
 
+            // Check if the role exists
+            var roleToBeAssigned = await _roleManager.FindByNameAsync(userRequest.Role);
+            if (roleToBeAssigned == null)
+            {
+                return ApiResponse<string>.ErrorResponse($"Role '{userRequest.Role}' does not exist in the database.");
+            }
+
+            // Create the user
+            var userCreateResult = await _userManager.CreateAsync(user, userRequest.Password);
+            if (!userCreateResult.Succeeded)
+            {
+                var errorMessage = string.Join(", ", userCreateResult.Errors.Select(e => e.Description));
+                return ApiResponse<string>.ErrorResponse(errorMessage);
+            }
+
+            // Assign the role to the user
+            var assignRoleResult = await _userManager.AddToRoleAsync(user, userRequest.Role);
+            if (!assignRoleResult.Succeeded)
+            {
+                var errorMessage = string.Join(", ", assignRoleResult.Errors.Select(e => e.Description));
+                return ApiResponse<string>.ErrorResponse(errorMessage);
+            }
+
+            // Upload the profile photo if it exists
             if (userRequest.ProfilePhotoFile != null)
             {
                 FileDTO fileDto = new FileDTO
@@ -64,35 +95,11 @@ public class UserService : IUserService
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     user.ProfilePhoto = uploadResult.Data.FileName;
+                    await _userManager.UpdateAsync(user);
                 }
             }
 
-            if (string.IsNullOrEmpty(userRequest.Role))
-                userRequest.Role = AuthorizationConstants.UserRole;
-
-            var roleToBeAssigned = await _roleManager.FindByNameAsync(userRequest.Role);
-
-            if (roleToBeAssigned == null)
-            {
-                return ApiResponse<string>.ErrorResponse($"Role '{roleToBeAssigned?.Name}'  does not exist in the database.");
-            }
-
-            var userCreateResult = await _userManager.CreateAsync(user, userRequest.Password);
-
-            var errorMessage = "";
-            if (userCreateResult.Succeeded)
-            {
-                var assignRoleResult = await _userManager.AddToRoleAsync(user, userRequest.Role);
-                if (assignRoleResult.Succeeded)
-                {
-                    return ApiResponse<string>.SuccessResponse("User created successfully.");
-                }
-                errorMessage = string.Join(", ", assignRoleResult.Errors.First().Description);
-            }
-            else
-                errorMessage = string.Join(", ", userCreateResult.Errors.First().Description);
-
-            return ApiResponse<string>.ErrorResponse(errorMessage);
+            return ApiResponse<string>.SuccessResponse("User created successfully.");
         }
         catch (Exception ex)
         {
@@ -112,25 +119,9 @@ public class UserService : IUserService
             }
 
             _mapper.Map(userRequest, existingUser);
+            existingUser.UpdatedBy = userRequest.Authorship;
 
-            if (userRequest.ProfilePhotoFile != null)
-            {
-                FileDTO fileDto = new FileDTO
-                {
-                    Files = userRequest.ProfilePhotoFile,
-                    Thumbnail = false,
-                    ReadableName = true,
-                    SubFolder = userSubDirectory
-                };
-                var uploadResult = await _fileService.UploadFile(fileDto);
-                if (uploadResult.IsSuccess && uploadResult.Data != null)
-                {
-                    if (!string.IsNullOrEmpty(userRequest.ProfilePhoto))
-                        _fileService.RemoveFile(userRequest.ProfilePhoto, fileDto.SubFolder);
-
-                    existingUser.ProfilePhoto = uploadResult.Data.FileName;
-                }
-            }
+            // Role update logic
             if (!string.IsNullOrEmpty(userRequest.Role))
             {
                 var roleToBeAssigned = await _roleManager.FindByNameAsync(userRequest.Role);
@@ -141,18 +132,70 @@ public class UserService : IUserService
                 }
 
                 var userRoles = await _userManager.GetRolesAsync(existingUser);
-                await _userManager.RemoveFromRolesAsync(existingUser, userRoles.ToArray());
-                await _userManager.AddToRoleAsync(existingUser, userRequest.Role);
+                var removeRolesResult = await _userManager.RemoveFromRolesAsync(existingUser, userRoles.ToArray());
+                if (!removeRolesResult.Succeeded)
+                {
+                    var errorMessage = string.Join(", ", removeRolesResult.Errors.Select(e => e.Description));
+                    return ApiResponse<string>.ErrorResponse(errorMessage);
+                }
+
+                var addRoleResult = await _userManager.AddToRoleAsync(existingUser, userRequest.Role);
+                if (!addRoleResult.Succeeded)
+                {
+                    var errorMessage = string.Join(", ", addRoleResult.Errors.Select(e => e.Description));
+                    return ApiResponse<string>.ErrorResponse(errorMessage);
+                }
             }
 
-            var result = await _userManager.UpdateAsync(existingUser);
+            // Update the user details
+            var updateResult = await _userManager.UpdateAsync(existingUser);
 
-            if (result.Succeeded)
+            if (!updateResult.Succeeded)
             {
-                return ApiResponse<string>.SuccessResponse("User updated successfully.");
+                var errorMessage = string.Join(", ", updateResult.Errors.Select(e => e.Description));
+                return ApiResponse<string>.ErrorResponse(errorMessage);
             }
 
-            return ApiResponse<string>.ErrorResponse("Something went wrong while updating user.");
+            // Upload the profile photo if it exists
+            if (userRequest.ProfilePhotoFile != null)
+            {
+                FileDTO fileDto = new FileDTO
+                {
+                    Files = userRequest.ProfilePhotoFile,
+                    Thumbnail = false,
+                    ReadableName = true,
+                    SubFolder = userSubDirectory
+                };
+
+                var uploadResult = await _fileService.UploadFile(fileDto);
+
+                if (uploadResult.IsSuccess && uploadResult.Data != null)
+                {
+                    // Remove old profile photo
+                    if (!string.IsNullOrEmpty(existingUser.ProfilePhoto))
+                    {
+                        _fileService.RemoveFile(existingUser.ProfilePhoto, fileDto.SubFolder);
+                    }
+
+                    existingUser.ProfilePhoto = uploadResult.Data.FileName;
+
+                    // Update the user profile photo information
+                    var photoUpdateResult = await _userManager.UpdateAsync(existingUser);
+                    if (!photoUpdateResult.Succeeded)
+                    {
+                        var errorMessage = string.Join(", ", photoUpdateResult.Errors.Select(e => e.Description));
+                        return ApiResponse<string>.ErrorResponse(errorMessage);
+                    }
+                }
+                else
+                {
+                    return ApiResponse<string>.ErrorResponse(
+                        new List<string> { "Something went wrong while uploading profile photo.",
+                    uploadResult.Message});
+                }
+            }
+
+            return ApiResponse<string>.SuccessResponse("User updated successfully.");
         }
         catch (Exception ex)
         {
@@ -243,6 +286,10 @@ public class UserService : IUserService
                 var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
                 userResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
             }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            userResponse.Role = string.Join(", ", roles);
+
             return ApiResponse<UserResponseDto>.SuccessResponse(userResponse);
         }
         catch (Exception ex)
@@ -251,7 +298,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<ApiResponse<PaginationResponse<UserResponseDto>>> GetUsers(BaseFilterParameters filterParameters)
+    public async Task<ApiResponse<PaginationResponse<UserResponseDto>>> GetUsers(UserFilterParameters filterParameters)
     {
         try
         {
@@ -264,26 +311,32 @@ public class UserService : IUserService
                 u.LastName.Contains(filterParameters.SearchKeyword));
             }
 
+            if (filterParameters.EmailConfirmed.HasValue)
+            {
+                query = query.Where(u => u.EmailConfirmed == filterParameters.EmailConfirmed);
+            }
+
             var totalCount = await query.CountAsync();
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
-            // fetch only certain columns with pagination
             var users = await query
-                .Select(u => new UserResponseDto
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Name=u.Name,
-                    Email = u.Email,
-                    PhoneNumber = u.PhoneNumber,
-                    ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, u.ProfilePhoto)
-                })
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)
                 .ToListAsync();
-                        
-            var userResponseDtos = users.Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
+            
+            // Remove superuser from the list
+            users = users.Where(u => !IsSuperuser(u)).ToList();
+
+            var userResponseDtos = new List<UserResponseDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var userDto = _mapper.Map<UserResponseDto>(user);
+                userDto.Role = string.Join(",", roles);
+                userDto.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
+                userResponseDtos.Add(userDto);
+            }           
 
             var pagedResult = new PaginationResponse<UserResponseDto>
             {
@@ -299,5 +352,10 @@ public class UserService : IUserService
         {
             return ApiResponse<PaginationResponse<UserResponseDto>>.ErrorResponse(ex.Message);
         }
+    }
+    private bool IsSuperuser(ApplicationUser user)
+    {
+        // Check if the user has the 'Superuser' role
+        return _userManager.IsInRoleAsync(user, AuthorizationConstants.SuperUserRole).Result;
     }
 }

@@ -1,4 +1,11 @@
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   eachYearOfInterval,
   format,
   getDay,
@@ -15,14 +22,15 @@ const CustomToolbar = (props) => {
   const currentYear = getYear(date);
   const currentMonth = getMonth(date);
 
-  const handleYearChange = (e) => {
-    const newYear = parseInt(e.target.value, 10);
+  const handleYearChange = (value) => {
+    debugger;
+    const newYear = parseInt(value, 10);
     const newDate = setYear(date, newYear);
     onNavigate("DATE", newDate);
   };
 
-  const handleMonthChange = (e) => {
-    const newMonth = parseInt(e.target.value, 10);
+  const handleMonthChange = (value) => {
+    const newMonth = parseInt(value, 10);
     const newDate = setMonth(date, newMonth);
     onNavigate("DATE", newDate);
   };
@@ -41,7 +49,7 @@ const CustomToolbar = (props) => {
   };
 
   return (
-    <div className="rbc-toolbar">
+    <div className="rbc-toolbar flex">
       <span className="rbc-btn-group">
         <button type="button" onClick={goToBack}>
           &lt;
@@ -54,31 +62,44 @@ const CustomToolbar = (props) => {
         </button>
       </span>
       <span className="rbc-toolbar-label">{label}</span>
-      <span className="custom-toolbar">
-        <label>
-          Year:
-          <select value={currentYear} onChange={handleYearChange}>
+      <div className="flex">
+        <Select className="flex"
+          defaultValue={currentYear}
+          value={currentYear}
+          onValueChange={handleYearChange}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
             {eachYearOfInterval({
-              start: new Date(currentYear - 10, 0),
+              start: new Date("1900", 0),
               end: new Date(currentYear + 9, 0),
             }).map((year) => (
-              <option key={year} value={getYear(year)}>
+              <SelectItem key={year} value={getYear(year)}>
                 {getYear(year)}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        </label>
-        <label>
-          Month:
-          <select value={currentMonth} onChange={handleMonthChange}>
+          </SelectContent>
+        </Select>
+
+        <Select
+          defaultValue={currentMonth}
+          value={currentMonth}
+          onValueChange={handleMonthChange}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
             {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={i}>
+              <SelectItem key={i} value={i}>
                 {format(setMonth(new Date(), i), "MMMM")}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        </label>
-      </span>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };

@@ -122,9 +122,9 @@ nav.sidebar-nav a.active, .nav-container a.active{
 .rbc-calendar .rbc-off-range-bg{
   @apply dark:bg-muted;
 }
-/* .rbc-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-} */
+.rbc-toolbar button{
+  @apply flex flex-row
+}
+.rbc-toolbar .rbc-btn-group{
+  @apply flex;
+}

@@ -8,6 +8,7 @@ import {
   GraduationCap,
   Home,
   Projector,
+  User,
   Users,
   Video,
 } from "lucide-react";
@@ -59,6 +60,11 @@ const adminRouteElement = [
     title: "Awards",
     icon: Award,
     path: Paths.Route_Admin_Awards,
+  },
+  {
+    title: "Users",
+    icon: User,
+    path: Paths.Route_Admin_User,
   },
   // {
   //   title: "Scholarship",
