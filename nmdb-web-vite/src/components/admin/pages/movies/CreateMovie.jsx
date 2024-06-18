@@ -155,8 +155,9 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
     resolver,
     defaultValues: sanitizeData(movie),
   });
-  if(movie.coverImage) form.setValue("coverImage", movie.coverImage);
-  if(movie.thumbnailImage) form.setValue("thumbnailImage", movie.thumbnailImage);
+  if (movie.coverImage) form.setValue("coverImage", movie.coverImage);
+  if (movie.thumbnailImage)
+    form.setValue("thumbnailImage", movie.thumbnailImage);
   const [previews, setPreviews] = useState({
     thumbnailImageFile: movie.thumbnailImageUrl
       ? [movie.thumbnailImageUrl]
@@ -188,11 +189,7 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8"
-        disabled={renderMode === renderModes.Render_Mode_Details}
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Tabs className="w-full" defaultValue="basic_information">
           <TabsList className="grid h-full min-h-fit w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <TabsTrigger value="basic_information">Basic Info</TabsTrigger>
@@ -206,30 +203,36 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
               className="py-2"
               // viewPortClass="max-h-[calc(100vh-80px)]"
             >
-              <TabsContent value="basic_information" className="h-full ">
-                <FormBasicInfo
-                  form={form}
-                  previews={previews}
-                  setPreviews={setPreviews}
-                />
-              </TabsContent>
-              <TabsContent value="crew_information">
-                <FormCrewInfo form={form} />
-              </TabsContent>
-              <TabsContent value="censor_information" className="h-full">
-                <FormCensorInfo form={form} />
-              </TabsContent>
-              <TabsContent value="theatre_information" className="h-full">
-                <FormTheatreInfo form={form} />
-              </TabsContent>
-              <TabsContent value="role_information" className="h-full">
-                <FormRoleInfo form={form} />
-              </TabsContent>
+              <fieldset
+                disabled={renderMode === renderModes.Render_Mode_Details}
+              >
+                <TabsContent value="basic_information" className="h-full ">
+                  <FormBasicInfo
+                    form={form}
+                    previews={previews}
+                    setPreviews={setPreviews}
+                  />
+                </TabsContent>
+                <TabsContent value="crew_information">
+                  <FormCrewInfo form={form} />
+                </TabsContent>
+                <TabsContent value="censor_information" className="h-full">
+                  <FormCensorInfo form={form} />
+                </TabsContent>
+                <TabsContent value="theatre_information" className="h-full">
+                  <FormTheatreInfo form={form} />
+                </TabsContent>
+                <TabsContent value="role_information" className="h-full">
+                  <FormRoleInfo form={form} />
+                </TabsContent>
+              </fieldset>
             </ScrollArea>
           </div>
         </Tabs>
 
-        <Button type="submit">Submit</Button>
+        {renderMode !== renderModes.Render_Mode_Details && (
+          <Button type="submit">Submit</Button>
+        )}
       </form>
     </Form>
   );
