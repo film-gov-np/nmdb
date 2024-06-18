@@ -27,7 +27,6 @@ const getMovie = async (id, renderMode) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -63,7 +62,6 @@ const createOrEditMovie = async ({
     },
   })
     .then((response) => {
-      console.log("api-response-categories", response);
       toast({
         description:
           response.data?.message || "Successfully completed the action.",
@@ -172,7 +170,6 @@ function MovieForm({ movie, renderMode, mutateMovie }) {
       thumbnailImageFile: data.thumbnailImageFile?.[0] || null,
       coverImageFile: data.coverImageFile?.[0] || null,
     };
-    console.log("submitted", submitData);
     mutateMovie.mutate({
       postData: submitData,
       setError: form.setError,

@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,6 +29,8 @@ import { useState } from "react";
 import { sanitizeData } from "@/lib/utils";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { FileInput } from "@/components/common/formElements/FileInput";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@radix-ui/react-checkbox";
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -98,7 +100,6 @@ function CreateUser() {
       ...data,
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
     };
-    console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,
@@ -173,6 +174,70 @@ function CreateUser() {
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
       <AddPageHeader label="user" pathTo={Paths.Route_Admin_User} />
+      <div className="mx-auto grid w-full max-w-6xl gap-2">
+          <h1 className="text-3xl font-semibold">Settings</h1>
+        </div>
+        {/* <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+          <nav
+            className="grid gap-4 text-sm text-muted-foreground" x-chunk="dashboard-04-chunk-0"
+          >
+            <NavLink href="#" className="font-semibold text-primary">
+              General
+            </NavLink>
+            <NavLink href="#">Security</NavLink>
+            <NavLink href="#">Integrations</NavLink>
+            <NavLink href="#">Support</NavLink>
+            <NavLink href="#">Organizations</NavLink>
+            <NavLink href="#">Advanced</NavLink>
+          </nav>
+          <div className="grid gap-6">
+            <Card x-chunk="dashboard-04-chunk-1">
+              <CardHeader>
+                <CardTitle>Store Name</CardTitle>
+                <CardDescription>
+                  Used to identify your store in the marketplace.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form>
+                  <Input placeholder="Store Name" />
+                </form>
+              </CardContent>
+              <CardFooter className="border-t px-6 py-4">
+                <Button>Save</Button>
+              </CardFooter>
+            </Card>
+            <Card x-chunk="dashboard-04-chunk-2">
+              <CardHeader>
+                <CardTitle>Plugins Directory</CardTitle>
+                <CardDescription>
+                  The directory within your project, in which your plugins are
+                  located.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form className="flex flex-col gap-4">
+                  <Input
+                    placeholder="Project Name"
+                    defaultValue="/content/plugins"
+                  />
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="include" defaultChecked />
+                    <label
+                      htmlFor="include"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Allow administrators to change the directory.
+                    </label>
+                  </div>
+                </form>
+              </CardContent>
+              <CardFooter className="border-t px-6 py-4">
+                <Button>Save</Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div> */}
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={5} rowCount={2} repeat={2} shrinkZero />
       ) : (
@@ -187,7 +252,6 @@ const getUserRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));

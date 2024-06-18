@@ -296,8 +296,8 @@ const MainLayout = () => {
                         </NavLink>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Support</DropdownMenuItem>
+                    {/* <DropdownMenuItem>Settings</DropdownMenuItem>
+                    <DropdownMenuItem>Support</DropdownMenuItem> */}
                     <DropdownMenuItem className="flex justify-between gap-2">
                       Theme<ModeToggle></ModeToggle>
                     </DropdownMenuItem>

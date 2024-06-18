@@ -23,7 +23,6 @@ const CustomToolbar = (props) => {
   const currentMonth = getMonth(date);
 
   const handleYearChange = (value) => {
-    debugger;
     const newYear = parseInt(value, 10);
     const newDate = setYear(date, newYear);
     onNavigate("DATE", newDate);

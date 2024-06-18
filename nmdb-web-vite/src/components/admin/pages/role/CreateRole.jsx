@@ -57,14 +57,9 @@ const getFlimRole = async (id, renderMode) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
-  console.log(
-    "api-response",
-    apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200,
-  );
   if (apiResponse?.isSuccess && Number(apiResponse?.statusCode) === 200)
     data = apiResponse.data;
   return data;
@@ -75,7 +70,6 @@ const getCategories = async () => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response-categories", response.data);
 
       return response.data;
     })
@@ -95,7 +89,6 @@ const createOrEditRole = async ({ postData, isEditMode, slug, toast }) => {
     data: postData,
   })
     .then((response) => {
-      console.log("api-response-categories", response);
       toast({
         description:
           response.data?.message || "Successfully completed the action.",
@@ -147,7 +140,6 @@ const CreateRole = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("submitted", data);
     mutateRole.mutate({
       postData: data,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,

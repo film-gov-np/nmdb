@@ -35,7 +35,6 @@ const getCelebrityDetail = async (movieId) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
       return response.data.data;
     })
     .catch((err) => console.error(err));
@@ -70,7 +69,6 @@ const CelebritiesDetails = () => {
       .post(apiPath)
       .then((response) => {
         setIsCardRequestInProgress(false);
-        console.log(response.data);
         return response.data.data;
       })
       .catch((err) => {
@@ -98,7 +96,6 @@ const CelebritiesDetails = () => {
       queryFn: async () => {
         const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
         if (cache) {
-          console.log("cached", cache);
           setCelebsDetails(cache.celebrity);
           return cache;
         } // use the data if in the cache

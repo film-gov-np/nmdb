@@ -48,7 +48,6 @@ function DataTableRowActions({ row }) {
       url: apiPath,
     })
       .then((response) => {
-        console.log("api-response-categories", response);
         return response.data;
       })
       .catch((err) => console.error(err));
@@ -58,12 +57,11 @@ function DataTableRowActions({ row }) {
   const mutateCardRequest = useMutation({
     mutationFn: approveCardRequest,
     onSuccess: async (data, variables, context) => {
-      console.log("success")
       setInvalidateCardReuest(true)
       setShowCelebCardDialog(true)
     },
     onError: (error, variables, context) => {
-      console.log({ description: "Something went wrong.Please try again." });
+      console.error({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {
       setIsLoading(false)

@@ -20,13 +20,10 @@ import axiosInstance from "@/helpers/axiosSetup"
 
 const deleteItems = async ({apiBasePath, itemsToDelete}) => {
   const itemId = itemsToDelete[0].original.id 
-  console.log("delete", itemId)
   let apiPath = `${apiBasePath}/${itemId}`;
   const { data } = await axiosInstance
   .delete(apiPath)
   .then((response) => {
-    console.log("api-response-delete", response);
-
     return response;
   })
   .catch((err) => console.error(err));

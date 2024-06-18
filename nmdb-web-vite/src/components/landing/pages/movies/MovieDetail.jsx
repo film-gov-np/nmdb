@@ -18,7 +18,6 @@ const getMovie = async (movieId) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
       return response.data.data;
     })
     .catch((err) => console.error(err));
@@ -40,7 +39,6 @@ const MovieDetail = () => {
       queryFn: async () => {
         const cache = getFromCache(`movie_id_${slug}`); // try to access the data from cache
         if (cache) {
-          console.log("cached", cache);
           return cache;
         } // use the data if in the cache
         return await getMovie(slug);
@@ -98,7 +96,6 @@ const MovieDetail = () => {
         };
     });
 });
-console.log(topCast)
   // const topCast = topCastData.data.topCast;
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background md:gap-8">

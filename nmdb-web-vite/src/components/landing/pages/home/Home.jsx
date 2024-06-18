@@ -33,7 +33,6 @@ const getMovies = async (apiPath) => {
     });
   const totalData = response.totalItems;
   const data = response.items;
-  console.log(totalData, data);
   return {
     movies: data,
     totalData,

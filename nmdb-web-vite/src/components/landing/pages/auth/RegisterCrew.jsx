@@ -46,7 +46,6 @@ const RegisterCrew = () => {
       confirmPassword,
       acceptTerms,
     };
-    console.log(postData)
     setIsRequestInProgress(true);
     axiosInstance
       .post("auth/register-crew", postData)

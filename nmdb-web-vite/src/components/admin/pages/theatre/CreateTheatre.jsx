@@ -89,7 +89,6 @@ const getTheatre = async (id, renderMode) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -116,7 +115,6 @@ const createOrEditTheatre = async ({ postData, isEditMode, slug, toast }) => {
     data: postData,
   })
     .then((response) => {
-      console.log("api-response-categories", response);
       toast({
         description:
           response.data?.message || "Successfully completed the action.",
@@ -162,7 +160,6 @@ const CreateTheatre = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("submitted", data);
     mutateTheatre.mutate({
       postData: data,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,

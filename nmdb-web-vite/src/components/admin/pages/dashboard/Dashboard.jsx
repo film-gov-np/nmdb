@@ -16,7 +16,6 @@ const getEntityCounts = async () => {
       else return {};
     })
     .catch((err) => console.error(err));
-  console.log(apiResponse);
   return apiResponse;
 };
 

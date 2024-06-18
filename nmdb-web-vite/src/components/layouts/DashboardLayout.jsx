@@ -131,7 +131,7 @@ const DashboardLayout = () => {
                 <DropdownMenuItem asChild>
                   <NavLink to={Paths.Route_Home}>Visit Website</NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex gap-2">
                   Theme<ModeToggle></ModeToggle>

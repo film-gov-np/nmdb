@@ -82,7 +82,6 @@ const getPrductionHouse = async (id, renderMode) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -114,7 +113,6 @@ const createOrEditProductionHouse = async ({
     data: postData,
   })
     .then((response) => {
-      console.log("api-response-categories", response);
       toast({
         description:
           response.data?.message || "Successfully completed the action.",
@@ -166,7 +164,6 @@ const CreateProductionHouse = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("submitted", data);
     mutateProductionHouse.mutate({
       postData: data,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,

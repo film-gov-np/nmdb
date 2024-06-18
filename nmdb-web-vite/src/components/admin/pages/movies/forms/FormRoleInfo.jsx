@@ -29,7 +29,6 @@ const getCrewFlimRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));

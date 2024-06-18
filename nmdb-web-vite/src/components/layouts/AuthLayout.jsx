@@ -18,7 +18,7 @@ const AuthLayout = () => {
           <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
             <Outlet />
             <div className="hidden justify-end bg-transparent lg:flex lg:h-screen">
-              <img
+              <Image
                 src="/amerohajur4.jpg"
                 alt="Image"
                 width="1920"

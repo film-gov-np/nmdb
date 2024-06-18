@@ -226,7 +226,6 @@ function CreateCrew() {
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
-    console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,
@@ -320,7 +319,6 @@ const getCrewFlimRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
