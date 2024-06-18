@@ -51,12 +51,13 @@ const CelebritiesDetails = () => {
   const [isCardRequestInProgress, setIsCardRequestInProgress] = useState(false);
   const { toast } = useToast();
   const ref = useRef(null);
+  const buttonRef = useRef(null);
   const { isTruncated, isShowingMore, toggleIsShowingMore } =
     useTruncatedElement({
       ref,
       params: celebDetails,
     });
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,37 +69,43 @@ const CelebritiesDetails = () => {
     const response = await axiosInstance
       .post(apiPath)
       .then((response) => {
-        setIsCardRequestInProgress(false);
-        return response.data.data;
+        const responseData = response.data;
+        if (responseData?.isSuccess) {
+          setIsCardRequestInProgress(false);
+          return response.data.data;
+        }
       })
       .catch((err) => {
         setIsCardRequestInProgress(false);
-        throw err;
+        throw new Error(err);
       });
     return response;
   };
 
   const mutateCardRequest = useMutation({
     mutationFn: sendCardRequest,
-    onSuccess: (data, variables, context) => {},
+    onSuccess: (data, variables, context) => {
+      if(buttonRef.current) buttonRef.current.style.display = 'none'
+      toast({ description: "Card request sent successfully." });
+    },
     onError: (error, variables, context) => {
       toast({ description: "Something went wrong.Please try again." });
     },
     onSettled: (data, error, variables, context) => {},
   });
 
-  const getFromCache = (key) => {
-    return queryClient.getQueryData([key]);
-  };
+  // const getFromCache = (key) => {
+  //   return queryClient.getQueryData([key]);
+  // };
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: [`celebrity_id_${slug}`],
       queryFn: async () => {
-        const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
-        if (cache) {
-          setCelebsDetails(cache.celebrity);
-          return cache;
-        } // use the data if in the cache
+        // const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
+        // if (cache) {
+        //   setCelebsDetails(cache.celebrity);
+        //   return cache;
+        // } // use the data if in the cache
         const dat = await getCelebrityDetail(slug);
         setCelebsDetails(dat.celebrity);
         return dat;
@@ -146,6 +153,7 @@ const CelebritiesDetails = () => {
                 userInfo.crewId == slug &&
                 !celebDetails.hasRequestedCard && (
                   <Button
+                    ref={buttonRef}
                     disabled={isCardRequestInProgress}
                     onClick={mutateCardRequest.mutate}
                   >
