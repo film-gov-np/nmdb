@@ -29,7 +29,7 @@ import { CardStackIcon } from "@radix-ui/react-icons";
 const adminRouteElement = [
   {
     title: "Dashboard",
-    label: "DB",
+    // label: "DB",
     icon: Home,
     path: Paths.Route_Admin_Dashboard,
   },
