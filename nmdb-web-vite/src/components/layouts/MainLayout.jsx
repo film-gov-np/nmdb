@@ -262,12 +262,12 @@ const MainLayout = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>
-                      <NavLink
+                      {/* <NavLink
                         className={"hover:underline"}
                         to={
                           Paths.Route_Admin_User + "/" + userInfo.id + "/edit"
                         }
-                      >
+                      > */}
                         <div className="flex flex-col items-center justify-center ">
                           <p className=" text-muted-foreground">
                             {userInfo.name}
@@ -276,8 +276,9 @@ const MainLayout = () => {
                             {userInfo.email}
                           </p>
                         </div>
-                      </NavLink>
+                      {/* </NavLink> */}
                     </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     {userInfo.isCrew && (
                       <DropdownMenuItem asChild>
                         <NavLink
