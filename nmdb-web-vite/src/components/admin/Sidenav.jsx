@@ -67,7 +67,6 @@ const adminRouteElement = [
     title: "Users",
     icon: User,
     path: Paths.Route_Admin_User,
-    roles: ["Admin", "Superadmin"],
   },
   {
     title: "Card Request",

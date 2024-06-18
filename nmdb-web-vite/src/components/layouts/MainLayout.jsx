@@ -290,7 +290,7 @@ const MainLayout = () => {
                     )}
                     <DropdownMenuSeparator />
                     {(userInfo.role === "Admin" ||
-                      userInfo.role === "Superadmin") && (
+                      userInfo.role === "Superuser") && (
                       <DropdownMenuItem asChild>
                         <NavLink to={Paths.Route_Admin_Dashboard}>
                           Dashboard
