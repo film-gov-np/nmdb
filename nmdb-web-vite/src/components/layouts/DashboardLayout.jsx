@@ -30,13 +30,11 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const { setIsAuthorized } = useAuthContext();
   const logOutFromServer = () => {
-    axiosInstance
-      .post(ApiPaths.Path_Session)
-      .then((resp) => {
-        setIsAuthorized(false);
-        navigate(Paths.Route_Home);
-      });
-  }
+    axiosInstance.post(ApiPaths.Path_Session).then((resp) => {
+      setIsAuthorized(false);
+      navigate(Paths.Route_Home);
+    });
+  };
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="theme-zinc h-full w-full">
@@ -107,7 +105,9 @@ const DashboardLayout = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <NavLink to={Paths.Route_Home}>Visit Website</NavLink>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex gap-2">

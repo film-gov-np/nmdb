@@ -8,7 +8,7 @@ import {
   Search,
   Theater,
 } from "lucide-react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,8 @@ import { useAuthContext } from "../admin/context/AuthContext";
 import { useState } from "react";
 import GlobalList from "../landing/pages/home/GlobalList";
 import { useDebouncedState } from "@/hooks/useDebouncedState";
+import axiosInstance from "@/helpers/axiosSetup";
+import { ApiPaths } from "@/constants/apiPaths";
 
 // const useNavigationListener = (onNavigateAway) => {
 //   const location = useLocation();
@@ -45,8 +47,9 @@ import { useDebouncedState } from "@/hooks/useDebouncedState";
 // };
 
 const MainLayout = () => {
-  const { isAuthorized, userInfo } = useAuthContext();
+  const { isAuthorized, userInfo, setIsAuthorized } = useAuthContext();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const [searchGlobal, setSearchGlobal] = useState("");
   const debouncedGlobalSearchTerm = useDebouncedState(searchGlobal, 500);
@@ -55,6 +58,13 @@ const MainLayout = () => {
   // });
   const resetGlobalSearch = () => {
     setSearchGlobal("");
+  };
+
+  const logOutFromServer = () => {
+    axiosInstance.post(ApiPaths.Path_Session).then((resp) => {
+      setIsAuthorized(false);
+      navigate(Paths.Route_Home);
+    });
   };
 
   return (
@@ -261,13 +271,21 @@ const MainLayout = () => {
                       )}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {(userInfo.role === "Admin" ||
+                      userInfo.role === "Superadmin") && (
+                      <DropdownMenuItem asChild>
+                        <NavLink to={Paths.Route_Admin_Dashboard}>
+                          Dashboard
+                        </NavLink>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem>Settings</DropdownMenuItem>
                     <DropdownMenuItem>Support</DropdownMenuItem>
                     <DropdownMenuItem className="flex justify-between gap-2">
                       Theme<ModeToggle></ModeToggle>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onClick={logOutFromServer}>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}

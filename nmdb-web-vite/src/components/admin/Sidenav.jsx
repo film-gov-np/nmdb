@@ -23,6 +23,7 @@ import {
 } from "../ui/collapsible";
 import useCheckActiveNav from "@/hooks/useCheckActiveNav";
 import { cn } from "@/lib/utils";
+import { useAuthContext } from "./context/AuthContext";
 
 const adminRouteElement = [
   {
@@ -65,6 +66,7 @@ const adminRouteElement = [
     title: "Users",
     icon: User,
     path: Paths.Route_Admin_User,
+    roles: ["Admin", "Superadmin"],
   },
   // {
   //   title: "Scholarship",
@@ -135,7 +137,7 @@ const NavLinkDropdown = ({
           "group w-full",
           (isMobileSidebar &&
             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground") ||
-          " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
+            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
         )}
       >
         {<rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />}
@@ -171,6 +173,7 @@ const NavLinkDropdown = ({
 };
 
 const Sidenav = ({ className, isMobileSidebar, setOpen }) => {
+  const { isAuthorized, userInfo } = useAuthContext();
   return (
     <nav className={cn("sidebar-nav grid", className)}>
       {adminRouteElement.map(
@@ -183,14 +186,24 @@ const Sidenav = ({ className, isMobileSidebar, setOpen }) => {
               isMobileSidebar={isMobileSidebar}
               setOpen={setOpen}
             />
-          )) || (
+          )) ||
+          (!route?.roles ? (
             <NavLinkCustom
               key={route.title + index}
               {...route}
               isMobileSidebar={isMobileSidebar}
               setOpen={setOpen}
             />
-          ),
+          ) : route?.roles && route.roles.includes(userInfo.role) ? (
+            <NavLinkCustom
+              key={route.title + index}
+              {...route}
+              isMobileSidebar={isMobileSidebar}
+              setOpen={setOpen}
+            />
+          ) : (
+            ""
+          )),
       )}
     </nav>
   );

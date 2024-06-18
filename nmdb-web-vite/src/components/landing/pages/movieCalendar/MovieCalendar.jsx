@@ -1,14 +1,11 @@
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import {
-  eachYearOfInterval,
   format,
   getDay,
   getMonth,
   getYear,
   parse,
-  setMonth,
-  setYear,
   startOfWeek,
 } from "date-fns";
 import enUS from "date-fns/locale/en-US";
@@ -40,7 +37,7 @@ function Event({ event }) {
 }
 
 const MovieCalendar = () => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [event, setEvent] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentMovie, setCurrentMovie] = useState({});
@@ -51,13 +48,12 @@ const MovieCalendar = () => {
         toolbar: CustomToolbar,
       },
       views: ["month"],
-
       //   defaultDate: new Date(),
     }),
     [],
   );
+
   const fetchEvents = useCallback(async (year, month) => {
-    debugger;
     let apiPath = `${ApiPaths.Path_Front_Movies}?Year=${year}&Month=${month}`;
     const response = await axiosInstance
       .get(apiPath)
@@ -77,9 +73,8 @@ const MovieCalendar = () => {
     setCurrentDate(range);
   };
   const onSelectEvent = (movie) => {
-    console.log(movie);
-    setCurrentMovie(movie)
-    setOpen(true)
+    setCurrentMovie(movie);
+    setOpen(true);
   };
 
   useEffect(() => {
@@ -88,7 +83,7 @@ const MovieCalendar = () => {
 
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
-      <MovieDrawer open={open} onOpenChange={setOpen} movie={currentMovie}/>
+      <MovieDrawer open={open} onOpenChange={setOpen} movie={currentMovie} />
       <div className="h-[calc(100vh-4rem)]">
         <Calendar
           components={components}
