@@ -30,8 +30,6 @@ export const labels = [];
 
 export const facetedFilters = [];
 
-
-
 function DataTableRowActions({ row }) {
   const [showApproveAlert, setShowApproveAlert] = useState(false);
   const [showCelebCardDialog, setShowCelebCardDialog] = useState(false);
@@ -146,6 +144,7 @@ export const columns = [
       </div>
       );
     },
+    enableSorting: false
   },
   {
     accessorKey: "approvedDate",
@@ -159,6 +158,7 @@ export const columns = [
           format(row.getValue("approvedDate"), "PPP p")}
       </div>
     ),
+    enableSorting: false
     // enableGlobalFilter: true,
   },
   {
