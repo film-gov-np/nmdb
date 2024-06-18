@@ -29,7 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-  const { userInfo, setIsAuthorized } = useAuthContext();
+  const { isAuthorized, userInfo, setIsAuthorized } = useAuthContext();
   const logOutFromServer = () => {
     axiosInstance.post(ApiPaths.Path_Session).then((resp) => {
       setIsAuthorized(false);
@@ -92,7 +92,7 @@ const DashboardLayout = () => {
               </form>
             </div>
 
-            <DropdownMenu>
+            {isAuthorized && (<DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="secondary"
@@ -145,7 +145,7 @@ const DashboardLayout = () => {
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu>)}
           </header>
           <div className="flex flex-col overflow-hidden pt-14 md:pl-60 lg:pl-64 lg:pt-[60px]">
             <div className="px-4 pt-2 lg:px-6 lg:pt-4">

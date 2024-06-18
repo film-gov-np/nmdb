@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ChevronLeft } from "lucide-react";
+import Image from "../common/Image";
 
 const AuthLayout = () => {
   return (
