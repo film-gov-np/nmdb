@@ -56,7 +56,8 @@ const formSchema = z.object({
   designations: z.any(),
   gender: z.string().optional(),
   dateOfBirthInAD: z
-    .string()
+    .date()
+    .or(z.string())
     .optional()
     .refine(
       (dateString) => {
@@ -79,7 +80,8 @@ const formSchema = z.object({
       },
     ),
   dateOfDeathInAD: z
-    .string()
+    .date()
+    .or(z.string())
     .optional()
     .refine(
       (dateString) => {
