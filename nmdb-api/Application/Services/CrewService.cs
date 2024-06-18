@@ -39,6 +39,8 @@ public class CrewService : ICrewService
     private readonly string _uploadFolderPathCrew;
     private readonly string _uploadFolderPathMovie;
     private readonly IWebHostEnvironment _environment;
+    private const string crewUploadSubFolder = "crews";
+    private const string movieUploadSubFolder = "movies";
 
 
     public CrewService(IUnitOfWork unitOfWork
@@ -54,8 +56,8 @@ public class CrewService : ICrewService
         _fileService = fileService;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
-        _uploadFolderPathCrew = string.Concat(configuration["UploadFolderPath"],"/crews/");
-        _uploadFolderPathMovie = string.Concat(configuration["UploadFolderPath"],"/movies/");
+        _uploadFolderPathCrew = string.Concat(configuration["UploadFolderPath"], $"/{crewUploadSubFolder}/");
+        _uploadFolderPathMovie = string.Concat(configuration["UploadFolderPath"], $"/{movieUploadSubFolder}/");
 
     }
     public async Task<ApiResponse<PaginationResponse<CrewListDto>>> GetAllAsync(CrewFilterParameters filterParameters)
@@ -129,7 +131,7 @@ public class CrewService : ICrewService
 
             if (crewRequestDto.ProfilePhotoFile != null && crewRequestDto.ProfilePhotoFile.Length > 0)
             {
-                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile, SubFolder = "crews" });
+                var uploadResultApiResponse = await _fileService.UploadFile(new FileDTO { Files = crewRequestDto.ProfilePhotoFile, SubFolder = crewUploadSubFolder });
                 if (!uploadResultApiResponse.IsSuccess)
                 {
                     return ApiResponse<string>.ErrorResponse(uploadResultApiResponse.Message, uploadResultApiResponse.StatusCode);
@@ -198,14 +200,14 @@ public class CrewService : ICrewService
                     Files = crewRequestDto.ProfilePhotoFile,
                     Thumbnail = false,
                     ReadableName = false,
-                    SubFolder = "crews"
+                    SubFolder = crewUploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(crewEntity.ProfilePhoto))
-                        _fileService.RemoveFile(crewEntity.ProfilePhoto, "crews");
+                        _fileService.RemoveFile(crewEntity.ProfilePhoto, crewUploadSubFolder);
 
                     crewEntity.ProfilePhoto = uploadResult.Data.FileName;
                 }
@@ -267,11 +269,7 @@ public class CrewService : ICrewService
             var crewResponse = _mapper.Map<CrewResponseDto>(crew);
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
-            string profilePictureStaticPath = !string.IsNullOrEmpty(crewResponse.ProfilePhoto)?
-                string.Concat(_uploadFolderPathCrew,"movies/",crewResponse.ProfilePhoto):"";
-
             crewResponse.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew, crewResponse.ProfilePhoto);
-
 
             response.IsSuccess = true;
             response.Data = crewResponse;

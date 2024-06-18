@@ -119,7 +119,7 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Role" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("role")}</div>,
-    enableSorting: true,
+    enableSorting: false,
   },
   {
     accessorKey: "phoneNumber",
@@ -128,26 +128,8 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Contact Number" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("phoneNumber")}</div>,
-  },
-  {
-    accessorKey: "emailConfirmed",
-    meta: "Email Confirmed",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email Confirmed" />
-    ),
-    cell: ({ row }) => {
-      let isEmailConfirmed = row.getValue("emailConfirmed");
-      return (
-        <Badge
-          variant={isEmailConfirmed ? "secondary" : "destructive"}
-          className="px-4"
-        >
-          {isEmailConfirmed ? "Yes" : "No"}
-        </Badge>
-      );
-    },
     enableSorting: false,
-  },
+  },  
   {
     id: "actions",
     meta: "Actions",

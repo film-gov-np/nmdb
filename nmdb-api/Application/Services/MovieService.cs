@@ -31,8 +31,8 @@ public class MovieService : IMovieService
     private readonly IFileService _fileService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly string _uploadFolderPath;
-
-
+    private const string uploadSubFolder = "movies";
+   
     public MovieService(IMapper mapper, ILogger<MovieService> logger,
         IUnitOfWork unitOfWork,
         IFileService fileService,
@@ -44,7 +44,7 @@ public class MovieService : IMovieService
         _logger = logger;
         _fileService = fileService;
         _httpContextAccessor = httpContextAccessor;
-        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/movies/");
+        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], $"/{uploadSubFolder}/");
     }
 
     public async Task<ApiResponse<string>> CreateAsync(MovieRequestDto movieRequestDto)
@@ -70,7 +70,7 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
                     ReadableName = false,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -87,7 +87,7 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.CoverImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -256,6 +256,12 @@ public class MovieService : IMovieService
             {
                 case "name":
                     orderByColumn = query => query.Name;
+                    break;
+                case "category":
+                    orderByColumn = query => query.Category;
+                    break;
+                case "status":
+                    orderByColumn = query => query.Status;
                     break;
                 // Add more cases for other columns
                 default:
@@ -430,14 +436,14 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
-                        _fileService.RemoveFile(existingMovie.ThumbnailImage, fileDto.SubFolder);
+                        _fileService.RemoveFile(existingMovie.ThumbnailImage, uploadSubFolder);
 
                     existingMovie.ThumbnailImage = uploadResult.Data.FileName;
                 }
@@ -450,13 +456,13 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.CoverImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     if (!string.IsNullOrEmpty(existingMovie.CoverImage))
-                        _fileService.RemoveFile(existingMovie.CoverImage, fileDto.SubFolder);
+                        _fileService.RemoveFile(existingMovie.CoverImage, uploadSubFolder);
 
                     existingMovie.CoverImage = uploadResult.Data.FileName;
                 }
