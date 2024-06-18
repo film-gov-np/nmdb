@@ -268,25 +268,27 @@ const MainLayout = () => {
                           Paths.Route_Admin_User + "/" + userInfo.id + "/edit"
                         }
                       > */}
-                        <div className="flex flex-col items-center justify-center ">
-                          <p className=" text-muted-foreground">
-                            {userInfo.name}
-                          </p>
-                          <p className=" text-muted-foreground">
-                            {userInfo.email}
-                          </p>
-                        </div>
+                      <div className="flex flex-col items-center justify-center ">
+                        <p className=" text-muted-foreground">
+                          {userInfo.name}
+                        </p>
+                        <p className=" text-muted-foreground">
+                          {userInfo.email}
+                        </p>
+                      </div>
                       {/* </NavLink> */}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
                     {userInfo.isCrew && (
-                      <DropdownMenuItem asChild>
-                        <NavLink
-                          to={Paths.Route_Celebrities + "/" + userInfo.crewId}
-                        >
-                          My Celebrity Page
-                        </NavLink>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <NavLink
+                            to={Paths.Route_Celebrities + "/" + userInfo.crewId}
+                          >
+                            My Celebrity Page
+                          </NavLink>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     <DropdownMenuSeparator />
                     {(userInfo.role === "Admin" ||
