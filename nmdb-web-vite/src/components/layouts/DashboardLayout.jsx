@@ -122,7 +122,7 @@ const DashboardLayout = () => {
                   >
                     <div className="flex flex-col items-center justify-center ">
                       <p className=" text-muted-foreground">
-                        {userInfo.firstName + " " + userInfo.lastName}
+                        {userInfo.name}
                       </p>
                       <p className=" text-muted-foreground">{userInfo.email}</p>
                     </div>
