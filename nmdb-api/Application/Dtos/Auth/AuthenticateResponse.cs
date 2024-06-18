@@ -17,8 +17,7 @@ public class AuthBaseResponse
     public bool IsVerified { get; set; }
     public bool Authenticated { get; set; }
     public bool IsCrew { get; set; } = false;
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string? Name { get; set; }
     public string Role { get; set; }
     public int? CrewId { get; set; }
     public string? ProfilePhotoUrl { get; set; }
