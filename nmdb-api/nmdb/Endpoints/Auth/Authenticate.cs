@@ -40,15 +40,15 @@ public class Authenticate
             var authenticateResponse = await _authService.Authenticate(request, "");
             setTokenCookie(authenticateResponse.JwtToken, authenticateResponse.RefreshToken);
 
-            Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
+            await SendOkAsync(ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully."));
         }
         catch (UnauthorizedAccessException ex)
         {
             //await SendUnauthorizedAsync();
             Response = ApiResponse<AuthenticateResponse>.ErrorResponse("Invalid Credentials", HttpStatusCode.Unauthorized);
 
-        }
-        Response = ApiResponse<AuthenticateResponse>.ErrorResponse("Invalid Credentials",HttpStatusCode.Unauthorized);
+        }       
+        
     }
 
     private void setTokenCookie(string accessToken, string refreshToken = "")
