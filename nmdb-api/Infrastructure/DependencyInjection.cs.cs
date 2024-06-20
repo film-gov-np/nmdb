@@ -54,7 +54,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = Environment.GetEnvironmentVariable("NMDB_CONNECTION_STRING");
+        var connectionString = Environment.GetEnvironmentVariable("NMDB_CONNECTION_STRING")?? configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<AppDbContext>(c =>
                     c.UseSqlServer(connectionString));
