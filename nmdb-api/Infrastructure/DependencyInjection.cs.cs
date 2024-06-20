@@ -33,14 +33,14 @@ public static class DependencyInjection
         services.AddScoped<IService, RestService>();
         services.Configure<EmailSettings>(options =>
         {
-            options.SmtpHost = Environment.GetEnvironmentVariable("NMDB_EMAIL_HOST");
-            options.SmtpPort = int.Parse(Environment.GetEnvironmentVariable("NMDB_EMAIL_PORT") ?? "587");
-            options.SmtpUsername = Environment.GetEnvironmentVariable("NMDB_EMAIL_USERNAME");
-            options.SmtpPassword = Environment.GetEnvironmentVariable("NMDB_EMAIL_PASSWORD");
-            options.SenderName = Environment.GetEnvironmentVariable("NMDB_EMAIL_SENDER_NAME");
-            options.SenderEmail = Environment.GetEnvironmentVariable("NMDB_EMAIL_SENDER_EMAIL");
-            options.CcTo = Environment.GetEnvironmentVariable("NMDB_EMAIL_CCTO");
-            options.BccTo = Environment.GetEnvironmentVariable("NMDB_EMAIL_BCCTO");
+            options.SmtpHost = Environment.GetEnvironmentVariable("EMAIL_HOST");
+            options.SmtpPort = int.Parse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? "587");
+            options.SmtpUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME");
+            options.SmtpPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+            options.SenderName = Environment.GetEnvironmentVariable("EMAIL_SENDER_NAME");
+            options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER_EMAIL");
+            options.CcTo = Environment.GetEnvironmentVariable("EMAIL_CCTO");
+            options.BccTo = Environment.GetEnvironmentVariable("EMAIL_BCCTO");
         });
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
