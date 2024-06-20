@@ -33,14 +33,14 @@ public static class DependencyInjection
         services.AddScoped<IService, RestService>();
         services.Configure<EmailSettings>(options =>
         {
-            options.SmtpHost = Environment.GetEnvironmentVariable("EMAIL_HOST");
-            options.SmtpPort = int.Parse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? "587");
-            options.SmtpUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME");
-            options.SmtpPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
-            options.SenderName = Environment.GetEnvironmentVariable("EMAIL_SENDER_NAME");
-            options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER_EMAIL");
-            options.CcTo = Environment.GetEnvironmentVariable("EMAIL_CCTO");
-            options.BccTo = Environment.GetEnvironmentVariable("EMAIL_BCCTO");
+            options.SmtpHost = Environment.GetEnvironmentVariable("EMAIL_HOST") ?? configuration["EmailSettings:SmtpHost"] ?? throw new ArgumentNullException("SmtpHost configuration is missing.");
+            options.SmtpPort = int.TryParse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? configuration["EmailSettings:SmtpPort"], out int smtpPort) ? smtpPort : throw new ArgumentException("SmtpPort configuration is invalid or missing.");
+            options.SmtpUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? configuration["EmailSettings:SmtpUsername"] ?? throw new ArgumentNullException("SmtpUsername configuration is missing.");
+            options.SmtpPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? configuration["EmailSettings:SmtpPassword"] ?? throw new ArgumentNullException("SmtpPassword configuration is missing.");
+            options.SenderName = Environment.GetEnvironmentVariable("EMAIL_SENDER_NAME") ?? configuration["EmailSettings:SenderName"] ?? throw new ArgumentNullException("SenderName configuration is missing.");
+            options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER_EMAIL") ?? configuration["EmailSettings:SenderEmail"] ?? throw new ArgumentNullException("SenderEmail configuration is missing.");
+            options.CcTo = Environment.GetEnvironmentVariable("EMAIL_CCTO") ?? configuration["EmailSettings:CcTo"] ?? throw new ArgumentNullException("CcTo configuration is missing.");
+            options.BccTo = Environment.GetEnvironmentVariable("EMAIL_BCCTO") ?? configuration["EmailSettings:BccTo"] ?? throw new ArgumentNullException("BccTo configuration is missing.");
         });
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
