@@ -112,13 +112,27 @@ const Celebrities = ({
         </div>
         <Separator className="my-4" />
         {isLoading ? (
-          <CommonAlertBanner type="Loader" />
+          <CommonAlertBanner
+            type="Loader"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : isError ? (
-          <CommonAlertBanner type="Error" />
+          <CommonAlertBanner
+            type="Error"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : isFetching ? (
-          <CommonAlertBanner type="Loader" label="Fetching data" />
+          <CommonAlertBanner
+            type="Loader"
+            label="Fetching data"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : data.celebs?.length === 0 ? (
-          <CommonAlertBanner type="NoData" message="No celebrities found." />
+          <CommonAlertBanner
+            type="NoData"
+            message="No celebrities found."
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : (
           <div className="">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 lg:gap-6 xl:grid-cols-9">

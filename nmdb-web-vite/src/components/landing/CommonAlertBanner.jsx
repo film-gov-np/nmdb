@@ -10,9 +10,10 @@ const CommonAlertBanner = ({
   message = "Something went wrong. Please try again later.",
   type = "Loader",
   label = "Loading",
+  className
 }) => {
   return (
-    <div className="flex min-h-[24rem] flex-1 items-center justify-center rounded-lg border border-dashed p-6 shadow-sm">
+    <div className={cn("flex min-h-[24rem] flex-1 items-center justify-center rounded-lg border border-dashed p-6 shadow-sm", className)}>
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="flex items-center gap-2">
           {type === ViewType.error && (
