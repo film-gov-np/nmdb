@@ -31,7 +31,17 @@ public static class DependencyInjection
     private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IService, RestService>();
-        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.Section));
+        services.Configure<EmailSettings>(options =>
+        {
+            options.SmtpHost = Environment.GetEnvironmentVariable("NMDB_EMAIL_HOST");
+            options.SmtpPort = int.Parse(Environment.GetEnvironmentVariable("NMDB_EMAIL_PORT") ?? "587");
+            options.SmtpUsername = Environment.GetEnvironmentVariable("NMDB_EMAIL_USERNAME");
+            options.SmtpPassword = Environment.GetEnvironmentVariable("NMDB_EMAIL_PASSWORD");
+            options.SenderName = Environment.GetEnvironmentVariable("NMDB_EMAIL_SENDER_NAME");
+            options.SenderEmail = Environment.GetEnvironmentVariable("NMDB_EMAIL_SENDER_EMAIL");
+            options.CcTo = Environment.GetEnvironmentVariable("NMDB_EMAIL_CCTO");
+            options.BccTo = Environment.GetEnvironmentVariable("NMDB_EMAIL_BCCTO");
+        });
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
@@ -44,8 +54,10 @@ public static class DependencyInjection
 
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = Environment.GetEnvironmentVariable("NMDB_CONNECTION_STRING");
+
         services.AddDbContext<AppDbContext>(c =>
-                    c.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                    c.UseSqlServer(connectionString));
 
         return services;
     }
