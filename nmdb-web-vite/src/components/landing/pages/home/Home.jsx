@@ -24,6 +24,7 @@ const getMovies = async (apiPath) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
+      debugger
       let responseData = response.data;
       if (responseData.isSuccess) return response.data.data;
       else throw new Error("Something went wrong");
@@ -81,9 +82,9 @@ const Home = () => {
   });
 
   const isLoading = results.some((query) => query.isLoading);
-  const isError = results.some((query) => query.isLoading);
+  const isError = results.some((query) => query.isError);
   if (isLoading) return <CommonAlertBanner type="Loader" />;
-  if (isError) return <CommonAlertBanner type="Error" />;
+  if (isError) return <CommonAlertBanner type="Error" className="m-12" />;
   const nowPlayingMovies = results[0];
   const upcomingMovies = results[1];
   const popularMovies = results[2];

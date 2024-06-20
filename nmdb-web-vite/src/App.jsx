@@ -8,7 +8,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axiosInstance from "./helpers/axiosSetup";
 import { ApiPaths } from "./constants/apiPaths";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: false,
+    },
+  },
+});
 
 const App = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -16,31 +25,36 @@ const App = () => {
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    axiosInstance.get(ApiPaths.Path_Session).then((resp) => {
-      if (resp && resp.data && resp.data.isSuccess) {
-        const { data } = resp.data;
-        setIsAuthorized(true);
-        setUserInfo(data);
-      }
-      setIsLoading(false);
-
-    }).catch(() => {
-      setIsLoading(false);
-    });
+    axiosInstance
+      .get(ApiPaths.Path_Session)
+      .then((resp) => {
+        if (resp && resp.data && resp.data.isSuccess) {
+          const { data } = resp.data;
+          setIsAuthorized(true);
+          setUserInfo(data);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, []);
 
-  return (<>
-    {!isLoading &&
-      <ThemeProvider>
-        <AuthContext.Provider value={{ isAuthorized, userInfo, setUserInfo, setIsAuthorized }}>
-          <QueryClientProvider client={queryClient}>
-            <Routes isAuthorized={isAuthorized} />
-          </QueryClientProvider>
-        </AuthContext.Provider>
-        <Toaster />
-      </ThemeProvider>
-    }
-  </>
+  return (
+    <>
+      {!isLoading && (
+        <ThemeProvider>
+          <AuthContext.Provider
+            value={{ isAuthorized, userInfo, setUserInfo, setIsAuthorized }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <Routes isAuthorized={isAuthorized} />
+            </QueryClientProvider>
+          </AuthContext.Provider>
+          <Toaster />
+        </ThemeProvider>
+      )}
+    </>
   );
 };
 
