@@ -108,13 +108,27 @@ const CinemaHall = ({
         </div>
         <Separator className="my-4" />
         {isLoading ? (
-          <CommonAlertBanner type="Loader" />
+          <CommonAlertBanner
+            type="Loader"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : isError ? (
-          <CommonAlertBanner type="Error" />
+          <CommonAlertBanner
+            type="Error"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : isFetching ? (
-          <CommonAlertBanner type="Loader" label="Fetching data" />
+          <CommonAlertBanner
+            type="Loader"
+            label="Fetching data"
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : data.cinemaHall?.length === 0 ? (
-          <CommonAlertBanner type="NoData" message="No cinema hall found." />
+          <CommonAlertBanner
+            type="NoData"
+            message="No cinema hall found."
+            className={search ? "" : "min-h-[38rem]"}
+          />
         ) : (
           <div className="">
             <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">
@@ -125,7 +139,7 @@ const CinemaHall = ({
                 >
                   <CircleIcon className="h-1.5 w-1.5 fill-foreground " />
                   <div className="">
-                      <h3 className="text-md font-bold ">{movie.name}</h3>
+                    <h3 className="text-md font-bold ">{movie.name}</h3>
                     <p className="text-xs text-muted-foreground">
                       {movie.address}
                     </p>
