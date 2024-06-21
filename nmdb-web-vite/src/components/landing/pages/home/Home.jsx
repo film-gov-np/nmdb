@@ -91,7 +91,7 @@ const Home = () => {
   const popularArtists = results[3];
 
   return (
-    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
+    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
       <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6">
         {/*  md:grid-cols-[2fr_2px_minmax(0,9fr)] */}
         {/* <aside className="hidden gap-4 py-4 md:grid">
@@ -133,7 +133,7 @@ const Home = () => {
         </aside> */}
 
         <div className="space-y-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
             Latest Movies
           </h3>
           <Carousel
@@ -180,14 +180,14 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext className="-right-9" />
+            <CarouselNext className="-right-9 bg-primary text-primary-foreground" />
           </Carousel>
         </div>
       </div>
       <div className="mx-auto mt-8 grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,7fr)_2px_3fr] ">
         <div className="block">
           <div className="space-y-4">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
               Movie of the Week
             </h3>
             <div className="relative ">
@@ -211,7 +211,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-8 space-y-4">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
               Top Artists
             </h3>
             <div className="relative ">
@@ -237,7 +237,7 @@ const Home = () => {
         </div>
         <Separator className="hidden md:grid" orientation="vertical" />
         <div className="space-y-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
             Trending
           </h3>
           <Carousel
@@ -276,7 +276,7 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext className="-bottom-9" />
+            <CarouselNext className="-bottom-9 bg-primary text-primary-foreground" />
           </Carousel>
         </div>
       </div>

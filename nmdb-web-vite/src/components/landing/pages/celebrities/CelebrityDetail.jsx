@@ -123,10 +123,10 @@ const CelebritiesDetails = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-4">
               <div className="space-y-2">
-                <h2 className="text-5xl font-semibold tracking-tight">
+                <h2 className="text-5xl font-semibold tracking-tight text-primary">
                   {celebDetails.name}
                 </h2>
-                <h2 className="text-2xl font-semibold tracking-tight text-muted-foreground">
+                <h2 className="text-2xl font-semibold tracking-tight text-primary/60">
                   {celebDetails.nepaliName}
                 </h2>
               </div>
@@ -220,7 +220,7 @@ const CelebritiesDetails = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl font-bold leading-none">
+                  <h3 className="text-2xl font-bold leading-none text-primary">
                     Personal Info
                   </h3>
                   <div className="space-y-1">
@@ -250,7 +250,7 @@ const CelebritiesDetails = () => {
             </div>
             <div className="flex flex-col gap-4 md:gap-8">
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Biography</h3>
+                <h3 className="text-2xl font-bold text-primary">Biography</h3>
                 <p
                   ref={ref}
                   className={cn(
@@ -272,7 +272,7 @@ const CelebritiesDetails = () => {
                 )}
               </div>
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Known for</h3>
+                <h3 className="text-2xl font-bold text-primary">Known for</h3>
                 <div className="relative ">
                   <ScrollArea>
                     <div className="flex space-x-4 pb-4">
@@ -297,7 +297,7 @@ const CelebritiesDetails = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Filmography</h3>
+                <h3 className="text-2xl font-bold text-primary">Filmography</h3>
                 <div className="rounded-lg border border-input p-1">
                   <ScrollArea viewPortClass="max-h-[620px]">
                     <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">

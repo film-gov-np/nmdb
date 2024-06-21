@@ -119,7 +119,7 @@ const MovieDetail = () => {
               </div>
               <div className="h-full w-full space-y-6  py-12 text-stone-200 ">
                 <div className="space-y-2">
-                  <h2 className="text-5xl font-semibold tracking-tight">
+                  <h2 className="text-5xl font-semibold tracking-tight text-primary">
                     {movie.name}
                   </h2>
                   <p className="text-sm">{movie.tagline}</p>
@@ -182,11 +182,11 @@ const MovieDetail = () => {
           </div>
           <div className="grid grid-cols-1 gap-6 p-4 md:p-10">
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold ">OverView</h3>
+              <h3 className="text-2xl font-bold text-primary">OverView</h3>
               <p className="text-muted-foreground">{movie.oneLiner}</p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold ">Top Cast</h3>
+              <h3 className="text-2xl font-bold text-primary">Top Cast</h3>
               <div className="relative ">
                 <ScrollArea>
                   <div className="flex space-x-4 pb-4">
@@ -208,7 +208,7 @@ const MovieDetail = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold ">All Crew Members</h3>
+              <h3 className="text-2xl font-bold text-primary">All Crew Members</h3>
               <div className="rounded-lg border border-input p-1">
                 <ScrollArea viewPortClass="max-h-[680px]">
                   <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">

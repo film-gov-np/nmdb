@@ -40,12 +40,12 @@ const DashboardLayout = () => {
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="theme-zinc h-full w-full">
         <div className="grid min-h-screen w-full ">
-          <aside className="fixed inset-y-0 left-0 z-10 hidden border-r bg-muted/40  md:block md:w-60 lg:w-64">
+          <aside className="fixed inset-y-0 left-0 z-10 hidden md:block md:w-60 lg:w-64">
             <div className="flex h-full flex-col gap-2 overflow-y-auto">
-              <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+              <div className="flex h-14 items-center bg-secondary px-4 lg:h-[60px] lg:px-6">
                 <NavLink
                   to={Paths.Route_Admin}
-                  className="flex items-center gap-2 font-semibold"
+                  className="flex items-center gap-2 font-semibold text-secondary-foreground"
                 >
                   <Package2 className="h-6 w-6" />
                   <span className="">NMDB Dashboard</span>
@@ -59,25 +59,27 @@ const DashboardLayout = () => {
                   <span className="sr-only">Toggle notifications</span>
                 </Button> */}
               </div>
-              <div className="flex-1">
+              <div className="flex-1 border-r">
                 <Sidenav className="items-start px-2 text-sm font-medium lg:px-4" />
               </div>
-              <div className="mt-auto p-4">
-                <Card>
-                  <CardHeader className="p-2 pt-0 md:p-4">
-                    <CardTitle className="text-xl">
-                      {" "}
-                      Film Development Board
-                    </CardTitle>
-                    <CardDescription>
-                      @{new Date().getFullYear()} All Rights Reserved
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+              <div className="mt-auto border-r">
+                <div className="p-4">
+                  <Card className="bg-primary text-primary-foreground border-none shadow-sm">
+                    <CardHeader className="p-2 pt-0 md:p-4">
+                      <CardTitle className="text-xl">
+                        {" "}
+                        Film Development Board
+                      </CardTitle>
+                      <CardDescription className="text-primary-foreground">
+                        @{new Date().getFullYear()} All Rights Reserved
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
               </div>
             </div>
           </aside>
-          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
+          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 shadow-lg bg-secondary px-4 md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
             <MobileSideBar />
             {/* <div className="w-full flex-1">
               <form>

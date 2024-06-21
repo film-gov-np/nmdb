@@ -7,15 +7,15 @@ import { TwitterLogoIcon } from "@radix-ui/react-icons";
 
 const Footer = () => {
   return (
-    <footer className="mt-12 bg-muted/20 px-4 md:px-6 lg:px-12 pt-12 shadow-lg content-baseline">
+    <footer className="mt-12  px-4 md:px-6 lg:px-12 pt-12 shadow-lg content-baseline bg-secondary text-muted">
       <div className="mx-auto grid w-full max-w-screen-2xl gap-6 p-4 py-6 lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[5fr_2px_4fr] gap-8">
           <div className="flex flex-col  items-center lg:items-start">
             <div className="space-y-6">
-                <div>
+                <div className="shadow-2xl bg-primary/30 rounded-2xl p-2">
                   <img src="/nmdb-logo.png" className="max-h-28 max-w-[16rem] sm:max-w-xs md:max-w-sm" alt="NMDB" />
                 </div>
-                <p className="max-w-lg text-sm text-muted-foreground">
+                <p className="max-w-lg text-sm text-muted">
                   Film Development Board (FDB) is established on 30 June 2000 by the
                   Government of Nepal according to the existed Motion Picture
                   (Production, Exhibition and Distribution) Act amended on 20th
@@ -26,10 +26,10 @@ const Footer = () => {
           <Separator className="hidden lg:block"  orientation="vertical" />
           <div className="flex space-x-4 justify-evenly ">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold leading-none tracking-tight ">
+              <h3 className="text-lg font-semibold leading-none tracking-tight text-primary">
                 Useful Links
               </h3>
-              <ul className="space-y-2 text-muted-foreground">
+              <ul className="space-y-2 text-muted">
                 <li>
                   <NavLink to={Paths.Route_Movies} className="hover:underline">Movies</NavLink>
                 </li>
@@ -42,10 +42,10 @@ const Footer = () => {
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold leading-none tracking-tight ">
+              <h3 className="text-lg font-semibold leading-none tracking-tight text-primary">
                 Contact Information
               </h3>
-              <ul className="space-y-2 text-muted-foreground">
+              <ul className="space-y-2 text-muted">
                 <li>
                   <NavLink to={"tel:014812387"} className="flex items-center hover:underline">
                     <Phone className="mr-1 lg:mr-4 h-4 w-4" />
@@ -73,14 +73,14 @@ const Footer = () => {
         </div>
         <Separator />
         <div className="grid gap-8 grid-flow-col justify-evenly">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted">
             © {new Date().getFullYear()}{" "}
             <NavLink to="https://flim.gov.np" className="hover:underline">
               Flim Development Board
             </NavLink>
             . All Rights Reserved.
           </span>
-          <div className="flex space-x-4 text-muted-foreground">
+          <div className="flex space-x-4 text-muted">
             <NavLink to={"https://www.facebook.com/nepalfilm"} className="hover:underline" target="_blank"><Facebook className="h-4 w-4"/></NavLink>
             <NavLink to={"https://twitter.com/FilmBoardNepal"} target="_blank"><TwitterLogoIcon className="h-4 w-4"/></NavLink>
             <NavLink to={"https://www.youtube.com/channel/UCc3KX2q4b0ZgLB59V452qFA"} target="_blank"><Youtube className="h-4 w-4"/></NavLink>
