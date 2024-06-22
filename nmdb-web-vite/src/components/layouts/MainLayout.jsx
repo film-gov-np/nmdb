@@ -72,8 +72,8 @@ const MainLayout = () => {
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className=" theme-zinc h-full w-full">
         <div className="flex min-h-screen w-full flex-col">
-          <header className="sticky top-0 z-10 grid h-16 grid-flow-col items-center gap-4 border-b bg-background px-4 md:px-6">
-            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6">
+          <header className="sticky top-0 z-10 grid h-16 grid-flow-col items-center gap-4 bg-secondary text-secondary-foreground px-4 md:px-6 shadow-lg">
+            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6 text-muted">
               <NavLink
                 to="/"
                 onClick={resetGlobalSearch}
@@ -166,13 +166,13 @@ const MainLayout = () => {
                 </nav>
               </SheetContent>
             </Sheet>
-            <div className="nav-container hidden grid-flow-col lg:grid">
+            <div className="nav-container hidden grid-flow-col lg:grid text-muted">
               <NavLink
                 to={Paths.Route_Home}
                 onClick={resetGlobalSearch}
-                className="w-fit rounded-md"
+                className="w-fit rounded-md "
               >
-                <Button variant="ghost">
+                <Button variant="ghost" className="">
                   <HomeIcon className="mr-2 h-4 w-4" />
                   Home
                 </Button>
@@ -182,7 +182,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost">
+                <Button variant="ghost" className="">
                   <Film className="mr-2 h-4 w-4" />
                   Movies
                 </Button>
@@ -192,7 +192,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost">
+                <Button variant="ghost" className="">
                   <Drama className="mr-2 h-4 w-4" />
                   Celebrities
                 </Button>
@@ -202,7 +202,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost">
+                <Button variant="ghost" className="">
                   <CalendarDays className="mr-2 h-4 w-4" />
                   Movie Calendar
                 </Button>
@@ -212,7 +212,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost">
+                <Button variant="ghost" className="">
                   <Theater className="mr-2 h-4 w-4" />
                   Cinema Hall
                 </Button>
@@ -220,8 +220,8 @@ const MainLayout = () => {
             </div>
             <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
               <form className="ml-auto flex-1 sm:flex-initial">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <div className="relative text-accent">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-accent" />
                   <Input
                     type="search"
                     value={searchGlobal}
@@ -230,13 +230,13 @@ const MainLayout = () => {
                       // setCurrentPage(1);
                     }}
                     placeholder="Search ..."
-                    className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px]"
+                    className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px] bg-transparent border-primary placeholder:text-accent"
                   />
                 </div>
               </form>
               {!isAuthorized && (
                 <NavLink to="login">
-                  <Button variant={"outline"}>Sign In</Button>
+                  <Button variant={"outline"} className="bg-primary border-primary/40">Sign In</Button>
                 </NavLink>
               )}
 

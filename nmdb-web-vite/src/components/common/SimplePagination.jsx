@@ -26,7 +26,7 @@ const SimplePagination = ({
           />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink className="pointer-events-none px-10" isActive>
+          <PaginationLink className="pointer-events-none px-10 text-primary border-primary" isActive>
             Page {currentPage}
           </PaginationLink>
         </PaginationItem>

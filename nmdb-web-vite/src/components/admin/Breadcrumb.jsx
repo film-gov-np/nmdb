@@ -51,7 +51,7 @@ export function BreadcrumbResponsive() {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className="text-primary">
         {/* <BreadcrumbItem>
           <BreadcrumbLink href={items[0].href}>{items[0].label}</BreadcrumbLink>
         </BreadcrumbItem> */}

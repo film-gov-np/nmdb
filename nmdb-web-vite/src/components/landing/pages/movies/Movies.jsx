@@ -70,7 +70,7 @@ const Movies = ({
           <div className="flex items-center justify-start gap-6">
             {showBackButton && (
               <NavLink to={Paths.Route_Home}>
-                <Button variant="outline" size="icon" className="h-8 w-8">
+                <Button variant="outline" size="icon" className="h-8 w-8 text-primary">
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </Button>
@@ -78,7 +78,7 @@ const Movies = ({
             )}
 
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold tracking-tight md:text-5xl">
+              <h2 className="text-xl font-semibold tracking-tight md:text-5xl text-primary">
                 Movies
               </h2>
             </div>
@@ -99,7 +99,7 @@ const Movies = ({
                   setCurrentPage(1);
                 }}
                 placeholder="Search movies..."
-                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] border-primary"
               />
             </div>
           </form>

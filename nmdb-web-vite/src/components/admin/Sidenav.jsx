@@ -1,11 +1,8 @@
 import {
   Award,
-  BookOpen,
-  BookText,
   BriefcaseBusiness,
   ChevronDown,
   Clapperboard,
-  GraduationCap,
   Home,
   Projector,
   User,
@@ -15,7 +12,6 @@ import {
 import { NavLink } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Paths } from "@/constants/routePaths";
-import { SheetClose } from "@/components/ui/sheet";
 import {
   Collapsible,
   CollapsibleContent,
@@ -110,7 +106,7 @@ const NavLinkCustom = ({
         }}
         className={cn(
           isMobileSidebar && "mx-[-0.65rem] gap-4",
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-all hover:text-muted-foreground",
         )}
       >
         <rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />

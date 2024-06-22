@@ -35,7 +35,7 @@ const Dashboard = () => {
         !isError && (
           <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-primary">
                 <CardTitle className="text-sm font-medium">Movies</CardTitle>
                 <Video className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -49,7 +49,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-primary">
                 <CardTitle className="text-sm font-medium">Crew</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -60,7 +60,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-primary">
                 <CardTitle className="text-sm font-medium">Theatre</CardTitle>
                 <Projector className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -69,9 +69,9 @@ const Dashboard = () => {
                   {Math.floor(data.theatreCount / 10) * 10} +{" "}
                 </div>
               </CardContent>
-            </Card>
+            </Card >
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-primary">
                 <CardTitle className="text-sm font-medium">
                   Production House
                 </CardTitle>
@@ -88,10 +88,10 @@ const Dashboard = () => {
       )}
 
       <div className=" space-y-4">
-        <h2 className="text-3xl font-bold capitalize tracking-tight">
+        <h2 className="text-3xl font-bold capitalize tracking-tight text-primary">
           Card Requests
         </h2>
-        <CardRequest className="p-0 lg:p-0"/>
+        <CardRequest className="p-1 lg:p-1"/>
       </div>
     </main>
   );

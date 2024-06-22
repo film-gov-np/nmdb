@@ -9,10 +9,10 @@ const ListPageHeader = ({label, pathTo}) => {
     <>
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight capitalize">
+          <h2 className="text-3xl font-bold tracking-tight capitalize text-primary">
            {label}
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-primary/80">
             List of all the {label}
           </p>
         </div>
