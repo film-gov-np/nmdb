@@ -153,7 +153,7 @@ const Home = () => {
                   className="pl-4 sm:flex-[0_0_50%] md:flex-[0_0_35%] lg:flex-[0_0_25%] xl:flex-[0_0_18.5%]"
                 >
                   <div className="">
-                    <Card>
+                    <Card className="border-none">
                       <CardContent className="group relative flex aspect-[7/9] items-center justify-center p-0">
                         <Image
                           src={movie.thumbnailImageUrl}

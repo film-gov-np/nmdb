@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[5fr_2px_4fr] gap-8">
           <div className="flex flex-col  items-center lg:items-start">
             <div className="space-y-6">
-                <div className="shadow-2xl bg-primary/30 rounded-2xl p-2">
+                <div className="shadow-2xl bg-accent/30 dark:bg-accent/10 rounded-2xl p-2">
                   <img src="/nmdb-logo.png" className="max-h-28 max-w-[16rem] sm:max-w-xs md:max-w-sm" alt="NMDB" />
                 </div>
                 <p className="max-w-lg text-sm text-muted">

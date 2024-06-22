@@ -172,7 +172,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md "
               >
-                <Button variant="ghost" className="hover:bg-primary/90">
+                <Button variant="ghost" className="">
                   <HomeIcon className="mr-2 h-4 w-4" />
                   Home
                 </Button>
@@ -182,7 +182,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost" className="hover:bg-primary/90">
+                <Button variant="ghost" className="">
                   <Film className="mr-2 h-4 w-4" />
                   Movies
                 </Button>
@@ -192,7 +192,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost" className="hover:bg-primary/90">
+                <Button variant="ghost" className="">
                   <Drama className="mr-2 h-4 w-4" />
                   Celebrities
                 </Button>
@@ -202,7 +202,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost" className="hover:bg-primary/90">
+                <Button variant="ghost" className="">
                   <CalendarDays className="mr-2 h-4 w-4" />
                   Movie Calendar
                 </Button>
@@ -212,7 +212,7 @@ const MainLayout = () => {
                 onClick={resetGlobalSearch}
                 className="w-fit rounded-md"
               >
-                <Button variant="ghost" className="hover:bg-primary/90">
+                <Button variant="ghost" className="">
                   <Theater className="mr-2 h-4 w-4" />
                   Cinema Hall
                 </Button>
