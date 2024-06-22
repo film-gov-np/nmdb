@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
 import QRCode from "react-qr-code";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toJpeg } from "html-to-image";
-import { Circle, QrCode } from "lucide-react";
+import { ArrowBigDownDash, Check, Circle, QrCode } from "lucide-react";
 import { extractInitials } from "@/lib/utils";
 import { ServerPath } from "@/constants/authConstant";
 
@@ -22,15 +22,19 @@ const QrCodeGenerator = ({
   ...props
 }) => {
   const qrBlockRef = useRef(null);
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState(false)
   const downloadQRCode = () => {
-    toJpeg(qrBlockRef.current)
+    setIsDownloadInProgress(true)
+    toJpeg(qrBlockRef.current, )
       .then(function (dataUrl) {
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = name + ".jpeg";
+        setIsDownloadInProgress(false)
         link.click();
       })
       .catch(function (error) {
+        setIsDownloadInProgress(false)
         console.error("Error generating QR code:", error);
       });
   };
@@ -60,7 +64,8 @@ const QrCodeGenerator = ({
               </div>
               <div className="flex justify-center">
                 <Avatar className="h-[9.25rem] w-[8.5rem] ring-4 ring-cyan-200">
-                  <AvatarImage className="object-cover object-top"
+                  <AvatarImage
+                    className="object-cover object-top"
                     src={profilePhotoUrl}
                     alt="Avatar"
                     crossOrigin="anonymous"
@@ -97,7 +102,10 @@ const QrCodeGenerator = ({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={downloadQRCode}>Download</Button>
+        <Button disabled={isDownloadInProgress} onClick={downloadQRCode}>
+          {isDownloadInProgress ? (<ArrowBigDownDash className="mr-2 h-4 w-4 animate-bounce" />): (<ArrowBigDownDash className="mr-2 h-4 w-4" />)}
+          <span>Download</span>
+        </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

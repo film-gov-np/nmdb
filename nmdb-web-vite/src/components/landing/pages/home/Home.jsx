@@ -24,7 +24,6 @@ const getMovies = async (apiPath) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      debugger
       let responseData = response.data;
       if (responseData.isSuccess) return response.data.data;
       else throw new Error("Something went wrong");
