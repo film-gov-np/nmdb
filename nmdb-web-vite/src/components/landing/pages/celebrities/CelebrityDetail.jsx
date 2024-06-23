@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTruncatedElement } from "@/hooks/useTruncatedElement";
 import { cn } from "@/lib/utils";
 import {
+  CircleCheck,
   CircleIcon,
   Facebook,
   Globe,
@@ -19,7 +20,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
-import { TwitterLogoIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import CelebQrCard from "../../CelebQrCard";
 import { useAuthContext } from "@/components/admin/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -123,8 +124,9 @@ const CelebritiesDetails = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-4">
               <div className="space-y-2">
-                <h2 className="text-5xl font-semibold tracking-tight text-primary">
+                <h2 className="text-5xl font-semibold tracking-tight text-primary flex items-center gap-4">
                   {celebDetails.name}
+                  {celebDetails.isVerified && <CheckCircledIcon className="text-secondary h-6 w-6"/>}
                 </h2>
                 <h2 className="text-2xl font-semibold tracking-tight text-primary/60">
                   {celebDetails.nepaliName}
@@ -172,11 +174,14 @@ const CelebritiesDetails = () => {
           <Separator className="my-4" />
           <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-[3fr,minmax(0,10fr)]">
             <div className="grid grid-cols-1 content-start gap-4 md:grid-cols-[1fr,1fr] md:gap-6 lg:grid-cols-1">
-              <Image
-                src={celebDetails.profilePhotoUrl}
-                alt={celebDetails.name}
-                className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
-              />
+              <div className="relative">
+                <Image
+                  src={celebDetails.profilePhotoUrl}
+                  alt={celebDetails.name}
+                  className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
+                />
+                {celebDetails.isVerified && <CheckCircledIcon className="absolute top-2 left-2 text-secondary h-5 w-5"/>}
+              </div>
               <div className="flex flex-1 flex-col gap-4 ">
                 <div className="flex flex-row space-x-4">
                   {celebDetails.facebookID && (

@@ -214,7 +214,7 @@ function CreateCrew() {
     useQuery({
       queryKey: ["crewDetail"],
       queryFn: () => getCrew(slug, renderMode),
-      keepPreviousData: true,
+      // keepPreviousData: true,
     });
 
   const form = useForm({

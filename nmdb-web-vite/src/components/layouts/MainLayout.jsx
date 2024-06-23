@@ -89,7 +89,7 @@ const MainLayout = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="shrink-0 lg:hidden"
+                  className="shrink-0 lg:hidden bg-primary text-primary-foreground"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle navigation menu</span>
@@ -230,7 +230,7 @@ const MainLayout = () => {
                       // setCurrentPage(1);
                     }}
                     placeholder="Search ..."
-                    className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px] bg-transparent border-primary placeholder:text-accent"
+                    className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px] bg-transparent placeholder:text-accent"
                   />
                 </div>
               </form>

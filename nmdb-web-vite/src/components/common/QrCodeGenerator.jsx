@@ -22,19 +22,19 @@ const QrCodeGenerator = ({
   ...props
 }) => {
   const qrBlockRef = useRef(null);
-  const [isDownloadInProgress, setIsDownloadInProgress] = useState(false)
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
   const downloadQRCode = () => {
-    setIsDownloadInProgress(true)
-    toJpeg(qrBlockRef.current, )
+    setIsDownloadInProgress(true);
+    toJpeg(qrBlockRef.current, { cacheBust: true })
       .then(function (dataUrl) {
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = name + ".jpeg";
-        setIsDownloadInProgress(false)
+        setIsDownloadInProgress(false);
         link.click();
       })
       .catch(function (error) {
-        setIsDownloadInProgress(false)
+        setIsDownloadInProgress(false);
         console.error("Error generating QR code:", error);
       });
   };
@@ -68,7 +68,6 @@ const QrCodeGenerator = ({
                     className="object-cover object-top"
                     src={profilePhotoUrl}
                     alt="Avatar"
-                    crossOrigin="anonymous"
                   />
                   <AvatarFallback>{extractInitials(name)}</AvatarFallback>
                 </Avatar>
@@ -102,10 +101,14 @@ const QrCodeGenerator = ({
           </div>
         </div>
         <DialogFooter>
-        <Button disabled={isDownloadInProgress} onClick={downloadQRCode}>
-          {isDownloadInProgress ? (<ArrowBigDownDash className="mr-2 h-4 w-4 animate-bounce" />): (<ArrowBigDownDash className="mr-2 h-4 w-4" />)}
-          <span>Download</span>
-        </Button>
+          <Button disabled={isDownloadInProgress} onClick={downloadQRCode}>
+            {isDownloadInProgress ? (
+              <ArrowBigDownDash className="mr-2 h-4 w-4 animate-bounce" />
+            ) : (
+              <ArrowBigDownDash className="mr-2 h-4 w-4" />
+            )}
+            <span>Download</span>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

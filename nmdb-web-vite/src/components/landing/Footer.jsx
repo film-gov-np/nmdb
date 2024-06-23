@@ -23,10 +23,10 @@ const Footer = () => {
                 </p>
             </div>
           </div>
-          <Separator className="hidden lg:block"  orientation="vertical" />
+          <Separator className="hidden lg:block bg-accent/30"  orientation="vertical" />
           <div className="flex space-x-4 justify-evenly ">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold leading-none tracking-tight text-primary">
+              <h3 className="text-lg font-bold leading-none tracking-tight text-primary">
                 Useful Links
               </h3>
               <ul className="space-y-2 text-muted">
@@ -42,7 +42,7 @@ const Footer = () => {
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold leading-none tracking-tight text-primary">
+              <h3 className="text-lg font-bold leading-none tracking-tight text-primary">
                 Contact Information
               </h3>
               <ul className="space-y-2 text-muted">
@@ -71,7 +71,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <Separator />
+        <Separator className="bg-accent/30" />
         <div className="grid gap-8 grid-flow-col justify-evenly">
           <span className="text-sm text-muted">
             © {new Date().getFullYear()}{" "}
