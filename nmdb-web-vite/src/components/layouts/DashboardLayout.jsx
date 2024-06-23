@@ -64,7 +64,7 @@ const DashboardLayout = () => {
               </div>
               <div className="mt-auto border-r">
                 <div className="p-4">
-                  <Card className="bg-primary text-primary-foreground border-none shadow-sm">
+                  <Card className="bg-secondary text-secondary-foreground border-none shadow-sm">
                     <CardHeader className="p-2 pt-0 md:p-4">
                       <CardTitle className="text-xl">
                         {" "}

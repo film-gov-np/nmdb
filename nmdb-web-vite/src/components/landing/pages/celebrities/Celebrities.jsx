@@ -147,6 +147,7 @@ const Celebrities = ({
                   width={220}
                   height={280}
                   navigateTo={Paths.Route_Celebrities + "/" + celeb.id}
+                  isVerifiedProfile= {celeb.isVerified}
                 />
               ))}
             </div>
