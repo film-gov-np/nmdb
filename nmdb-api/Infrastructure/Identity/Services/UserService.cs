@@ -10,6 +10,7 @@ using AutoMapper;
 using Core;
 using Core.Constants;
 using Core.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,13 +28,15 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private const string userSubDirectory = "users";
     private readonly string _uploadFolderPath;
+    private readonly AppDbContext _context;
 
     public UserService(UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         IHttpContextAccessor httpContextAccessor,
         IFileService fileService,
         IMapper mapper,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        AppDbContext context)
 
     {
         _userManager = userManager;
@@ -42,7 +45,7 @@ public class UserService : IUserService
         _fileService = fileService;
         _httpContextAccessor = httpContextAccessor;
         _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/users/");
-
+        _context = context;
     }
 
     public async Task<ApiResponse<string>> CreateUserAsync(UserRequestDto userRequest)
@@ -307,78 +310,52 @@ public class UserService : IUserService
     public async Task<ApiResponse<PaginationResponse<UserResponseDto>>> GetUsers(UserFilterParameters filterParameters)
     {
         try
-        {
-            Expression<Func<ApplicationUser, object>> orderByColumn = null;
-            Func<IQueryable<ApplicationUser>, IOrderedQueryable<ApplicationUser>> orderBy = null;
+        {            
+            var superuserIds = await (from userRole in _context.UserRoles
+                                      join role in _context.Roles on userRole.RoleId equals role.Id
+                                      where role.Name == AuthorizationConstants.SuperUserRole
+                                      select userRole.UserId).ToListAsync();
 
-            var query = _userManager.Users.AsQueryable();
+            var query = _userManager.Users.Where(u => !superuserIds.Contains(u.Id)).AsQueryable().AsNoTracking();
 
             if (!string.IsNullOrEmpty(filterParameters.SearchKeyword))
             {
                 query = query.Where(u => u.Email.Contains(filterParameters.SearchKeyword) ||
-                u.FirstName.Contains(filterParameters.SearchKeyword) ||
-                u.LastName.Contains(filterParameters.SearchKeyword));
+                                         u.Name.Contains(filterParameters.SearchKeyword));
             }
-
-            //if (filterParameters.EmailConfirmed.HasValue)
-            //{
-            //    query = query.Where(u => u.EmailConfirmed == filterParameters.EmailConfirmed);
-            //}
 
             if (!string.IsNullOrEmpty(filterParameters.SortColumn))
             {
-                switch (filterParameters.SortColumn.ToLower())
-                {
-                    case "name":
-                        orderByColumn = u => u.Name; // Assuming Name is stored in FirstName
-                        break;
-                    case "email":
-                        orderByColumn = u => u.Email;
-                        break;
-                    case "phonenumber":
-                        orderByColumn = u => u.PhoneNumber;
-                        break;                    
-                    default:
-                        throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
-                }
-
-                if (orderByColumn != null)
-                {
-                    orderBy = queryable =>
-                    {
-                        return filterParameters.Descending
-                            ? queryable.OrderByDescending(orderByColumn)
-                            : queryable.OrderBy(orderByColumn);
-                    };
-                }
-            }
-
-            if (orderBy != null)
-            {
-                query = orderBy(query);
+                query = ApplySorting(query, filterParameters.SortColumn, filterParameters.Descending);
             }
 
             var totalCount = await query.CountAsync();
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
-            var users = await query
+            var paginatedUsers = await query
                 .Skip((filterParameters.PageNumber - 1) * filterParameters.PageSize)
                 .Take(filterParameters.PageSize)
                 .ToListAsync();
 
-            // Remove superuser from the list
-            users = users.Where(u => !IsSuperuser(u)).ToList();
+            var userIds = paginatedUsers.Select(u => u.Id).ToList();
 
-            var userResponseDtos = new List<UserResponseDto>();
+            var userRoles = await (from userRole in _context.UserRoles
+                                   join role in _context.Roles on userRole.RoleId equals role.Id
+                                   where userIds.Contains(userRole.UserId)
+                                   select new
+                                   {
+                                       UserId = userRole.UserId,
+                                       RoleName = role.Name
+                                   }).ToListAsync();
 
-            foreach (var user in users)
+            var userResponseDtos = paginatedUsers.Select(user =>
             {
-                var roles = await _userManager.GetRolesAsync(user);
+                var roles = userRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleName).ToList();
                 var userDto = _mapper.Map<UserResponseDto>(user);
                 userDto.Role = string.Join(",", roles);
                 userDto.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, user.ProfilePhoto);
-                userResponseDtos.Add(userDto);
-            }
+                return userDto;
+            }).ToList();
 
             var pagedResult = new PaginationResponse<UserResponseDto>
             {
@@ -395,6 +372,21 @@ public class UserService : IUserService
             return ApiResponse<PaginationResponse<UserResponseDto>>.ErrorResponse(ex.Message);
         }
     }
+
+    private IQueryable<ApplicationUser> ApplySorting(IQueryable<ApplicationUser> query, string sortColumn, bool descending)
+    {
+        Expression<Func<ApplicationUser, object>> orderByColumn = sortColumn.ToLower() switch
+        {
+            "name" => u => u.Name,
+            "email" => u => u.Email,
+            "phonenumber" => u => u.PhoneNumber,
+            _ => throw new ArgumentException($"Invalid sort column: {sortColumn}")
+        };
+
+        return descending ? query.OrderByDescending(orderByColumn) : query.OrderBy(orderByColumn);
+    }
+
+
     private bool IsSuperuser(ApplicationUser user)
     {
         // Check if the user has the 'Superuser' role
