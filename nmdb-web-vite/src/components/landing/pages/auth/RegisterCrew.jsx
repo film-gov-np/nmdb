@@ -34,12 +34,7 @@ const RegisterCrew = () => {
     },
   });
 
-  const onSubmit = ({
-    email,
-    password,
-    confirmPassword,
-    acceptTerms,
-  }) => {
+  const onSubmit = ({ email, password, confirmPassword, acceptTerms }) => {
     const postData = {
       email,
       password,
@@ -56,7 +51,7 @@ const RegisterCrew = () => {
           if (responseData.isSuccess) {
             //set token to cookie or localStorage
             navigate(Paths.Route_Login);
-          }else{
+          } else {
             setErrorState(responseData.message);
             toast({
               description: "Something went wrong. Please try again later.",

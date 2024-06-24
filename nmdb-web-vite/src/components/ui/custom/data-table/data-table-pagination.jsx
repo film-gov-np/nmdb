@@ -45,9 +45,9 @@ export function DataTablePagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] lg:w-[120px] items-center justify-center text-sm font-medium">
+        <div className="flex w-[100px] items-center justify-center text-sm font-medium lg:w-[120px]">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount() || "..." }
+          {table.getPageCount() || "..."}
         </div>
         <div className="flex items-center space-x-2">
           <Button

@@ -45,7 +45,7 @@ const Awards = () => {
     //       label: categroy.categoryName,
     //     })) || [],
     // });
-  };
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">

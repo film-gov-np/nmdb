@@ -21,9 +21,14 @@ export const facetedFilters = [
   },
 ];
 
-const CardRequest = ({className}) => {
+const CardRequest = ({ className }) => {
   return (
-    <main className={cn("flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6", className)}>
+    <main
+      className={cn(
+        "flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6",
+        className,
+      )}
+    >
       <DataTableAdvancedServerControlled
         apiPath={ApiPaths.Path_CardRequest}
         columns={columns}
@@ -31,7 +36,6 @@ const CardRequest = ({className}) => {
         queryKey="datatable-card-request"
         facetedFilters={facetedFilters}
         withHeader={false}
-        // addNewPath={Paths.Route_Admin_ProductionHouse_Add}
       />
     </main>
   );

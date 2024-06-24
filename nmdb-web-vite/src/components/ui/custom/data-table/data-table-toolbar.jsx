@@ -119,7 +119,7 @@ export function DataTableToolbar({ table, facetedFilters }) {
           </Button>
         )}
       </div>
-      <DataTableToolbarActions table={table}/>
+      <DataTableToolbarActions table={table} />
       <DataTableViewOptions table={table} />
     </div>
   );

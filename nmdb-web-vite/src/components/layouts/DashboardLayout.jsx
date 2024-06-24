@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Bell, CircleUser, Menu, Package2, Search } from "lucide-react";
+import { CircleUser } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/mode-toggle";
 import Sidenav from "@/components/admin/Sidenav";
 import { BreadcrumbResponsive } from "@/components/admin/Breadcrumb";
@@ -26,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Logo from "../common/Logo";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const DashboardLayout = () => {
                   to={Paths.Route_Admin}
                   className="flex items-center gap-2 font-semibold text-secondary-foreground"
                 >
-                  <Package2 className="h-6 w-6" />
+                  <Logo />
                   <span className="">NMDB Dashboard</span>
                 </NavLink>
                 {/* <Button
@@ -64,7 +64,7 @@ const DashboardLayout = () => {
               </div>
               <div className="mt-auto border-r">
                 <div className="p-4">
-                  <Card className="bg-secondary text-secondary-foreground border-none shadow-sm">
+                  <Card className="border-none bg-secondary text-secondary-foreground shadow-sm">
                     <CardHeader className="p-2 pt-0 md:p-4">
                       <CardTitle className="text-xl">
                         {" "}
@@ -79,7 +79,7 @@ const DashboardLayout = () => {
               </div>
             </div>
           </aside>
-          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 shadow-lg bg-secondary px-4 md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
+          <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center gap-4 bg-secondary px-4 shadow-lg md:left-60 lg:left-64 lg:h-[60px] lg:px-6">
             <MobileSideBar />
             {/* <div className="w-full flex-1">
               <form>
@@ -95,60 +95,64 @@ const DashboardLayout = () => {
             </div> */}
             <div className="w-full flex-1"></div>
 
-            {isAuthorized && (<DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  {
-                    <Avatar className="flex h-8 w-8 text-center">
-                      <AvatarImage
-                        src={userInfo.profilePhotoUrl}
-                        alt="Avatar"
-                      />
-                      <AvatarFallback>
-                        <CircleUser className="h-5 w-5" />
-                      </AvatarFallback>
-                    </Avatar>
-                  }
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  <NavLink
-                    className={"hover:underline"}
-                    to={Paths.Route_Admin_User + "/" + userInfo.id + "/edit"}
+            {isAuthorized && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="rounded-full"
                   >
-                    <div className="flex flex-col items-center justify-center ">
-                      <p className=" text-muted-foreground">
-                        {userInfo.name}
-                      </p>
-                      <p className=" text-muted-foreground">{userInfo.email}</p>
-                    </div>
-                  </NavLink>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <NavLink to={Paths.Route_Home}>Visit Website</NavLink>
-                </DropdownMenuItem>
-                {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2">
-                  Theme<ModeToggle></ModeToggle>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    logOutFromServer();
-                  }}
-                >
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>)}
+                    {
+                      <Avatar className="flex h-8 w-8 text-center">
+                        <AvatarImage
+                          src={userInfo.profilePhotoUrl}
+                          alt="Avatar"
+                        />
+                        <AvatarFallback>
+                          <CircleUser className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
+                    }
+                    <span className="sr-only">Toggle user menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    <NavLink
+                      className={"hover:underline"}
+                      to={Paths.Route_Admin_User + "/" + userInfo.id + "/edit"}
+                    >
+                      <div className="flex flex-col items-center justify-center ">
+                        <p className=" text-muted-foreground">
+                          {userInfo.name}
+                        </p>
+                        <p className=" text-muted-foreground">
+                          {userInfo.email}
+                        </p>
+                      </div>
+                    </NavLink>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <NavLink to={Paths.Route_Home}>Visit Website</NavLink>
+                  </DropdownMenuItem>
+                  {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="flex gap-2">
+                    Theme<ModeToggle></ModeToggle>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      logOutFromServer();
+                    }}
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </header>
           <div className="flex flex-col overflow-hidden pt-14 md:pl-60 lg:pl-64 lg:pt-[60px]">
             <div className="px-4 pt-2 lg:px-6 lg:pt-4">

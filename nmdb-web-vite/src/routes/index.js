@@ -202,7 +202,7 @@ export const routes = [
                 path: Paths.Route_Admin_Theatre + "/:slug",
                 isPublic: false,
               },
-            ]
+            ],
           },
           {
             name: "awards",
@@ -232,7 +232,7 @@ export const routes = [
                 path: Paths.Route_Admin_Awards + "/:slug",
                 isPublic: false,
               },
-            ]
+            ],
           },
           {
             name: "user",
@@ -262,7 +262,7 @@ export const routes = [
                 path: Paths.Route_Admin_User + "/:slug",
                 isPublic: false,
               },
-            ]
+            ],
           },
           {
             name: "Card Request",

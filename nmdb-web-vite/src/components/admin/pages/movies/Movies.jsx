@@ -4,19 +4,20 @@ import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-t
 import { ApiPaths } from "@/constants/apiPaths";
 import { movieCategories, movieStatuses } from "./constants";
 
-
-export const facetedFilters = [{
-  name: "category",
-  title: "Category",
-  accessorKey:"Category",
-  filters: movieCategories,
-},
-{
-  name: "status",
-  title: "Status",
-  accessorKey:"Status",
-  filters: movieStatuses,
-}];
+export const facetedFilters = [
+  {
+    name: "category",
+    title: "Category",
+    accessorKey: "Category",
+    filters: movieCategories,
+  },
+  {
+    name: "status",
+    title: "Status",
+    accessorKey: "Status",
+    filters: movieStatuses,
+  },
+];
 
 const Movies = () => {
   return (

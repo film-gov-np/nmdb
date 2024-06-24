@@ -86,7 +86,7 @@ const CelebritiesDetails = () => {
   const mutateCardRequest = useMutation({
     mutationFn: sendCardRequest,
     onSuccess: (data, variables, context) => {
-      if(buttonRef.current) buttonRef.current.style.display = 'none'
+      if (buttonRef.current) buttonRef.current.style.display = "none";
       toast({ description: "Card request sent successfully." });
     },
     onError: (error, variables, context) => {
@@ -124,9 +124,11 @@ const CelebritiesDetails = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-4">
               <div className="space-y-2">
-                <h2 className="text-5xl font-semibold tracking-tight text-primary flex items-center gap-4">
+                <h2 className="flex items-center gap-4 text-5xl font-semibold tracking-tight text-primary">
                   {celebDetails.name}
-                  {celebDetails.isVerified && <CheckCircledIcon className="text-secondary h-6 w-6"/>}
+                  {celebDetails.isVerified && (
+                    <CheckCircledIcon className="h-6 w-6 text-secondary" />
+                  )}
                 </h2>
                 <h2 className="text-2xl font-semibold tracking-tight text-primary/60">
                   {celebDetails.nepaliName}

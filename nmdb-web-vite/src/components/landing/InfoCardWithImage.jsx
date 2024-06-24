@@ -39,7 +39,9 @@ const InfoCardWithImage = ({
           <h3 className="font-medium leading-none hover:text-primary/80">
             {title}
           </h3>
-          {isVerifiedProfile && <CheckCircledIcon className="text-secondary h-5 w-5"/>}
+          {isVerifiedProfile && (
+            <CheckCircledIcon className="h-5 w-5 text-secondary" />
+          )}
         </NavLink>
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>

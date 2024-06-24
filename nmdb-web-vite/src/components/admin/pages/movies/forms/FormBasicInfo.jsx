@@ -86,7 +86,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
         <FormField
           control={form.control}
           name="thumbnailImageFile"
-          render={({field }) => (
+          render={({ field }) => (
             <FormItem className="lg:col-span-3">
               <FormLabel>Thumbnail Image</FormLabel>
               <FileInput
@@ -101,7 +101,7 @@ const FormBasicInfo = ({ form, previews, setPreviews }) => {
         <FormField
           control={form.control}
           name="coverImageFile"
-          render={({field }) => (
+          render={({ field }) => (
             <FormItem className="lg:col-span-3">
               <FormLabel>Cover Image</FormLabel>
               <FileInput

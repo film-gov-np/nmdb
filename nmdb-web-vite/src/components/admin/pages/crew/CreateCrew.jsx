@@ -34,7 +34,6 @@ import DatePickerForForm from "@/components/common/formElements/DatePicker";
 import { Date_Format, Gender } from "@/constants/general";
 import DateInput from "@/components/ui/custom/DateInput";
 import { format, isValid, parse } from "date-fns";
-import Image from "@/components/common/Image";
 import { FileInput } from "@/components/common/formElements/FileInput";
 import { isNull } from "lodash";
 
@@ -161,7 +160,7 @@ const formSchema = z.object({
   profilePhotoFile: z.any(),
   profilePhoto: z.any(),
   email: z.string().email().optional().or(z.literal("")),
-  hasRequestedCard: z.any()
+  hasRequestedCard: z.any(),
 });
 
 const defaultValues = {
@@ -194,7 +193,7 @@ const defaultValues = {
   dateOfBirthInBS: "",
   dateOfDeathInBS: "",
   email: "",
-  hasRequestedCard: false
+  hasRequestedCard: false,
 };
 
 function CreateCrew() {
@@ -306,7 +305,11 @@ function CreateCrew() {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="crew" pathTo={Paths.Route_Admin_Crew} />
+      <AddPageHeader
+        label="crew"
+        pathTo={Paths.Route_Admin_Crew}
+        renderMode={renderMode}
+      />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={5} rowCount={2} repeat={2} shrinkZero />
       ) : (
@@ -337,8 +340,9 @@ function CrewForm({ crew, renderMode, onSubmit }) {
       isVerified: crew.isVerified.toString(),
     }),
   });
-  if(crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
-  if(isNull(crew.hasRequestedCard)) form.setValue("hasRequestedCard", crew.hasRequestedCard);
+  if (crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
+  if (isNull(crew.hasRequestedCard))
+    form.setValue("hasRequestedCard", crew.hasRequestedCard);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["FlimRolesforCrews"],

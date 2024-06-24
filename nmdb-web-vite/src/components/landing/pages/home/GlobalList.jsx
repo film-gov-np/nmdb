@@ -16,14 +16,14 @@ const GlobalList = ({ search }) => {
         search={search}
         showFilters={false}
         itemsPerPage={14}
-        className={"min-h-60 -mt-8"}
+        className={"-mt-8 min-h-60"}
         showBackButton={false}
       />
       <CinemaHall
         search={search}
         showFilters={false}
         itemsPerPage={18}
-        className={"min-h-60 -mt-8"}
+        className={"-mt-8 min-h-60"}
         showBackButton={false}
       />
     </div>

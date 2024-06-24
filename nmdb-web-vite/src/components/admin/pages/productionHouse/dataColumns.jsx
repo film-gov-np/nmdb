@@ -1,5 +1,4 @@
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DeleteItemsDialog } from "@/components/ui/custom/data-table/delete-items-dialog";
 import { DataTableColumnHeader } from "@/components/ui/custom/data-table/data-table-column-header";
 import {

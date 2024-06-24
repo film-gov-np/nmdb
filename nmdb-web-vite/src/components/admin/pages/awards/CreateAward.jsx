@@ -12,34 +12,16 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { z } from "zod";
-import { cn, sanitizeData } from "@/lib/utils";
+import { sanitizeData } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { ApiPaths } from "@/constants/apiPaths";
-import { useState } from "react";
-import DateInput from "@/components/ui/custom/DateInput";
 import { Textarea } from "@/components/ui/textarea";
 import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
 const formSchema = z.object({
@@ -91,22 +73,20 @@ const renderModes = {
 };
 
 const defaultValues = {
-  awardTitle: '',
-  categoryName: '',
-  awardStatus: '',
-  awardedIn: '',
+  awardTitle: "",
+  categoryName: "",
+  awardStatus: "",
+  awardedIn: "",
   awardedDate: null,
-  remarks: '',
+  remarks: "",
   movieID: [],
-  crewID: []
-
+  crewID: [],
 };
 
 const getAward = async (id, renderMode) => {
   let apiPath = `${ApiPaths.Path_Awards}/${id}`;
   let data = {};
-  if (renderMode === renderModes.Render_Mode_Create)
-    return defaultValues;
+  if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
@@ -118,8 +98,6 @@ const getAward = async (id, renderMode) => {
   return data;
 };
 
-
-
 const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
   let apiPath = ApiPaths.Path_Awards;
   if (isEditMode) {
@@ -128,14 +106,16 @@ const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
   }
   postData = {
     ...postData,
-    movieID: postData.movieID && postData.movieID.length > 0 ?
-      postData.movieID[0].id :
-      null,
-    crewID: postData.crewID && postData.crewID.length > 0 ?
-      postData.crewID[0].id :
-      null,
-    awardedDate: postData.awardedDate ? postData.awardedDate : null
-  }
+    movieID:
+      postData.movieID && postData.movieID.length > 0
+        ? postData.movieID[0].id
+        : null,
+    crewID:
+      postData.crewID && postData.crewID.length > 0
+        ? postData.crewID[0].id
+        : null,
+    awardedDate: postData.awardedDate ? postData.awardedDate : null,
+  };
   const { data } = await axiosInstance({
     method: isEditMode ? "put" : "post",
     url: apiPath,
@@ -215,18 +195,16 @@ const CreateAward = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="award" pathTo={Paths.Route_Admin_Awards} />
-      {isLoading ||
-        isFetching ? (
+      <AddPageHeader
+        label="award"
+        pathTo={Paths.Route_Admin_Awards}
+        renderMode={renderMode}
+      />
+      {isLoading || isFetching ? (
         <FormSkeleton columnCount={2} rowCount={1} repeat={1} shrinkZero />
       ) : (
-        data &&
-        (
-          <AwardForm
-            award={data}
-            renderMode={renderMode}
-            onSubmit={onSubmit}
-          />
+        data && (
+          <AwardForm award={data} renderMode={renderMode} onSubmit={onSubmit} />
         )
       )}
     </main>
@@ -240,7 +218,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
     defaultValues: sanitizeData({
       ...award,
       movieID: award.movie ? [award.movie] : [],
-      crewID: award.crew ? [award.crew] : []
+      crewID: award.crew ? [award.crew] : [],
     }),
   });
   return (
@@ -380,8 +358,6 @@ function AwardForm({ award, renderMode, onSubmit }) {
                 </FormItem>
               )}
             />
-
-
 
             <FormField
               control={form.control}

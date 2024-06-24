@@ -61,7 +61,7 @@ const Register = () => {
           if (responseData.isSuccess) {
             //set token to cookie or localStorage
             navigate(Paths.Route_Verify_Email);
-          }else{
+          } else {
             toast({
               description: "Something went wrong. Please try again later.",
               duration: 5000,

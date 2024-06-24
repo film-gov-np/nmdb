@@ -23,7 +23,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
+import {
+  Calculator,
+  Calendar,
+  CreditCard,
+  Settings,
+  Smile,
+  User,
+} from "lucide-react";
 
 export function DatatableSimple({ columns, data }) {
   const [sorting, setSorting] = useState([]);
@@ -104,7 +111,7 @@ export function DatatableSimple({ columns, data }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -123,7 +130,7 @@ export function DatatableSimple({ columns, data }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

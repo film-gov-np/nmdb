@@ -50,9 +50,11 @@ const Login = () => {
           const userInfo = response.data;
           setIsAuthorized(true);
           setUserInfo(userInfo);
-          if (userInfo.isCrew) navigate(Paths.Route_Celebrities + "/" + userInfo.crewId);
-          else if(userInfo.role === "Admin" || userInfo.role === "Superuser") navigate(Paths.Route_Admin_Dashboard);
-          else navigate(Paths.Route_Home)
+          if (userInfo.isCrew)
+            navigate(Paths.Route_Celebrities + "/" + userInfo.crewId);
+          else if (userInfo.role === "Admin" || userInfo.role === "Superuser")
+            navigate(Paths.Route_Admin_Dashboard);
+          else navigate(Paths.Route_Home);
         } else {
           setErrorState(response.message);
         }
