@@ -34,7 +34,7 @@ const InfoCardWithImage = ({
           {/* {isVerifiedProfile && <CheckCircledIcon className="absolute top-1 left-1 text-secondary h-4 w-4 stro"/>} */}
         </NavLink>
       </div>
-      <div className="space-y-2 text-sm">
+      <div className="space-y-1 text-sm">
         <NavLink to={navigateTo} className="flex justify-evenly">
           <h3 className="font-medium leading-none hover:text-primary/80">
             {title}
@@ -44,7 +44,7 @@ const InfoCardWithImage = ({
           )}
         </NavLink>
         {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-xs text-muted-foreground text-center">{description}</p>
         )}
       </div>
     </div>
