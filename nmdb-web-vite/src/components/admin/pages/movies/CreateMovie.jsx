@@ -134,7 +134,11 @@ const AddMovie = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="movie" pathTo={Paths.Route_Admin_Movie} />
+      <AddPageHeader
+        label="movie"
+        pathTo={Paths.Route_Admin_Movie}
+        renderMode={renderMode}
+      />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />
       ) : (

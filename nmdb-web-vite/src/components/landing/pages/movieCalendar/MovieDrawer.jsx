@@ -38,7 +38,7 @@ export function MovieDrawer({ open, onOpenChange, movie }) {
           </DialogHeader>
           <MovieDetails details={movie} />
           <DialogFooter>
-            <NavLink to={Paths.Route_Movies + "/" + movie.id} asChild>
+            <NavLink to={Paths.Route_Movies + "/" + movie.id}>
               <Button type="button">View Movie</Button>
             </NavLink>
           </DialogFooter>
@@ -56,12 +56,10 @@ export function MovieDrawer({ open, onOpenChange, movie }) {
         </DrawerHeader>
         <MovieDetails className="px-4" details={movie} />
         <DrawerFooter className="flex flex-row justify-evenly pt-2">
-            <NavLink to={Paths.Route_Movies + "/" + movie.id} asChild>
-              <Button type="button">View Movie</Button>
-            </NavLink>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
+          <NavLink to={Paths.Route_Movies + "/" + movie.id}>
+            <Button type="button">View Movie</Button>
+          </NavLink>
+          <DrawerClose>Cancel</DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

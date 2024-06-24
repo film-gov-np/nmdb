@@ -14,7 +14,6 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ApiPaths } from "@/constants/apiPaths";
 
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function DataTableRowActions({ row }) {
@@ -97,9 +96,7 @@ export const columns = [
             {row.getValue("name") && extractInitials(row.getValue("name"))}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col space-y-2">
-          {row.getValue("name")}
-        </div>
+        <div className="flex flex-col space-y-2">{row.getValue("name")}</div>
       </div>
     ),
   },
@@ -129,7 +126,7 @@ export const columns = [
     ),
     cell: ({ row }) => <div className="">{row.getValue("phoneNumber")}</div>,
     enableSorting: false,
-  },  
+  },
   {
     id: "actions",
     meta: "Actions",

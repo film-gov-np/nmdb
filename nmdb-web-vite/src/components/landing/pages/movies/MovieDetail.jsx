@@ -1,10 +1,7 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { Circle, CircleIcon } from "lucide-react";
-import { useState } from "react";
+import { CircleIcon } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { Paths } from "@/constants/routePaths";
@@ -75,27 +72,29 @@ const MovieDetail = () => {
   // if (isLoading || topCastData.isLoading) return "Loading...";
   // if (isError || topCastData.isError) return `Error: ${error}`;
   const movie = data.movie;
-  const topCastRaw = movie.crewRoles.filter(role => role.roleName === "Actress" || role.roleName === "Actor");
-  const topCast = topCastRaw.flatMap(role => {
-    return role.crews.map(crew => {
-        return {
-            id: crew.id,
-            name: crew.name,
-            roleName: role.roleName,
-            profilePhotoUrl: crew.profilePhotoUrl
-        };
+  const topCastRaw = movie.crewRoles.filter(
+    (role) => role.roleName === "Actress" || role.roleName === "Actor",
+  );
+  const topCast = topCastRaw.flatMap((role) => {
+    return role.crews.map((crew) => {
+      return {
+        id: crew.id,
+        name: crew.name,
+        roleName: role.roleName,
+        profilePhotoUrl: crew.profilePhotoUrl,
+      };
     });
-});
+  });
   const allCrewRaw = movie.crewRoles;
-  const allCrew = allCrewRaw.flatMap(role => {
-    return role.crews.map(crew => {
-        return {
-            id: crew.id,
-            name: crew.name,
-            roleName: role.roleName,
-        };
+  const allCrew = allCrewRaw.flatMap((role) => {
+    return role.crews.map((crew) => {
+      return {
+        id: crew.id,
+        name: crew.name,
+        roleName: role.roleName,
+      };
     });
-});
+  });
   // const topCast = topCastData.data.topCast;
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background md:gap-8">
@@ -185,50 +184,65 @@ const MovieDetail = () => {
               <h3 className="text-2xl font-bold text-primary">OverView</h3>
               <p className="text-muted-foreground">{movie.oneLiner}</p>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold text-primary">Top Cast</h3>
-              <div className="relative ">
-                <ScrollArea>
-                  <div className="flex space-x-4 pb-4">
-                    {topCast?.map((cast, index) => (
-                      <InfoCardWithImage
-                        key={"movie-top-cast-" + index}
-                        title={cast.name}
-                        imgPath={cast.profilePhotoUrl}
-                        className="w-[150px]"
-                        aspectRatio="portrait"
-                        width={150}
-                        height={210}
-                        navigateTo={Paths.Route_Celebrities + "/" + cast.id}
-                      />
-                    ))}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+            {topCast?.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-primary">Top Cast</h3>
+                <div className="relative ">
+                  <ScrollArea>
+                    <div className="flex space-x-4 pb-4">
+                      {topCast.map((cast, index) => (
+                        <InfoCardWithImage
+                          key={"movie-top-cast-" + index}
+                          title={cast.name}
+                          imgPath={cast.profilePhotoUrl}
+                          className="w-[150px]"
+                          aspectRatio="portrait"
+                          width={150}
+                          height={210}
+                          navigateTo={Paths.Route_Celebrities + "/" + cast.id}
+                        />
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </div>
               </div>
-            </div>
+            )}
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold text-primary">All Crew Members</h3>
+              <h3 className="text-2xl font-bold text-primary">
+                All Crew Members
+              </h3>
               <div className="rounded-lg border border-input p-1">
                 <ScrollArea viewPortClass="max-h-[680px]">
-                  <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">
-                    {allCrew.map((crew, i) => (
-                      <div
-                        key={"crews" + crew.name + i}
-                        className="flex flex-row items-center space-x-3 "
-                      >
-                        <CircleIcon className="h-1.5 w-1.5 fill-foreground " />
-                        <div className="">
-                          <NavLink to={Paths.Route_Celebrities + "/" + crew.id}>
-                            <h3 className="text-md font-bold ">{crew.name}</h3>
-                          </NavLink>
-                          <p className="text-xs text-muted-foreground">
-                            {crew.roleName}
-                          </p>
+                  {allCrew?.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      Crew data not available.
+                    </div>
+                  ) : (
+                    <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">
+                      {allCrew?.map((crew, i) => (
+                        <div
+                          key={"crews" + crew.name + i}
+                          className="flex flex-row items-center space-x-3 "
+                        >
+                          <CircleIcon className="h-1.5 w-1.5 fill-foreground " />
+                          <div className="">
+                            <NavLink
+                              to={Paths.Route_Celebrities + "/" + crew.id}
+                            >
+                              <h3 className="text-md font-bold ">
+                                {crew.name}
+                              </h3>
+                            </NavLink>
+                            <p className="text-xs text-muted-foreground">
+                              {crew.roleName}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
+
                   <ScrollBar orientation="vertical" />
                 </ScrollArea>
               </div>

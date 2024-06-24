@@ -69,7 +69,7 @@ const Dashboard = () => {
                   {Math.floor(data.theatreCount / 10) * 10} +{" "}
                 </div>
               </CardContent>
-            </Card >
+            </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-primary">
                 <CardTitle className="text-sm font-medium">
@@ -91,7 +91,7 @@ const Dashboard = () => {
         <h2 className="text-3xl font-bold capitalize tracking-tight text-primary">
           Card Requests
         </h2>
-        <CardRequest className="p-1 lg:p-1"/>
+        <CardRequest className="p-1 lg:p-1" />
       </div>
     </main>
   );

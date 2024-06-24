@@ -77,14 +77,18 @@ const Celebrities = ({
           <div className="flex items-center justify-start gap-6">
             {showBackButton && (
               <NavLink to={Paths.Route_Home}>
-                <Button variant="outline" size="icon" className="h-8 w-8 text-primary">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 text-primary"
+                >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </Button>
               </NavLink>
             )}
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold tracking-tight md:text-5xl text-primary">
+              <h2 className="text-xl font-semibold tracking-tight text-primary md:text-5xl">
                 Celebrities
               </h2>
             </div>
@@ -105,7 +109,7 @@ const Celebrities = ({
                   setCurrentPage(1);
                 }}
                 placeholder="Search celebrities..."
-                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] border-primary"
+                className="border-primary pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               />
             </div>
           </form>
@@ -147,7 +151,7 @@ const Celebrities = ({
                   width={220}
                   height={280}
                   navigateTo={Paths.Route_Celebrities + "/" + celeb.id}
-                  isVerifiedProfile= {celeb.isVerified}
+                  isVerifiedProfile={celeb.isVerified}
                 />
               ))}
             </div>

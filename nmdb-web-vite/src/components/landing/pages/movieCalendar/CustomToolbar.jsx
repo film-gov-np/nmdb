@@ -8,13 +8,10 @@ import {
 import {
   eachYearOfInterval,
   format,
-  getDay,
   getMonth,
   getYear,
-  parse,
   setMonth,
   setYear,
-  startOfWeek,
 } from "date-fns";
 
 const CustomToolbar = (props) => {
@@ -62,7 +59,8 @@ const CustomToolbar = (props) => {
       </span>
       <span className="rbc-toolbar-label">{label}</span>
       <div className="flex">
-        <Select className="flex"
+        <Select
+          className="flex"
           defaultValue={currentYear}
           value={currentYear}
           onValueChange={handleYearChange}

@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,17 +29,7 @@ import { useState } from "react";
 import { sanitizeData } from "@/lib/utils";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { FileInput } from "@/components/common/formElements/FileInput";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@radix-ui/react-checkbox";
 import { useAuthContext } from "@/components/admin/context/AuthContext";
-
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -190,7 +180,11 @@ function CreateUser() {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="user" pathTo={Paths.Route_Admin_User} />
+      <AddPageHeader
+        label="user"
+        pathTo={Paths.Route_Admin_User}
+        renderMode={renderMode}
+      />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={5} rowCount={2} repeat={2} shrinkZero />
       ) : (
@@ -214,7 +208,7 @@ const getUserRoles = async (apiPath) => {
 function UserForm({ user, renderMode, onSubmit }) {
   const { slug } = useParams();
   const { isAuthorized, userInfo } = useAuthContext();
-  
+
   const [previews, setPreviews] = useState({
     profilePhotoFile: user?.profilePhotoUrl ? [user?.profilePhotoUrl] : [],
   });
@@ -303,7 +297,10 @@ function UserForm({ user, renderMode, onSubmit }) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={renderMode === renderModes.Render_Mode_Edit}/>
+                    <Input
+                      {...field}
+                      disabled={renderMode === renderModes.Render_Mode_Edit}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -341,8 +338,7 @@ function UserForm({ user, renderMode, onSubmit }) {
               )}
             />
           </fieldset>
-          {
-            slug != String(userInfo.id) &&
+          {slug != String(userInfo.id) && (
             <fieldset
               disabled={renderMode === renderModes.Render_Mode_Details}
               className="grid grid-cols-1 gap-2 rounded-lg border p-4 md:grid-cols-2 md:gap-4 lg:gap-6"
@@ -379,7 +375,7 @@ function UserForm({ user, renderMode, onSubmit }) {
                 )}
               />
             </fieldset>
-          }
+          )}
           {renderMode === renderModes.Render_Mode_Create && (
             <fieldset
               disabled={renderMode === renderModes.Render_Mode_Details}

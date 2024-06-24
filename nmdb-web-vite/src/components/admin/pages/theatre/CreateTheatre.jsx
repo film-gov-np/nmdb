@@ -12,22 +12,14 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { cn, sanitizeData } from "@/lib/utils";
+import { sanitizeData } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { ApiPaths } from "@/constants/apiPaths";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 import {
   Select,
   SelectContent,
@@ -46,14 +38,14 @@ const formSchema = z.object({
     message: "Contact number must be at least 6 characters.",
   }),
   establishedDate: z.date().or(z.string()),
-    // .refine(
-    //   (date) => {
-    //     return date < new Date();
-    //   },
-    //   {
-    //     message: "Established date must be in the past.",
-    //   },
-    // ),
+  // .refine(
+  //   (date) => {
+  //     return date < new Date();
+  //   },
+  //   {
+  //     message: "Established date must be in the past.",
+  //   },
+  // ),
   seatCapacity: z.coerce.number().positive(),
   numberOfScreen: z.coerce.number().positive(),
   websiteUrl: z.string().url(),
@@ -172,7 +164,11 @@ const CreateTheatre = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="theatre" pathTo={Paths.Route_Admin_Theatre} />
+      <AddPageHeader
+        label="theatre"
+        pathTo={Paths.Route_Admin_Theatre}
+        renderMode={renderMode}
+      />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={2} rowCount={6} repeat={1} shrinkZero />
       ) : (

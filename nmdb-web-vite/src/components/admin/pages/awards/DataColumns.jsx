@@ -13,26 +13,27 @@ import { cn } from "@/lib/utils";
 import { SquarePen, Trash, View } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Paths } from "@/constants/routePaths";
 import { ApiPaths } from "@/constants/apiPaths";
 
 export const labels = [];
 
-export const facetedFilters = [{
-  name: "categoryName",
-  title: "Category",
-  accessorKey: "CategoryId",
-  filters: [
-    {
-      value: "1",
-      label: "Writer",
-    },
-    {
-      value: "2",
-      label: "Visual Effects",
-    },
-  ],
-}];
+export const facetedFilters = [
+  {
+    name: "categoryName",
+    title: "Category",
+    accessorKey: "CategoryId",
+    filters: [
+      {
+        value: "1",
+        label: "Writer",
+      },
+      {
+        value: "2",
+        label: "Visual Effects",
+      },
+    ],
+  },
+];
 
 function DataTableRowActions({ row }) {
   // const movie = row.original;
@@ -100,30 +101,30 @@ function DataTableRowActions({ row }) {
 }
 
 export const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={
+  //         table.getIsAllPageRowsSelected() ||
+  //         (table.getIsSomePageRowsSelected() && "indeterminate")
+  //       }
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "awardTitle",
     meta: "Title",

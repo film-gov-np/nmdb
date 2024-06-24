@@ -226,7 +226,7 @@ const Home = () => {
                       width={150}
                       height={210}
                       navigateTo={Paths.Route_Celebrities + "/" + cast.id}
-                      isVerifiedProfile = {cast.isVerified}
+                      isVerifiedProfile={cast.isVerified}
                     />
                   ))}
                 </div>

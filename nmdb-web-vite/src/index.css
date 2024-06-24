@@ -35,8 +35,8 @@
     --popover-foreground: 0 0% 98%;
     --primary: 0 72.2% 50.6%;
     --primary-foreground: 0 85.7% 97.3%;
-    --secondary:  217.2 91.2% 59.8%;;
-    --secondary-foreground:  0 85.7% 97.3%;;
+    --secondary: 217.2 91.2% 59.8%;
+    --secondary-foreground: 0 85.7% 97.3%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
@@ -62,7 +62,6 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }
-  
 }
 
 @layer utilities {
@@ -71,7 +70,7 @@
   }
 
   .step:before {
-    @apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
+    @apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-4 border-background bg-muted text-center -indent-px font-mono text-base font-medium;
     @apply ml-[-50px] mt-[-4px];
     content: counter(step);
   }
@@ -83,7 +82,8 @@
   }
 }
 
-nav.sidebar-nav a.active, .nav-container a.active{
+nav.sidebar-nav a.active,
+.nav-container a.active {
   @apply bg-primary text-primary-foreground;
 }
 
@@ -99,7 +99,7 @@ nav.sidebar-nav a.active, .nav-container a.active{
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-500/40 rounded-lg;
+  @apply rounded-lg bg-zinc-500/40;
 }
 
 /* Handle on hover */
@@ -107,30 +107,30 @@ nav.sidebar-nav a.active, .nav-container a.active{
   @apply bg-zinc-400/40;
 }
 
-.rbc-calendar{
+.rbc-calendar {
   @apply dark:text-white;
 }
-.rbc-calendar .rbc-today{
+.rbc-calendar .rbc-today {
   @apply dark:bg-stone-900;
 }
-.rbc-calendar .rbc-btn-group button{
+.rbc-calendar .rbc-btn-group button {
   @apply dark:text-white;
 }
-.rbc-calendar .rbc-btn-group button:focus{
+.rbc-calendar .rbc-btn-group button:focus {
   @apply dark:bg-muted;
 }
-.rbc-calendar .rbc-off-range-bg{
+.rbc-calendar .rbc-off-range-bg {
   @apply dark:bg-muted;
 }
-.rbc-toolbar button{
-  @apply flex flex-row
+.rbc-toolbar button {
+  @apply flex flex-row;
 }
-.rbc-toolbar .rbc-btn-group{
+.rbc-toolbar .rbc-btn-group {
   @apply flex;
 }
-.rbc-event{
+.rbc-event {
   @apply bg-primary text-primary-foreground;
 }
-.rbc-event.rbc-selected{
+.rbc-event.rbc-selected {
   @apply bg-primary/85 text-primary-foreground;
 }

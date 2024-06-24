@@ -18,15 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn, sanitizeData } from "@/lib/utils";
-import { format } from "date-fns";
+import { sanitizeData } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
@@ -58,14 +50,17 @@ const formSchema = z.object({
     .max(15, {
       message: "Contact number must not exceed 15 characters.",
     }),
-  establishedDate: z.date().or(z.string()).refine(
-    (date) => {
-      return date < new Date();
-    },
-    {
-      message: "Established date must be in the past.",
-    },
-  ),
+  establishedDate: z
+    .date()
+    .or(z.string())
+    .refine(
+      (date) => {
+        return date < new Date();
+      },
+      {
+        message: "Established date must be in the past.",
+      },
+    ),
   isRunning: z.enum(["true", "false"]).transform((value) => value === "true"),
 });
 
@@ -182,7 +177,10 @@ const CreateProductionHouse = () => {
       navigate(Paths.Route_Admin_ProductionHouse);
     },
     onError: (error, variables, context) => {
-      toast({ description: "Something went wrong.Please check your form and try again." });
+      toast({
+        description:
+          "Something went wrong.Please check your form and try again.",
+      });
     },
     onSettled: (data, error, variables, context) => {
       // queryClient.invalidateQueries("theatreDetail");
@@ -194,6 +192,7 @@ const CreateProductionHouse = () => {
       <AddPageHeader
         label="production house"
         pathTo={Paths.Route_Admin_ProductionHouse}
+        renderMode={renderMode}
       />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={3} rowCount={2} repeat={2} shrinkZero />

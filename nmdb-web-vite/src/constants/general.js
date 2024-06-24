@@ -1,4 +1,4 @@
-export const Date_Format = 'yyyy-MM-dd';
+export const Date_Format = "yyyy-MM-dd";
 export const Gender = [
   {
     value: "0",
@@ -13,3 +13,9 @@ export const Gender = [
     label: "Other",
   },
 ];
+
+export const renderModes = {
+  Render_Mode_Create: "create",
+  Render_Mode_Edit: "edit",
+  Render_Mode_Details: "details",
+};

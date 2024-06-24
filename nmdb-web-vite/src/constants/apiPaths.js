@@ -31,5 +31,5 @@ export const ApiPaths = {
   Path_RequestCard: "/cards/request",
 
   // Users
-  Path_Users:"/users"
+  Path_Users: "/users",
 };

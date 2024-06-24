@@ -4,7 +4,6 @@ import {
   Drama,
   Film,
   Menu,
-  Package2,
   Search,
   Theater,
 } from "lucide-react";
@@ -31,6 +30,7 @@ import { useDebouncedState } from "@/hooks/useDebouncedState";
 import axiosInstance from "@/helpers/axiosSetup";
 import { ApiPaths } from "@/constants/apiPaths";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Logo from "../common/Logo";
 
 // const useNavigationListener = (onNavigateAway) => {
 //   const location = useLocation();
@@ -72,14 +72,14 @@ const MainLayout = () => {
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className=" theme-zinc h-full w-full">
         <div className="flex min-h-screen w-full flex-col">
-          <header className="sticky top-0 z-10 grid h-16 grid-flow-col items-center gap-4 bg-secondary text-secondary-foreground px-4 md:px-6 shadow-lg">
-            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6 text-muted">
+          <header className="sticky top-0 z-10 grid h-16 grid-flow-col items-center gap-4 bg-secondary px-4 text-secondary-foreground shadow-lg md:px-6">
+            <nav className="hidden flex-col gap-6 text-lg font-medium text-muted md:flex-row md:items-center md:gap-5 md:text-sm lg:flex lg:gap-6">
               <NavLink
                 to="/"
                 onClick={resetGlobalSearch}
                 className="flex items-center gap-2 text-lg font-semibold md:text-base"
               >
-                <Package2 className="h-6 w-6" />
+                <Logo />
                 <span>NMDB</span>
                 <span className="sr-only">NMDB</span>
               </NavLink>
@@ -89,7 +89,7 @@ const MainLayout = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="shrink-0 lg:hidden bg-primary text-primary-foreground"
+                  className="shrink-0 bg-primary text-primary-foreground lg:hidden"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle navigation menu</span>
@@ -105,8 +105,8 @@ const MainLayout = () => {
                     }}
                     className="flex items-center gap-2 text-lg font-semibold"
                   >
-                    <Package2 className="h-6 w-6" />
-                    <span className="sr-only">Acme Inc</span>
+                    <Logo />
+                    <span className="sr-only">NMDB</span>
                   </NavLink>
                   <NavLink
                     to={Paths.Route_Home}
@@ -166,7 +166,7 @@ const MainLayout = () => {
                 </nav>
               </SheetContent>
             </Sheet>
-            <div className="nav-container hidden grid-flow-col lg:grid text-muted">
+            <div className="nav-container hidden grid-flow-col text-muted lg:grid">
               <NavLink
                 to={Paths.Route_Home}
                 onClick={resetGlobalSearch}
@@ -230,13 +230,18 @@ const MainLayout = () => {
                       // setCurrentPage(1);
                     }}
                     placeholder="Search ..."
-                    className="pl-8 sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px] bg-transparent placeholder:text-accent"
+                    className="bg-transparent pl-8 placeholder:text-accent sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px]"
                   />
                 </div>
               </form>
               {!isAuthorized && (
                 <NavLink to="login">
-                  <Button variant={"outline"} className="bg-primary border-primary/40">Sign In</Button>
+                  <Button
+                    variant={"outline"}
+                    className="border-primary/40 bg-primary"
+                  >
+                    Sign In
+                  </Button>
                 </NavLink>
               )}
 

@@ -28,7 +28,7 @@ export function DataTableFacetedFilter({
 }) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue());
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -85,11 +85,11 @@ export function DataTableFacetedFilter({
                       if (isSelected) {
                         selectedValues.delete(option.value);
                       } else {
-                        if (isMultiSelector) selectedValues.add(option.value)
+                        if (isMultiSelector) selectedValues.add(option.value);
                         else {
                           selectedValues.clear();
                           selectedValues.add(option.value);
-                          setOpen(false)
+                          setOpen(false);
                         }
                       }
                       const filterValues = Array.from(selectedValues);
@@ -98,16 +98,18 @@ export function DataTableFacetedFilter({
                       );
                     }}
                   >
-                    {isMultiSelector && (<div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible",
-                      )}
-                    >
-                      <CheckIcon className={cn("h-4 w-4")} />
-                    </div>)}
+                    {isMultiSelector && (
+                      <div
+                        className={cn(
+                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                          isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "opacity-50 [&_svg]:invisible",
+                        )}
+                      >
+                        <CheckIcon className={cn("h-4 w-4")} />
+                      </div>
+                    )}
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
