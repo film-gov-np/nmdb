@@ -180,7 +180,7 @@ const CelebritiesDetails = () => {
                   alt={celebDetails.name}
                   className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
                 />
-                {celebDetails.isVerified && <CheckCircledIcon className="absolute top-2 left-2 text-secondary h-5 w-5"/>}
+                {/* {celebDetails.isVerified && <CheckCircledIcon className="absolute top-2 left-2 text-secondary h-5 w-5"/>} */}
               </div>
               <div className="flex flex-1 flex-col gap-4 ">
                 <div className="flex flex-row space-x-4">
