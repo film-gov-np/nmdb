@@ -18,7 +18,6 @@ const getLatestRelease = async () => {
     .catch((err) => {
       throw new Error(err);
     });
-  debugger;
   const totalData = response.totalItems;
   const data = response.items;
   return {
