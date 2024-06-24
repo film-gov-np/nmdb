@@ -31,7 +31,7 @@ const InfoCardWithImage = ({
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
             )}
           />
-          {isVerifiedProfile && <CheckCircledIcon className="absolute top-1 left-1 text-secondary h-4 w-4 stro"/>}
+          {/* {isVerifiedProfile && <CheckCircledIcon className="absolute top-1 left-1 text-secondary h-4 w-4 stro"/>} */}
         </NavLink>
       </div>
       <div className="space-y-2 text-sm">
