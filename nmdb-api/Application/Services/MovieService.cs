@@ -223,12 +223,11 @@ public class MovieService : IMovieService
     public async Task<ApiResponse<PaginationResponse<MovieListResponseDto>>> GetAllAsync(MovieFilterParameters filterParameters)
     {
         Expression<Func<Movie, bool>> filter = null;
+        Expression<Func<Movie, bool>> FilterNull = null;
         Expression<Func<Movie, object>> orderByColumn = null;
-        Func<IQueryable<Movie>, IOrderedQueryable<Theatre>> orderBy = null;
-
 
         // Apply filtering
-        if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword) || (!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate"))
         {
             filter = query =>
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
@@ -236,6 +235,8 @@ public class MovieService : IMovieService
                     (filterParameters.Category == null || filterParameters.Category == query.Category)
                 ) && (
                     (filterParameters.Status == null || filterParameters.Status == query.Status)
+                )&& (
+                    (!(!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate") || query.ReleaseDate!=null)
                 );
         }
         if (filterParameters.Year.HasValue && filterParameters.Month.HasValue)
@@ -262,6 +263,9 @@ public class MovieService : IMovieService
                     break;
                 case "status":
                     orderByColumn = query => query.Status;
+                    break;
+                case "releasedate":
+                    orderByColumn = query =>   query.ReleaseDate ;
                     break;
                 // Add more cases for other columns
                 default:

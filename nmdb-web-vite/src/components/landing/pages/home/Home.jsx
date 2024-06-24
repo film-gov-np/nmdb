@@ -59,22 +59,31 @@ const Home = () => {
     queries: [
       {
         queryKey: ["nowPlayingMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () =>
+          getMovies(
+            ApiPaths.Path_Front_Movies +
+              "?SortColumn=ReleaseDate&Descending=true&PageNumber=1&PageSize=12",
+          ),
         keepPreviousData: true,
       },
       {
         queryKey: ["trendingMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () =>
+          getMovies(
+            ApiPaths.Path_Front_Movies +
+              `?SortColumn=ReleaseDate&Descending=true&PageNumber=1&PageSize=12&Status=1`,
+          ),
         keepPreviousData: true,
       },
       {
         queryKey: ["topRatedMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Movies + "?SortColumn=ReleaseDate&Descending=false&PageNumber=1&PageSize=15"),
         keepPreviousData: true,
       },
       {
         queryKey: ["popularArtists"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Celebrities),
+        queryFn: () =>
+          getMovies(ApiPaths.Path_Front_Celebrities + "?isVerified=true"),
         keepPreviousData: true,
       },
     ],
@@ -187,7 +196,7 @@ const Home = () => {
         <div className="block">
           <div className="space-y-4">
             <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
-              Movie of the Week
+              Old Movies
             </h3>
             <div className="relative ">
               <ScrollArea>
