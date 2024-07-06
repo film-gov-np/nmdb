@@ -57,13 +57,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
         builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
 
+        builder.Entity<ApplicationUser>()
+         .HasMany(u => u.RefreshTokens)
+         .WithOne(rt => rt.User)
+         .HasForeignKey(rt => rt.UserId)
+         .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<FilmProduction>()
             .HasIndex(fp => fp.SubmissionId)
             .IsUnique();
 
 
         builder.Entity<Crew>()
-            .HasIndex(c=>c.Email)
+            .HasIndex(c => c.Email)
             .IsUnique();
 
         // Crew Role/Designation
