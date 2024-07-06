@@ -15,12 +15,13 @@ const InfoCardWithImage = ({
   height,
   className,
   isVerifiedProfile = false,
+  forceReload= false,
   ...props
 }) => {
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
-        <NavLink to={navigateTo} className="relative">
+        <NavLink to={navigateTo} className="relative" reloadDocument={forceReload}>
           <Image
             src={imgPath}
             alt={title || data.name}
@@ -35,7 +36,7 @@ const InfoCardWithImage = ({
         </NavLink>
       </div>
       <div className="space-y-1 text-sm">
-        <NavLink to={navigateTo} className="flex justify-evenly">
+        <NavLink to={navigateTo} className="flex justify-evenly" reloadDocument={forceReload} >
           <h3 className="font-medium leading-none hover:text-primary/80">
             {title}
           </h3>

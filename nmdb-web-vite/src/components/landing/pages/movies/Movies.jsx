@@ -145,6 +145,7 @@ const Movies = ({
                   width={220}
                   height={280}
                   navigateTo={Paths.Route_Movies + "/" + movie.id}
+                  forceReload= {!showFilters}
                 />
               ))}
             </div>
