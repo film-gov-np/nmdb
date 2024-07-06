@@ -104,40 +104,40 @@ const formSchema = z.object({
     ),
   dateOfBirthInBS: z
     .string()
-    .refine(
-      (dateStr) => {
-        // Parse the date string using date-fns
-        const parsedDate = parse(dateStr, Date_Format, new Date());
+    // .refine(
+    //   (dateStr) => {
+    //     // Parse the date string using date-fns
+    //     const parsedDate = parse(dateStr, Date_Format, new Date());
 
-        // Check if the parsed date is valid and matches the input string
-        const isValidDate =
-          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+    //     // Check if the parsed date is valid and matches the input string
+    //     const isValidDate =
+    //       isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
 
-        return isValidDate;
-      },
-      {
-        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
-      },
-    )
+    //     return isValidDate;
+    //   },
+    //   {
+    //     message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+    //   },
+    // )
     .optional()
     .or(z.literal("")),
   dateOfDeathInBS: z
     .string()
-    .refine(
-      (dateStr) => {
-        // Parse the date string using date-fns
-        const parsedDate = parse(dateStr, Date_Format, new Date());
+    // .refine(
+    //   (dateStr) => {
+    //     // Parse the date string using date-fns
+    //     const parsedDate = parse(dateStr, Date_Format, new Date());
 
-        // Check if the parsed date is valid and matches the input string
-        const isValidDate =
-          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+    //     // Check if the parsed date is valid and matches the input string
+    //     const isValidDate =
+    //       isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
 
-        return isValidDate;
-      },
-      {
-        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
-      },
-    )
+    //     return isValidDate;
+    //   },
+    //   {
+    //     message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+    //   },
+    // )
     .optional()
     .or(z.literal("")),
   birthPlace: z.string().optional().or(z.literal("")),
