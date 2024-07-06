@@ -256,7 +256,6 @@ namespace Infrastructure.Identity.Services
             {
                 return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' does not exist.", HttpStatusCode.NotFound);
             }
-
             var userToRegister = new ApplicationUser
             {
                 UserName = request.Email,
@@ -274,6 +273,13 @@ namespace Infrastructure.Identity.Services
                 var account = _mapper.Map<ApplicationUser>(request);
                 account.VerificationToken = await generateVerificationToken();
                 await sendVerificationEmail(account, request.Password);
+
+                // Bad approach
+                // Just a hot fix
+                var crewEntity = await _context.Crews.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
+                crewEntity.IsVerified = true;
+                _context.SaveChanges();
+
                 return ApiResponse<string>.SuccessResponse("Registration Successful.");// Please check your email for verification instructions.");
             }
             var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
