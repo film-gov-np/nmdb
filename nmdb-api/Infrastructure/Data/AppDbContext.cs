@@ -42,6 +42,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<CardRequest> CardRequests { get; set; }
     public DbSet<Awards> Awards { get; set; }
 
+    public DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+    public DbSet<ApplicationRole> Roles { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.HasDefaultSchema("dbo");

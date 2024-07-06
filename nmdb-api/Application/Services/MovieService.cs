@@ -32,7 +32,7 @@ public class MovieService : IMovieService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly string _uploadFolderPath;
     private const string uploadSubFolder = "movies";
-   
+
     public MovieService(IMapper mapper, ILogger<MovieService> logger,
         IUnitOfWork unitOfWork,
         IFileService fileService,
@@ -235,8 +235,8 @@ public class MovieService : IMovieService
                     (filterParameters.Category == null || filterParameters.Category == query.Category)
                 ) && (
                     (filterParameters.Status == null || filterParameters.Status == query.Status)
-                )&& (
-                    (!(!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate") || query.ReleaseDate!=null)
+                ) && (
+                    (!(!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate") || query.ReleaseDate != null)
                 );
         }
         if (filterParameters.Year.HasValue && filterParameters.Month.HasValue)
@@ -248,7 +248,7 @@ public class MovieService : IMovieService
         {
             filter = query =>
                  query.ReleaseDate.HasValue && query.ReleaseDate.Value.Year == filterParameters.Year.Value;
-                
+
         }
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))
@@ -265,7 +265,7 @@ public class MovieService : IMovieService
                     orderByColumn = query => query.Status;
                     break;
                 case "releasedate":
-                    orderByColumn = query =>   query.ReleaseDate ;
+                    orderByColumn = query => query.ReleaseDate;
                     break;
                 // Add more cases for other columns
                 default:
@@ -335,7 +335,7 @@ public class MovieService : IMovieService
             movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
 
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
-                        
+
             movieResponse.ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.ThumbnailImage);
             movieResponse.CoverImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.CoverImage);
 
@@ -404,7 +404,7 @@ public class MovieService : IMovieService
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
                                 ProfilePhoto = c.ProfilePhoto,
-                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl,   "/upload/img/crews/",c.ProfilePhoto),
+                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, "/upload/img/crews/", c.ProfilePhoto),
                             })
                             .ToList()
             })
