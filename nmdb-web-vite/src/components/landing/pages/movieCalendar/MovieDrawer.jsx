@@ -71,7 +71,7 @@ function MovieDetails({ className, details }) {
     <div className={cn("grid items-start gap-4", className)}>
       <div className="grid grid-cols-6 gap-4">
         <div className="col-span-3">
-          <Image src={details.thumbnailPhotoUrl} className={"rounded-md"} />
+          <Image src={details.thumbnailImageUrl} className={"rounded-md"} />
         </div>
         <div className="col-span-3 flex flex-col ">
           <div className="">
