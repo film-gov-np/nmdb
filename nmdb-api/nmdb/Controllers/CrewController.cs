@@ -32,6 +32,7 @@ namespace nmdb.Controllers
             try
             {
                 string currentUserEmail = GetUserEmail;
+                filterParameters.SortColumn = "Name";
                 var response = await _crewService.GetAllAsync(filterParameters);
                 return Ok(response);
             }

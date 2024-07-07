@@ -35,7 +35,7 @@ public class CrewService : ICrewService
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
     private readonly ILogger<CrewService> _logger;
-    private readonly IHttpContextAccessor _httpContextAccessor;    
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly string _uploadFolderPathCrew;
     private readonly string _uploadFolderPathMovie;
     private readonly IWebHostEnvironment _environment;
@@ -82,7 +82,7 @@ public class CrewService : ICrewService
             switch (filterParameters.SortColumn.ToLower())
             {
                 case "name":
-                    orderByColumn = query => query.Name;
+                    orderByColumn = query => query.Name == "Bhuwan K.C." ? 0 : 1;
                     break;
                 case "nickname":
                     orderByColumn = query => query.ContactNumber;
@@ -100,7 +100,7 @@ public class CrewService : ICrewService
 
         var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
 
-        var theatreResponse = await query.Select(
+        var crewsResponse = await query.Select(
                                             tr => new CrewListDto
                                             {
                                                 Id = tr.Id,
@@ -109,12 +109,12 @@ public class CrewService : ICrewService
                                                 Email = tr.Email,
                                                 IsVerified = tr.IsVerified,
                                                 NepaliName = tr.NepaliName,
-                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew,tr.ProfilePhoto),
+                                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew, tr.ProfilePhoto),
                                             }).ToListAsync();
 
         var response = new PaginationResponse<CrewListDto>
         {
-            Items = theatreResponse,
+            Items = crewsResponse,
             TotalItems = totalItems,
             PageNumber = filterParameters.PageNumber,
             PageSize = filterParameters.PageSize
@@ -315,7 +315,7 @@ public class CrewService : ICrewService
                 Name = crewMovie.Movie.Name,
                 NepaliName = crewMovie.Movie.NepaliName,
                 ReleaseDateBS = crewMovie.Movie.ReleaseDateBS,
-                ThumbnailImagePath = ImageUrlHelper.GetFullImageUrl(hostUrl,  _uploadFolderPathMovie, crewMovie.Movie.ThumbnailImage),
+                ThumbnailImagePath = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathMovie, crewMovie.Movie.ThumbnailImage),
             };
             crewMovieDtos.Add(movie);
         }
