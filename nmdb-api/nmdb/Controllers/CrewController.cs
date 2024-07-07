@@ -26,6 +26,7 @@ namespace nmdb.Controllers
             _crewService = crewService;
         }
 
+        // CORS
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
