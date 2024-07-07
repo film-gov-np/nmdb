@@ -230,7 +230,7 @@ const MainLayout = () => {
                       // setCurrentPage(1);
                     }}
                     placeholder="Search ..."
-                    className="bg-transparent pl-8 placeholder:text-accent sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px]"
+                    className="bg-transparent pl-8 placeholder:text-accent sm:w-[100px] md:w-[150px] lg:w-[200px] xl:w-[250px] border-primary focus-visible:ring-offset-1"
                   />
                 </div>
               </form>
