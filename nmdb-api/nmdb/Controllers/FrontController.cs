@@ -41,6 +41,8 @@ public class FrontController : ControllerBase
     {
         try
         {
+            filterParameters.SortColumn = "Name";
+
             var crews = await _crewService.GetAllAsync(filterParameters);
             return Ok(crews);
         }
