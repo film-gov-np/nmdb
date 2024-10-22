@@ -8,15 +8,15 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["nmdb-api/nmdb/nmdb.csproj", "nmdb/"]
-RUN dotnet restore ".nmdb-api/nmdb/nmdb.csproj"
+COPY ["nmdb/nmdb.csproj", "nmdb/"]
+RUN dotnet restore "nmdb/nmdb.csproj"
 COPY . .
 WORKDIR "/src/nmdb"
-RUN dotnet build "./nmdb.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "nmdb.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./nmdb.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "nmdb.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

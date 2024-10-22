@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseFastEndpoints()
-    .UseSwaggerGen();
+ .UseSwaggerGen();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
@@ -72,7 +72,7 @@ async void SeedDatabase(WebApplication app)
             var roleManager = scopedProvider.GetRequiredService<RoleManager<ApplicationRole>>();
             //var roleManager = scopedProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var identityContext = scopedProvider.GetRequiredService<AppDbContext>();
-            await AppIdentitySeed.SeedAsync(identityContext, userManager,roleManager);
+            await AppIdentitySeed.SeedAsync(identityContext, userManager, roleManager);
         }
         catch (Exception ex)
         {
