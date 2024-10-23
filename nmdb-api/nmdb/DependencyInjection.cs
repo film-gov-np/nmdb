@@ -19,7 +19,7 @@ public static class DependencyInjection
             options.AddPolicy("AllowSpecificOrigin",
                 builder =>
                 {
-                    builder.WithOrigins("https://nmdb-phi.vercel.app", "http://localhost:5173", "https://nmdb-git-main-neptics.vercel.app/", "https://nmdb.azurewebsites.net")
+                    builder.WithOrigins("https://nmdb-phi.vercel.app", "https://nmdb-api.nepalidev.com.np/", "http://localhost:5173", "https://nmdb-git-main-neptics.vercel.app/", "https://nmdb.azurewebsites.net")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
