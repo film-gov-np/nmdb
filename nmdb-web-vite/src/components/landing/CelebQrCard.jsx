@@ -57,7 +57,7 @@ const CelebQrCard = ({ url, details }) => {
                   />
                 </div>
               )}
-              <Separator className="my-8" />
+              {/* <Separator className="my-8" />
               <div className="flex  items-start gap-4">
                 <Avatar className="flex h-36 w-28 rounded-lg">
                   <AvatarImage src={details.profilePhotoUrl} alt="Avatar" />
@@ -85,7 +85,7 @@ const CelebQrCard = ({ url, details }) => {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

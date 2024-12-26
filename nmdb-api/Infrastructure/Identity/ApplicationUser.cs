@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity;
@@ -7,6 +8,7 @@ public class ApplicationUser : IdentityUser, IBaseEntity<string>
 {
     public string? FirstName { get; set; } = string.Empty;
     public string? LastName { get; set; } = string.Empty;
+    public string? Name { get; set; } = string.Empty;
     public List<RefreshToken> RefreshTokens { get; set; }
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
@@ -26,9 +28,4 @@ public class ApplicationUser : IdentityUser, IBaseEntity<string>
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
     public string? ProfilePhoto { get; set; }
-    public virtual ICollection<ApplicationRole> UserRoles { get; } = new List<ApplicationRole>();
-    public ApplicationUser()
-    {
-        ProfilePhoto = string.Empty;
-    }
 }

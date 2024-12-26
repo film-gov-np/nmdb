@@ -127,6 +127,7 @@ public class TheatreService : ITheatreService
                                                 Name = tr.Name,
                                                 ContactPerson = tr.ContactPerson,
                                                 ContactNumber = tr.ContactNumber,
+                                                Address = tr.Address,
                                                 IsRunning = tr.IsRunning
 
                                             }).ToListAsync();

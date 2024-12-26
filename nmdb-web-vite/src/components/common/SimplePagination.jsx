@@ -1,4 +1,11 @@
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const SimplePagination = ({
   currentPage,
@@ -26,7 +33,10 @@ const SimplePagination = ({
           />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink className="pointer-events-none px-10" isActive>
+          <PaginationLink
+            className="pointer-events-none border-primary px-10 text-primary"
+            isActive
+          >
             Page {currentPage}
           </PaginationLink>
         </PaginationItem>

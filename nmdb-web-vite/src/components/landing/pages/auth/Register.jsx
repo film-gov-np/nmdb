@@ -14,16 +14,21 @@ import {
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { registerSchemaResolver } from "./authSchema";
+import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const form = useForm({
     resolver: registerSchemaResolver,
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
-      mobileNumber: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
       acceptTerms: true,
@@ -46,15 +51,35 @@ const Register = () => {
       confirmPassword,
       acceptTerms,
     };
+    setIsRequestInProgress(true);
     axiosInstance
-      .post("auth/register", postData)
-      .then((resp) => {
-        if (resp) {
-          //set token to cookie or localStorage
-          navigate(Paths.Route_Verify_Email);
-        }
+      .post("auth/register-crew", postData)
+      .then((response) => {
+        setIsRequestInProgress(false);
+        if (response.status === 200) {
+          const responseData = response.data;
+          if (responseData.isSuccess) {
+            //set token to cookie or localStorage
+            navigate(Paths.Route_Verify_Email);
+          } else {
+            toast({
+              description: "Something went wrong. Please try again later.",
+              duration: 5000,
+            });
+          }
+        } else
+          toast({
+            description: "Something went wrong. Please try again later.",
+            duration: 5000,
+          });
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setIsRequestInProgress(false);
+        toast({
+          description: "Something went wrong. Please try again later.",
+          duration: 5000,
+        });
+      });
   };
 
   return (
@@ -115,7 +140,7 @@ const Register = () => {
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
-                  name="mobileNumber"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Mobile Number</FormLabel>
@@ -185,7 +210,14 @@ const Register = () => {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                disabled={isRequestInProgress}
+                type="submit"
+                className="w-full"
+              >
+                {isRequestInProgress && (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Register
               </Button>
             </div>

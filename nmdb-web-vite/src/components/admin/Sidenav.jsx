@@ -1,20 +1,17 @@
 import {
   Award,
-  BookOpen,
-  BookText,
   BriefcaseBusiness,
   ChevronDown,
   Clapperboard,
-  GraduationCap,
   Home,
   Projector,
+  User,
   Users,
   Video,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Paths } from "@/constants/routePaths";
-import { SheetClose } from "@/components/ui/sheet";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,11 +19,13 @@ import {
 } from "../ui/collapsible";
 import useCheckActiveNav from "@/hooks/useCheckActiveNav";
 import { cn } from "@/lib/utils";
+import { useAuthContext } from "./context/AuthContext";
+import { CardStackIcon } from "@radix-ui/react-icons";
 
 const adminRouteElement = [
   {
     title: "Dashboard",
-    label: "DB",
+    // label: "DB",
     icon: Home,
     path: Paths.Route_Admin_Dashboard,
   },
@@ -59,6 +58,16 @@ const adminRouteElement = [
     title: "Awards",
     icon: Award,
     path: Paths.Route_Admin_Awards,
+  },
+  {
+    title: "Users",
+    icon: User,
+    path: Paths.Route_Admin_User,
+  },
+  {
+    title: "Card Request",
+    icon: CardStackIcon,
+    path: Paths.Route_Admin_Card_Request,
   },
   // {
   //   title: "Scholarship",
@@ -97,7 +106,7 @@ const NavLinkCustom = ({
         }}
         className={cn(
           isMobileSidebar && "mx-[-0.65rem] gap-4",
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-foreground transition-all hover:text-muted-foreground",
         )}
       >
         <rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />
@@ -129,7 +138,7 @@ const NavLinkDropdown = ({
           "group w-full",
           (isMobileSidebar &&
             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground") ||
-          " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
+            " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
         )}
       >
         {<rest.icon className={cn(isMobileSidebar ? "h-6 w-6" : "h-4 w-4")} />}
@@ -165,6 +174,7 @@ const NavLinkDropdown = ({
 };
 
 const Sidenav = ({ className, isMobileSidebar, setOpen }) => {
+  const { isAuthorized, userInfo } = useAuthContext();
   return (
     <nav className={cn("sidebar-nav grid", className)}>
       {adminRouteElement.map(

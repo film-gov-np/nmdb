@@ -23,11 +23,11 @@ public class CrewDto : BaseDto
 
     public string? Gender { get; set; }
 
-    //public DateTime? DateOfBirthInAD { get; set; }
+    public DateTime? DateOfBirthInAD { get; set; }
 
     public string? DateOfBirthInBS { get; set; }
 
-    //public DateTime? DateOfDeathInAD { get; set; }
+    public DateTime? DateOfDeathInAD { get; set; }
 
     public string? DateOfDeathInBS { get; set; }
 

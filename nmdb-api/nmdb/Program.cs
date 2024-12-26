@@ -26,21 +26,25 @@ app.Configuration.GetSection("AllowedUploadFiles").Get<AllowedUploadFiles>();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseCors("AllowSpecificOrigin");
+    //app.UseCors("AllowSpecificOrigin");
     //app.UseSwagger();
     //app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
-app.UseFastEndpoints()
- .UseSwaggerGen();
 
-app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseFastEndpoints()
+    .UseSwaggerGen();
 
 //app.UseMiddleware<AuthorizedUserMiddleware>();
 //app.UseMiddleware<CamelCaseResponseMiddleware>();

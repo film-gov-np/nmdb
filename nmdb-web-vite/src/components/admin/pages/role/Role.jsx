@@ -9,7 +9,6 @@ const getCategories = async () => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response-categories", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -25,7 +24,6 @@ const Role = () => {
     queryFn: async () => {
       const cache = getFromCache(`flimRoleCategories`);
       if (cache && cache.length > 0) {
-        console.log("cachedCategories", cache);
         return cache;
       }
       return await getCategories();

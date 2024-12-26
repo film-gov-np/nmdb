@@ -75,7 +75,7 @@ namespace Application.Services
                         IsApproved = false
                     };
                     await _unitOfWork.CardRequestRepository.AddAsync(request);
-                    crewEntity.HasRequestedCard = true;
+                    crewEntity.HasRequestedCard = true;                    
                     await _unitOfWork.CrewRepository.UpdateAsync(crewEntity);
 
                     await _unitOfWork.CommitAsync();
@@ -83,7 +83,7 @@ namespace Application.Services
                     await _emailService.Send(
                         "test@nmdb.com", // admin or info email
                         "Card Requested",
-                        EmailTemplate.CardRequestedMail(crewEntity.Email)
+                        EmailTemplate.CardRequestedMail(crewEntity?.Email)
                         );
 
                     response.IsSuccess = true;
@@ -165,13 +165,17 @@ namespace Application.Services
             {
                 switch (filterParameters.SortColumn.ToLower())
                 {
-                    case "CreatedAt":
-                        orderByColumn = query => query.CreatedAt;
+                    case "ApprovedDate":
+                        orderByColumn = query => query.ApprovedDate;
                         break;
                     // Add more cases for other columns
                     default:
                         throw new ArgumentException($"Invalid sort column: {filterParameters.SortColumn}");
                 }
+            }
+            else
+            {
+                orderByColumn = query => query.IsApproved;
             }
 
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);

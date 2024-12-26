@@ -57,19 +57,13 @@ export function ModeToggle({ mode }) {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="light" className="flex-column flex">
-          <div className="flex w-full flex-row">
-            Light
-          </div>
+          <div className="flex w-full flex-row">Light</div>
         </SelectItem>
         <SelectItem value="dark">
-          <div className="flex w-full flex-row">
-            Dark
-          </div>
+          <div className="flex w-full flex-row">Dark</div>
         </SelectItem>
         <SelectItem value="system">
-          <div className="flex w-full flex-row">
-            System
-          </div>
+          <div className="flex w-full flex-row">System</div>
         </SelectItem>
       </SelectContent>
     </Select>

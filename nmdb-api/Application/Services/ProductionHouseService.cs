@@ -175,12 +175,6 @@ public class ProductionHouseService : IProductionHouseService
 
         try
         {
-            var validationResult = await _productionHouseRequestValidator.ValidateAsync(productionHouseRequestDto);
-            if (!validationResult.IsValid)
-            {                
-                return ApiResponse<string>.ErrorResponse(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), HttpStatusCode.BadRequest);
-            }
-
             var productionHouse = await _unitOfWork.ProductionHouseRepository.GetByIdAsync(productionHouseId);
 
             if (productionHouse == null)
@@ -195,7 +189,7 @@ public class ProductionHouseService : IProductionHouseService
             await _unitOfWork.CommitAsync();
 
             response = ApiResponse<string>
-                .SuccessResponseWithoutData($"Production house '{productionHouseRequestDto.Name}' updated successfully.");
+                .SuccessResponseWithoutData($"Production house updated successfully.");
         }
         catch (Exception ex)
         {

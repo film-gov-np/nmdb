@@ -3,6 +3,7 @@ using Core;
 using Core.Constants;
 using FastEndpoints;
 using Infrastructure.Identity.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System.Net;
 
 namespace nmdb.Endpoints.AuthEndpoints;
@@ -39,12 +40,15 @@ public class Authenticate
             var authenticateResponse = await _authService.Authenticate(request, "");
             setTokenCookie(authenticateResponse.JwtToken, authenticateResponse.RefreshToken);
 
-            Response = ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully.");
+            await SendOkAsync(ApiResponse<AuthenticateResponse>.SuccessResponse(authenticateResponse, "User authenticated successfully."));
         }
-        catch (Exception ex)
+        catch (UnauthorizedAccessException ex)
         {
-            Response = ApiResponse<AuthenticateResponse>.ErrorResponse(ex.Message, HttpStatusCode.InternalServerError);
-        }
+            //await SendUnauthorizedAsync();
+            Response = ApiResponse<AuthenticateResponse>.ErrorResponse("Invalid Credentials", HttpStatusCode.Unauthorized);
+
+        }       
+        
     }
 
     private void setTokenCookie(string accessToken, string refreshToken = "")

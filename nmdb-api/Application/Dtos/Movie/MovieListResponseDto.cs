@@ -12,4 +12,5 @@ public class MovieListResponseDto
     public string Status { get; set; }
     public string? ThumbnailImageUrl { get; set; }
     public string? Color { get; set; }
+    public DateTime? ReleaseDate { get; set; }
 }

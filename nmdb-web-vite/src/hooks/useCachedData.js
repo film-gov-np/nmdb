@@ -7,7 +7,7 @@ const useCachedData = () => {
     if (cache && cache.length > 0) {
       return { cache };
     } else {
-      return {cache: null};
+      return { cache: null };
     }
   };
   return { getFromCache };

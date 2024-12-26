@@ -15,13 +15,11 @@ const FormCrewInfo = ({ form }) => {
   const getHelperData = async (apiPath, queryKey) => {
     const { cache } = getFromCache([queryKey]);
     if (cache) {
-      console.log("cached-data", cache);
       return cache;
     }
     const apiResponse = await axiosInstance
       .get(apiPath)
       .then((response) => {
-        console.log("api-response", response.data);
         return response.data;
       })
       .catch((err) => console.error(err));

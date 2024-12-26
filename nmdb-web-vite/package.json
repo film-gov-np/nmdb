@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "host": "vite --host"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -40,6 +41,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.363.0",
     "react": "^18.2.0",
+    "react-big-calendar": "^1.13.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.2",

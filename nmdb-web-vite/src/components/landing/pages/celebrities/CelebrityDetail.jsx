@@ -2,18 +2,28 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useTruncatedElement } from "@/hooks/useTruncatedElement";
 import { cn } from "@/lib/utils";
-import { CircleIcon, Facebook, Globe, Instagram, Twitter } from "lucide-react";
+import {
+  CircleCheck,
+  CircleIcon,
+  Facebook,
+  Globe,
+  Instagram,
+  LoaderCircle,
+  Twitter,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import InfoCardWithImage from "../../InfoCardWithImage";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Paths } from "@/constants/routePaths";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
-import { TwitterLogoIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import CelebQrCard from "../../CelebQrCard";
+import { useAuthContext } from "@/components/admin/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const gender = {
   0: "Female",
@@ -26,7 +36,6 @@ const getCelebrityDetail = async (movieId) => {
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
       return response.data.data;
     })
     .catch((err) => console.error(err));
@@ -39,32 +48,68 @@ const CelebritiesDetails = () => {
   const { slug } = useParams();
   const { pathname } = useLocation();
   const [celebDetails, setCelebsDetails] = useState({});
+  const { isAuthorized, userInfo } = useAuthContext();
+  const [isCardRequestInProgress, setIsCardRequestInProgress] = useState(false);
+  const { toast } = useToast();
   const ref = useRef(null);
+  const buttonRef = useRef(null);
   const { isTruncated, isShowingMore, toggleIsShowingMore } =
     useTruncatedElement({
       ref,
       params: celebDetails,
     });
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const getFromCache = (key) => {
-    return queryClient.getQueryData([key]);
+
+  const sendCardRequest = async () => {
+    setIsCardRequestInProgress(true);
+    let apiPath = ApiPaths.Path_RequestCard;
+    const response = await axiosInstance
+      .post(apiPath)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData?.isSuccess) {
+          setIsCardRequestInProgress(false);
+          return response.data.data;
+        }
+      })
+      .catch((err) => {
+        setIsCardRequestInProgress(false);
+        throw new Error(err);
+      });
+    return response;
   };
+
+  const mutateCardRequest = useMutation({
+    mutationFn: sendCardRequest,
+    onSuccess: (data, variables, context) => {
+      if (buttonRef.current) buttonRef.current.style.display = "none";
+      toast({ description: "Card request sent successfully." });
+    },
+    onError: (error, variables, context) => {
+      toast({ description: "Something went wrong.Please try again." });
+    },
+    onSettled: (data, error, variables, context) => {},
+  });
+
+  // const getFromCache = (key) => {
+  //   return queryClient.getQueryData([key]);
+  // };
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: [`celebrity_id_${slug}`],
       queryFn: async () => {
-        const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
-        if (cache) {
-          console.log("cached", cache);
-          setCelebsDetails(cache.celebrity)
-          return cache;
-        } // use the data if in the cache
+        // const cache = getFromCache(`celebrity_id_${slug}`); // try to access the data from cache
+        // if (cache) {
+        //   setCelebsDetails(cache.celebrity);
+        //   return cache;
+        // } // use the data if in the cache
         const dat = await getCelebrityDetail(slug);
-        setCelebsDetails(dat.celebrity)
-        return dat
+        setCelebsDetails(dat.celebrity);
+        return dat;
       },
       keepPreviousData: true,
     });
@@ -79,10 +124,13 @@ const CelebritiesDetails = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-4">
               <div className="space-y-2">
-                <h2 className="text-5xl font-semibold tracking-tight">
+                <h2 className="flex items-center gap-4 text-5xl font-semibold tracking-tight text-primary">
                   {celebDetails.name}
+                  {celebDetails.isVerified && (
+                    <CheckCircledIcon className="h-6 w-6 text-secondary" />
+                  )}
                 </h2>
-                <h2 className="text-2xl font-semibold text-muted-foreground tracking-tight">
+                <h2 className="text-2xl font-semibold tracking-tight text-primary/60">
                   {celebDetails.nepaliName}
                 </h2>
               </div>
@@ -103,20 +151,39 @@ const CelebritiesDetails = () => {
                 </ul>
               </div>
             </div>
-            
-            <CelebQrCard
-              url={window.location.origin + pathname}
-              details={celebDetails}
-            />
+            <div className="flex items-center gap-4">
+              {isAuthorized &&
+                userInfo.isCrew &&
+                userInfo.crewId == slug &&
+                !celebDetails.hasRequestedCard && (
+                  <Button
+                    ref={buttonRef}
+                    disabled={isCardRequestInProgress}
+                    onClick={mutateCardRequest.mutate}
+                  >
+                    {isCardRequestInProgress && (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Request Your Card
+                  </Button>
+                )}
+              <CelebQrCard
+                url={window.location.origin + pathname}
+                details={celebDetails}
+              />
+            </div>
           </div>
           <Separator className="my-4" />
           <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-[3fr,minmax(0,10fr)]">
             <div className="grid grid-cols-1 content-start gap-4 md:grid-cols-[1fr,1fr] md:gap-6 lg:grid-cols-1">
-              <Image
-                src={celebDetails.profilePhotoUrl}
-                alt={celebDetails.name}
-                className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
-              />
+              <div className="relative">
+                <Image
+                  src={celebDetails.profilePhotoUrl}
+                  alt={celebDetails.name}
+                  className="aspect-[3/4] h-auto w-full rounded-lg object-cover transition-all"
+                />
+                {/* {celebDetails.isVerified && <CheckCircledIcon className="absolute top-2 left-2 text-secondary h-5 w-5"/>} */}
+              </div>
               <div className="flex flex-1 flex-col gap-4 ">
                 <div className="flex flex-row space-x-4">
                   {celebDetails.facebookID && (
@@ -160,7 +227,7 @@ const CelebritiesDetails = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl font-bold leading-none">
+                  <h3 className="text-2xl font-bold leading-none text-primary">
                     Personal Info
                   </h3>
                   <div className="space-y-1">
@@ -190,7 +257,7 @@ const CelebritiesDetails = () => {
             </div>
             <div className="flex flex-col gap-4 md:gap-8">
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Biography</h3>
+                <h3 className="text-2xl font-bold text-primary">Biography</h3>
                 <p
                   ref={ref}
                   className={cn(
@@ -212,7 +279,7 @@ const CelebritiesDetails = () => {
                 )}
               </div>
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Known for</h3>
+                <h3 className="text-2xl font-bold text-primary">Known for</h3>
                 <div className="relative ">
                   <ScrollArea>
                     <div className="flex space-x-4 pb-4">
@@ -237,7 +304,7 @@ const CelebritiesDetails = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold ">Filmography</h3>
+                <h3 className="text-2xl font-bold text-primary">Filmography</h3>
                 <div className="rounded-lg border border-input p-1">
                   <ScrollArea viewPortClass="max-h-[620px]">
                     <div className="grid gap-8  p-4 md:grid-cols-2 lg:grid-cols-3">

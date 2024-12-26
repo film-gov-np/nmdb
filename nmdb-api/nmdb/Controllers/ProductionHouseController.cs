@@ -1,4 +1,3 @@
-using Application.Dtos.Film;
 using Application.Dtos.FilterParameters;
 using Application.Dtos.ProductionHouse;
 using Application.Interfaces.Services;
@@ -13,6 +12,7 @@ using System.Net;
 namespace nmdb.Controllers;
 
 [ApiController]
+[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/production-house/")]
 public class ProductionHouseController : AuthorizedController

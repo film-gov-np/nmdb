@@ -12,31 +12,17 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AddPageHeader from "../../AddPageHeader";
 import { Paths } from "@/constants/routePaths";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
+import { sanitizeData } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosSetup";
 import { FormSkeleton } from "@/components/ui/custom/skeleton/form-skeleton";
 import { ApiPaths } from "@/constants/apiPaths";
-import { useState } from "react";
-import DateInput from "@/components/ui/custom/DateInput";
 import { Textarea } from "@/components/ui/textarea";
+import MultipleSelectorWithList from "@/components/ui/custom/multiple-selector/MultipleSelectionWithList";
+import DatePickerForForm from "@/components/common/formElements/DatePicker";
 
 const formSchema = z.object({
   awardTitle: z.string().min(2, {
@@ -45,10 +31,39 @@ const formSchema = z.object({
   categoryName: z.string().min(2, {
     message: "Category must be at least 2 characters.",
   }),
-  awardStatus: z.string().optional().or(z.literal("")),
-  awardedIn: z.string().optional().or(z.literal("")),
-  awardedDate: z.string().optional().or(z.literal("")),
+  awardStatus: z.string().min(2, {
+    message: "Status must be at least 2 characters.",
+  }),
+  awardedIn: z.string().min(2, {
+    message: "Awarded In must be at least 2 characters.",
+  }),
+  awardedDate: z
+    .date()
+    .or(z.string())
+    .optional()
+    .refine(
+      (dateString) => {
+        if (!dateString) return true; // Allow empty or undefined values
+        const date = new Date(dateString);
+        return !isNaN(date.getTime());
+      },
+      {
+        message: "Invalid date format",
+      },
+    )
+    .refine(
+      (dateString) => {
+        if (!dateString) return true; // Allow empty or undefined values
+        const date = new Date(dateString);
+        return date <= new Date(); // Check if the date is in the future
+      },
+      {
+        message: "Death date must be in the past.",
+      },
+    ),
   remarks: z.string().optional().or(z.literal("")),
+  movieID: z.array(z.any()),
+  crewID: z.array(z.any()),
 });
 
 const renderModes = {
@@ -58,19 +73,20 @@ const renderModes = {
 };
 
 const defaultValues = {
-  awardTitle: '',
-  categoryName: '',
-  awardStatus: '',
-  awardedIn: '',
-  awardedDate: '',
-  remarks: ''
+  awardTitle: "",
+  categoryName: "",
+  awardStatus: "",
+  awardedIn: "",
+  awardedDate: null,
+  remarks: "",
+  movieID: [],
+  crewID: [],
 };
 
 const getAward = async (id, renderMode) => {
   let apiPath = `${ApiPaths.Path_Awards}/${id}`;
   let data = {};
-  if (renderMode === renderModes.Render_Mode_Create)
-    return defaultValues;
+  if (renderMode === renderModes.Render_Mode_Create) return defaultValues;
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
@@ -82,14 +98,24 @@ const getAward = async (id, renderMode) => {
   return data;
 };
 
-
-
 const createOrEditAward = async ({ postData, isEditMode, slug, toast }) => {
   let apiPath = ApiPaths.Path_Awards;
   if (isEditMode) {
     apiPath += "/" + slug;
     postData.id = slug;
   }
+  postData = {
+    ...postData,
+    movieID:
+      postData.movieID && postData.movieID.length > 0
+        ? postData.movieID[0].id
+        : null,
+    crewID:
+      postData.crewID && postData.crewID.length > 0
+        ? postData.crewID[0].id
+        : null,
+    awardedDate: postData.awardedDate ? postData.awardedDate : null,
+  };
   const { data } = await axiosInstance({
     method: isEditMode ? "put" : "post",
     url: apiPath,
@@ -169,18 +195,16 @@ const CreateAward = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="award" pathTo={Paths.Route_Admin_Awards} />
-      {isLoading ||
-        isFetching ? (
+      <AddPageHeader
+        label="award"
+        pathTo={Paths.Route_Admin_Awards}
+        renderMode={renderMode}
+      />
+      {isLoading || isFetching ? (
         <FormSkeleton columnCount={2} rowCount={1} repeat={1} shrinkZero />
       ) : (
-        data &&
-        (
-          <AwardForm
-            award={data}
-            renderMode={renderMode}
-            onSubmit={onSubmit}
-          />
+        data && (
+          <AwardForm award={data} renderMode={renderMode} onSubmit={onSubmit} />
         )
       )}
     </main>
@@ -191,13 +215,11 @@ function AwardForm({ award, renderMode, onSubmit }) {
   // const [openCategorySelection, setOpenCategorySelection] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      awardTitle: award.awardTitle,
-      categoryName: award.categoryName,
-      awardStatus: award.awardStatus,
-      awardedIn: award.awardedIn,
-      awardedDate: award.awardedDate,
-    },
+    defaultValues: sanitizeData({
+      ...award,
+      movieID: award.movie ? [award.movie] : [],
+      crewID: award.crew ? [award.crew] : [],
+    }),
   });
   return (
     <Form {...form}>
@@ -254,7 +276,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
               name="awardedIn"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Award Category</FormLabel>
+                  <FormLabel>Awarded In</FormLabel>
                   <FormControl>
                     <Input placeholder="Award Category" {...field} />
                   </FormControl>
@@ -263,7 +285,7 @@ function AwardForm({ award, renderMode, onSubmit }) {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="awardedDate"
               render={({ field }) => (
@@ -273,7 +295,70 @@ function AwardForm({ award, renderMode, onSubmit }) {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+
+            <FormField
+              control={form.control}
+              name="awardedDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Awarded date</FormLabel>
+                  <DatePickerForForm field={field} />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+
+            <FormField
+              control={form.control}
+              name="movieID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Movie</FormLabel>
+                  <FormControl>
+                    <MultipleSelectorWithList
+                      value={field.value}
+                      onChange={field.onChange}
+                      triggerOnSearch={true}
+                      minSearchTrigger={3}
+                      apiPath={ApiPaths.Path_Movies + "?SearchKeyword="}
+                      keyValue="id"
+                      keyLabel="name"
+                      placeholder="Begin typing to search for movie..."
+                      maxSelected={1}
+                      replaceOnMaxSelected={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="crewID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Crew</FormLabel>
+                  <FormControl>
+                    <MultipleSelectorWithList
+                      value={field.value}
+                      onChange={field.onChange}
+                      triggerOnSearch={true}
+                      minSearchTrigger={3}
+                      apiPath={ApiPaths.Path_Crews + "?SearchKeyword="}
+                      keyValue="id"
+                      keyLabel="name"
+                      placeholder="Begin typing to search for crew..."
+                      maxSelected={1}
+                      replaceOnMaxSelected={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="remarks"

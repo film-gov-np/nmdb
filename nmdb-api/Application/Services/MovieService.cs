@@ -31,7 +31,7 @@ public class MovieService : IMovieService
     private readonly IFileService _fileService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly string _uploadFolderPath;
-
+    private const string uploadSubFolder = "movies";
 
     public MovieService(IMapper mapper, ILogger<MovieService> logger,
         IUnitOfWork unitOfWork,
@@ -44,7 +44,7 @@ public class MovieService : IMovieService
         _logger = logger;
         _fileService = fileService;
         _httpContextAccessor = httpContextAccessor;
-        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/movies/");
+        _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], $"/{uploadSubFolder}/");
     }
 
     public async Task<ApiResponse<string>> CreateAsync(MovieRequestDto movieRequestDto)
@@ -70,7 +70,7 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
                     ReadableName = false,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -87,7 +87,7 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.CoverImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
@@ -223,12 +223,11 @@ public class MovieService : IMovieService
     public async Task<ApiResponse<PaginationResponse<MovieListResponseDto>>> GetAllAsync(MovieFilterParameters filterParameters)
     {
         Expression<Func<Movie, bool>> filter = null;
+        Expression<Func<Movie, bool>> FilterNull = null;
         Expression<Func<Movie, object>> orderByColumn = null;
-        Func<IQueryable<Movie>, IOrderedQueryable<Theatre>> orderBy = null;
-
 
         // Apply filtering
-        if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword))
+        if ((filterParameters.Category != null) || (filterParameters.Status != null) || !string.IsNullOrEmpty(filterParameters.SearchKeyword) || (!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate"))
         {
             filter = query =>
                 (string.IsNullOrEmpty(filterParameters.SearchKeyword) || query.Name.Contains(filterParameters.SearchKeyword)
@@ -236,7 +235,20 @@ public class MovieService : IMovieService
                     (filterParameters.Category == null || filterParameters.Category == query.Category)
                 ) && (
                     (filterParameters.Status == null || filterParameters.Status == query.Status)
+                ) && (
+                    (!(!string.IsNullOrEmpty(filterParameters.SortColumn) && filterParameters.SortColumn == "ReleaseDate") || query.ReleaseDate != null)
                 );
+        }
+        if (filterParameters.Year.HasValue && filterParameters.Month.HasValue)
+        {
+            filter = query => query.ReleaseDate.HasValue && query.ReleaseDate.Value.Year == filterParameters.Year.Value &&
+                                     (int)query.ReleaseDate.Value.Month == (int)filterParameters.Month.Value;
+        }
+        else if (filterParameters.Year.HasValue)
+        {
+            filter = query =>
+                 query.ReleaseDate.HasValue && query.ReleaseDate.Value.Year == filterParameters.Year.Value;
+
         }
 
         if (!string.IsNullOrEmpty(filterParameters.SortColumn))
@@ -245,6 +257,15 @@ public class MovieService : IMovieService
             {
                 case "name":
                     orderByColumn = query => query.Name;
+                    break;
+                case "category":
+                    orderByColumn = query => query.Category;
+                    break;
+                case "status":
+                    orderByColumn = query => query.Status;
+                    break;
+                case "releasedate":
+                    orderByColumn = query => query.ReleaseDate;
                     break;
                 // Add more cases for other columns
                 default:
@@ -264,7 +285,8 @@ public class MovieService : IMovieService
                                                 Category = mr.Category != null ? mr.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                                                 Status = mr.Status != null ? mr.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                                                 Color = mr.Color != null ? mr.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),
-                                                ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage)
+                                                ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, mr.ThumbnailImage),
+                                                ReleaseDate = mr.ReleaseDate
                                             }).ToListAsync();
 
 
@@ -313,7 +335,7 @@ public class MovieService : IMovieService
             movieResponse.Theatres = MapMovieTheatres(movieEntity.MovieTheatres.ToList());
 
             var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
-                        
+
             movieResponse.ThumbnailImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.ThumbnailImage);
             movieResponse.CoverImageUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, movieResponse.CoverImage);
 
@@ -382,7 +404,7 @@ public class MovieService : IMovieService
                                 Email = "",//when email is added to the crew load it here
                                 ThumbnailPhoto = c.ThumbnailPhoto,
                                 ProfilePhoto = c.ProfilePhoto,
-                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl,   "/upload/img/crews/",c.ProfilePhoto),
+                                ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, "/upload/img/crews/", c.ProfilePhoto),
                             })
                             .ToList()
             })
@@ -418,14 +440,14 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.ThumbnailImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     // Delete existing image
                     if (!string.IsNullOrEmpty(existingMovie.ThumbnailImage))
-                        _fileService.RemoveFile(existingMovie.ThumbnailImage, "movies");
+                        _fileService.RemoveFile(existingMovie.ThumbnailImage, uploadSubFolder);
 
                     existingMovie.ThumbnailImage = uploadResult.Data.FileName;
                 }
@@ -438,13 +460,13 @@ public class MovieService : IMovieService
                     Files = movieRequestDto.CoverImageFile,
                     Thumbnail = false,
                     ReadableName = true,
-                    SubFolder = "movies"
+                    SubFolder = uploadSubFolder
                 };
                 var uploadResult = await _fileService.UploadFile(fileDto);
                 if (uploadResult.IsSuccess && uploadResult.Data != null)
                 {
                     if (!string.IsNullOrEmpty(existingMovie.CoverImage))
-                        _fileService.RemoveFile(existingMovie.CoverImage, "movies");
+                        _fileService.RemoveFile(existingMovie.CoverImage, uploadSubFolder);
 
                     existingMovie.CoverImage = uploadResult.Data.FileName;
                 }

@@ -1,8 +1,41 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ChevronLeft } from "lucide-react";
+import Image from "../common/Image";
+import axiosInstance from "@/helpers/axiosSetup";
+import { useQuery } from "@tanstack/react-query";
+import { ApiPaths } from "@/constants/apiPaths";
+
+const getLatestRelease = async () => {
+  let apiPath = `${ApiPaths.Path_Front_Movies}?SortColumn=ReleaseDate&Descending=true&PageNumber=1&PageSize=1`;
+  const response = await axiosInstance
+    .get(apiPath)
+    .then((response) => {
+      let responseData = response.data;
+      if (responseData.isSuccess) return response.data.data;
+      else throw new Error("Something went wrong");
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  const totalData = response.totalItems;
+  const data = response.items;
+  return {
+    movies: data,
+    totalData,
+  };
+};
 
 const AuthLayout = () => {
+  const { isLoading, data, isError, isFetching, isPreviousData, error } =
+    useQuery({
+      queryKey: ["movies-latest-released"],
+      queryFn: getLatestRelease,
+      keepPreviousData: true,
+    });
+  let imgPath = "";
+  if (isError || isLoading || isFetching) imgPath = "/placeholder.png";
+  else imgPath = data?.movies[0].thumbnailImageUrl;
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div className="fixed inset-y-0 p-8">
@@ -18,8 +51,8 @@ const AuthLayout = () => {
           <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
             <Outlet />
             <div className="hidden justify-end bg-transparent lg:flex lg:h-screen">
-              <img
-                src="/amerohajur4.jpg"
+              <Image
+                src={imgPath}
                 alt="Image"
                 width="1920"
                 height="1080"

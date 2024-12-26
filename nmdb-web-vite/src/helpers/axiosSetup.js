@@ -3,12 +3,11 @@ import { BaseAPIUrl } from "@/constants/authConstant";
 import { Paths } from "@/constants/routePaths";
 import axios from "axios";
 
-
 const refreshUrl = ApiPaths.Path_Auth + "/refresh";
 
 const axiosInstance = axios.create({
   baseURL: BaseAPIUrl,
-  withCredentials: true
+  withCredentials: true,
 });
 
 const refreshInstance = axios.create({
@@ -26,14 +25,14 @@ axiosInstance.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
@@ -44,7 +43,6 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-
 //response interceptor
 axiosInstance.interceptors.response.use(
   function (response) {
@@ -53,7 +51,6 @@ axiosInstance.interceptors.response.use(
   function (error) {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
-
       location.href = Paths.Route_Home;
       // if (isRefreshing) {
       //   return new Promise(function (resolve, reject) {
@@ -94,7 +91,7 @@ axiosInstance.interceptors.response.use(
       // });
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

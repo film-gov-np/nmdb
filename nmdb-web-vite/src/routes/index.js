@@ -6,14 +6,12 @@ import MainLayout from "@/components/layouts/MainLayout";
 // Pages Landing
 import Login from "@/components/landing/pages/auth/Login";
 import Home from "@/components/landing/pages/home/Home";
+import RegisterCrew from "@/components/landing/pages/auth/RegisterCrew";
 
 // Pages Admin
 import Movies from "@/components/admin/pages/movies/Movies";
 import Crew from "@/components/admin/pages/crew/Crew";
-import ScholarshipBachelors from "@/components/admin/pages/scholarship/Bachelors";
-import ScholarshipMasters from "@/components/admin/pages/scholarship/Masters";
 import { Paths } from "@/constants/routePaths";
-import Register from "@/components/landing/pages/auth/Register";
 import VerifyEmail from "@/components/landing/pages/auth/VerifyEmail";
 import Dashboard from "@/components/admin/pages/dashboard/Dashboard";
 import Awards from "@/components/admin/pages/awards/Awards";
@@ -32,6 +30,11 @@ import CreateRole from "@/components/admin/pages/role/CreateRole";
 import CreateTheatre from "@/components/admin/pages/theatre/CreateTheatre";
 import CreateCrew from "@/components/admin/pages/crew/CreateCrew";
 import CreateAward from "@/components/admin/pages/awards/CreateAward";
+import CinemaHall from "@/components/landing/pages/home/CinemaHall";
+import MovieCalendar from "@/components/landing/pages/movieCalendar/MovieCalendar";
+import User from "@/components/admin/pages/user/User";
+import CreateUser from "@/components/admin/pages/user/CreateUser";
+import CardRequest from "@/components/admin/pages/cardRequest/CardRequest";
 
 export const routes = [
   {
@@ -199,7 +202,7 @@ export const routes = [
                 path: Paths.Route_Admin_Theatre + "/:slug",
                 isPublic: false,
               },
-            ]
+            ],
           },
           {
             name: "awards",
@@ -229,9 +232,45 @@ export const routes = [
                 path: Paths.Route_Admin_Awards + "/:slug",
                 isPublic: false,
               },
-            ]
+            ],
           },
-
+          {
+            name: "user",
+            title: "User Page",
+            component: User,
+            path: Paths.Route_Admin_User,
+            isPublic: false,
+            routes: [
+              {
+                name: "UserAdd",
+                title: "Awards Add page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User_Add,
+                isPublic: false,
+              },
+              {
+                name: "UserEdit",
+                title: "Users Edit page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User + "/:slug/edit",
+                isPublic: false,
+              },
+              {
+                name: "UserDetail",
+                title: "User Detail page",
+                component: CreateUser,
+                path: Paths.Route_Admin_User + "/:slug",
+                isPublic: false,
+              },
+            ],
+          },
+          {
+            name: "Card Request",
+            title: "User Page",
+            component: CardRequest,
+            path: Paths.Route_Admin_Card_Request,
+            isPublic: false,
+          },
           // {
           //   name: "Scholarship",
           //   title: "Scholarship",
@@ -301,6 +340,20 @@ export const routes = [
           },
         ],
       },
+      {
+        name: "CinemaHall",
+        title: "Cinema Hall",
+        component: CinemaHall,
+        path: Paths.Route_CinemaHalls,
+        isPublic: true,
+      },
+      {
+        name: "MovieCalendar",
+        title: "Movie Calendar",
+        component: MovieCalendar,
+        path: Paths.Route_MovieCalendar,
+        isPublic: true,
+      },
     ],
   },
   {
@@ -314,10 +367,10 @@ export const routes = [
         isPublic: true,
       },
       {
-        name: "register",
-        title: "Register page",
-        component: Register,
-        path: Paths.Route_Register,
+        name: "registerCrew",
+        title: "Register Crew",
+        component: RegisterCrew,
+        path: Paths.Route_Register_Crew,
         isPublic: true,
       },
       {

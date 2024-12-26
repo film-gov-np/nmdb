@@ -29,7 +29,6 @@ const getCrewFlimRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -84,7 +83,7 @@ const FormRoleInfo = ({ form }) => {
                       apiPath="crews?RetrieveAll=true&SearchKeyword="
                       keyValue="id"
                       keyLabel="name"
-                      showAvatar = {true}
+                      showAvatar={true}
                       imgLabel="profilePhoto"
                       extraLabel="nepaliName"
                       placeholder="Begin typing to search crew member..."

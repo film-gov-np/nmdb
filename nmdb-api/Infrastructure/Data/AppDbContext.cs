@@ -42,6 +42,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<CardRequest> CardRequests { get; set; }
     public DbSet<Awards> Awards { get; set; }
 
+    public DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+    public DbSet<ApplicationRole> Roles { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.HasDefaultSchema("dbo");
@@ -55,13 +57,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
         builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
 
+        builder.Entity<ApplicationUser>()
+         .HasMany(u => u.RefreshTokens)
+         .WithOne(rt => rt.User)
+         .HasForeignKey(rt => rt.UserId)
+         .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<FilmProduction>()
             .HasIndex(fp => fp.SubmissionId)
             .IsUnique();
 
 
         builder.Entity<Crew>()
-            .HasIndex(c=>c.Email)
+            .HasIndex(c => c.Email)
             .IsUnique();
 
         // Crew Role/Designation

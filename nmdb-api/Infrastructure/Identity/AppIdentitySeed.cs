@@ -30,13 +30,25 @@ public class AppIdentitySeed
             {
                 await roleManager.CreateAsync(new ApplicationRole
                 {
+                    Name = AuthorizationConstants.SuperUserRole,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = defaultSuperuser
+                });
+                await roleManager.CreateAsync(new ApplicationRole
+                {
                     Name = AuthorizationConstants.AdminRole,
                     CreatedAt = DateTime.UtcNow,
-                    CreatedBy = "superuser@nmdb.com"
+                    CreatedBy = defaultSuperuser
                 }); ;
                 await roleManager.CreateAsync(new ApplicationRole
                 {
                     Name = AuthorizationConstants.UserRole,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = defaultSuperuser
+                });
+                await roleManager.CreateAsync(new ApplicationRole
+                {
+                    Name = AuthorizationConstants.CrewRole,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = defaultSuperuser
                 });
@@ -53,16 +65,25 @@ public class AppIdentitySeed
             await userManager.CreateAsync(defaultUser, defaultPassword);
 
             string adminUserName = AuthorizationConstants.Admin;
+            
             var adminUser = new ApplicationUser
             {
                 UserName = adminUserName,
                 Email = adminUserName,
                 CreatedBy = defaultSuperuser
             };
+
+            var superUser = new ApplicationUser
+            {
+                UserName = defaultSuperuser,
+                Email = defaultSuperuser,
+                CreatedBy = defaultSuperuser
+            };
+
             await userManager.CreateAsync(adminUser, defaultPassword);
+            await userManager.CreateAsync(superUser, defaultPassword);            
 
             adminUser = await userManager.FindByNameAsync(adminUserName);
-
             if (adminUser is not null)
             {
                 await userManager.AddToRoleAsync(adminUser, AuthorizationConstants.AdminRole);
@@ -72,6 +93,12 @@ public class AppIdentitySeed
             if (defaultUser is not null)
             {
                 await userManager.AddToRoleAsync(defaultUser, AuthorizationConstants.UserRole);
+            }
+
+            superUser = await userManager.FindByNameAsync(defaultSuperuser);
+            if (defaultUser is not null)
+            {
+                await userManager.AddToRoleAsync(superUser, AuthorizationConstants.SuperUserRole);
             }
         }
         catch (Exception ex)
