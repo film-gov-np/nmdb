@@ -72,7 +72,7 @@ const getDataFromServer = async (apiPath, parameters) => {
       else throw response.data.message;
     })
     .catch((error) => {
-      console.log("error", error);
+      console.error("error", error);
       throw error;
     });
   return {

@@ -2,12 +2,12 @@
 using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using nmdb.Common;
 using nmdb.Filters;
 
 namespace nmdb.Controllers;
 
 [ApiController]
+[Authorize]
 [RequiredRoles(AuthorizationConstants.AdminRole)]
 [Route("api/film/")]
 public class FilmRoleCategoryController : ControllerBase

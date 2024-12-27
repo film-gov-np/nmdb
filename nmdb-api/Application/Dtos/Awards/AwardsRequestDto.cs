@@ -8,6 +8,8 @@ namespace Application.Dtos;
 
 public class AwardsRequestDto : AwardsDto
 {
+    public int? MovieID { get; set; }
+    public int? CrewID { get; set; }
 }
     
 

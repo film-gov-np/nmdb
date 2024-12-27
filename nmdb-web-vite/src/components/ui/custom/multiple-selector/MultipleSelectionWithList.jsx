@@ -110,14 +110,13 @@ const MultipleSelectorWithList = React.forwardRef(
       const response = await axiosInstance
         .get(apiPath + searchTerm)
         .then((resp) => {
-          console.log(resp);
           if (resp) {
             const { items } = resp.data.data;
             return items;
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           return [];
         });
       return response;

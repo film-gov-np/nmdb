@@ -1,6 +1,7 @@
 import { DataTableAdvancedServerControlled } from "@/components/ui/custom/data-table/data-table-advanced-server-controlled";
 import { ApiPaths } from "@/constants/apiPaths";
 import { columns } from "./DataColumns";
+import { cn } from "@/lib/utils";
 
 export const facetedFilters = [
   {
@@ -20,8 +21,14 @@ export const facetedFilters = [
   },
 ];
 
-const CardRequest = () => {
+const CardRequest = ({ className }) => {
   return (
+    <main
+      className={cn(
+        "flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6",
+        className,
+      )}
+    >
       <DataTableAdvancedServerControlled
         apiPath={ApiPaths.Path_CardRequest}
         columns={columns}
@@ -29,8 +36,8 @@ const CardRequest = () => {
         queryKey="datatable-card-request"
         facetedFilters={facetedFilters}
         withHeader={false}
-        // addNewPath={Paths.Route_Admin_ProductionHouse_Add}
       />
+    </main>
   );
 };
 

@@ -3,8 +3,6 @@ using Application.Dtos;
 using Application.Dtos.Auth;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Azure.Core;
-using BCrypt.Net;
 using Core;
 using Core.Constants;
 using Infrastructure.Data;
@@ -13,17 +11,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
-
+using Application;
+using Microsoft.Extensions.Logging;
+using Application.Dtos.User;
+using Application.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Identity.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService : BaseAPIController, IAuthService
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -35,18 +34,21 @@ namespace Infrastructure.Identity.Services
         private readonly IEmailService _emailService;
         private readonly ICrewService _crewService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
+        private readonly string _uploadFolderPath;
         public AuthService(
+           ApiResponse apiResponse,
+            ILogger<AuthService> logger,
+            IHttpContextAccessor httpContextAccessor,
             AppDbContext context,
             IJwtTokenGenerator jwtUtils,
             IMapper mapper,
             IOptions<JwtSettings> appSettings,
             IEmailService emailService,
             ICrewService crewService,
-            IHttpContextAccessor httpContextAccessor,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager)
+            RoleManager<ApplicationRole> roleManager, 
+            IConfiguration configuration ) : base(apiResponse, logger, httpContextAccessor)
         {
             _context = context;
             _jwtTokenGenerator = jwtUtils;
@@ -58,6 +60,7 @@ namespace Infrastructure.Identity.Services
             _roleManager = roleManager;
             _crewService = crewService;
             _httpContextAccessor = httpContextAccessor;
+             _uploadFolderPath = string.Concat(configuration["UploadFolderPath"], "/users/");
         }
 
 
@@ -66,7 +69,6 @@ namespace Infrastructure.Identity.Services
         {
             try
             {
-
                 var requestedUser = await _userManager.Users.Include(u => u.RefreshTokens)
                                        .SingleOrDefaultAsync(u => u.Email == request.Email);
                 if (requestedUser != null)
@@ -85,14 +87,26 @@ namespace Infrastructure.Identity.Services
                         // save changes to db
                         _context.Update(requestedUser);
                         await _context.SaveChangesAsync();
-
+                        
                         var response = _mapper.Map<AuthenticateResponse>(requestedUser);
                         response.JwtToken = jwtToken;
                         response.RefreshToken = refreshToken.Token;
+                        var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+                        response.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, requestedUser.ProfilePhoto);
 
                         if (roles.Contains(AuthorizationConstants.CrewRole))
                             response.IsCrew = true;
 
+                        if (response.IsCrew)
+                        {
+                            var crew = await _crewService.GetCrewByEmailAsync(request.Email);
+                            if (crew != null && crew.IsSuccess)
+                            {
+                                response.CrewId = crew.Data?.Id;
+                            }
+                        }
+                        response.Role = string.Join(",", roles);
+                        response.Authenticated = true;
                         return response;
                     }
                 }
@@ -118,7 +132,6 @@ namespace Infrastructure.Identity.Services
         //    //    ValidateAudience = false
         //    //}, out SecurityToken validatedToken);
         //}
-
 
 
         public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
@@ -194,37 +207,46 @@ namespace Infrastructure.Identity.Services
                     case ClaimTypes.Role:
                         user.Roles = c.Value;
                         break;
+                    case ClaimTypes.Email:
+                        user.Email = c.Value;
+                        break;
                 }
             }
             return user;
         }
         public async Task<ApiResponse<string>> Register(RegisterRequest request)
         {
-
-            var userToRegister = new ApplicationUser
+            try
             {
-                UserName = request.Email,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                CreatedBy = request.Email
-            };
+                var userToRegister = new ApplicationUser
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    CreatedBy = request.Email
+                };
 
-            var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
+                var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
 
-            if (registrationResult.Succeeded)
-            {
-                var created_user = await _userManager.FindByEmailAsync(request.Email);
-                await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
-                var account = _mapper.Map<ApplicationUser>(request);
-                created_user.VerificationToken = await generateVerificationToken();
-                await _userManager.UpdateAsync(created_user);
-                await sendVerificationEmail(created_user, request.Password);
-                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+                if (registrationResult.Succeeded)
+                {
+                    var created_user = await _userManager.FindByEmailAsync(request.Email);
+                    await _userManager.AddToRoleAsync(created_user, AuthorizationConstants.UserRole);
+                    var account = _mapper.Map<ApplicationUser>(request);
+                    created_user.VerificationToken = await generateVerificationToken();
+                    await _userManager.UpdateAsync(created_user);
+                    await sendVerificationEmail(created_user, request.Password);
+                    return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+                }
+                var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
+                return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
             }
-            var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
-            return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
+            catch (Exception ex)
+            {
+                return ApiResponse<string>.ErrorResponse("Registration failed: " + ex.Message);
+            }
         }
 
         public async Task<ApiResponse<string>> RegisterCrew(RegisterRequest request)
@@ -232,14 +254,14 @@ namespace Infrastructure.Identity.Services
             var crew = await _crewService.GetCrewByEmailAsync(request.Email);
             if (!crew.IsSuccess && crew.Data == null)
             {
-                return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' not found.", HttpStatusCode.NotFound);
+                return ApiResponse<string>.ErrorResponse($"Crew with email '{request.Email}' does not exist.", HttpStatusCode.NotFound);
             }
-
             var userToRegister = new ApplicationUser
             {
                 UserName = request.Email,
                 Email = request.Email,
-                CreatedBy = "superuser@nmdb.com"
+                CreatedBy = request.Email,
+                Name=crew.Data.Name
             };
 
             var registrationResult = await _userManager.CreateAsync(userToRegister, request.Password);
@@ -251,7 +273,14 @@ namespace Infrastructure.Identity.Services
                 var account = _mapper.Map<ApplicationUser>(request);
                 account.VerificationToken = await generateVerificationToken();
                 await sendVerificationEmail(account, request.Password);
-                return ApiResponse<string>.SuccessResponse("Registration successful. Please check your email for verification instructions.");
+
+                // Bad approach
+                // Just a hot fix
+                var crewEntity = await _context.Crews.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
+                crewEntity.IsVerified = true;
+                _context.SaveChanges();
+
+                return ApiResponse<string>.SuccessResponse("Registration Successful.");// Please check your email for verification instructions.");
             }
             var errorMessage = string.Join(", ", registrationResult.Errors.First().Description);
             return ApiResponse<string>.ErrorResponse("Registration failed: " + errorMessage);
@@ -484,11 +513,9 @@ namespace Infrastructure.Identity.Services
 
         private async Task sendVerificationEmail(ApplicationUser account, string password = "")
         {
-            string hostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}"; // make it global later
+            var request = _httpContextAccessor.HttpContext.Request;
+            var hostUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
             string verificationLink = $"{hostUrl}/api/{account.VerificationToken}/verify-email";
-
-            //string emailContent = GetVerificationEmailContent(verificationLink, account.FirstName);
-
             await _emailService.Send(
                  to: account.Email,
                  subject: "Verify Email",
@@ -496,134 +523,69 @@ namespace Infrastructure.Identity.Services
              );
         }
 
-        private string GetVerificationEmailContent(string verificationLink, string username = "")
-        {
-            // var emailTemplate = @"
-            // <!DOCTYPE html>
-            // <html lang=""en"">
-            // <head>
-            //     <meta charset=""UTF-8"">
-            //     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-            //     <title>Email Verification</title>
-            // </head>
-            // <body>
-            //     <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
-            //         <h2 style=""color: #333;"">Verify Your Email Address</h2>
-            //         <p>Thank you for registering! Please click the button below to verify your email address:</p>
-            //         <a href=""{{verificationLink}}"" style=""display: inline-block; background-color: #007bff; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;"">Verify Email</a>
-            //         <p>If you did not create an account, you can safely ignore this email.</p>
-            //         <p>Thank you,<br>YourApp Team</p>
-            //     </div>
-            // </body>
-            // </html>";
-
-
-
-            // Replace placeholder with actual verification link
-            //return emailTemplate.Replace("{{verificationLink}}", verificationLink);
-
-
-            var emailTemplate = $@"
-            ${getEmailStyle}
-            <div class='email-container'>
-            <h2>Welcome to nmdb!</h2>
-            <p>Thank you for registering ${username}. Please click the button below to verify your email address and complete your registration.</p>
-            <a href='${verificationLink}' class='button'>Verify Email Address</a>
-            <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
-            <p>${verificationLink}</p>
-            </div>";
-            return emailTemplate;
-
-        }
-
-        private string getEmailStyle()
-        {
-            string cssStyles = @"
-                            <style>
-                            .email-container {
-                                max-width: 600px;
-                                margin: 0 auto;
-                                background: #fff;
-                                padding: 20px;
-                                text-align: center;
-                                border: 1px solid #dedede;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                            }
-                            .button {
-                                display: inline-block;
-                                padding: 10px 20px;
-                                margin-top: 20px;
-                                background-color: #007bff;
-                                color: #ffffff;
-                                text-decoration: none;
-                                border-radius: 5px;
-                                font-weight: bold;
-                                border: none;
-                                cursor: pointer;
-                            }
-                            .button:hover {
-                                background-color: #0056b3;
-                            }
-                            </style>";
-            return cssStyles;
-
-        }
-
-
         private async Task sendAlreadyRegisteredEmail(string email, string username = "", string loginLink = "")
         {
-            string message = $@"${getEmailStyle}<div class='email-container'>
-                                <p>Hello ${username},</p>
-                                <p>Our records show that you are already registered with us. Here's a quick way to access your account:</p>
-                                <a href='${loginLink}' class='button'>Login to Your Account</a>
-                                <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
-                                <p>Thank you for being a part of our community!</p>
-                                <p>${getCompanySignature}</p>
-                                </div>";
-
             await _emailService.Send(
                 to: email,
                 subject: "Email Already Registered",
-                html: $@"<h4>Email Already Registered</h4>
-                        <p>Your email <strong>{email}</strong> is already registered.</p>
-                        {message}"
+                html: EmailTemplate.sendAlreadyRegisteredEmail(email, username, loginLink)
             );
-        }
-        private string getCompanySignature()
-        {
-            string companySignature = $@"<p>Thank you,<br>YourApp Team</p>";
-            return companySignature;
         }
 
         private async Task sendPasswordResetEmail(ApplicationUser account)
         {
-            // string message = $@"<p>Please use the below token to reset your password with the <code>/Users/reset-password</code> api route:</p>
-            //                 <p><code>{account.ResetToken}</code></p>";
-
-            string message = $@"${getEmailStyle}<div class='email-container'>
-                                <h2>Password Reset Request</h2>
-                                <p>Dear ${account.UserName},</p>
-                                <p>You have requested to reset your password. Please click the button below to set a new password:</p>
-                                    <a href='{account.ResetToken}' class='button'>Reset Password</a>
-                                <p>If the button above does not work, please copy and paste the following URL into your browser:</p>
-                                <p>{account.ResetToken}</p>
-                                <p>If you did not request a password reset, please ignore this email or contact support.</p>
-                            </div>";
-
-
             await _emailService.Send(
                 to: account.Email,
                 subject: "Reset Password",
-                html: message
+                html: EmailTemplate.PasswordResetEmail(account.UserName, account.ResetToken)
             );
         }
 
         public async Task<AuthenticateResponse> GetCurrentSessionUser(string userID)
         {
             var currentUser = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userID);
+            var roles = await _userManager.GetRolesAsync(currentUser);
             var response = _mapper.Map<AuthenticateResponse>(currentUser);
-            response.Authenticated=true;
+            if (roles.Contains(AuthorizationConstants.CrewRole))
+                response.IsCrew = true;
+
+            if (response.IsCrew)
+            {
+                var crew = await _crewService.GetCrewByEmailAsync(currentUser.Email);
+                if (crew != null && crew.IsSuccess)
+                {
+                    response.CrewId = crew.Data?.Id;
+                }
+            }
+            response.Role = string.Join(",", roles);
+            response.Authenticated = true;
+            var hostUrl = ImageUrlHelper.GetHostUrl(_httpContextAccessor);
+             response.ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPath, currentUser.ProfilePhoto);
             return response;
+        }
+
+        public async Task<ApiResponse<string>> ChangePassword(ChangePasswordRequestDto changePassword)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(changePassword.Email);
+                if (user != null)
+                {
+                    var changePasswordResult = await _userManager.ChangePasswordAsync(user, changePassword.CurrentPassword, changePassword.NewPassword);
+                    if (!changePasswordResult.Succeeded)
+                    {
+                        var errors = changePasswordResult.Errors.Select(cr => cr.Description).ToList();
+                        return ApiResponse<string>.ErrorResponse(errors, HttpStatusCode.InternalServerError);
+                    }
+                    return ApiResponse<string>.SuccessResponseWithoutData("Your password has been changed.");
+                }
+                return ApiResponse<string>.ErrorResponse($"The user '{changePassword.Email}' could not be found", HttpStatusCode.NotFound);
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<string>.ErrorResponse("Something went wrong while changing password.", HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

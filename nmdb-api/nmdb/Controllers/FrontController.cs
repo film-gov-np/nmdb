@@ -1,8 +1,7 @@
-﻿using Application.BaseManager;
-using Application.Dtos.FilterParameters;
+﻿using Application.Dtos.FilterParameters;
 using Application.Interfaces.Services;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace nmdb.Controllers;
 
@@ -13,10 +12,13 @@ public class FrontController : ControllerBase
     private readonly IMovieService _movieService;
     private readonly ICrewService _crewService;
     private readonly ICommonService _commonService;
-    public FrontController(IMovieService movieService, ICrewService crewService)
+    private readonly ITheatreService _theatreService;
+    public FrontController(IMovieService movieService, ICrewService crewService, ICommonService commonService, ITheatreService theatreService)
     {
         _crewService = crewService;
         _movieService = movieService;
+        _commonService = commonService;
+        _theatreService = theatreService;
     }
 
     [HttpGet("movies")]
@@ -39,6 +41,8 @@ public class FrontController : ControllerBase
     {
         try
         {
+            filterParameters.SortColumn = "Name";
+
             var crews = await _crewService.GetAllAsync(filterParameters);
             return Ok(crews);
         }
@@ -84,7 +88,6 @@ public class FrontController : ControllerBase
     {
         try
         {
-
             var response = await _commonService.GetGlobalSearchResults(filterParameters);
             if (response.IsSuccess)
                 return Ok(response);
@@ -97,4 +100,20 @@ public class FrontController : ControllerBase
 
         }
     }
+
+    [HttpGet("theatres")]
+    public async Task<IActionResult> GetTheatres([FromQuery] TheatreFilterParameters? filterParameters)
+    {
+        try
+        {
+            var movies = await _theatreService.GetAllAsync(filterParameters);
+            return Ok(movies);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
 }
+

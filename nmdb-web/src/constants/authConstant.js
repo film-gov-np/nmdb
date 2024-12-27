@@ -1,1 +1,1 @@
-export const BaseAPIUrl = "https://localhost:7113/api/";
+export const BaseAPIUrl = "https://nmdb-api.nepalidev.com.np/api/";

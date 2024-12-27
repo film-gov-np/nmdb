@@ -195,7 +195,7 @@ const FormCensorInfo = ({ form }) => {
           control={form.control}
           name="censor.description"
           render={({ field }) => (
-            <FormItem className="md:col-span-2 lg:col-span-3 flex flex-col">
+            <FormItem className="flex flex-col md:col-span-2 lg:col-span-3">
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea {...field} />

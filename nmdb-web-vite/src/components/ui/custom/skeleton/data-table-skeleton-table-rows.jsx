@@ -16,7 +16,6 @@ export function DataTableSkeletonTableRows({
 }) {
   return (
     <div className="w-full space-y-3 overflow-auto">
-      
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -55,7 +54,6 @@ export function DataTableSkeletonTableRows({
           </TableBody>
         </Table>
       </div>
-     
     </div>
   );
 }

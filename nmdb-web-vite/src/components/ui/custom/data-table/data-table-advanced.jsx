@@ -26,7 +26,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -36,7 +36,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
       columnVisibility,
       rowSelection,
       columnFilters,
-      globalFilter
+      globalFilter,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -54,7 +54,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} facetedFilters={facetedFilters}/>
+      <DataTableToolbar table={table} facetedFilters={facetedFilters} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -67,7 +67,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -86,7 +86,7 @@ export function DataTableAdvanced({ columns, data, facetedFilters }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

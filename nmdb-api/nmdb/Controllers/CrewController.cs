@@ -1,8 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Dtos.FilterParameters;
-using Application.Dtos.Theatre;
 using Application.Interfaces.Services;
-using Application.Services;
 using Core;
 using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +12,7 @@ using System.Net;
 namespace nmdb.Controllers
 {
     [ApiController]    
+    [Authorize]
     [RequiredRoles(AuthorizationConstants.AdminRole)]
     [Route("api/crews")]
     public class CrewController : AuthorizedController
@@ -27,11 +26,14 @@ namespace nmdb.Controllers
             _crewService = crewService;
         }
 
+        // CORS
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] CrewFilterParameters filterParameters)
         {
             try
             {
+                string currentUserEmail = GetUserEmail;
+                filterParameters.SortColumn = "Name";
                 var response = await _crewService.GetAllAsync(filterParameters);
                 return Ok(response);
             }

@@ -34,8 +34,8 @@ import DatePickerForForm from "@/components/common/formElements/DatePicker";
 import { Date_Format, Gender } from "@/constants/general";
 import DateInput from "@/components/ui/custom/DateInput";
 import { format, isValid, parse } from "date-fns";
-import Image from "@/components/common/Image";
 import { FileInput } from "@/components/common/formElements/FileInput";
+import { isNull } from "lodash";
 
 const renderModes = {
   Render_Mode_Create: "create",
@@ -55,7 +55,8 @@ const formSchema = z.object({
   designations: z.any(),
   gender: z.string().optional(),
   dateOfBirthInAD: z
-    .string()
+    .date()
+    .or(z.string())
     .optional()
     .refine(
       (dateString) => {
@@ -78,7 +79,8 @@ const formSchema = z.object({
       },
     ),
   dateOfDeathInAD: z
-    .string()
+    .date()
+    .or(z.string())
     .optional()
     .refine(
       (dateString) => {
@@ -102,40 +104,40 @@ const formSchema = z.object({
     ),
   dateOfBirthInBS: z
     .string()
-    .refine(
-      (dateStr) => {
-        // Parse the date string using date-fns
-        const parsedDate = parse(dateStr, Date_Format, new Date());
+    // .refine(
+    //   (dateStr) => {
+    //     // Parse the date string using date-fns
+    //     const parsedDate = parse(dateStr, Date_Format, new Date());
 
-        // Check if the parsed date is valid and matches the input string
-        const isValidDate =
-          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+    //     // Check if the parsed date is valid and matches the input string
+    //     const isValidDate =
+    //       isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
 
-        return isValidDate;
-      },
-      {
-        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
-      },
-    )
+    //     return isValidDate;
+    //   },
+    //   {
+    //     message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+    //   },
+    // )
     .optional()
     .or(z.literal("")),
   dateOfDeathInBS: z
     .string()
-    .refine(
-      (dateStr) => {
-        // Parse the date string using date-fns
-        const parsedDate = parse(dateStr, Date_Format, new Date());
+    // .refine(
+    //   (dateStr) => {
+    //     // Parse the date string using date-fns
+    //     const parsedDate = parse(dateStr, Date_Format, new Date());
 
-        // Check if the parsed date is valid and matches the input string
-        const isValidDate =
-          isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
+    //     // Check if the parsed date is valid and matches the input string
+    //     const isValidDate =
+    //       isValid(parsedDate) && format(parsedDate, Date_Format) === dateStr;
 
-        return isValidDate;
-      },
-      {
-        message: `Invalid date format or value. Expected format is ${Date_Format}.`,
-      },
-    )
+    //     return isValidDate;
+    //   },
+    //   {
+    //     message: `Invalid date format or value. Expected format is ${Date_Format}.`,
+    //   },
+    // )
     .optional()
     .or(z.literal("")),
   birthPlace: z.string().optional().or(z.literal("")),
@@ -158,6 +160,7 @@ const formSchema = z.object({
   profilePhotoFile: z.any(),
   profilePhoto: z.any(),
   email: z.string().email().optional().or(z.literal("")),
+  hasRequestedCard: z.any(),
 });
 
 const defaultValues = {
@@ -190,6 +193,7 @@ const defaultValues = {
   dateOfBirthInBS: "",
   dateOfDeathInBS: "",
   email: "",
+  hasRequestedCard: false,
 };
 
 function CreateCrew() {
@@ -209,7 +213,7 @@ function CreateCrew() {
     useQuery({
       queryKey: ["crewDetail"],
       queryFn: () => getCrew(slug, renderMode),
-      keepPreviousData: true,
+      // keepPreviousData: true,
     });
 
   const form = useForm({
@@ -223,7 +227,6 @@ function CreateCrew() {
       profilePhotoFile: data.profilePhotoFile?.[0] || null,
       // thumbnailImage: data.thumbnailImageFile?.[0].name,
     };
-    console.log("submitted", submitData);
     mutateRole.mutate({
       postData: submitData,
       isEditMode: renderMode === renderModes.Render_Mode_Edit,
@@ -302,7 +305,11 @@ function CreateCrew() {
 
   return (
     <main className="flex flex-1 flex-col gap-2 overflow-auto p-4 lg:gap-4 lg:p-6">
-      <AddPageHeader label="crew" pathTo={Paths.Route_Admin_Crew} />
+      <AddPageHeader
+        label="crew"
+        pathTo={Paths.Route_Admin_Crew}
+        renderMode={renderMode}
+      />
       {isLoading || isFetching ? (
         <FormSkeleton columnCount={5} rowCount={2} repeat={2} shrinkZero />
       ) : (
@@ -317,7 +324,6 @@ const getCrewFlimRoles = async (apiPath) => {
   const apiResponse = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log("api-response", response.data);
       return response.data;
     })
     .catch((err) => console.error(err));
@@ -334,7 +340,9 @@ function CrewForm({ crew, renderMode, onSubmit }) {
       isVerified: crew.isVerified.toString(),
     }),
   });
-  if(crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
+  if (crew.profilePhoto) form.setValue("profilePhoto", crew.profilePhoto);
+  if (isNull(crew.hasRequestedCard))
+    form.setValue("hasRequestedCard", crew.hasRequestedCard);
   const { isLoading, data, isError, isFetching, isPreviousData, error } =
     useQuery({
       queryKey: ["FlimRolesforCrews"],

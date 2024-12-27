@@ -75,8 +75,8 @@ public class CommonService : ICommonService
             {
                 Id = cr.Id,
                 Name = cr.Name,
-                Email = cr.Email,
-                NepaliName = cr.NepaliName,
+                Email = cr.Email ?? "",
+                NepaliName = cr.NepaliName ?? "",
                 ProfilePhotoUrl = ImageUrlHelper.GetFullImageUrl(hostUrl, _uploadFolderPathCrew, cr.ProfilePhoto),
             }).ToListAsync();
 
@@ -84,7 +84,7 @@ public class CommonService : ICommonService
             {
                 Id = m.Id,
                 Name = m.Name,
-                NepaliName = m.NepaliName,
+                NepaliName = m.NepaliName ?? "",
                 Category = m.Category != null ? m.Category.GetDisplayName() : eMovieCategory.None.GetDisplayName(),
                 Status = m.Status != null ? m.Status.GetDisplayName() : eMovieStatus.Unknown.GetDisplayName(),
                 Color = m.Color != null ? m.Color.GetDisplayName() : eMovieColor.None.GetDisplayName(),

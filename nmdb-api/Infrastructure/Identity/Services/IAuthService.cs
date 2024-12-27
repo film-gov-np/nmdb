@@ -1,5 +1,7 @@
-﻿using Application.Dtos;
+﻿using Application;
+using Application.Dtos;
 using Application.Dtos.Auth;
+using Application.Dtos.User;
 using Core;
 using System.Security.Claims;
 
@@ -25,5 +27,7 @@ namespace Infrastructure.Identity.Services
         CurrentUser GetUserFromClaims(IEnumerable<Claim> claims);
         Task Delete(string idx);
         Task<AuthenticateResponse> GetCurrentSessionUser(string userID);
+
+        Task<ApiResponse<string>> ChangePassword(ChangePasswordRequestDto changePassword);
     }
 }

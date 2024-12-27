@@ -44,6 +44,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
 
         string accessToken = context.HttpContext.Request.Cookies[TokenConstants.AccessToken];
         string refreshToken = context.HttpContext.Request.Cookies[TokenConstants.RefreshToken];
+        string origin = context.HttpContext.Request.Headers.Origin.ToString();
 
         if (string.IsNullOrEmpty(accessToken))
         {
@@ -63,6 +64,7 @@ public class AuthorizedUserFilter : IAsyncAuthorizationFilter
                 CurrentUser user = _usrAuth.GetUserFromClaims(claimsIdentity.Claims);
 
                 context.HttpContext.Items["CurrentUser"] = user;
+                context.HttpContext.Items["origin"] = origin;
 
                 if (controllerActionDescriptor != null)
                 {

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -11,9 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Paths } from "@/constants/routePaths";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import axios from "axios";
 import Autoplay from "embla-carousel-autoplay";
-import { CalendarDays, Drama, Film, HomeIcon, Theater } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -21,19 +18,21 @@ import InfoCardWithImage from "../../InfoCardWithImage";
 import { ApiPaths } from "@/constants/apiPaths";
 import axiosInstance from "@/helpers/axiosSetup";
 import Image from "@/components/common/Image";
+import CommonAlertBanner from "../../CommonAlertBanner";
 
 const getMovies = async (apiPath) => {
-  debugger;
   const response = await axiosInstance
     .get(apiPath)
     .then((response) => {
-      console.log(response.data);
-      return response.data.data;
+      let responseData = response.data;
+      if (responseData.isSuccess) return response.data.data;
+      else throw new Error("Something went wrong");
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      throw new Error("Something went wrong");
+    });
   const totalData = response.totalItems;
   const data = response.items;
-  console.log(totalData, data);
   return {
     movies: data,
     totalData,
@@ -60,39 +59,49 @@ const Home = () => {
     queries: [
       {
         queryKey: ["nowPlayingMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () =>
+          getMovies(
+            ApiPaths.Path_Front_Movies +
+              "?SortColumn=ReleaseDate&Descending=true&PageNumber=1&PageSize=12",
+          ),
         keepPreviousData: true,
       },
       {
         queryKey: ["trendingMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () =>
+          getMovies(
+            ApiPaths.Path_Front_Movies +
+              `?SortColumn=ReleaseDate&Descending=true&PageNumber=1&PageSize=12&Status=1`,
+          ),
         keepPreviousData: true,
       },
       {
         queryKey: ["topRatedMovies"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Movies),
+        queryFn: () => getMovies(ApiPaths.Path_Front_Movies + "?SortColumn=ReleaseDate&Descending=false&PageNumber=1&PageSize=15"),
         keepPreviousData: true,
       },
       {
         queryKey: ["popularArtists"],
-        queryFn: () => getMovies(ApiPaths.Path_Front_Celebrities),
+        queryFn: () =>
+          getMovies(ApiPaths.Path_Front_Celebrities + "?isVerified=true"),
         keepPreviousData: true,
       },
     ],
   });
+
   const isLoading = results.some((query) => query.isLoading);
-  const isError = results.some((query) => query.isLoading);
-  if (isLoading) return "Loading...";
-  if (isError) return `Error: ${error.message}`;
+  const isError = results.some((query) => query.isError);
+  if (isLoading) return <CommonAlertBanner type="Loader" />;
+  if (isError) return <CommonAlertBanner type="Error" className="m-12" />;
   const nowPlayingMovies = results[0];
   const upcomingMovies = results[1];
   const popularMovies = results[2];
   const popularArtists = results[3];
 
   return (
-    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
+    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
       <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6">
-      {/*  md:grid-cols-[2fr_2px_minmax(0,9fr)] */}
+        {/*  md:grid-cols-[2fr_2px_minmax(0,9fr)] */}
         {/* <aside className="hidden gap-4 py-4 md:grid">
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
             Menu
@@ -130,10 +139,10 @@ const Home = () => {
             </NavLink>
           </div>
         </aside> */}
-        
+
         <div className="space-y-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">
-            Now Playing
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
+            Latest Movies
           </h3>
           <Carousel
             setApi={setApi}
@@ -146,13 +155,13 @@ const Home = () => {
             ]}
           >
             <CarouselContent className="">
-              {nowPlayingMovies.data.movies.map((movie, index) => (
+              {nowPlayingMovies?.data?.movies.map((movie, index) => (
                 <CarouselItem
                   key={"now-playing-movie-" + index}
                   className="pl-4 sm:flex-[0_0_50%] md:flex-[0_0_35%] lg:flex-[0_0_25%] xl:flex-[0_0_18.5%]"
                 >
                   <div className="">
-                    <Card>
+                    <Card className="border-none">
                       <CardContent className="group relative flex aspect-[7/9] items-center justify-center p-0">
                         <Image
                           src={movie.thumbnailImageUrl}
@@ -179,20 +188,20 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext className="-right-9" />
+            <CarouselNext className="-right-9 bg-primary text-primary-foreground" />
           </Carousel>
         </div>
       </div>
       <div className="mx-auto mt-8 grid w-full max-w-screen-2xl grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,7fr)_2px_3fr] ">
         <div className="block">
           <div className="space-y-4">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
-              Movie of the Week
+            <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
+              Timeless Classics
             </h3>
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularMovies.data.movies.map((movie, index) => (
+                  {popularMovies?.data?.movies.map((movie, index) => (
                     <InfoCardWithImage
                       key={"movie-of-the-week-" + index}
                       title={movie.name}
@@ -210,13 +219,13 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-8 space-y-4">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
               Top Artists
             </h3>
             <div className="relative ">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {popularArtists.data.movies.map((cast, index) => (
+                  {popularArtists?.data?.movies.map((cast, index) => (
                     <InfoCardWithImage
                       key={"top-artist-" + index}
                       title={cast.name}
@@ -226,6 +235,7 @@ const Home = () => {
                       width={150}
                       height={210}
                       navigateTo={Paths.Route_Celebrities + "/" + cast.id}
+                      isVerifiedProfile={cast.isVerified}
                     />
                   ))}
                 </div>
@@ -236,11 +246,11 @@ const Home = () => {
         </div>
         <Separator className="hidden md:grid" orientation="vertical" />
         <div className="space-y-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-primary">
             Trending
           </h3>
           <Carousel
-            opts={{ align: "start", dragFree: true, loop: true }}
+            opts={{ align: "start", dragFree: true, loop: false }}
             orientation="vertical"
             className="w-full "
           >
@@ -275,7 +285,7 @@ const Home = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext className="-bottom-9" />
+            <CarouselNext className="-bottom-9 bg-primary text-primary-foreground" />
           </Carousel>
         </div>
       </div>
