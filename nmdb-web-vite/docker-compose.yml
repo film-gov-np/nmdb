@@ -1,0 +1,11 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map Nginx port to host port 3000
+    volumes:
+      - .:/app # For development (optional, only if editing locally)
+    container_name: react-vite-app
