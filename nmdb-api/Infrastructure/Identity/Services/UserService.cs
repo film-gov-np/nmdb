@@ -1,4 +1,4 @@
-﻿using Application.Dtos.FilterParameters;
+using Application.Dtos.FilterParameters;
 using Application.Dtos.Media;
 using Application.Dtos.Movie;
 using Application.Dtos.Role;

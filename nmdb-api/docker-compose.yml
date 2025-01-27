@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  nmdb-db:
+    container_name: nmdb-db
+    hostname: nmdb-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'Admin@123'
+      Platform: 'linux/amd64'
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_PID: 'Developer' 
+      MSSQL_TCP_PORT: 1433 
+    ports: 
+      - "1455:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+      - ./backup:/var/opt/mssql/backup
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrongPassword123"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+
+  nmdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+      - "543:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    volumes:
+      - ./logs:/app/logs
+    restart: always
